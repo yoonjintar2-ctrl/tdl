@@ -31,7 +31,7 @@
 #mApp,#mSheet{display:none;}
 body.mob{overflow:hidden;}
 body.mob #app{display:none!important;}
-body.mob #miniCalFab,body.mob #stickerFab,body.mob #noteFab,body.mob #timeFab,body.mob #bulkBar,body.mob #stickerGhost,body.mob #stickerPanel,body.mob #notePanel,body.mob #timePanel{display:none!important;}
+body.mob #miniCalFab,body.mob #stickerFab,body.mob #noteFab,body.mob #timeFab,body.mob #loungeFab,body.mob #lounge,body.mob #bulkBar,body.mob #stickerGhost,body.mob #stickerPanel,body.mob #notePanel,body.mob #timePanel{display:none!important;}
 body.mob #mApp{display:flex;flex-direction:column;height:100vh;overflow:hidden;background:var(--bg);}
 body.mob #mSheet{display:block;}
 body.mob #mSheet.hidden{display:none;}
@@ -113,8 +113,70 @@ body.theme-dark #mSheet .ms-back{background:rgba(0,0,0,0.55);}
 #qrBox canvas{border-radius:10px;box-shadow:0 3px 12px rgba(40,34,60,0.12);}
 .qr-url{text-align:center;font-size:calc(11px * var(--fs,1));color:var(--text-dim);word-break:break-all;line-height:1.5;margin-bottom:12px;}
 .inst-steps{margin-top:4px;}
-.inst-steps div{display:flex;gap:9px;align-items:flex-start;font-size:calc(11.5px * var(--fs,1));color:var(--text);line-height:1.65;padding:9px 11px;background:var(--bg);border-radius:12px;margin-bottom:6px;}
-.inst-steps b{flex:0 0 auto;width:18px;height:18px;border-radius:50%;background:var(--accent);color:#fff;font-size:calc(10px * var(--fs,1));display:flex;align-items:center;justify-content:center;margin-top:1px;}
+.inst-tabs{display:flex;gap:6px;margin:0 0 12px;}
+.inst-tabs button{flex:1;border:none;background:var(--bg);color:var(--text-dim);border-radius:12px;padding:10px 8px;font-size:calc(12px * var(--fs,1));font-family:inherit;cursor:pointer;}
+.inst-tabs button.on{background:var(--accent);color:#fff;font-weight:700;}
+.inst-steps .ist{display:flex;gap:9px;align-items:flex-start;font-size:calc(12px * var(--fs,1));color:var(--text);line-height:1.7;padding:11px 12px;background:var(--bg);border-radius:12px;margin-bottom:6px;}
+.inst-steps .ist-n{flex:0 0 auto;width:19px;height:19px;border-radius:50%;background:var(--accent);color:#fff;font-size:calc(10.5px * var(--fs,1));font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:2px;}
+.inst-steps .ist-t{flex:1;min-width:0;}
+.inst-steps .ist-t b{font-weight:700;color:var(--accent-deep);}
+.inst-note{font-size:calc(11px * var(--fs,1));color:var(--text-dim);line-height:1.6;margin-top:10px;padding:10px 12px;background:var(--bg);border-radius:12px;}
+/* ===================== 사이버 탕비실 ===================== */
+#lounge{position:fixed;inset:0;z-index:700;background:rgba(28,26,38,0.55);backdrop-filter:blur(2px);display:flex;align-items:center;justify-content:center;padding:20px;}
+#lounge.hidden{display:none;}
+.lg-shell{width:min(1040px,96vw);background:var(--panel);border-radius:22px;box-shadow:0 24px 70px rgba(0,0,0,0.35);overflow:hidden;display:flex;flex-direction:column;}
+.lg-head{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--line);}
+.lg-head .lg-t{font-size:calc(14px * var(--fs,1));font-weight:700;color:var(--accent-deep);}
+.lg-head .lg-cnt{font-size:calc(11px * var(--fs,1));color:var(--text-dim);background:var(--bg);border-radius:20px;padding:4px 11px;}
+.lg-head .lg-sp{flex:1;}
+.lg-head button{border:none;background:var(--bg);color:var(--text-dim);border-radius:11px;padding:8px 13px;font-size:calc(11.5px * var(--fs,1));font-family:inherit;cursor:pointer;}
+.lg-head button:hover{background:var(--accent-soft);color:var(--accent-deep);}
+
+.lg-room{position:relative;width:100%;aspect-ratio:1000/620;background:#F3F1EC;overflow:hidden;user-select:none;outline:none;}
+body.theme-dark .lg-room{background:#26272B;}
+.lg-room .lg-floor{position:absolute;inset:0;background-image:linear-gradient(rgba(0,0,0,0.035) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,0.035) 1px,transparent 1px);background-size:5% 8.06%;}
+.lg-obj{position:absolute;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:0.85em;color:#fff;background:#2C2B33;box-shadow:0 3px 10px rgba(0,0,0,0.18);}
+.lg-obj .oe{font-size:1.6em;line-height:1;}
+.lg-obj .on{font-size:0.72em;font-weight:600;letter-spacing:0.5px;opacity:0.92;}
+.lg-obj.tree{background:#4E7A46;}
+.lg-obj.pantry{background:#3B3A45;}
+.lg-obj.table{background:#5A4634;}
+
+.lg-av{position:absolute;transform:translate(-50%,-50%);text-align:center;transition:left .09s linear, top .09s linear;pointer-events:none;}
+.lg-av .av-b{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 3px 9px rgba(0,0,0,0.22);margin:0 auto;}
+.lg-av .av-n{margin-top:3px;font-size:10.5px;font-weight:600;color:#3B3A45;background:rgba(255,255,255,0.82);border-radius:9px;padding:1px 7px;display:inline-block;white-space:nowrap;max-width:120px;overflow:hidden;text-overflow:ellipsis;}
+body.theme-dark .lg-av .av-n{color:#E8E8EC;background:rgba(0,0,0,0.5);}
+.lg-av.me .av-b{box-shadow:0 0 0 3px var(--accent),0 3px 9px rgba(0,0,0,0.22);}
+.lg-av .av-say{position:absolute;left:50%;bottom:52px;transform:translateX(-50%);background:#fff;color:#2B2A33;font-size:11.5px;line-height:1.45;padding:7px 11px;border-radius:13px;box-shadow:0 4px 14px rgba(0,0,0,0.18);max-width:220px;white-space:pre-wrap;word-break:break-word;text-align:left;}
+.lg-av .av-say:after{content:'';position:absolute;left:50%;bottom:-5px;margin-left:-5px;border:5px solid transparent;border-top-color:#fff;border-bottom:0;}
+.lg-av .av-say.hidden{display:none;}
+
+.lg-chat{position:absolute;left:2%;bottom:3.5%;width:52%;height:34%;background:rgba(222,236,204,0.93);border:2px solid #2C2B33;border-radius:8px;display:flex;flex-direction:column;overflow:hidden;}
+body.theme-dark .lg-chat{background:rgba(48,56,44,0.93);border-color:#5A5B63;}
+.lg-chat .lc-log{flex:1;overflow-y:auto;padding:9px 11px;font-size:11.5px;line-height:1.6;color:#2B3025;}
+body.theme-dark .lg-chat .lc-log{color:#D9DED3;}
+.lg-chat .lc-log b{color:var(--accent-deep);}
+.lg-chat .lc-log .sys{color:#6C7263;font-style:normal;}
+.lg-chat .lc-in{display:flex;gap:5px;padding:7px;border-top:1px solid rgba(0,0,0,0.12);}
+.lg-chat .lc-in input{flex:1;border:none;background:rgba(255,255,255,0.9);border-radius:9px;padding:8px 10px;font-size:12px;font-family:inherit;color:#2B3025;outline:none;}
+body.theme-dark .lg-chat .lc-in input{background:rgba(0,0,0,0.35);color:#E4E7DF;}
+.lg-chat .lc-in button{border:none;background:#2C2B33;color:#fff;border-radius:9px;padding:0 13px;font-size:11.5px;font-family:inherit;cursor:pointer;}
+
+.lg-tip{position:absolute;right:2%;top:3%;background:rgba(255,255,255,0.86);border-radius:10px;padding:7px 11px;font-size:10.5px;color:#5A5A66;line-height:1.6;pointer-events:none;}
+body.theme-dark .lg-tip{background:rgba(0,0,0,0.45);color:#B9BAC2;}
+.lg-join{position:absolute;inset:0;background:rgba(243,241,236,0.96);display:flex;align-items:center;justify-content:center;}
+body.theme-dark .lg-join{background:rgba(38,39,43,0.96);}
+.lg-join.hidden{display:none;}
+.lj-card{text-align:center;width:min(340px,86%);}
+.lj-card h3{margin:0 0 6px;font-size:calc(15px * var(--fs,1));color:var(--accent-deep);}
+.lj-card p{margin:0 0 16px;font-size:calc(11.5px * var(--fs,1));color:var(--text-dim);line-height:1.7;}
+.lj-card input{width:100%;border:none;background:var(--bg);border-radius:13px;padding:12px 14px;font-size:calc(13px * var(--fs,1));font-family:inherit;color:var(--text);outline:none;text-align:center;}
+.lj-faces{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:12px 0 16px;}
+.lj-faces button{width:38px;height:38px;border-radius:50%;border:none;font-size:19px;cursor:pointer;background:var(--bg);padding:0;}
+.lj-faces button.on{box-shadow:0 0 0 2px var(--accent);}
+.lj-go{width:100%;border:none;background:var(--accent);color:#fff;border-radius:14px;padding:13px;font-size:calc(13px * var(--fs,1));font-weight:700;font-family:inherit;cursor:pointer;}
+.lj-err{font-size:calc(11px * var(--fs,1));color:#B0526F;margin-top:10px;min-height:15px;line-height:1.5;}
+
 .tdl-logo{display:block;object-fit:contain;flex:0 0 auto;}
 #topbar .brand{display:flex;align-items:center;gap:8px;}
 #topbar .brand .tdl-logo{width:calc(29px * var(--fs,1));height:calc(29px * var(--fs,1));}
@@ -456,7 +518,7 @@ body.theme-dark .date-btn:hover,body.theme-dark .info-detail input:focus{backgro
 #ctxMenu{position:fixed;background:var(--panel);border:none;border-radius:14px;box-shadow:0 10px 30px rgba(60,50,90,0.2);z-index:250;padding:6px;min-width:130px;}
 #ctxMenu.hidden{display:none;}
 
-#miniCal{position:fixed;right:16px;bottom:72px;z-index:320;width:236px;background:var(--panel);border:1px solid var(--line-strong);border-radius:14px;box-shadow:0 10px 30px rgba(40,34,60,0.18);padding:12px;}
+#miniCal{position:fixed;right:16px;bottom:72px;z-index:320;width:calc(452px * var(--fs));background:var(--panel);border:1px solid var(--line-strong);border-radius:14px;box-shadow:0 10px 30px rgba(40,34,60,0.18);padding:12px;}
 #miniCal.hidden{display:none;}
 body.theme-dark #miniCal{box-shadow:0 10px 30px rgba(0,0,0,0.45);}
 #miniCalHead{display:flex;align-items:center;gap:4px;margin-bottom:8px;}
@@ -465,7 +527,10 @@ body.theme-dark #miniCal{box-shadow:0 10px 30px rgba(0,0,0,0.45);}
 .mc-nav:hover{background:var(--accent-soft);color:var(--accent-deep);}
 .mc-min{background:var(--bg);border:none;cursor:pointer;font-size:calc(12px * var(--fs,1));color:var(--text-dim);padding:4px 8px;border-radius:8px;font-family:inherit;line-height:1;margin-left:2px;display:flex;align-items:center;gap:3px;}
 .mc-min:hover{background:var(--accent-soft);color:var(--accent-deep);}
-#mcGrid{display:grid;grid-template-columns:repeat(7,1fr);grid-auto-rows:calc(26px * var(--fs));gap:1px;align-content:start;min-height:186px;}
+#mcWrap{display:flex;gap:14px;}
+#mcWrap .mc-col{flex:1;min-width:0;}
+#mcWrap .mc-mon{text-align:center;font-size:calc(11px * var(--fs,1));font-weight:600;color:var(--text-dim);margin-bottom:5px;}
+.mc-grid{display:grid;grid-template-columns:repeat(7,1fr);grid-auto-rows:calc(26px * var(--fs));gap:1px;align-content:start;min-height:186px;}
 .mc-wd{font-size:calc(9.5px * var(--fs,1));color:var(--text-dim);text-align:center;padding:2px 0;}
 .mc-cell{font-size:calc(11px * var(--fs,1));text-align:center;padding:5px 0;border-radius:7px;position:relative;color:var(--text);}
 .mc-cell.other{visibility:hidden;}
@@ -473,14 +538,15 @@ body.theme-dark #miniCal{box-shadow:0 10px 30px rgba(0,0,0,0.45);}
 .mc-cell.sun,.mc-cell.hol{color:#c0554f;}
 .mc-cell.today{background:var(--accent-soft);font-weight:700;}
 .mc-cell.hol{font-weight:600;}
-#miniCalFab,#stickerFab,#noteFab,#timeFab{position:fixed;bottom:16px;z-index:330;width:calc(46px * var(--fs));height:calc(46px * var(--fs));border-radius:50%;border:1px solid var(--line-strong);cursor:pointer;background:var(--panel);color:var(--text);font-size:calc(20px * var(--fs,1));box-shadow:0 6px 18px rgba(40,34,60,0.16);display:flex;align-items:center;justify-content:center;padding:0;line-height:1;}
+#miniCalFab,#stickerFab,#noteFab,#timeFab,#loungeFab{position:fixed;bottom:16px;z-index:330;width:calc(46px * var(--fs));height:calc(46px * var(--fs));border-radius:50%;border:1px solid var(--line-strong);cursor:pointer;background:var(--panel);color:var(--text);font-size:calc(20px * var(--fs,1));box-shadow:0 6px 18px rgba(40,34,60,0.16);display:flex;align-items:center;justify-content:center;padding:0;line-height:1;}
 #miniCalFab{right:16px;}
 #stickerFab{right:70px;}
 #noteFab{right:124px;}
 #timeFab{right:178px;}
-#miniCalFab:hover,#stickerFab:hover,#noteFab:hover,#timeFab:hover{background:var(--accent-soft);}
-#miniCalFab.on,#stickerFab.on,#noteFab.on,#timeFab.on{background:var(--accent);color:#fff;border-color:transparent;}
-body.theme-dark #miniCalFab,body.theme-dark #stickerFab,body.theme-dark #noteFab,body.theme-dark #timeFab{box-shadow:0 6px 18px rgba(0,0,0,0.45);}
+#loungeFab{right:232px;}
+#miniCalFab:hover,#stickerFab:hover,#noteFab:hover,#timeFab:hover,#loungeFab:hover{background:var(--accent-soft);}
+#miniCalFab.on,#stickerFab.on,#noteFab.on,#timeFab.on,#loungeFab.on{background:var(--accent);color:#fff;border-color:transparent;}
+body.theme-dark #miniCalFab,body.theme-dark #stickerFab,body.theme-dark #noteFab,body.theme-dark #timeFab,body.theme-dark #loungeFab{box-shadow:0 6px 18px rgba(0,0,0,0.45);}
 #timePanel{position:fixed;right:178px;bottom:72px;z-index:320;width:262px;background:var(--panel);border:1px solid var(--line-strong);border-radius:14px;box-shadow:0 10px 30px rgba(40,34,60,0.2);padding:11px;}
 #timePanel.hidden{display:none;}
 #timePanel .tp-head{display:flex;align-items:center;justify-content:space-between;font-size:calc(12.5px * var(--fs,1));font-weight:600;color:var(--text);margin-bottom:8px;}
@@ -651,11 +717,10 @@ null
       <div><span class="ni">🔒</span><span><b>운영자도 볼 수 없습니다.</b> 일정은 본인 구글 계정에만 저장되며, 만든 사람조차 열어볼 수 없도록 데이터베이스 권한이 잠겨 있습니다.</span></div>
       <div><span class="ni">🔄</span><span><b>업데이트해도 일정은 그대로.</b> 새 버전이 올라가도 저장된 일정·캠페인·메모는 전혀 사라지지 않습니다.</span></div>
       <div><span class="ni">📱</span><span><b>휴대폰에서도 열립니다.</b> 같은 주소로 접속하면 폰에 맞는 간단한 목록 화면으로 바뀝니다.</span></div>
-      <div><span class="ni">💾</span><span><b>따로 저장할 필요 없습니다.</b> 고칠 때마다 자동으로 저장됩니다.</span></div>
+      <div><span class="ni">💾</span><span><b>따로 저장할 필요 없습니다.</b> 고칠 때마다 로그인한 <b>구글 계정 기준</b>으로 자동 저장되고, 다른 기기에서 같은 계정으로 열면 그대로 이어집니다.</span></div>
     </div>
-    <div class="gate-sub" id="gateSub" style="margin:18px 0 0;">구글 계정으로 로그인하면 어느 기기에서나 같은 일정이 열립니다.</div>
     <div class="gate-made">Made by Jintar</div>
-    <div class="gate-build">배포 2026-07-30 14:40 &nbsp;·&nbsp; ver 3.1</div>
+    <div class="gate-build">배포 2026-07-30 15:20 &nbsp;·&nbsp; ver 3.2</div>
   </div>
 </div>
 
@@ -800,9 +865,39 @@ null
     <button class="mc-nav" id="mcNext">›</button>
     <button class="mc-min" id="mcMinimize" title="달력 닫기">✕</button>
   </div>
-  <div id="mcGrid"></div>
+  <div id="mcWrap"></div>
 </div>
 <button id="miniCalFab" title="달력">📅</button>
+<button id="loungeFab" title="사이버 탕비실 — 다른 사용자와 잡담">🍵</button>
+
+<div id="lounge" class="hidden">
+  <div class="lg-shell">
+    <div class="lg-head">
+      <span class="lg-t">🍵 사이버 탕비실</span>
+      <span class="lg-cnt" id="lgCount">혼자 있음</span>
+      <span class="lg-sp"></span>
+      <button id="lgLeave">나가기</button>
+    </div>
+    <div class="lg-room" id="lgRoom" tabindex="0">
+      <div class="lg-floor"></div>
+      <div class="lg-tip">방향키 · WASD 로 이동 &nbsp;/&nbsp; 바닥을 클릭해도 이동<br>Enter 로 채팅 입력 · Esc 로 빠져나오기</div>
+      <div class="lg-chat">
+        <div class="lc-log" id="lgLog"></div>
+        <div class="lc-in"><input type="text" id="lgMsg" placeholder="여기에 입력하고 Enter" maxlength="120" autocomplete="off"><button id="lgSend">전송</button></div>
+      </div>
+      <div class="lg-join" id="lgJoin">
+        <div class="lj-card">
+          <h3>사이버 탕비실</h3>
+          <p>지금 TDL을 쓰고 있는 사람들과 잠깐 쉬어가는 공간이에요.<br>이름을 정하고 들어와 주세요.</p>
+          <input type="text" id="lgName" maxlength="12" placeholder="이름 (최대 12자)">
+          <div class="lj-faces" id="lgFaces"></div>
+          <button class="lj-go" id="lgEnter">들어가기</button>
+          <div class="lj-err" id="lgErr"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 <div id="stickerPanel" class="hidden">
   <div class="sp-head"><span>🎨 스티커</span><button class="sp-close" id="spClose">✕</button></div>
   <div class="sp-hint" id="spHint">붙일 스티커를 고른 뒤 오른쪽 달력 영역을 클릭하세요.</div>
@@ -994,7 +1089,12 @@ null
   <div class="modal hidden" id="installModal" style="width:380px;">
     <h2>📲 홈 화면에 추가</h2>
     <div class="hint" id="instHint">앱처럼 아이콘을 만들어두면 브라우저를 거치지 않고 바로 열립니다.</div>
+    <div class="inst-tabs" id="instTabs">
+      <button data-os="ios">🍎 아이폰</button>
+      <button data-os="and">🤖 안드로이드</button>
+    </div>
     <div class="inst-steps" id="instSteps"></div>
+    <div class="inst-note" id="instNote"></div>
     <div class="modal-actions"><button class="btn" id="closeInstall">닫기</button><button class="btn primary hidden" id="instNow">지금 설치</button></div>
   </div>
 
@@ -1357,7 +1457,7 @@ function exportBackup(){
 
 function updateFileStatusHint(t){ const el=document.getElementById('fileStatusHint'); if(el) el.textContent=t; }
 /* ═══════════════ 클라우드 저장 (Supabase) ═══════════════ */
-const APP_VER='ver 3.1', APP_BUILD='2026-07-30 14:40';
+const APP_VER='ver 3.2', APP_BUILD='2026-07-30 15:20';
 const LOGO_SRC='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOAAAADgCAMAAAAt85rTAAAAYFBMVEX94cwnIh9nXFL84suunIz8qqrgyrXKtaL31rqGeGz/f3+UhXj//3/83shDPDZLQzz//wC0tLT/AAB/f3/94ssAAAABAQD+8dj///743sf848z94sv/v7/84sr//7H84stYzgMqAAAAIHRSTlMc//+s/wP//wv/Av8CWP//AQMBAv4A//4B/9CQBE4DceOdScMAAAtmSURBVHja3Z3pdqMgFICvu1matB0t4BLf/y0HUBM1cWELRM6ZnvnRGr/cFbhwITcyzvj20/4PAOqmDIKiKLLHKIogKJsaIG1/K7rhs5k3Af2P/IerDo2RDbFejKLgnPwPKnx0HhBHFeaPrTkaQtnq4L8TlDV/E1xF2F1AHPVwjC0TGvTXix7yhp0EjCqulo043AiSW2UVuQb4r+pFJwn3gOwEWR0dAoxu7EnqdA9G9lpR5AYgxtRkmGZqobszNtA92jIgDwlQ6qTrGQOuqdgqIBdeXejH68RYp+1nWAJk0qO6aYSuY+Sa+oOtAH5z08sM4rVi5Mb4/X5A6jhT43gdYso/7q2A1DDMKudEUSNpUwRZ31K/C69FrGW9jQwgDcAQZG8eLGjc3gJIfWdaZhYGTW8khAgSzuWt2jnR05thQCo+sCK+uxBFUxsxQGxNfENnYw7wJ48siq8TYppXhgDxLQeb4uuFKOZrQEQ9m8yJ0YioKWz3nvbV866m1XbCrYCVC+r5UNN0c7yAzXyZU+Nrq6uBje6lzhwbTb5tdXELID674l5GhpifsR7AY56XyD1AVB7zsw5AOvMLHOSjhMEWZwrrfKmbfIwQ8kgV0GG+NlxgNUDsUvibydtUAM9u822R4SLg+RsCp/laGZ5lAfHReT7madLFyQUs5S/YfT5GuLhjCkv5Z/kBfCziL+WlsDA/aj6Cj8lwYW4B8/L7yj5loK95Qphd3IXsgwbMEsJcgv1RfIzwLAKIIyg+C7CAGVcKH+1ANzgaeJ2BWnUwJCN8iDoavBUQWzZApjyoqwITAH09dwL3DDDxr77vH8IwiUlXyrYJsoBXdW5g1gCJBN/fY3ie75+SuBUqWTfDagtgpMsAidQfIf/vaXj+gVKiVUnWL5QUnrendRggexOUxUmYCIK+BOSQ10NCOOSSGT5PLJ4B1RWU05HkcPHYi8WCooy9v7nh+WEsqqTwlGLX6nRZHPr31/RiwSfE/jzi3981XFZSvAxIFbRQo0MjOjZ8YWuMw4PvzVIufWPFk5JOAXOFOe5Udt24SDyHBgcShyf/6okR0rnhImAk72G43YWvtCuU0QQudBYDuTQnTzwgsjncTwBlBchUM3lF511DBYVvMTOSnEbP9hcApzkpaPAwzPLikyfu9bZjMsjDZYsEqZ+5zQHKeRjCsyvvFR1BSDLez8TV1gSW/XIxXmWDUY4mtwoTPsdm75BsyDzErTyjZu4vawVqRsEQ1HIY+qHhZUp3OcXa6QaCXBXCKFQMASUEiGJ/hs7YZHH1e6MifAkolYSe3ku3dWY4OAQFSgL0x3bnBN0k2oOKAId8fuIG3dQKQdqFEnQaCs8durEjhXsNvXgMvPZ4J4LcoZuIEO4WKJrE9FNTs3hEKtgMRPgAFE9i2NTUtPSQXG5cTCV4+5WZRpAwMaycie/LJev1bzQClJ5GmLU9v50wSy10jwBl91qM0pEsXJ8dLcwLjwPAysnNTtJPUWIFNwNduZ17m0l3Aa7M/+bcTLfbBM7udhJ0uK+kSYXC1gpB/24Z0QV4zwQ9uYS06gG/87TQysd2E4hlwKyA/LsD1FzPG1LfcI11SvAi9YB2ERj0rNY/uQYv1uhkpOJEp6PAKyZ1aqgnu549HyYSuXSN1+mB3g1dgu5fu7oIezd6lXwAry0BvSVN5DEJDpG6O/VVtJ3q6K2ToM4o7ykZztOaj+f50o/hUwrQXfOjFxBlKge9WTkwSEx13whIlALqFwfUmsYMbPCEbK9i8EBBJXjUGSQeK1FJZn0wIwTdVT998LpmDgwqPtBsgvf8I3YBsM4ruGmvu2M7hV7iwjoii4QQ5dovNYjDkLixThpQFdU/13VpCZjimZjME+ISoHNnO3UaYU0BG7RjwIYClnsGDChgsGMVzYocUqsroqbdUZGCzRVRIrt5JOBGrQJm8emUmAa0GSUOsptHAtkoNPb0M9Q4M54bjc0LjB6rguYIS4uA9+Jsz6AEAwjsS9Ckkgb2DrkMtse0rKHOBEKrp3geRaaxKTO0C/g4xeMZ+wyricxASY2ZoeW966txM7QMGBs3Q7uAg902Fg3J/iQ4PGzmxWh/gKNY4Z0MLMnZBiSj43QX/WmpdQkOzZAfdCJ7U9FhNDQwtXCghmt8qtXbnZNhY0ioOeK7cWcFCr0/tbImN5PtgZYOjgjFegHdWPcl2cOZanWkAbiysE3uEf+AtAK6cq/tw5dqnTmVYP3m0G71/hEOfZ0q2kBtWzO7n4YkWIP1ZDQM47Zcy4gNgm1AHgCvjPFgxIuC5e2z5HFzjJE4WKSQFzYN8MXdKlpNsLC9hf3idgGd+2motF2E4JkVIC9CsBgnhqdkzWzE1GYKgSQnSn/6a9zAOmAWegb5GCC2XEeCsuTQxQjvoHtplBXj3SxXAvXXd4UGjsvyckps/6LU7locA4uiX1SCZzfODhIjJUGspDnH+MOuEhXIY37YsYLbbsvx+Nke7QdDXBo1Pzfxcdf5ipjgWf/hLJdMsDs/eNtp0e/9eN1trzoK9/ODsEsdLVJ2DFv3IWWnNPRxCnuXgeJxzPx7nzr6uCjgAy9G36ShlduXdagLMBpct7K/hHt03YqjF+Yoaej4wpwd5qPjK48ULq1yVICTS6vy6HdnIrxfuH2/OO64KzdTRNOr/6q8Rjt0MQMJ4l1lM4C/la/fdFuAWMsFqg4LEOu5AtfpidIU8LgfEb6+xJg1I0J7s8Ax4BF2Z4HTq+BdESG5/1CKgVPA77fEQrKy09Le258kstUkRXrGmtsxCH7D3b9XmO1d9qRtfiB5uHfS9gUmLW3Mb/cePM8/hMn9iDnpR8avLB70VJEiDJY7hpgPFX1vA+9CMdveX+2gqMmkpYpMycy08zBo77q0aH/jIwSsguvC+pwdDvTnc58e8fr05y59etsSrY+llkp/6oCrbYmMLwILAcaqHuZVa7DK5OLFbGez1wIUDYWvOvIaau42O+KtdJ4v4WKGSehCez6DSkqyxNtEF8pcE7ypPZ9hJaWDBoPrAqV3ObCSIHG8rQ0WzXvSvrHZxXvRZDCU7vhTwM+2FpnGtyrujc0IK+FiIdDnTT9Zz0+FgifIf7a2qX3HtKLPRNFjPODVJxErjYbfVxxEBkNxmaISaRV9Sz+tVTSORFpF5+edN/v+uNqSmT7RC4CU8IOWoJrZdvTzgGrtQN+9DjrLtwD4MaUJbJ33WwYQf8auKArmHOgaIM3ZUvcJUfFiCrERkAWLArnOl+Y4lwXkdXrIcfkt860Auk64zrcGyNuJIJf5olwNkM2dXPU0zP7W+NYBqQwrNwlRkK7p5yZA6kuPLkZ8VEZzCbYgYE7jTOkeIM1f/uV6AOn00P4Jruf8OsK5LkC+iOEWXz0zgZcFZPNDd8IFCw+3XC8gC4jOuJpyi/sUBWSPbFwxv+18AoDM1Tigplw9t/OJADJXY/9+Haqelcg7CwGypeM6QzbFV+fr2ZkCYM4aGVkUYslO5OYmAVm8yGs7lsjFdxN9X2FA9hWmpSXru+HcPCD/Ft9/W1kAEuKTBOR28FY95dqJcf4uQP5hUfMuRJQ1dGaE5d5UEpCrS9q8I2RQvFQkddEFmH+zI86laUTEQoOkdioC0o+lcR+MKioqGjU8NcD2o6EuzIgRZep4qoD043m34kA/IsqCmqW/WPEFVQG7b5hqqk7GTniq0tMDyNZOWf4LpSZGSlfCuXuqG4B5fuSaWqszMro6Zbp51PNmmgDz/DdijDcmR1lI+mdUduyNquhX13tpA+RTfm4yXJCikByuhsFjHATku8JVD8nS8S2tzfjvBD1cFWG9b6QZsD0E1R3whropi5WCoqIImhr6w+5n/W9jAJAZJK56PQOAr6YMgjEp5QpKRga9dlf418ir/AfTnmki8JgsHQAAAABJRU5ErkJggg==';
 function paintLogos(){ document.querySelectorAll('img.tdl-logo').forEach(i=>{ i.src=LOGO_SRC; }); }
 const IS_WEB = /^https?:$/i.test(location.protocol);
@@ -3431,16 +3531,19 @@ function jumpToDate(dstr){
 }
 /* ===================== 미니 달력 (우측 하단) ===================== */
 let mcState={year:startOfToday().getFullYear(), month:startOfToday().getMonth()};
-function renderMiniCal(){
-  document.getElementById('mcTitle').textContent=mcState.year+'년 '+MONTH_NAMES[mcState.month];
-  const grid=document.getElementById('mcGrid'); grid.innerHTML='';
+function renderMiniMonth(wrap, year, month){
+  const col=document.createElement('div'); col.className='mc-col';
+  const h=document.createElement('div'); h.className='mc-mon';
+  h.textContent=year+'년 '+MONTH_NAMES[month];
+  col.appendChild(h);
+  const grid=document.createElement('div'); grid.className='mc-grid';
   WD.forEach(w=>{ const c=document.createElement('div'); c.className='mc-wd'; c.textContent=w; grid.appendChild(c); });
-  const first=new Date(mcState.year,mcState.month,1).getDay();
-  const total=daysInMonth(mcState.year,mcState.month);
+  const first=new Date(year,month,1).getDay();
+  const total=daysInMonth(year,month);
   const ts=todayStr();
   for(let i=0;i<first;i++){ const c=document.createElement('div'); c.className='mc-cell other'; c.textContent='.'; grid.appendChild(c); }
   for(let d=1; d<=total; d++){
-    const dobj=new Date(mcState.year,mcState.month,d), dstr=fmt(dobj), wd=dobj.getDay();
+    const dobj=new Date(year,month,d), dstr=fmt(dobj), wd=dobj.getDay();
     const hn=state.holidays[dstr];
     const c=document.createElement('div'); c.className='mc-cell';
     if(wd===6) c.classList.add('sat');
@@ -3453,6 +3556,14 @@ function renderMiniCal(){
     c.addEventListener('click',()=>jumpToDate(dstr));
     grid.appendChild(c);
   }
+  col.appendChild(grid); wrap.appendChild(col);
+}
+function renderMiniCal(){
+  let ny=mcState.year, nm=mcState.month+1; if(nm>11){ nm=0; ny++; }
+  document.getElementById('mcTitle').textContent=MONTH_NAMES[mcState.month]+' · '+MONTH_NAMES[nm];
+  const wrap=document.getElementById('mcWrap'); wrap.innerHTML='';
+  renderMiniMonth(wrap, mcState.year, mcState.month);
+  renderMiniMonth(wrap, ny, nm);
 }
 document.getElementById('mcPrev').addEventListener('click',()=>{ let m=mcState.month-1,y=mcState.year; if(m<0){m=11;y--;} mcState={year:y,month:m}; renderMiniCal(); });
 document.getElementById('mcNext').addEventListener('click',()=>{ let m=mcState.month+1,y=mcState.year; if(m>11){m=0;y++;} mcState={year:y,month:m}; renderMiniCal(); });
@@ -5118,39 +5229,385 @@ function setupPWA(){
     }
   }catch(e){}
 }
-function openInstallModal(){
-  const ua=navigator.userAgent||'';
-  const ios=/iPhone|iPad|iPod/i.test(ua);
+let instOS='ios';
+function paintInstall(){
   const steps=document.getElementById('instSteps');
   const hint=document.getElementById('instHint');
+  const note=document.getElementById('instNote');
   const now=document.getElementById('instNow');
   steps.innerHTML='';
-  const add=(txt)=>{ const d=document.createElement('div'); d.innerHTML='<b>'+(steps.children.length+1)+'</b><span>'+txt+'</span>'; steps.appendChild(d); };
+  const add=(html)=>{
+    const d=document.createElement('div'); d.className='ist';
+    d.innerHTML='<span class="ist-n">'+(steps.children.length+1)+'</span><span class="ist-t">'+html+'</span>';
+    steps.appendChild(d);
+  };
+  document.querySelectorAll('#instTabs button').forEach(b=>b.classList.toggle('on', b.dataset.os===instOS));
 
   if(isStandalone()){
     hint.textContent='이미 홈 화면 앱으로 열려 있어요. 추가 작업이 필요하지 않습니다.';
-    now.classList.add('hidden');
-  } else if(ios){
-    hint.innerHTML='<b>사파리</b>에서 아래 순서로 진행하면 앱 아이콘이 만들어집니다.';
-    add('화면 아래 <b>공유 버튼</b>(↑ 네모에서 화살표) 을 누릅니다.');
-    add('목록을 내려서 <b>“홈 화면에 추가”</b> 를 누릅니다.');
-    add('이름을 <b>TDL</b> 로 두고 <b>추가</b> 를 누르면 끝입니다.');
+    note.textContent=''; now.classList.add('hidden');
+    document.getElementById('instTabs').style.display='none';
+    return;
+  }
+  document.getElementById('instTabs').style.display='';
+
+  if(instOS==='ios'){
+    hint.innerHTML='<b>사파리</b>로 접속한 상태에서 아래 3단계면 끝납니다.';
+    add('화면 <b>맨 아래 가운데</b>의 공유 버튼을 누릅니다. (네모 안에서 화살표가 위로 나가는 모양)');
+    add('메뉴를 아래로 넘겨서 <b>홈 화면에 추가</b>를 누릅니다.');
+    add('이름을 <b>TDL</b> 로 두고 오른쪽 위 <b>추가</b>를 누르면 완료됩니다.');
+    note.innerHTML='아이폰은 애플 정책상 버튼 한 번으로 자동 추가하는 방법이 없습니다. 위 3단계가 유일한 방법이에요.<br>크롬 앱으로 보고 계시다면 먼저 <b>사파리</b>로 이 주소를 열어주세요.';
     now.classList.add('hidden');
   } else {
-    hint.innerHTML='<b>크롬</b>에서 아래 순서로 진행하면 앱 아이콘이 만들어집니다.';
-    add('오른쪽 위 <b>⋮</b> 버튼을 누릅니다.');
-    add('<b>“홈 화면에 추가”</b> 또는 <b>“앱 설치”</b> 를 누릅니다.');
-    add('<b>추가</b> 를 누르면 바탕화면에 TDL 아이콘이 생깁니다.');
+    hint.innerHTML='<b>크롬</b>으로 접속한 상태에서 아래 순서로 진행합니다.';
+    if(installPrompt){
+      add('아래 <b>지금 설치</b> 버튼을 누릅니다.');
+      add('안내창에서 <b>설치</b>를 누르면 바탕화면에 아이콘이 생깁니다.');
+      note.innerHTML='버튼이 동작하지 않으면 오른쪽 위 <b>⋮ → 홈 화면에 추가</b> 로도 가능합니다.';
+    } else {
+      add('오른쪽 위 <b>⋮</b> 버튼을 누릅니다.');
+      add('<b>홈 화면에 추가</b> 또는 <b>앱 설치</b>를 누릅니다.');
+      add('<b>추가</b>를 누르면 바탕화면에 TDL 아이콘이 생깁니다.');
+      note.innerHTML='브라우저가 준비되면 <b>지금 설치</b> 버튼이 자동으로 나타납니다.';
+    }
     now.classList.toggle('hidden', !installPrompt);
   }
+}
+function openInstallModal(){
+  const ua=navigator.userAgent||'';
+  instOS = /iPhone|iPad|iPod/i.test(ua) ? 'ios' : 'and';
+  paintInstall();
   showModal('installModal');
 }
+document.querySelectorAll('#instTabs button').forEach(b=>{
+  b.addEventListener('click',()=>{ instOS=b.dataset.os; paintInstall(); });
+});
 document.getElementById('closeInstall').addEventListener('click', hideModals);
 document.getElementById('instNow').addEventListener('click', async ()=>{
   if(!installPrompt) return;
   hideModals();
   try{ installPrompt.prompt(); await installPrompt.userChoice; installPrompt=null; }catch(e){}
 });
+
+/* ===================== 사이버 탕비실 =====================
+   Supabase Realtime 의 presence(누가 있는지) + broadcast(이동·채팅) 만 사용합니다.
+   별도 테이블이나 서버가 없고, 방을 닫으면 아무 기록도 남지 않습니다.            */
+const LG_W=1000, LG_H=620, LG_R=22;          /* 방 크기 · 아바타 반지름 */
+const LG_FACES=['🙂','😎','🐱','🐶','🐻','🦊','🐰','🐼','🦉','🐧','🍀','⭐'];
+const LG_TINT=['#DCE9F7','#E7DFF7','#DEF0E4','#FBE9D2','#FADEE4','#EAE6DA','#DFEFEF','#F1E6C9'];
+const LG_OBJ=[
+  {x:40,  y:18,  w:96,  h:64,  cls:'tree',   e:'🌳', n:'나무'},
+  {x:388, y:14,  w:224, h:64,  cls:'pantry', e:'🍵', n:'탕비실'},
+  {x:864, y:18,  w:96,  h:64,  cls:'tree',   e:'🌳', n:'나무'},
+  {x:34,  y:112, w:92,  h:196, cls:'',       e:'☕', n:'커피머신'},
+  {x:858, y:112, w:108, h:170, cls:'',       e:'🧊', n:'냉장고'},
+  {x:698, y:398, w:252, h:140, cls:'table',  e:'🪑', n:'테이블'}
+];
+
+let lgOpen=false, lgCh=null, lgMe=null, lgPeers={}, lgKeys={}, lgRaf=null;
+let lgLastSent=0, lgMoved=false, lgTarget=null, lgSweep=null;
+
+function lgEl(id){ return document.getElementById(id); }
+function lgHitObj(x,y){
+  for(const o of LG_OBJ){
+    if(x > o.x-LG_R*0.55 && x < o.x+o.w+LG_R*0.55 && y > o.y-LG_R*0.4 && y < o.y+o.h+LG_R*0.4) return true;
+  }
+  return false;
+}
+function lgClamp(v,a,b){ return v<a?a:(v>b?b:v); }
+
+function lgBuildRoom(){
+  const room=lgEl('lgRoom');
+  if(room.dataset.built) return;
+  room.dataset.built='1';
+  LG_OBJ.forEach(o=>{
+    const d=document.createElement('div');
+    d.className='lg-obj'+(o.cls?(' '+o.cls):'');
+    d.style.left=(o.x/LG_W*100)+'%'; d.style.top=(o.y/LG_H*100)+'%';
+    d.style.width=(o.w/LG_W*100)+'%'; d.style.height=(o.h/LG_H*100)+'%';
+    d.innerHTML='<span class="oe">'+o.e+'</span><span class="on">'+o.n+'</span>';
+    room.insertBefore(d, room.querySelector('.lg-chat'));
+  });
+  const fw=lgEl('lgFaces');
+  LG_FACES.forEach((f,i)=>{
+    const b=document.createElement('button'); b.type='button'; b.textContent=f;
+    b.addEventListener('click',()=>{
+      lgEl('lgFaces').querySelectorAll('button').forEach(x=>x.classList.remove('on'));
+      b.classList.add('on');
+      if(lgMe) lgMe.face=f;
+      lgSaveProfile();
+    });
+    fw.appendChild(b);
+  });
+}
+
+function lgProfile(){
+  let pf=null;
+  try{ pf=JSON.parse(localStorage.getItem('tdl_lounge')||'null'); }catch(e){}
+  if(!pf||typeof pf!=='object') pf={};
+  if(!pf.name){
+    const em=(cloudUser&&cloudUser.email)||'';
+    pf.name = em? em.split('@')[0].slice(0,12) : '';
+  }
+  if(!pf.face) pf.face=LG_FACES[Math.floor(Math.random()*LG_FACES.length)];
+  if(pf.tint===undefined) pf.tint=Math.floor(Math.random()*LG_TINT.length);
+  return pf;
+}
+function lgSaveProfile(){
+  if(!lgMe) return;
+  try{ localStorage.setItem('tdl_lounge', JSON.stringify({name:lgMe.name, face:lgMe.face, tint:lgMe.tint})); }catch(e){}
+}
+
+function lgLog(html, sys){
+  const box=lgEl('lgLog');
+  const d=document.createElement('div');
+  if(sys) d.className='sys';
+  d.innerHTML=html;
+  box.appendChild(d);
+  while(box.children.length>120) box.removeChild(box.firstChild);
+  box.scrollTop=box.scrollHeight;
+}
+
+function lgAvatar(p){
+  let el=document.querySelector('.lg-av[data-id="'+p.id+'"]');
+  if(!el){
+    el=document.createElement('div');
+    el.className='lg-av'+(lgMe&&p.id===lgMe.id?' me':'');
+    el.dataset.id=p.id;
+    el.innerHTML='<div class="av-say hidden"></div><div class="av-b"></div><div class="av-n"></div>';
+    lgEl('lgRoom').appendChild(el);
+  }
+  el.querySelector('.av-b').textContent=p.face||'🙂';
+  el.querySelector('.av-b').style.background=LG_TINT[(p.tint||0)%LG_TINT.length];
+  el.querySelector('.av-n').textContent=p.name||'익명';
+  el.style.left=(p.x/LG_W*100)+'%';
+  el.style.top=(p.y/LG_H*100)+'%';
+  return el;
+}
+function lgSay(id, msg){
+  const el=document.querySelector('.lg-av[data-id="'+id+'"]');
+  if(!el) return;
+  const b=el.querySelector('.av-say');
+  b.textContent=msg; b.classList.remove('hidden');
+  clearTimeout(b._t);
+  b._t=setTimeout(()=>b.classList.add('hidden'), 5200);
+}
+function lgSyncCount(){
+  const c=Object.keys(lgPeers).length+1;
+  lgEl('lgCount').textContent = c>1 ? (c+'명 접속 중') : '혼자 있음';
+}
+function lgDropStale(){
+  const now=Date.now();
+  Object.keys(lgPeers).forEach(id=>{
+    if(now-(lgPeers[id].t||0) > 45000){
+      const el=document.querySelector('.lg-av[data-id="'+id+'"]');
+      if(el) el.remove();
+      delete lgPeers[id];
+    }
+  });
+  lgSyncCount();
+}
+
+/* ---- 실시간 연결 ---- */
+async function lgConnect(){
+  if(!sb){ lgLog('오프라인 모드예요. 방은 열리지만 다른 사람은 보이지 않습니다.', true); return false; }
+  try{
+    lgCh=sb.channel('tdl-lounge', {config:{presence:{key:lgMe.id}, broadcast:{self:false}}});
+
+    lgCh.on('presence', {event:'sync'}, ()=>{
+      const st=lgCh.presenceState()||{};
+      const seen={};
+      Object.keys(st).forEach(k=>{
+        const m=(st[k]||[])[0]; if(!m||!m.id||m.id===lgMe.id) return;
+        seen[m.id]=1;
+        const prev=lgPeers[m.id];
+        lgPeers[m.id]=Object.assign({}, prev||{}, m, {t:Date.now()});
+        lgAvatar(lgPeers[m.id]);
+      });
+      Object.keys(lgPeers).forEach(id=>{
+        if(!seen[id]){
+          const el=document.querySelector('.lg-av[data-id="'+id+'"]'); if(el) el.remove();
+          delete lgPeers[id];
+        }
+      });
+      lgSyncCount();
+    });
+    lgCh.on('presence', {event:'join'}, ({newPresences})=>{
+      (newPresences||[]).forEach(m=>{ if(m.id&&m.id!==lgMe.id) lgLog('<b>'+escapeHtml(m.name||'익명')+'</b> 님이 들어왔어요.', true); });
+    });
+    lgCh.on('presence', {event:'leave'}, ({leftPresences})=>{
+      (leftPresences||[]).forEach(m=>{
+        if(!m.id||m.id===lgMe.id) return;
+        lgLog('<b>'+escapeHtml(m.name||'익명')+'</b> 님이 나갔어요.', true);
+        const el=document.querySelector('.lg-av[data-id="'+m.id+'"]'); if(el) el.remove();
+        delete lgPeers[m.id];
+        lgSyncCount();
+      });
+    });
+    lgCh.on('broadcast', {event:'mv'}, ({payload})=>{
+      const p=payload; if(!p||!p.id||p.id===lgMe.id) return;
+      lgPeers[p.id]=Object.assign({}, lgPeers[p.id]||{}, p, {t:Date.now()});
+      lgAvatar(lgPeers[p.id]);
+      lgSyncCount();
+    });
+    lgCh.on('broadcast', {event:'msg'}, ({payload})=>{
+      const p=payload; if(!p||!p.id||p.id===lgMe.id) return;
+      lgLog('<b>'+escapeHtml(p.name||'익명')+'</b> '+escapeHtml(p.msg||''));
+      lgSay(p.id, p.msg||'');
+    });
+
+    await new Promise((res)=>{
+      let done=false;
+      lgCh.subscribe(async (status)=>{
+        if(status==='SUBSCRIBED'){
+          try{ await lgCh.track(lgSnapshot()); }catch(e){}
+          if(!done){ done=true; res(true); }
+        } else if(status==='CHANNEL_ERROR'||status==='TIMED_OUT'){
+          if(!done){ done=true; res(false); }
+        }
+      });
+      setTimeout(()=>{ if(!done){ done=true; res(false); } }, 7000);
+    });
+    return true;
+  }catch(e){
+    lgLog('실시간 연결에 실패했어요. 혼자 있는 방으로 이어집니다.', true);
+    return false;
+  }
+}
+function lgSnapshot(){
+  return {id:lgMe.id, name:lgMe.name, face:lgMe.face, tint:lgMe.tint, x:Math.round(lgMe.x), y:Math.round(lgMe.y)};
+}
+function lgPush(force){
+  if(!lgCh) return;
+  const now=Date.now();
+  if(!force && now-lgLastSent < 120) return;
+  lgLastSent=now;
+  try{ lgCh.send({type:'broadcast', event:'mv', payload:lgSnapshot()}); }catch(e){}
+}
+
+/* ---- 이동 루프 ---- */
+function lgTick(){
+  if(!lgOpen){ lgRaf=null; return; }
+  const sp=5.4;
+  let dx=0, dy=0;
+  if(lgKeys.left) dx-=1;
+  if(lgKeys.right) dx+=1;
+  if(lgKeys.up) dy-=1;
+  if(lgKeys.down) dy+=1;
+
+  if((dx||dy) && lgTarget) lgTarget=null;
+  if(!dx && !dy && lgTarget){
+    const ax=lgTarget.x-lgMe.x, ay=lgTarget.y-lgMe.y;
+    const d=Math.hypot(ax,ay);
+    if(d<4){ lgTarget=null; }
+    else { dx=ax/d; dy=ay/d; }
+  }
+  if(dx||dy){
+    const m=Math.hypot(dx,dy)||1;
+    const nx=lgClamp(lgMe.x+dx/m*sp, LG_R, LG_W-LG_R);
+    const ny=lgClamp(lgMe.y+dy/m*sp, LG_R, LG_H-LG_R);
+    if(!lgHitObj(nx, lgMe.y)) lgMe.x=nx;
+    if(!lgHitObj(lgMe.x, ny)) lgMe.y=ny;
+    lgAvatar(lgMe);
+    lgMoved=true;
+    lgPush(false);
+  } else if(lgMoved){
+    lgMoved=false; lgPush(true);
+  }
+  lgRaf=requestAnimationFrame(lgTick);
+}
+
+/* ---- 열기 / 닫기 ---- */
+function lgOpenPanel(){
+  lgBuildRoom();
+  const pf=lgProfile();
+  lgEl('lgName').value=pf.name||'';
+  lgEl('lgErr').textContent='';
+  lgEl('lgFaces').querySelectorAll('button').forEach(b=>b.classList.toggle('on', b.textContent===pf.face));
+  lgEl('lgJoin').classList.remove('hidden');
+  lgEl('lounge').classList.remove('hidden');
+  lgEl('loungeFab').classList.add('on');
+  setTimeout(()=>{ const i=lgEl('lgName'); if(i) i.focus(); }, 60);
+}
+async function lgEnter(){
+  const pf=lgProfile();
+  const nm=(lgEl('lgName').value||'').trim().slice(0,12);
+  if(!nm){ lgEl('lgErr').textContent='이름을 입력해주세요.'; return; }
+  const face=(lgEl('lgFaces').querySelector('button.on')||{textContent:pf.face}).textContent;
+  lgMe={ id:uid(), name:nm, face:face, tint:pf.tint,
+         x:LG_W/2+(Math.random()*160-80), y:LG_H*0.42+(Math.random()*80-40) };
+  lgSaveProfile();
+  lgEl('lgJoin').classList.add('hidden');
+  lgEl('lgLog').innerHTML='';
+  lgOpen=true;
+  lgAvatar(lgMe);
+  lgLog('<b>'+escapeHtml(nm)+'</b> 님으로 입장했어요. 방향키로 움직이고 아래에 채팅해 보세요.', true);
+  const okc=await lgConnect();
+  if(okc) lgPush(true);
+  lgSyncCount();
+  clearInterval(lgSweep); lgSweep=setInterval(lgDropStale, 12000);
+  if(!lgRaf) lgRaf=requestAnimationFrame(lgTick);
+  lgEl('lgRoom').focus();
+}
+function lgClose(){
+  lgOpen=false;
+  if(lgRaf){ cancelAnimationFrame(lgRaf); lgRaf=null; }
+  clearInterval(lgSweep); lgSweep=null;
+  if(lgCh){ try{ lgCh.untrack(); sb.removeChannel(lgCh); }catch(e){} lgCh=null; }
+  lgPeers={}; lgKeys={}; lgTarget=null;
+  document.querySelectorAll('.lg-av').forEach(e=>e.remove());
+  lgEl('lounge').classList.add('hidden');
+  lgEl('loungeFab').classList.remove('on');
+}
+function lgSend(){
+  const inp=lgEl('lgMsg');
+  const v=(inp.value||'').trim().slice(0,120);
+  if(!v||!lgMe) return;
+  inp.value='';
+  lgLog('<b>'+escapeHtml(lgMe.name)+'</b> '+escapeHtml(v));
+  lgSay(lgMe.id, v);
+  if(lgCh){ try{ lgCh.send({type:'broadcast', event:'msg', payload:{id:lgMe.id, name:lgMe.name, msg:v}}); }catch(e){} }
+}
+
+(function(){
+  const fab=document.getElementById('loungeFab');
+  if(!fab) return;
+  fab.addEventListener('click',()=>{ if(lgEl('lounge').classList.contains('hidden')) lgOpenPanel(); else lgClose(); });
+  lgEl('lgLeave').addEventListener('click', lgClose);
+  lgEl('lgEnter').addEventListener('click', lgEnter);
+  lgEl('lgName').addEventListener('keydown',(e)=>{ if(e.key==='Enter'){ e.preventDefault(); lgEnter(); } });
+  lgEl('lgSend').addEventListener('click', lgSend);
+  lgEl('lgMsg').addEventListener('keydown',(e)=>{
+    e.stopPropagation();
+    if(e.key==='Enter'){ e.preventDefault(); lgSend(); }
+    else if(e.key==='Escape'){ e.preventDefault(); lgEl('lgMsg').blur(); lgEl('lgRoom').focus(); }
+  });
+
+  const KMAP={ArrowLeft:'left',ArrowRight:'right',ArrowUp:'up',ArrowDown:'down',a:'left',d:'right',w:'up',s:'down',A:'left',D:'right',W:'up',S:'down',ㅁ:'left',ㅇ:'right',ㅈ:'up',ㄴ:'down'};
+  document.addEventListener('keydown',(e)=>{
+    if(!lgOpen) return;
+    if(e.target===lgEl('lgMsg')) return;
+    if(e.key==='Enter'){ e.preventDefault(); e.stopPropagation(); lgEl('lgMsg').focus(); return; }
+    if(e.key==='Escape'){ e.preventDefault(); e.stopPropagation(); lgClose(); return; }
+    const k=KMAP[e.key];
+    if(k){ e.preventDefault(); e.stopPropagation(); lgKeys[k]=true; }
+  }, true);
+  document.addEventListener('keyup',(e)=>{
+    if(!lgOpen) return;
+    const k=KMAP[e.key];
+    if(k){ lgKeys[k]=false; }
+  }, true);
+
+  lgEl('lgRoom').addEventListener('click',(e)=>{
+    if(!lgOpen) return;
+    if(e.target.closest('.lg-chat')||e.target.closest('.lg-join')) return;
+    const r=lgEl('lgRoom').getBoundingClientRect();
+    if(!r.width) return;
+    lgTarget={ x:lgClamp((e.clientX-r.left)/r.width*LG_W, LG_R, LG_W-LG_R),
+               y:lgClamp((e.clientY-r.top)/r.height*LG_H, LG_R, LG_H-LG_R) };
+  });
+  window.addEventListener('beforeunload',()=>{ if(lgCh){ try{ lgCh.untrack(); }catch(e){} } });
+})();
 
 async function init(){
   paintLogos(); setupPWA();
