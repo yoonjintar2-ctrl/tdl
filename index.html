@@ -182,9 +182,13 @@ body.theme-dark .lg-zlab{color:rgba(255,255,255,0.11);}
 .lg-ch.wave .ar-r{animation:chWave .38s ease-in-out infinite;}
 @keyframes chJump{0%{transform:translateY(0)}30%{transform:translateY(-26px)}55%{transform:translateY(-26px)}100%{transform:translateY(0)}}
 .lg-ch.jump .flip{animation:chJump .5s ease-out;}
-.lg-ch.sleep{opacity:.72;}
-.lg-ch.sleep .torso{transform:rotate(-4deg);}
-.lg-ch.sleep .ar-l,.lg-ch.sleep .ar-r{transform:rotate(6deg);}
+@keyframes chSleep{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-3px) rotate(-3deg)}}
+@keyframes chSleepArm{0%,100%{transform:rotate(7deg)}50%{transform:rotate(11deg)}}
+.lg-ch.sleep{opacity:.8;}
+.lg-ch.sleep .torso{animation:chSleep 2.8s ease-in-out infinite;}
+.lg-ch.sleep .ar-l,.lg-ch.sleep .ar-r{animation:chSleepArm 2.8s ease-in-out infinite;}
+.lg-ch.sleep .lg-l{transform:rotate(4deg);}
+.lg-ch.sleep .lg-r{transform:rotate(-4deg);}
 @keyframes chZ{0%{transform:translate(0,0) scale(.8);opacity:0}25%{opacity:.95}100%{transform:translate(12px,-26px) scale(1.2);opacity:0}}
 .lg-ch .zzz{position:absolute;left:60%;bottom:96px;font-size:18px;animation:chZ 2.6s ease-out infinite;pointer-events:none;}
 .lg-ch .zzz.hidden{display:none;}
@@ -803,7 +807,7 @@ null
       <div><span class="ni">💾</span><span><b>따로 저장할 필요 없습니다.</b> 고칠 때마다 로그인한 <b>구글 계정 기준</b>으로 자동 저장되고, 다른 기기에서 같은 계정으로 열면 그대로 이어집니다.</span></div>
     </div>
     <div class="gate-made">Made by Jintar</div>
-    <div class="gate-build">배포 2026-07-30 17:05 &nbsp;·&nbsp; ver 3.4</div>
+    <div class="gate-build">배포 2026-07-30 17:30 &nbsp;·&nbsp; ver 3.5</div>
   </div>
 </div>
 
@@ -961,11 +965,12 @@ null
       <span class="lg-cnt" id="lgCount">혼자 있음</span>
       <span class="lg-sp"></span>
       <button id="lgEdit">캐릭터 변경</button>
-      <button id="lgLeave">나가기</button>
+      <button id="lgHide" title="창만 닫고 탕비실에는 계속 있기 — 남들에게는 자는 것으로 보입니다">숨기기</button>
+      <button id="lgLeave" title="탕비실에서 완전히 나가기">나가기</button>
     </div>
     <div class="lg-view" id="lgView" tabindex="0">
       <div class="lg-world" id="lgWorld"></div>
-      <div class="lg-tip">방향키 · WASD 이동 &nbsp;/&nbsp; 미니맵 클릭으로 이동<br>Enter 채팅 · Space 점프 · Esc 나가기</div>
+      <div class="lg-tip">방향키 · WASD 이동 &nbsp;/&nbsp; 미니맵 클릭으로 이동<br>Enter 채팅 · Space 점프 · Esc 숨기기</div>
       <div class="lg-mini" id="lgMini" title="미니맵 — 가고 싶은 곳을 클릭하세요">
         <canvas id="lgMap" width="180" height="105"></canvas>
         <div class="mm-t">MINI MAP</div>
@@ -1553,7 +1558,7 @@ function exportBackup(){
 
 function updateFileStatusHint(t){ const el=document.getElementById('fileStatusHint'); if(el) el.textContent=t; }
 /* ═══════════════ 클라우드 저장 (Supabase) ═══════════════ */
-const APP_VER='ver 3.4', APP_BUILD='2026-07-30 17:05';
+const APP_VER='ver 3.5', APP_BUILD='2026-07-30 17:30';
 const LOGO_SRC='data:image/png;base64,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';
 function paintLogos(){ document.querySelectorAll('img.tdl-logo').forEach(i=>{ i.src=LOGO_SRC; }); }
 const IS_WEB = /^https?:$/i.test(location.protocol);
@@ -6081,6 +6086,7 @@ function lgOpenPanel(){
   if(lgOpen){                                  /* 대기 상태에서 복귀 */
     lgAway=false; lgFabBadge();
     lgSetAction('');
+    if(lgCh){ try{ lgCh.track(lgSnap()); }catch(e){} }
     lgCamera(); lgDrawMap();
     if(!lgRaf) lgRaf=requestAnimationFrame(lgTick);
     lgEl('lgView').focus();
@@ -6092,10 +6098,13 @@ function lgOpenPanel(){
 }
 /* 팝업만 닫고 접속은 유지 — 남들에게는 자는 것으로 보임 */
 function lgAwayMode(){
+  if(!lgOpen){ lgClose(); return; }
   lgAway=true;
   lgKeys={}; lgTarget=null;
   if(lgRaf){ cancelAnimationFrame(lgRaf); lgRaf=null; }
   lgSetAction('sleep');
+  if(lgCh){ try{ lgCh.track(lgSnap()); }catch(e){} }
+  lgLog('창을 닫아도 탕비실에는 그대로 있어요. 다시 🍵 를 누르면 돌아옵니다.', true);
   lgEl('lounge').classList.add('hidden');
   lgEl('loungeFab').classList.remove('on');
   lgFabBadge();
@@ -6121,7 +6130,7 @@ async function lgEnter(auto){
     const okc=await lgConnect();
     if(okc) lgPush(true);
     clearInterval(lgSweep); lgSweep=setInterval(lgDropStale,15000);
-    clearInterval(lgBeat); lgBeat=setInterval(()=>{ if(lgOpen) lgPush(true); }, 18000);
+    clearInterval(lgBeat); lgBeat=setInterval(()=>{ if(lgOpen){ lgPush(true); if(lgCh){ try{ lgCh.track(lgSnap()); }catch(e){} } } }, 18000);
   } else { lgPush(true); }
   lgSyncCount();
   if(!lgRaf) lgRaf=requestAnimationFrame(lgTick);
@@ -6176,6 +6185,7 @@ function lgBuildActs(){
   if(!fab) return;
   fab.addEventListener('click',()=>{ if(lgEl('lounge').classList.contains('hidden')) lgOpenPanel(); else if(lgOpen) lgAwayMode(); else lgClose(); });
   lgEl('lgLeave').addEventListener('click', lgClose);
+  lgEl('lgHide').addEventListener('click', lgAwayMode);
   lgEl('lgEdit').addEventListener('click', lgShowJoin);
   lgEl('lgEnter').addEventListener('click', ()=>lgEnter(false));
   lgEl('lgRnd').addEventListener('click',()=>{
