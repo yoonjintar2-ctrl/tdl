@@ -41,20 +41,22 @@ body.mob .cal-month{width:100%;max-width:290px;}
 body.mob .cal-cell{padding:9px 0;font-size:13px;}
 body.mob .modal-actions button{padding:12px 16px;font-size:13.5px;}
 
-#mTop{display:flex;align-items:center;gap:5px;padding:10px 12px 8px;background:var(--panel);flex:0 0 auto;}
+#mTop{display:flex;align-items:center;gap:5px;padding:12px 12px 10px;background:var(--bg);flex:0 0 auto;}
 #mTop .m-brand{font-size:20px;font-weight:800;color:var(--accent-deep);letter-spacing:-0.6px;}
 #mTop .m-brand span{color:var(--today);}
 #mTop .m-sp{flex:1;}
-.m-ic{width:40px;height:40px;border-radius:13px;border:none;background:var(--bg);color:var(--text);font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;font-family:inherit;line-height:1;}
+.m-ic{width:40px;height:40px;border-radius:13px;border:none;background:var(--panel);color:var(--text);font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;font-family:inherit;line-height:1;}
 .m-ic:active{background:var(--accent-soft);}
+.m-ic.hidden{display:none;}
+.modal-actions .btn.hidden{display:none;}
 .m-ic.on{background:var(--accent);color:#fff;}
 .m-ic.need{background:#F6E4EA;color:#B0526F;}
-#mSaveSub{font-size:10px;color:var(--text-dim);text-align:right;padding:0 15px 7px;background:var(--panel);flex:0 0 auto;}
-#mSearchBar{display:flex;gap:6px;padding:0 12px 10px;background:var(--panel);flex:0 0 auto;}
+#mSaveSub{display:none;}
+#mSearchBar{display:flex;gap:6px;padding:0 12px 10px;background:var(--bg);flex:0 0 auto;}
 #mSearchBar.hidden{display:none;}
-#mSearchBar input{flex:1;border:none;background:var(--bg);border-radius:12px;padding:11px 13px;font-size:14px;font-family:inherit;color:var(--text);outline:none;}
-#mSearchBar button{border:none;background:var(--bg);border-radius:12px;padding:0 15px;font-size:13px;color:var(--text-dim);font-family:inherit;}
-#mList{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:9px 10px 100px;}
+#mSearchBar input{flex:1;border:none;background:var(--panel);border-radius:12px;padding:11px 13px;font-size:14px;font-family:inherit;color:var(--text);outline:none;}
+#mSearchBar button{border:none;background:var(--panel);border-radius:12px;padding:0 15px;font-size:13px;color:var(--text-dim);font-family:inherit;}
+#mList{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:2px 10px 100px;}
 
 .mrow{display:flex;align-items:center;gap:9px;background:var(--panel);border-radius:14px;padding:11px 11px 11px 8px;margin-bottom:6px;cursor:pointer;}
 .mrow:active{background:var(--accent-soft);}
@@ -106,6 +108,13 @@ body.theme-dark #mSheet .ms-back{background:rgba(0,0,0,0.55);}
 .ms-del{flex:0 0 90px!important;background:#F6E4EA;color:#B0526F;}
 .ms-ok{background:var(--accent);color:#fff;}
 /* 로고 */
+/* QR · 설치 안내 */
+#qrBox{display:flex;justify-content:center;padding:14px 0 10px;}
+#qrBox canvas{border-radius:10px;box-shadow:0 3px 12px rgba(40,34,60,0.12);}
+.qr-url{text-align:center;font-size:calc(11px * var(--fs,1));color:var(--text-dim);word-break:break-all;line-height:1.5;margin-bottom:12px;}
+.inst-steps{margin-top:4px;}
+.inst-steps div{display:flex;gap:9px;align-items:flex-start;font-size:calc(11.5px * var(--fs,1));color:var(--text);line-height:1.65;padding:9px 11px;background:var(--bg);border-radius:12px;margin-bottom:6px;}
+.inst-steps b{flex:0 0 auto;width:18px;height:18px;border-radius:50%;background:var(--accent);color:#fff;font-size:calc(10px * var(--fs,1));display:flex;align-items:center;justify-content:center;margin-top:1px;}
 .tdl-logo{display:block;object-fit:contain;flex:0 0 auto;}
 #topbar .brand{display:flex;align-items:center;gap:8px;}
 #topbar .brand .tdl-logo{width:calc(29px * var(--fs,1));height:calc(29px * var(--fs,1));}
@@ -137,9 +146,10 @@ body.mob #mFab:active{transform:scale(0.93);}
 #timePanel .tp-offrow b{font-size:calc(16px * var(--fs,1));font-weight:700;color:var(--accent-deep);min-width:62px;text-align:center;letter-spacing:0.5px;}
 
 /* 캠페인 색상 선택 */
-.color-btn{width:32px;height:32px;border-radius:12px;cursor:pointer;border:none;flex:0 0 auto;display:flex;align-items:center;justify-content:center;padding:0;background:var(--bg);}
-.color-btn i{display:block;width:15px;height:15px;border-radius:50%;background:var(--line-strong);box-shadow:inset 0 0 0 1px rgba(0,0,0,0.07);}
-.color-btn:hover{background:var(--accent-soft);}
+.color-btn{height:32px;border-radius:12px;cursor:pointer;border:none;flex:0 0 auto;display:flex;align-items:center;gap:5px;padding:0 11px 0 8px;background:var(--bg);color:var(--text-dim);font-size:calc(11px * var(--fs,1));font-family:inherit;white-space:nowrap;}
+.color-btn i{display:block;width:14px;height:14px;border-radius:50%;background:linear-gradient(135deg,#F1C3D0 0%,#F1DFA6 33%,#B6DFC9 66%,#C5C7EE 100%);box-shadow:inset 0 0 0 1px rgba(0,0,0,0.08);}
+.color-btn:hover{background:var(--accent-soft);color:var(--accent-deep);}
+.color-btn.on{font-weight:600;}
 .color-wrap{display:none;flex-wrap:wrap;gap:5px;margin-top:7px;padding:8px;background:var(--bg);border-radius:12px;}
 .color-wrap.on{display:flex;}
 .color-sw{width:26px;height:26px;border-radius:9px;cursor:pointer;border:none;padding:0;}
@@ -633,9 +643,8 @@ null
     <div class="gate-brand">TDL<span>.</span></div>
     <div class="gate-tag">12년차 광고 플래너가 만든,<br>바쁜 직장인을 위한 스케줄 관리 프로그램
       <i>무겁지 않게, 딱 필요한 만큼만.</i></div>
-    <div class="gate-sub" id="gateSub">구글 계정으로 로그인하면 어느 기기에서나 같은 일정이 열립니다.</div>
     <button class="gate-google" id="gateGoogle">
-      <span class="gg-ic">G</span> Google로 계속하기
+      <span class="gg-ic">G</span> Google 아이디로 시작하기
     </button>
     <div class="gate-err" id="gateErr"></div>
     <div class="gate-notes">
@@ -644,8 +653,9 @@ null
       <div><span class="ni">📱</span><span><b>휴대폰에서도 열립니다.</b> 같은 주소로 접속하면 폰에 맞는 간단한 목록 화면으로 바뀝니다.</span></div>
       <div><span class="ni">💾</span><span><b>따로 저장할 필요 없습니다.</b> 고칠 때마다 자동으로 저장됩니다.</span></div>
     </div>
+    <div class="gate-sub" id="gateSub" style="margin:18px 0 0;">구글 계정으로 로그인하면 어느 기기에서나 같은 일정이 열립니다.</div>
     <div class="gate-made">Made by Jintar</div>
-    <div class="gate-build">배포 2026-07-30 12:50 &nbsp;·&nbsp; ver 3.0</div>
+    <div class="gate-build">배포 2026-07-30 14:40 &nbsp;·&nbsp; ver 3.1</div>
   </div>
 </div>
 
@@ -687,6 +697,7 @@ null
       <div id="newsTicker" title="실시간 주요 뉴스 · 클릭하면 기사로 이동"><span id="newsText"></span></div>
       <button class="tb-btn save-btn" id="btnSave"><span class="sv-main">💾 저장</span><span class="sv-sub" id="svSub">연결 필요</span></button>
       <div id="userChip" class="hidden"><b id="userEmail"></b><button id="btnSignOut">로그아웃</button></div>
+      <button class="tb-btn" id="btnQr" title="휴대폰으로 접속할 수 있는 QR 코드">📱 모바일 접속</button>
       <button class="tb-btn" id="btnSettings">⚙ 설정</button>
     </div>
     <input type="file" id="importInput" accept=".json" style="display:none;">
@@ -723,6 +734,7 @@ null
     <div class="m-brand"><img class="tdl-logo" alt=""><span>TDL<span>.</span></span></div>
     <div class="m-sp"></div>
     <button class="m-ic" id="mSearchBtn" title="검색">🔍</button>
+    <button class="m-ic" id="mInstall" title="홈 화면에 추가">📲</button>
     <button class="m-ic" id="mSave" title="저장">☁</button>
     <button class="m-ic" id="mUser" title="계정">👤</button>
   </div>
@@ -868,7 +880,7 @@ null
 <div class="overlay hidden" id="overlay">
   <div class="modal hidden" id="campaignModal">
     <h2>🎯 캠페인 관리</h2>
-    <div class="hint">캠페인의 카테고리, 아이콘, 이름을 설정할 수 있어요. 오른쪽 <b>●</b> 를 누르면 테마 색상을 고를 수 있고, 캠페인 배지와 우측 일정 바에 은은하게 적용됩니다.</div>
+    <div class="hint">캠페인의 카테고리, 아이콘, 이름을 설정할 수 있어요.<br>이름 오른쪽 <b>🎨 색상</b> 버튼을 누르면 20가지 테마 색상을 고를 수 있습니다. 고른 색은 캠페인 배지와 우측 일정 바에 은은하게 깔립니다.</div>
     <div id="campaignList"></div>
     <button class="add-line" id="addCampaignBtn">+ 캠페인 추가</button>
     <div class="modal-actions"><button class="btn primary" id="closeCampaignModal">저장</button></div>
@@ -970,6 +982,22 @@ null
     <div class="modal-actions"><button class="btn" id="closeSettingsModal2">닫기</button><button class="btn primary" id="closeSettingsModal">저장</button></div>
   </div>
 
+  <div class="modal hidden" id="qrModal" style="width:370px;">
+    <h2>📱 모바일에서 열기</h2>
+    <div class="hint">휴대폰 카메라로 아래 QR을 비추면 바로 열립니다. 같은 구글 계정으로 로그인하면 지금 보고 있는 일정이 그대로 보여요.</div>
+    <div id="qrBox"></div>
+    <div class="qr-url" id="qrUrl"></div>
+    <div class="row"><button class="btn" id="qrCopy" style="flex:1;">🔗 주소 복사</button></div>
+    <div class="modal-actions"><button class="btn primary" id="closeQrModal">닫기</button></div>
+  </div>
+
+  <div class="modal hidden" id="installModal" style="width:380px;">
+    <h2>📲 홈 화면에 추가</h2>
+    <div class="hint" id="instHint">앱처럼 아이콘을 만들어두면 브라우저를 거치지 않고 바로 열립니다.</div>
+    <div class="inst-steps" id="instSteps"></div>
+    <div class="modal-actions"><button class="btn" id="closeInstall">닫기</button><button class="btn primary hidden" id="instNow">지금 설치</button></div>
+  </div>
+
   <div class="modal hidden" id="bulkModal">
     <h2>✏️ 선택 일정 일괄 수정</h2>
     <div class="hint" id="bulkModalCount"></div>
@@ -1043,7 +1071,17 @@ const CAMP_COLORS=[
   {id:'indigo', name:'인디고', pill:'#E2E3F8', text:'#434693', bar:'#C5C7EE'},
   {id:'lilac',  name:'라일락', pill:'#EEE1F7', text:'#6B4090', bar:'#DAC2EC'},
   {id:'sand',   name:'샌드',   pill:'#ECE2D7', text:'#6B5441', bar:'#D8C6B1'},
-  {id:'gray',   name:'그레이', pill:'#E6E7EA', text:'#4B4D53', bar:'#CACCD2'}
+  {id:'gray',   name:'그레이', pill:'#E6E7EA', text:'#4B4D53', bar:'#CACCD2'},
+  {id:'coral',  name:'코랄',   pill:'#FBDFD8', text:'#8E4638', bar:'#F5C4B8'},
+  {id:'lemon',  name:'레몬',   pill:'#F7F3C9', text:'#6E6A14', bar:'#E9E39D'},
+  {id:'teal',   name:'틸',     pill:'#D6EEEF', text:'#20605F', bar:'#AEDDDF'},
+  {id:'denim',  name:'데님',   pill:'#DDE4F0', text:'#3A4C68', bar:'#BCC9DE'},
+  {id:'plum',   name:'플럼',   pill:'#F2DEEC', text:'#79396A', bar:'#E4BFDA'},
+  {id:'moss',   name:'모스',   pill:'#DFE9DA', text:'#41603A', bar:'#BFD5B7'},
+  {id:'clay',   name:'클레이', pill:'#F0E2DC', text:'#77503F', bar:'#DCC3B8'},
+  {id:'steel',  name:'스틸',   pill:'#DEE4E8', text:'#3F5460', bar:'#BECAD1'},
+  {id:'wine',   name:'와인',   pill:'#EFDCE0', text:'#7A3B47', bar:'#DDBAC2'},
+  {id:'khaki',  name:'카키',   pill:'#E8E6D3', text:'#5E5B33', bar:'#D0CCA8'}
 ];
 function campColor(id){ return id? (CAMP_COLORS.find(c=>c.id===id)||null) : null; }
 function campPillStyle(camp){
@@ -1319,7 +1357,7 @@ function exportBackup(){
 
 function updateFileStatusHint(t){ const el=document.getElementById('fileStatusHint'); if(el) el.textContent=t; }
 /* ═══════════════ 클라우드 저장 (Supabase) ═══════════════ */
-const APP_VER='ver 3.0', APP_BUILD='2026-07-30 12:50';
+const APP_VER='ver 3.1', APP_BUILD='2026-07-30 14:40';
 const LOGO_SRC='data:image/png;base64,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';
 function paintLogos(){ document.querySelectorAll('img.tdl-logo').forEach(i=>{ i.src=LOGO_SRC; }); }
 const IS_WEB = /^https?:$/i.test(location.protocol);
@@ -3042,9 +3080,16 @@ function renderCampaignList(focusId){
     const iconBtn=document.createElement('button'); iconBtn.type='button'; iconBtn.className='icon-pick-btn'; iconBtn.textContent=c.icon||'＋';
     const nameIn=document.createElement('input'); nameIn.type='text'; nameIn.value=c.name; nameIn.placeholder='캠페인 이름';
     nameIn.addEventListener('input',()=>{ c.name=nameIn.value; saveAll(); buildBody(); });
-    const colBtn=document.createElement('button'); colBtn.type='button'; colBtn.className='color-btn'; colBtn.title='테마 색상 (선택)';
-    const colDot=document.createElement('i'); colBtn.appendChild(colDot);
-    const paintDot=()=>{ const cc=campColor(c.color); colDot.style.background = cc? cc.bar : ''; };
+    const colBtn=document.createElement('button'); colBtn.type='button'; colBtn.className='color-btn'; colBtn.title='이 캠페인의 테마 색상을 고릅니다';
+    const colDot=document.createElement('i'); const colTxt=document.createElement('span');
+    colBtn.append(colDot, colTxt);
+    const paintDot=()=>{
+      const cc=campColor(c.color);
+      colBtn.classList.toggle('on', !!cc);
+      colTxt.textContent = cc? cc.name : '색상';
+      if(cc){ colDot.style.background=cc.bar; colBtn.style.background=cc.pill; colBtn.style.color=cc.text; }
+      else  { colDot.style.background=''; colBtn.style.background=''; colBtn.style.color=''; }
+    };
     paintDot();
     const del=document.createElement('span'); del.className='del-mini'; del.textContent='×'; del.title='삭제';
     del.addEventListener('click',()=>{
@@ -4766,6 +4811,9 @@ function mSyncTop(){
 
   $('mFab').addEventListener('click', mAddTask);
 
+  $('mInstall').addEventListener('click', openInstallModal);
+  if(isStandalone()) $('mInstall').classList.add('hidden');
+
   $('mSearchBtn').addEventListener('click',()=>{
     const bar=$('mSearchBar'), on=bar.classList.contains('hidden');
     bar.classList.toggle('hidden', !on);
@@ -4790,8 +4838,322 @@ function mSyncTop(){
   });
 })();
 
+/* ===== 초경량 QR 생성기 (byte 모드 · 오류복원 L · 버전 1~10) ===== */
+function qrMake(text){
+  const bytes=[];
+  for(const ch of unescape(encodeURIComponent(text))) bytes.push(ch.charCodeAt(0));
+
+  /* [총 코드워드, 블록당 ECC, [ [블록수, 데이터코드워드], ... ] ] */
+  const SPEC=[
+    null,
+    [26,7,[[1,19]]],   [44,10,[[1,34]]],  [70,15,[[1,55]]],  [100,20,[[1,80]]],
+    [134,26,[[1,108]]],[172,18,[[2,68]]], [196,20,[[2,78]]], [242,24,[[2,97]]],
+    [292,30,[[2,116]]],[346,18,[[2,68],[2,69]]]
+  ];
+  const ALIGN=[null,[],[6,18],[6,22],[6,26],[6,30],[6,34],[6,22,38],[6,24,42],[6,26,46],[6,28,50]];
+  const REMAIN=[0,0,7,7,7,7,7,0,0,0,0];
+
+  let ver=0;
+  for(let v=1;v<=10;v++){
+    const sp=SPEC[v];
+    const dataCw=sp[2].reduce((a,g)=>a+g[0]*g[1],0);
+    const cntBits=(v<10)?8:16;
+    if(4+cntBits+bytes.length*8 <= dataCw*8){ ver=v; break; }
+  }
+  if(!ver) return null;
+
+  const sp=SPEC[ver], eccPer=sp[1], groups=sp[2];
+  const dataCw=groups.reduce((a,g)=>a+g[0]*g[1],0);
+  const cntBits=(ver<10)?8:16;
+
+  /* --- 비트스트림 --- */
+  const bits=[];
+  const put=(val,len)=>{ for(let i=len-1;i>=0;i--) bits.push((val>>>i)&1); };
+  put(4,4); put(bytes.length,cntBits);
+  bytes.forEach(b=>put(b,8));
+  const cap=dataCw*8;
+  put(0, Math.min(4, cap-bits.length));
+  while(bits.length%8) bits.push(0);
+  const dw=[];
+  for(let i=0;i<bits.length;i+=8){ let b=0; for(let k=0;k<8;k++) b=(b<<1)|bits[i+k]; dw.push(b); }
+  const PAD=[0xEC,0x11];
+  for(let i=0; dw.length<dataCw; i++) dw.push(PAD[i%2]);
+
+  /* --- GF(256) --- */
+  const EXP=new Array(512), LOG=new Array(256);
+  for(let i=0,x=1;i<255;i++){ EXP[i]=x; LOG[x]=i; x<<=1; if(x&0x100) x^=0x11D; }
+  for(let i=255;i<512;i++) EXP[i]=EXP[i-255];
+  const mul=(a,b)=>(a&&b)?EXP[LOG[a]+LOG[b]]:0;
+
+  function rsPoly(n){
+    let p=[1];
+    for(let i=0;i<n;i++){
+      const q=[1,EXP[i]], r=new Array(p.length+1).fill(0);
+      for(let a=0;a<p.length;a++) for(let b=0;b<2;b++) r[a+b]^=mul(p[a],q[b]);
+      p=r;
+    }
+    return p;
+  }
+  const gen=rsPoly(eccPer);
+  function ecc(block){
+    const res=new Array(eccPer).fill(0);
+    block.forEach(b=>{
+      const f=b^res[0];
+      res.shift(); res.push(0);
+      if(f) for(let i=0;i<eccPer;i++) res[i]^=mul(gen[i+1],f);
+    });
+    return res;
+  }
+
+  /* --- 블록 분할 + 인터리브 --- */
+  const dBlocks=[], eBlocks=[];
+  let pos=0;
+  groups.forEach(g=>{ for(let i=0;i<g[0];i++){ const blk=dw.slice(pos,pos+g[1]); pos+=g[1]; dBlocks.push(blk); eBlocks.push(ecc(blk)); } });
+  const maxD=Math.max(...dBlocks.map(b=>b.length));
+  const final=[];
+  for(let i=0;i<maxD;i++) dBlocks.forEach(b=>{ if(i<b.length) final.push(b[i]); });
+  for(let i=0;i<eccPer;i++) eBlocks.forEach(b=>final.push(b[i]));
+
+  const stream=[];
+  final.forEach(b=>{ for(let i=7;i>=0;i--) stream.push((b>>i)&1); });
+  for(let i=0;i<REMAIN[ver];i++) stream.push(0);
+
+  /* --- 매트릭스 --- */
+  const size=ver*4+17;
+  const M=[], F=[];   /* F: 기능 모듈 여부 */
+  for(let i=0;i<size;i++){ M.push(new Array(size).fill(0)); F.push(new Array(size).fill(false)); }
+  const setF=(r,c,v)=>{ M[r][c]=v; F[r][c]=true; };
+
+  function finder(r,c){
+    for(let i=-1;i<=7;i++) for(let j=-1;j<=7;j++){
+      const rr=r+i, cc=c+j;
+      if(rr<0||cc<0||rr>=size||cc>=size) continue;
+      const on=(i>=0&&i<=6&&(j===0||j===6)) || (j>=0&&j<=6&&(i===0||i===6)) || (i>=2&&i<=4&&j>=2&&j<=4);
+      setF(rr,cc,on?1:0);
+    }
+  }
+  finder(0,0); finder(0,size-7); finder(size-7,0);
+
+  for(let i=8;i<size-8;i++){ const v=(i%2===0)?1:0; setF(6,i,v); setF(i,6,v); }
+
+  const ap=ALIGN[ver];
+  ap.forEach(r=>ap.forEach(c=>{
+    if((r===6&&c===6)||(r===6&&c===size-7)||(r===size-7&&c===6)) return;
+    for(let i=-2;i<=2;i++) for(let j=-2;j<=2;j++){
+      const on=(Math.abs(i)===2||Math.abs(j)===2||(i===0&&j===0))?1:0;
+      setF(r+i,c+j,on);
+    }
+  }));
+
+  /* 포맷/버전 영역 예약 */
+  for(let i=0;i<9;i++){ if(!F[8][i]) setF(8,i,0); if(!F[i][8]) setF(i,8,0); }
+  for(let i=0;i<8;i++){ setF(8,size-1-i,0); setF(size-1-i,8,0); }
+  setF(size-8,8,1);   /* 다크 모듈 */
+  if(ver>=7){
+    for(let i=0;i<18;i++){
+      const r=Math.floor(i/3), c=i%3;
+      setF(size-11+c, r, 0); setF(r, size-11+c, 0);
+    }
+  }
+
+  /* 데이터 배치 */
+  let idx=0, up=true;
+  for(let c=size-1;c>0;c-=2){
+    if(c===6) c--;
+    for(let n=0;n<size;n++){
+      const r=up? size-1-n : n;
+      for(let k=0;k<2;k++){
+        const cc=c-k;
+        if(F[r][cc]) continue;
+        M[r][cc]= idx<stream.length? stream[idx] : 0;
+        idx++;
+      }
+    }
+    up=!up;
+  }
+
+  /* 마스크 */
+  const MASKS=[
+    (i,j)=>(i+j)%2===0,
+    (i,j)=>i%2===0,
+    (i,j)=>j%3===0,
+    (i,j)=>(i+j)%3===0,
+    (i,j)=>((i>>1)+Math.floor(j/3))%2===0,
+    (i,j)=>((i*j)%2)+((i*j)%3)===0,
+    (i,j)=>(((i*j)%2)+((i*j)%3))%2===0,
+    (i,j)=>(((i+j)%2)+((i*j)%3))%2===0
+  ];
+  function fmtBits(mask){
+    let data=(1<<3)|mask;                      /* L = 01 */
+    let d=data<<10;
+    for(let i=4;i>=0;i--) if(d&(1<<(i+10))) d^=0x537<<i;
+    return ((data<<10)|d)^0x5412;
+  }
+  function verBits(v){
+    let d=v<<12;
+    for(let i=5;i>=0;i--) if(d&(1<<(i+12))) d^=0x1F25<<i;
+    return (v<<12)|d;
+  }
+
+  function apply(mask){
+    const G=M.map(r=>r.slice());
+    for(let i=0;i<size;i++) for(let j=0;j<size;j++) if(!F[i][j] && MASKS[mask](i,j)) G[i][j]^=1;
+    const f=fmtBits(mask);
+    for(let i=0;i<15;i++){
+      const b=(f>>i)&1;
+      if(i<6) G[i][8]=b; else if(i<8) G[i+1][8]=b; else G[size-15+i][8]=b;
+    }
+    for(let i=0;i<15;i++){
+      const b=(f>>i)&1;
+      if(i<8) G[8][size-1-i]=b; else if(i===8) G[8][7]=b; else G[8][14-i]=b;
+    }
+    G[size-8][8]=1;
+    if(ver>=7){
+      const vb=verBits(ver);
+      for(let i=0;i<18;i++){
+        const b=(vb>>i)&1, r=Math.floor(i/3), c=i%3;
+        G[size-11+c][r]=b; G[r][size-11+c]=b;
+      }
+    }
+    return G;
+  }
+  function penalty(G){
+    let p=0;
+    /* 규칙1: 연속 5개 이상 */
+    for(let i=0;i<size;i++){
+      for(const dir of [0,1]){
+        let run=1;
+        for(let j=1;j<size;j++){
+          const a=dir? G[j-1][i]:G[i][j-1], b=dir? G[j][i]:G[i][j];
+          if(a===b) run++; else { if(run>=5) p+=run-2; run=1; }
+        }
+        if(run>=5) p+=run-2;
+      }
+    }
+    /* 규칙2: 2x2 블록 */
+    for(let i=0;i<size-1;i++) for(let j=0;j<size-1;j++){
+      const v=G[i][j];
+      if(v===G[i][j+1]&&v===G[i+1][j]&&v===G[i+1][j+1]) p+=3;
+    }
+    /* 규칙3: 1:1:3:1:1 패턴 */
+    const PAT=[1,0,1,1,1,0,1,0,0,0,0], PAT2=[0,0,0,0,1,0,1,1,1,0,1];
+    for(let i=0;i<size;i++) for(let j=0;j<=size-11;j++){
+      let m1=true,m2=true,m3=true,m4=true;
+      for(let k=0;k<11;k++){
+        if(G[i][j+k]!==PAT[k]) m1=false;
+        if(G[i][j+k]!==PAT2[k]) m2=false;
+        if(G[j+k][i]!==PAT[k]) m3=false;
+        if(G[j+k][i]!==PAT2[k]) m4=false;
+      }
+      if(m1)p+=40; if(m2)p+=40; if(m3)p+=40; if(m4)p+=40;
+    }
+    /* 규칙4: 어두운 모듈 비율 */
+    let dark=0;
+    for(let i=0;i<size;i++) for(let j=0;j<size;j++) dark+=G[i][j];
+    const ratio=dark*100/(size*size);
+    p+=Math.floor(Math.abs(ratio-50)/5)*10;
+    return p;
+  }
+
+  let best=null, bestP=Infinity;
+  for(let m=0;m<8;m++){ const G=apply(m); const s=penalty(G); if(s<bestP){ bestP=s; best=G; } }
+  return {size:size, ver:ver, mods:best};
+}
+
+/* ===================== 모바일 접속 QR ===================== */
+function drawQR(box, text, px){
+  box.innerHTML='';
+  const r=qrMake(text);
+  if(!r){ box.textContent='주소가 너무 길어 QR을 만들 수 없어요.'; return; }
+  const q=4, n=r.size, S=Math.max(2, Math.floor(px/(n+q*2)));
+  const cv=document.createElement('canvas');
+  cv.width=cv.height=(n+q*2)*S;
+  const g=cv.getContext('2d');
+  g.fillStyle='#ffffff'; g.fillRect(0,0,cv.width,cv.height);
+  g.fillStyle='#16161a';
+  for(let i=0;i<n;i++) for(let j=0;j<n;j++) if(r.mods[i][j]) g.fillRect((j+q)*S,(i+q)*S,S,S);
+  box.appendChild(cv);
+}
+function openQrModal(){
+  const url=location.href.split('#')[0];
+  const box=document.getElementById('qrBox');
+  const lab=document.getElementById('qrUrl');
+  if(!IS_WEB){
+    box.innerHTML='';
+    lab.innerHTML='이 파일은 <b>내 컴퓨터에서 직접 열린 상태</b>라 휴대폰에서 접속할 주소가 없어요.<br>웹 주소(https://…)로 접속했을 때 QR이 표시됩니다.';
+  } else {
+    drawQR(box, url, 250);
+    lab.textContent=url;
+  }
+  showModal('qrModal');
+}
+document.getElementById('btnQr').addEventListener('click', openQrModal);
+document.getElementById('closeQrModal').addEventListener('click', hideModals);
+document.getElementById('qrCopy').addEventListener('click',()=>{
+  copyPath(location.href.split('#')[0]);
+});
+
+/* ===================== 홈 화면에 추가 (PWA) ===================== */
+let installPrompt=null;
+window.addEventListener('beforeinstallprompt',(e)=>{ e.preventDefault(); installPrompt=e; });
+function isStandalone(){
+  try{
+    return (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone===true;
+  }catch(e){ return false; }
+}
+function setupPWA(){
+  try{
+    const head=document.head;
+    const ic=document.createElement('link'); ic.rel='apple-touch-icon'; ic.href=LOGO_SRC; head.appendChild(ic);
+    const m1=document.createElement('meta'); m1.name='apple-mobile-web-app-capable'; m1.content='yes'; head.appendChild(m1);
+    const m2=document.createElement('meta'); m2.name='apple-mobile-web-app-title'; m2.content='TDL'; head.appendChild(m2);
+    const m3=document.createElement('meta'); m3.name='theme-color'; m3.content='#F6F6F7'; head.appendChild(m3);
+    if(IS_WEB){
+      const man={ name:'TDL 스케줄러', short_name:'TDL',
+        start_url:location.pathname+location.search, scope:location.pathname,
+        display:'standalone', background_color:'#F6F6F7', theme_color:'#F6F6F7',
+        icons:[{src:LOGO_SRC, sizes:'224x224', type:'image/png', purpose:'any'}] };
+      const b=new Blob([JSON.stringify(man)],{type:'application/manifest+json'});
+      const l=document.createElement('link'); l.rel='manifest'; l.href=URL.createObjectURL(b); head.appendChild(l);
+    }
+  }catch(e){}
+}
+function openInstallModal(){
+  const ua=navigator.userAgent||'';
+  const ios=/iPhone|iPad|iPod/i.test(ua);
+  const steps=document.getElementById('instSteps');
+  const hint=document.getElementById('instHint');
+  const now=document.getElementById('instNow');
+  steps.innerHTML='';
+  const add=(txt)=>{ const d=document.createElement('div'); d.innerHTML='<b>'+(steps.children.length+1)+'</b><span>'+txt+'</span>'; steps.appendChild(d); };
+
+  if(isStandalone()){
+    hint.textContent='이미 홈 화면 앱으로 열려 있어요. 추가 작업이 필요하지 않습니다.';
+    now.classList.add('hidden');
+  } else if(ios){
+    hint.innerHTML='<b>사파리</b>에서 아래 순서로 진행하면 앱 아이콘이 만들어집니다.';
+    add('화면 아래 <b>공유 버튼</b>(↑ 네모에서 화살표) 을 누릅니다.');
+    add('목록을 내려서 <b>“홈 화면에 추가”</b> 를 누릅니다.');
+    add('이름을 <b>TDL</b> 로 두고 <b>추가</b> 를 누르면 끝입니다.');
+    now.classList.add('hidden');
+  } else {
+    hint.innerHTML='<b>크롬</b>에서 아래 순서로 진행하면 앱 아이콘이 만들어집니다.';
+    add('오른쪽 위 <b>⋮</b> 버튼을 누릅니다.');
+    add('<b>“홈 화면에 추가”</b> 또는 <b>“앱 설치”</b> 를 누릅니다.');
+    add('<b>추가</b> 를 누르면 바탕화면에 TDL 아이콘이 생깁니다.');
+    now.classList.toggle('hidden', !installPrompt);
+  }
+  showModal('installModal');
+}
+document.getElementById('closeInstall').addEventListener('click', hideModals);
+document.getElementById('instNow').addEventListener('click', async ()=>{
+  if(!installPrompt) return;
+  hideModals();
+  try{ installPrompt.prompt(); await installPrompt.userChoice; installPrompt=null; }catch(e){}
+});
+
 async function init(){
-  paintLogos();
+  paintLogos(); setupPWA();
   loadState();
   state.tasks.forEach((t,i)=>{ t._seq=i; });
   applyFont(); applyTheme(state.settings.theme);
