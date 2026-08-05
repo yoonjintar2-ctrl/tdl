@@ -343,10 +343,12 @@ html,body{margin:0;padding:0;height:100%;background:var(--bg);color:var(--text);
 body{font-family:var(--user-font,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic","Segoe UI",Roboto,sans-serif);}
 #app{display:flex;flex-direction:column;height:100vh;overflow:hidden;padding:10px 12px 12px;gap:10px;}
 
-#topbar{display:flex;align-items:center;gap:14px;background:var(--panel);border-radius:16px;padding:0 16px;height:var(--topbar-h);flex:0 0 auto;z-index:60;}
+#topbar{display:flex;flex-direction:column;align-items:stretch;gap:7px;background:var(--panel);border-radius:16px;padding:9px 16px;flex:0 0 auto;z-index:60;}
+#topbarRow1{display:flex;align-items:center;gap:14px;}
+#topbarRow2{display:flex;align-items:center;gap:10px;padding-top:7px;border-top:1px solid var(--border);}
 #topbar .brand{font-size:calc(17px * var(--fs,1));font-weight:600;letter-spacing:0.2px;color:#3A3A3D;flex:0 0 auto;}
 #topbar .brand span{color:#3A3A3D;}
-#filters{display:flex;align-items:center;gap:8px;font-size:calc(12px * var(--fs,1));color:var(--text-dim);}
+#filters{display:flex;align-items:center;gap:8px;font-size:calc(12px * var(--fs,1));color:var(--text-dim);flex-wrap:wrap;}
 #filters label{display:flex;align-items:center;gap:6px;cursor:pointer;user-select:none;white-space:nowrap;background:var(--bg);padding:6px 12px;border-radius:20px;transition:background .12s;}
 #filters label:hover{background:var(--accent-soft);}
 #filters input[type=checkbox]{accent-color:var(--accent);cursor:pointer;}
@@ -354,9 +356,9 @@ body{font-family:var(--user-font,-apple-system,BlinkMacSystemFont,"Apple SD Goth
 #searchBox{background:var(--bg);color:var(--text);border:none;border-radius:20px;padding:6px 12px;font-size:calc(11.5px * var(--fs,1));font-family:inherit;width:150px;outline:none;}
 #searchBox:focus{box-shadow:0 0 0 2px var(--accent-soft);width:190px;}
 #searchBox::placeholder{color:var(--text-dim);}
-#topbar-spacer{flex:0 0 10px;min-width:0;}
-#topbar-right{display:flex;align-items:center;gap:6px;flex:1 1 auto;min-width:0;justify-content:flex-end;}
-#newsTicker{flex:1 1 auto;min-width:140px;overflow:hidden;white-space:nowrap;height:22px;position:relative;margin-right:8px;}
+#histGroup{display:flex;align-items:center;gap:6px;flex:0 0 auto;}
+#topbar-right{display:flex;align-items:center;gap:6px;flex:0 0 auto;min-width:0;justify-content:flex-end;}
+#newsTicker{flex:1 1 auto;min-width:0;overflow:hidden;white-space:nowrap;height:22px;position:relative;}
 #newsText{position:absolute;left:0;top:50%;margin-top:-8px;display:inline-block;font-size:calc(11.5px * var(--fs,1));line-height:calc(16px * var(--fs,1));color:var(--text-dim);opacity:0;white-space:nowrap;cursor:pointer;letter-spacing:-0.1px;will-change:transform;}
 #newsText:hover{color:var(--text);}
 #newsText.run{animation:newsPass var(--ndur,12s) linear forwards;}
@@ -846,28 +848,33 @@ null
 
 <div id="app">
   <div id="topbar">
-    <div class="brand"><img class="tdl-logo" alt=""><span>TDL<span>.</span></span></div>
-    <div id="filters">
-      <button class="tb-btn add-top" id="btnAddTop" title="새 일정 추가 (맨 아래에 생기고 바로 입력할 수 있어요)">＋ 일정 추가</button>
-      <input type="text" id="searchBox" placeholder="🔍 세부내용 검색" autocomplete="off">
-      <label><input type="checkbox" id="fltIncomplete"> 완료일정 숨기기</label>
-      <button class="lock-toggle" id="btnDateLock" type="button" role="switch" aria-checked="false">
-        <span class="lt-label">기간으로 정렬</span>
-        <span class="lt-track"><span class="lt-knob"></span></span>
-        <span class="lt-state">Unlock</span>
-      </button>
-      <button class="tb-btn hist-btn" id="btnUndoSort" style="padding:5px 12px;" title="되돌리기 (Ctrl+Z) — 추가·삭제·수정·순서변경 모두">↶ 되돌리기</button>
-      <button class="tb-btn hist-btn" id="btnRedoSort" style="padding:5px 12px;" title="다시 실행 (Ctrl+Shift+Z)">↷ 다시실행</button>
-      <button class="tb-btn" id="btnPastView" title="지난 일정 보기">🕐 지난 일정</button>
-      <button class="tb-btn hidden" id="btnGoToday" title="오늘로 돌아가기" style="background:#fff4e0;">◀ 오늘로</button>
+    <div id="topbarRow1">
+      <div class="brand"><img class="tdl-logo" alt=""><span>TDL<span>.</span></span></div>
+      <div id="filters">
+        <button class="tb-btn add-top" id="btnAddTop" title="새 일정 추가 (맨 아래에 생기고 바로 입력할 수 있어요)">＋ 일정 추가</button>
+        <input type="text" id="searchBox" placeholder="🔍 세부내용 검색" autocomplete="off">
+        <label><input type="checkbox" id="fltIncomplete"> 완료일정 숨기기</label>
+        <button class="lock-toggle" id="btnDateLock" type="button" role="switch" aria-checked="false">
+          <span class="lt-label">기간으로 정렬</span>
+          <span class="lt-track"><span class="lt-knob"></span></span>
+          <span class="lt-state">Unlock</span>
+        </button>
+        <button class="tb-btn" id="btnPastView" title="지난 일정 보기">🕐 지난 일정</button>
+        <button class="tb-btn hidden" id="btnGoToday" title="오늘로 돌아가기" style="background:#fff4e0;">◀ 오늘로</button>
+      </div>
     </div>
-    <div id="topbar-spacer"></div>
-    <div id="topbar-right">
+    <div id="topbarRow2">
+      <div id="histGroup">
+        <button class="tb-btn hist-btn" id="btnUndoSort" style="padding:5px 12px;" title="되돌리기 (Ctrl+Z) — 추가·삭제·수정·순서변경 모두">↶ 되돌리기</button>
+        <button class="tb-btn hist-btn" id="btnRedoSort" style="padding:5px 12px;" title="다시 실행 (Ctrl+Shift+Z)">↷ 다시실행</button>
+      </div>
       <div id="newsTicker" title="실시간 주요 뉴스 · 클릭하면 기사로 이동"><span id="newsText"></span></div>
-      <button class="tb-btn save-btn" id="btnSave"><span class="sv-main">💾 저장</span><span class="sv-sub" id="svSub">연결 필요</span></button>
-      <div id="userChip" class="hidden"><b id="userEmail"></b><button id="btnSignOut">로그아웃</button></div>
-      <button class="tb-btn" id="btnQr" title="휴대폰으로 접속할 수 있는 QR 코드">📱 모바일 접속</button>
-      <button class="tb-btn" id="btnSettings">⚙ 설정</button>
+      <div id="topbar-right">
+        <button class="tb-btn save-btn" id="btnSave"><span class="sv-main">💾 저장</span><span class="sv-sub" id="svSub">연결 필요</span></button>
+        <div id="userChip" class="hidden"><b id="userEmail"></b><button id="btnSignOut">로그아웃</button></div>
+        <button class="tb-btn" id="btnQr" title="휴대폰으로 접속할 수 있는 QR 코드">📱 모바일 접속</button>
+        <button class="tb-btn" id="btnSettings">⚙ 설정</button>
+      </div>
     </div>
     <input type="file" id="importInput" accept=".json" style="display:none;">
   </div>
