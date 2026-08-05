@@ -858,6 +858,8 @@ null
       </button>
       <button class="tb-btn hist-btn" id="btnUndoSort" style="padding:5px 12px;" title="되돌리기 (Ctrl+Z) — 추가·삭제·수정·순서변경 모두">↶ 되돌리기</button>
       <button class="tb-btn hist-btn" id="btnRedoSort" style="padding:5px 12px;" title="다시 실행 (Ctrl+Shift+Z)">↷ 다시실행</button>
+      <button class="tb-btn" id="btnPastView" title="지난 일정 보기">🕐 지난 일정</button>
+      <button class="tb-btn hidden" id="btnGoToday" title="오늘로 돌아가기" style="background:#fff4e0;">◀ 오늘로</button>
     </div>
     <div id="topbar-spacer"></div>
     <div id="topbar-right">
@@ -1190,7 +1192,40 @@ null
     <div class="row">
       <button class="btn" id="openHolidayFromSettings">📅 공휴일 관리</button>
     </div>
+    <div class="field-label">데이터 안전</div>
+    <div class="row">
+      <button class="btn" id="openRestoreModal">🕘 이전 데이터 복구</button>
+    </div>
+    <div class="row">
+      <button class="btn" id="exportBackupBtn">⬇ 백업 내려받기</button>
+      <button class="btn" id="importBackupBtn">⬆ 백업 불러오기</button>
+    </div>
+    <div class="hint">클라우드 자동 저장과 별개로, 자동으로 보관된 이전 데이터에서 되돌리거나 직접 백업 파일을 내려받아 둘 수 있어요.</div>
     <div class="modal-actions"><button class="btn" id="closeSettingsModal2">닫기</button><button class="btn primary" id="closeSettingsModal">저장</button></div>
+  </div>
+
+  <div class="modal hidden" id="restoreModal" style="width:420px;">
+    <h2>🕘 이전 데이터 복구</h2>
+    <div class="hint">기기에 자동으로 남아있는 이전 데이터입니다. 되돌리면 지금 화면의 내용이 대체됩니다.</div>
+    <div id="restoreList" style="max-height:340px;overflow:auto;"></div>
+    <div class="modal-actions"><button class="btn" id="closeRestoreModal">닫기</button></div>
+  </div>
+
+  <div class="modal hidden" id="pastModal" style="width:340px;">
+    <h2>🕐 지난 일정 보기</h2>
+    <div class="hint">기본은 오늘부터 표시돼요. 필요할 때만 과거 날짜까지(최대 약 1년 전) 펼쳐서 볼 수 있어요. 다시 켜면 자동으로 오늘부터 보여줘요.</div>
+    <div class="row" style="flex-wrap:wrap;gap:6px;">
+      <button class="btn past-opt" data-days="30">1개월 전</button>
+      <button class="btn past-opt" data-days="90">3개월 전</button>
+      <button class="btn past-opt" data-days="180">6개월 전</button>
+      <button class="btn past-opt" data-days="365">1년 전</button>
+    </div>
+    <div class="field-label">특정 날짜로 이동</div>
+    <div class="row">
+      <input type="date" id="pastDateInput" style="flex:1;padding:6px 8px;border:1px solid var(--border-strong);border-radius:5px;font-size:calc(12px * var(--fs,1));font-family:inherit;">
+      <button class="btn primary" id="pastDateGo">이동</button>
+    </div>
+    <div class="modal-actions"><button class="btn" id="closePastModal">닫기</button></div>
   </div>
 
   <div class="modal hidden" id="qrModal" style="width:370px;">
@@ -1382,6 +1417,7 @@ function normalize(d){
   if(!d.holidays) d.holidays={};
   if(!Array.isArray(d.stickers)) d.stickers=[];
   if(!Array.isArray(d.notes)) d.notes=[];
+  if(!Array.isArray(d._bk)) d._bk=[];
   if(!d.time) d.time={};
   const T=d.time;
   if(!Array.isArray(T.alarms)) T.alarms=[];
@@ -1573,7 +1609,7 @@ function exportBackup(){
 
 function updateFileStatusHint(t){ const el=document.getElementById('fileStatusHint'); if(el) el.textContent=t; }
 /* ═══════════════ 클라우드 저장 (Supabase) ═══════════════ */
-const APP_VER='ver 3.6', APP_BUILD='2026-07-30 18:10';
+const APP_VER='ver 3.7', APP_BUILD='2026-08-05 16:00';
 const LOGO_SRC='data:image/png;base64,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';
 function paintLogos(){ document.querySelectorAll('img.tdl-logo').forEach(i=>{ i.src=LOGO_SRC; }); }
 const IS_WEB = /^https?:$/i.test(location.protocol);
@@ -1605,6 +1641,31 @@ function cloudCfg(){
 }
 let sb=null, cloudUser=null, cloudDirty=false, cloudTimer=null,
     lastCloudAt=0, cloudBusy=false, cloudPending=false, cloudReady=false;
+let booting=true, remoteHad=0, cloudLoadTry=0;
+const SAFE_KEY='tdl_safe';
+function saveSafetyCopy(){
+  try{
+    const cnt=(state.tasks||[]).length;
+    if(!cnt) return;
+    const prev=JSON.parse(localStorage.getItem(SAFE_KEY)||'null');
+    if(prev && (prev.savedAt||0) > (state.savedAt||0)) return;
+    localStorage.setItem(SAFE_KEY, JSON.stringify(state));
+  }catch(e){}
+}
+function readSafetyCopy(){
+  try{ const d=JSON.parse(localStorage.getItem(SAFE_KEY)||'null'); return (d&&d.tasks&&d.tasks.length)? d : null; }catch(e){ return null; }
+}
+const SNAP_GAP=6*3600*1000, SNAP_KEEP=7;
+function pushSnapshot(){
+  try{
+    if(!Array.isArray(state._bk)) state._bk=[];
+    if(!(state.tasks||[]).length) return;
+    const last=state._bk[state._bk.length-1];
+    if(last && Date.now()-(last.at||0) < SNAP_GAP) return;
+    state._bk.push({at:Date.now(), t:JSON.parse(JSON.stringify(state.tasks||[])), c:JSON.parse(JSON.stringify(state.campaigns||[])), g:JSON.parse(JSON.stringify(state.categories||[])), n:JSON.parse(JSON.stringify(state.notes||[]))});
+    while(state._bk.length>SNAP_KEEP) state._bk.shift();
+  }catch(e){}
+}
 const CLOUD_MODE = (function(){ const c=cloudCfg(); return IS_WEB && !!(c.url&&c.anon); })();
 
 function cloudStatus(txt){ updateFileStatusHint(txt); syncSaveBtn(); }
@@ -1626,7 +1687,6 @@ async function initCloud(){
   cloudUser=session.user;
   hideGate();
   await cloudLoad();
-  cloudReady=true;
   return true;
 }
 function showGate(){ document.getElementById('gate').classList.remove('hidden'); }
@@ -1639,25 +1699,40 @@ async function cloudLoad(){
     cloudStatus('클라우드에서 불러오는 중…');
     const {data,error}=await sb.from('planner').select('data,updated_at').eq('user_id',cloudUser.id).maybeSingle();
     if(error) throw error;
-    const remote = data && data.data && data.data.tasks ? data.data : null;
+    const remote = data && data.data && Array.isArray(data.data.tasks) ? data.data : null;
+    const cnt=(d)=>d? ((d.tasks||[]).length + (d.notes||[]).length + (d.campaigns||[]).length) : 0;
+    const localN=cnt(state), remoteN=cnt(remote);
+    remoteHad=remoteN;
     const localAt = (state && state.savedAt) || 0;
     const remoteAt = remote ? (remote.savedAt||0) : 0;
-    if(remote && remoteAt >= localAt){
+    const takeRemote = remote && (remoteAt >= localAt || (localN===0 && remoteN>0));
+    if(takeRemote){
       state=normalize(remote);
       state.tasks.forEach((t,i)=>{ if(typeof t._seq!=='number') t._seq=i; });
-      persistLocal();
+      persistLocal(); saveSafetyCopy();
       applyFontScale(); applyFont(); applyTheme(state.settings.theme); syncDateLockBtn(); render();
-      cloudStatus('클라우드에서 불러왔어요');
-    } else if(remote && localAt > remoteAt){
+      cloudStatus('클라우드에서 불러왔어요 (일정 '+(state.tasks||[]).length+'건)');
+    } else if(remote && localN===0 && remoteN===0){
+      cloudStatus('아직 저장된 일정이 없어요');
+    } else if(remote){
       cloudStatus('이 기기 내용이 더 최신이라 그대로 두었어요');
-      cloudDirty=true; scheduleCloudSave();
+      cloudDirty=true;
     } else {
-      cloudStatus('클라우드에 처음 저장합니다');
-      cloudDirty=true; scheduleCloudSave();
+      cloudStatus(localN? '클라우드에 처음 저장합니다' : '아직 저장된 일정이 없어요');
+      if(localN) cloudDirty=true;
     }
     lastCloudAt=Date.now();
+    cloudReady=true;
+    cloudLoadTry=0;
+    if(cloudDirty) scheduleCloudSave();
   }catch(e){
-    cloudStatus('불러오기 실패: '+(e.message||e));
+    cloudLoadTry=(cloudLoadTry||0)+1;
+    if(cloudLoadTry<=3){
+      cloudStatus('불러오기 실패 — '+cloudLoadTry+'차 재시도 중…');
+      setTimeout(()=>cloudLoad(), 4000);
+    } else {
+      cloudStatus('⚠ 불러오지 못했어요. 저장을 멈춰 두었으니 새로고침해 주세요.');
+    }
   }
   syncSaveBtn();
 }
@@ -1665,17 +1740,23 @@ async function cloudLoad(){
 const CLOUD_IDLE=2500, CLOUD_MIN_GAP=6000;
 function scheduleCloudSave(){
   cloudDirty=true; syncSaveBtn();
-  if(!sb||!cloudUser) return;
+  if(!sb||!cloudUser||!cloudReady) return;
   clearTimeout(cloudTimer);
   const wait=Math.max(CLOUD_IDLE, CLOUD_MIN_GAP-(Date.now()-lastCloudAt));
   cloudTimer=setTimeout(()=>cloudWrite(), wait);
 }
 async function cloudWrite(){
-  if(!sb||!cloudUser) return;
+  if(!sb||!cloudUser||!cloudReady) return;
+  const mine=(state.tasks||[]).length + (state.notes||[]).length + (state.campaigns||[]).length;
+  if(mine===0 && remoteHad>0){
+    cloudStatus('⚠ 이 기기가 비어 있어 저장을 멈췄어요. 서버 자료를 지우지 않습니다. 새로고침해 주세요.');
+    cloudDirty=false; return;
+  }
   if(cloudBusy){ cloudPending=true; return; }
   cloudBusy=true; syncSaveBtn();
   try{
     state.savedAt=Date.now();
+    pushSnapshot();
     const {error}=await sb.from('planner').upsert({
       user_id: cloudUser.id,
       data: state,
@@ -1683,6 +1764,7 @@ async function cloudWrite(){
     },{onConflict:'user_id'});
     if(error) throw error;
     lastCloudAt=Date.now(); lastSavedAt=lastCloudAt; cloudDirty=false;
+    remoteHad=mine; saveSafetyCopy();
     cloudStatus('클라우드에 저장됨 ('+new Date().toLocaleTimeString()+')');
   }catch(e){
     cloudStatus('저장 실패: '+(e.message||e)+' — 이 기기에는 보관되어 있어요');
@@ -1692,6 +1774,7 @@ async function cloudWrite(){
 }
 
 function saveAll(){
+  if(booting) return;
   persistLocal();
   if(CLOUD_MODE) scheduleCloudSave(); else scheduleFileWrite();
 }
@@ -1857,8 +1940,9 @@ function sortedTasks(){
 }
 function visibleTasks(){
   let list=sortedTasks(); const ts=todayStr();
-  // 오른쪽 영역에 남은 날짜가 전혀 없는(모든 회차가 과거인) 항목은 자동 숨김
-  list=list.filter(t=>{ if(t.pinBottom) return true; return lastDateOf(t)>=ts; });
+  // 오른쪽 영역에 남은 날짜가 전혀 없는(모든 회차가 과거인) 항목은 자동 숨김 — 단, '지난 일정 보기' 중에는 숨기지 않음
+  const pastViewOn=(state.settings.startOffset||0)>0;
+  if(!pastViewOn) list=list.filter(t=>{ if(t.pinBottom) return true; return lastDateOf(t)>=ts; });
   if(state.settings.filterIncomplete) list=list.filter(t=>!taskIsDone(t));
   if(state.settings.filterCategory && state.settings.filterCategory!=='all') list=list.filter(t=>t.categoryId===state.settings.filterCategory);
   const fc=state.settings.filterCampaign;
@@ -2268,7 +2352,7 @@ function render(){
   document.getElementById('fltIncomplete').checked=state.settings.filterIncomplete;
   const mc=document.getElementById('miniCal');
   if(mc && !mc.classList.contains('hidden')) renderMiniCal();
-  syncHScroll(); renderStickers();
+  syncHScroll(); renderStickers(); syncGoTodayBtn();
 }
 
 let selectedTaskId=null, selectedDate=null;
@@ -3453,6 +3537,70 @@ document.getElementById('addCategoryBtn').addEventListener('click',()=>{
 document.getElementById('closeHolidayModal').addEventListener('click',()=>{ hideModals(); render(); });
 document.getElementById('backToSettings').addEventListener('click',()=>{ showModal('settingsModal'); });
 document.getElementById('openHolidayFromSettings').addEventListener('click',()=>{ showModal('holidayModal'); renderHolidayList(); });
+
+/* ===================== 지난 일정 보기 ===================== */
+document.getElementById('btnPastView').addEventListener('click',()=>{
+  document.getElementById('pastDateInput').value=todayStr();
+  showModal('pastModal');
+});
+document.getElementById('closePastModal').addEventListener('click', hideModals);
+document.getElementById('btnGoToday').addEventListener('click', resetToToday);
+document.querySelectorAll('.past-opt').forEach(b=>{
+  b.addEventListener('click',()=>{
+    const days=parseInt(b.dataset.days,10)||30;
+    jumpToDate(fmt(addDays(startOfToday(),-days)));
+    hideModals();
+  });
+});
+document.getElementById('pastDateGo').addEventListener('click',()=>{
+  const v=document.getElementById('pastDateInput').value;
+  if(!v) return;
+  jumpToDate(v);
+  hideModals();
+});
+
+/* ===================== 데이터 복구 ===================== */
+document.getElementById('exportBackupBtn').addEventListener('click', exportBackup);
+document.getElementById('importBackupBtn').addEventListener('click', ()=>{ document.getElementById('importInput').click(); });
+document.getElementById('openRestoreModal').addEventListener('click', ()=>{ showModal('restoreModal'); renderRestoreList(); });
+document.getElementById('closeRestoreModal').addEventListener('click', hideModals);
+function fmtBk(ts){ const d=new Date(ts); return (d.getMonth()+1)+'/'+d.getDate()+' '+pad2(d.getHours())+':'+pad2(d.getMinutes()); }
+function renderRestoreList(){
+  const wrap=document.getElementById('restoreList'); wrap.innerHTML='';
+  const items=[];
+  const safe=readSafetyCopy();
+  if(safe) items.push({label:'자동 보관 · 일정 '+(safe.tasks||[]).length+'건', at:safe.savedAt||0, src:safe});
+  (state._bk||[]).slice().reverse().forEach(b=>{
+    items.push({label:'자동 스냅샷 · 일정 '+(b.t||[]).length+'건', at:b.at||0, src:{tasks:b.t,campaigns:b.c,categories:b.g,notes:b.n,savedAt:b.at}});
+  });
+  if(!items.length){ wrap.innerHTML='<div class="hint">아직 자동으로 보관된 이전 데이터가 없어요.</div>'; return; }
+  items.forEach(it=>{
+    const row=document.createElement('div');
+    row.style.cssText='display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 4px;border-bottom:1px solid var(--border);';
+    const lab=document.createElement('div');
+    lab.innerHTML='<div>'+it.label+'</div><div class="hint" style="margin:0;">'+(it.at?fmtBk(it.at):'-')+'</div>';
+    const btn=document.createElement('button'); btn.className='btn'; btn.textContent='이걸로 복구';
+    btn.addEventListener('click',()=>applyRestore(it.src, it.label));
+    row.appendChild(lab); row.appendChild(btn);
+    wrap.appendChild(row);
+  });
+}
+function applyRestore(src, label){
+  const cnt=(src.tasks||src.t||[]).length;
+  if(!confirm(label+'\n\n일정 '+cnt+'건으로 되돌립니다. 지금 화면의 내용은 대체돼요.\n계속할까요?')) return;
+  pushHistory('데이터 복구');
+  state.tasks      = JSON.parse(JSON.stringify(src.tasks || src.t || []));
+  state.campaigns  = JSON.parse(JSON.stringify(src.campaigns || src.c || state.campaigns || []));
+  state.categories = JSON.parse(JSON.stringify(src.categories || src.g || state.categories || []));
+  state.notes      = JSON.parse(JSON.stringify(src.notes || src.n || []));
+  state=normalize(state);
+  state.tasks.forEach((t,i)=>{ t._seq=i; });
+  saveAll();
+  rebuildDateRange();
+  render(); renderNotes();
+  hideModals();
+  alert('복구했습니다. 일정 '+(state.tasks||[]).length+'건.');
+}
 function renderHolidayList(){
   const wrap=document.getElementById('holidayList'); wrap.innerHTML='';
   Object.keys(state.holidays).sort().forEach(k=>{
@@ -3638,12 +3786,22 @@ function jumpToDate(dstr){
   if(idx<0){
     // 표시 범위를 벗어난 날짜면 시작 오프셋을 조정해 범위에 포함
     const diff=Math.round((parseYMD(dstr)-startOfToday())/86400000);
-    if(diff<0){ state.settings.startOffset=Math.min(60, Math.abs(diff)+2); saveAll(); render(); idx=dateStrs.indexOf(dstr); }
+    if(diff<0){ state.settings.startOffset=Math.min(400, Math.abs(diff)+2); saveAll(); render(); idx=dateStrs.indexOf(dstr); }
   }
   if(idx<0) return;
   selectedDate=dstr; applySelection();
   const gw=document.getElementById('gridWrap');
   gw.scrollLeft = Math.max(0, idx*DATE_COL_W - gw.clientWidth/2 + 200);
+  syncGoTodayBtn();
+}
+function resetToToday(){
+  state.settings.startOffset=0; saveAll(); render();
+  setTimeout(()=>{ const gw=document.getElementById('gridWrap'); if(gw) gw.scrollLeft=Math.max(0,(todayIdx-2)*DATE_COL_W); },20);
+  syncGoTodayBtn();
+}
+function syncGoTodayBtn(){
+  const b=document.getElementById('btnGoToday');
+  if(b) b.classList.toggle('hidden', !(state.settings.startOffset>0));
 }
 /* ===================== 미니 달력 (우측 하단) ===================== */
 let mcState={year:startOfToday().getFullYear(), month:startOfToday().getMonth()};
@@ -6264,6 +6422,7 @@ async function init(){
   }
   if(CLOUD_MODE || IS_WEB){ await initCloud(); syncUserChip(); }
   else { tryReconnectFile(); }
+  booting=false;
   initTime();
   if(!IS_MOBILE) initNews();
   syncSaveBtn();
