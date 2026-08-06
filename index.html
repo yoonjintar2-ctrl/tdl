@@ -112,14 +112,14 @@ body.theme-dark #mSheet .ms-back{background:rgba(0,0,0,0.55);}
 .ms-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;}
 .ms-head b{font-size:14px;color:var(--accent-deep);}
 .ms-x{border:none;background:var(--bg);border-radius:11px;width:33px;height:33px;font-size:14px;color:var(--text-dim);font-family:inherit;}
-.ms-lab{font-size:10px;font-weight:700;color:var(--text-dim);margin:15px 0 5px;letter-spacing:0.2px;}
+.ms-lab{font-size:10px;font-weight:700;color:var(--text-dim);margin:11px 0 4px;letter-spacing:0.2px;}
 #mSheet input,#mSheet select,#mSheet textarea{width:100%;box-sizing:border-box;border:none;background:var(--bg);border-radius:13px;padding:12px;font-size:14px;font-family:inherit;color:var(--text);outline:none;}
 #mSheet .hint{white-space:normal;word-break:keep-all;max-width:100%;}
 #mSheet .chk-line{display:flex;align-items:center;gap:8px;}
 #mSheet .chk-line input[type=checkbox]{width:auto;flex:0 0 auto;}
 #mSheet select{-webkit-appearance:none;appearance:none;}
 #mSheet input[type=time]{min-height:44px;}
-#mSheet textarea{min-height:74px;resize:vertical;line-height:1.5;}
+#mSheet textarea{min-height:58px;resize:vertical;line-height:1.5;}
 #mSheet select{background-image:none;}
 .ms-big{width:100%;text-align:left;border:none;background:var(--bg);border-radius:13px;padding:12px;font-size:14px;font-family:inherit;color:var(--text);line-height:1.35;}
 .ms-big small{display:block;font-size:10.5px;color:var(--accent-deep);margin-top:4px;}
@@ -322,6 +322,8 @@ body.mob #mMicFab:active{transform:scale(0.93);}
 #mFilter select{width:100%;padding:11px;border:1px solid var(--border-strong);border-radius:10px;font-size:14px;font-family:inherit;background:var(--bg);color:var(--text);box-sizing:border-box;}
 #mFilter .mv-acts,#mCollab .mv-acts{display:flex;gap:8px;margin-top:16px;}
 #mFilter .mv-acts .btn,#mCollab .mv-acts .btn{flex:1;padding:12px;font-size:14px;}
+#mFilterBtn{position:relative;}
+#mFilterBtn.filter-on::after{content:'';position:absolute;top:6px;right:7px;width:6px;height:6px;border-radius:50%;background:var(--accent);}
 #mCollabDot{position:absolute;top:2px;right:2px;min-width:16px;height:16px;border-radius:9px;background:var(--imp-strong);color:#7A4B00;font-size:9.5px;font-weight:700;display:flex;align-items:center;justify-content:center;padding:0 3px;box-sizing:border-box;}
 #mCollabDot.hidden{display:none;}
 #mVoice .mv-back{position:absolute;inset:0;background:rgba(20,16,30,0.45);}
@@ -396,6 +398,8 @@ body{font-family:var(--user-font,-apple-system,BlinkMacSystemFont,"Apple SD Goth
 #topbarRow1{display:flex;align-items:center;gap:10px;min-height:var(--ctl-h);}
 /* 상단바 안의 모든 조작 요소를 같은 높이로 맞춤 */
 #topbar .tb-btn svg{width:16px;height:16px;display:block;}
+#btnFilter{position:relative;}
+#btnFilter.filter-on::after{content:'';position:absolute;top:5px;right:6px;width:5px;height:5px;border-radius:50%;background:var(--accent);}
 #topbar .tb-btn,#topbar .lock-toggle,#topbar #userChip,#topbar #filters label{
   height:var(--ctl-h);box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;padding-top:0;padding-bottom:0;}
 #topbar .save-btn{height:var(--ctl-h);box-sizing:border-box;flex-direction:column;justify-content:center;gap:0;padding-top:0;padding-bottom:0;}
@@ -426,11 +430,11 @@ body{font-family:var(--user-font,-apple-system,BlinkMacSystemFont,"Apple SD Goth
 
 /* 동작 */
 #buddyAvatar.act-idle .torso{animation:chBob 3.2s ease-in-out infinite;}
-#buddyAvatar.act-walk .lg-l{animation:chLegA .44s linear infinite;}
-#buddyAvatar.act-walk .lg-r{animation:chLegB .44s linear infinite;}
-#buddyAvatar.act-walk .ar-l{animation:chArmB .44s linear infinite;}
-#buddyAvatar.act-walk .ar-r{animation:chArmA .44s linear infinite;}
-#buddyAvatar.act-walk .torso{animation:chBob .44s linear infinite;}
+#buddyAvatar.act-walk .lg-l{animation:chLegA 1.5s ease-in-out infinite;}
+#buddyAvatar.act-walk .lg-r{animation:chLegB 1.5s ease-in-out infinite;}
+#buddyAvatar.act-walk .ar-l{animation:chArmB 1.5s ease-in-out infinite;}
+#buddyAvatar.act-walk .ar-r{animation:chArmA 1.5s ease-in-out infinite;}
+#buddyAvatar.act-walk .torso{animation:chBob 1.5s ease-in-out infinite;}
 #buddyAvatar.act-wave .ar-r{animation:chWave .4s ease-in-out infinite;}
 @keyframes baStretchA{0%,100%{transform:rotate(0)}45%{transform:rotate(-165deg)}}
 @keyframes baStretchB{0%,100%{transform:rotate(0)}45%{transform:rotate(165deg)}}
@@ -583,7 +587,7 @@ body.theme-excel .save-btn .sv-sub{color:rgba(255,255,255,0.75);}
 .cl-ava-wrap{display:flex;justify-content:center;padding:6px 0;}
 .cl-ava{width:74px;height:104px;}
 .cl-ava svg{width:100%;height:100%;display:block;}
-.shared-mark{color:var(--accent-deep);font-size:calc(10px * var(--fs,1));margin-left:4px;}
+.shared-mark{color:var(--accent-deep);font-size:calc(10px * var(--fs,1));}
 .hist-btn{background:var(--panel);border:1px solid var(--line-strong);color:var(--text);font-weight:600;padding-left:8px !important;padding-right:8px !important;font-size:calc(10.5px * var(--fs,1)) !important;letter-spacing:-0.3px;}
 .hist-btn:hover:not(:disabled){background:var(--accent-soft);color:var(--accent-deep);border-color:var(--accent);}
 .hist-btn:disabled{opacity:0.32;cursor:default;}
@@ -681,7 +685,8 @@ body.theme-excel .save-btn .sv-sub{color:rgba(255,255,255,0.75);}
 .camp-empty{color:#CFCADD;}
 
 .info-detail{position:relative;}
-.info-detail input{width:100%;height:100%;border:none;background:transparent;padding:0 52px 0 10px;font-size:calc(12.5px * var(--fs,1));color:var(--text);text-align:left;font-family:inherit;}
+.info-detail input{width:100%;height:100%;border:none;background:transparent;padding:0 74px 0 10px;font-size:calc(12.5px * var(--fs,1));color:var(--text);caret-color:var(--text);text-align:left;font-family:inherit;}
+.info-detail input:focus,.lrow.important .info-detail input,.lrow.selected .info-detail input{color:var(--text);-webkit-text-fill-color:var(--text);}
 .lrow .cell[data-col="dateinput"]{position:relative;padding-left:14px;}
 .row-grip{position:absolute;left:1px;top:50%;transform:translateY(-50%);cursor:grab;color:var(--text-dim);opacity:0.22;font-size:9px;letter-spacing:-2px;line-height:1;user-select:none;}
 .lrow:hover .row-grip{opacity:0.55;}
@@ -690,7 +695,7 @@ body.theme-excel .save-btn .sv-sub{color:rgba(255,255,255,0.75);}
 .row-pen:hover{opacity:1!important;background:rgba(0,0,0,0.07);filter:grayscale(1) brightness(0.75);}
 .info-detail input:focus{outline:none;background:var(--bg);border-radius:8px;}
 .info-detail input::placeholder{color:#CFCADD;}
-.link-btn{position:absolute;right:26px;top:50%;transform:translateY(-50%);border:none;background:transparent;cursor:pointer;padding:2px 3px;border-radius:7px;font-size:calc(11.5px * var(--fs,1));line-height:1;font-family:inherit;opacity:1;z-index:3;}
+.link-btn{position:absolute;right:27px;top:50%;transform:translateY(-50%);border:none;background:transparent;cursor:pointer;padding:2px 3px;border-radius:7px;font-size:calc(11.5px * var(--fs,1));line-height:1;font-family:inherit;opacity:1;z-index:3;}
 .link-btn:hover{background:rgba(0,0,0,0.06);}
 
 .date-btn{width:100%;height:100%;border:none;background:transparent;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:calc(12px * var(--fs,1));font-weight:400;font-family:inherit;color:var(--text);white-space:nowrap;overflow:hidden;padding:0 4px;border-radius:10px;}
@@ -1203,6 +1208,11 @@ null
     <div class="ms-lab">세부내용</div>
     <textarea id="msDetail" placeholder="할 일을 적어주세요"></textarea>
 
+    <div class="ms-toggles" style="margin-top:12px;">
+      <button class="ms-tg" id="msDone">✅ 완료</button>
+      <button class="ms-tg imp" id="msImp">⭐ 중요</button>
+    </div>
+
     <div class="ms-lab">기간 · 반복</div>
     <button class="ms-big" id="msDate">날짜 선택</button>
 
@@ -1229,11 +1239,6 @@ null
     <div class="ms-lab">동료와 함께</div>
     <label class="chk-line"><input type="checkbox" id="msShare"> 👥 동료와 함께하는 일정</label>
     <div class="hint" id="msShareWho"></div>
-
-    <div class="ms-toggles">
-      <button class="ms-tg" id="msDone">✅ 완료</button>
-      <button class="ms-tg imp" id="msImp">⭐ 중요</button>
-    </div>
 
     </div>
     <div class="ms-foot">
@@ -1788,6 +1793,7 @@ function normalize(d){
   if(!Array.isArray(d._bk)) d._bk=[];
   if(!d.catShares || typeof d.catShares!=='object') d.catShares={};   /* 카테고리별 공유 대상 */
   if(d.settings.filterRange===undefined) d.settings.filterRange=null;
+  if(!d.campShares || typeof d.campShares!=='object') d.campShares={};   /* 캠페인별 공유 대상 */
   if(!d.time) d.time={};
   const T=d.time;
   if(!Array.isArray(T.alarms)) T.alarms=[];
@@ -1979,7 +1985,7 @@ function exportBackup(){
 
 function updateFileStatusHint(t){ const el=document.getElementById('fileStatusHint'); if(el) el.textContent=t; }
 /* ═══════════════ 클라우드 저장 (Supabase) ═══════════════ */
-const APP_VER='ver 5.7', APP_BUILD='2026-08-07 14:30';
+const APP_VER='ver 5.8', APP_BUILD='2026-08-07 16:30';
 const LOGO_SRC='data:image/png;base64,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';
 function paintLogos(){ document.querySelectorAll('img.tdl-logo').forEach(i=>{ i.src=LOGO_SRC; }); }
 const IS_WEB = /^https?:$/i.test(location.protocol);
@@ -2302,7 +2308,20 @@ function cmpVal(t,key){
   return 0;
 }
 function dateLocked(){ if(IS_MOBILE) return true; return !!(state && state.settings && state.settings.dateLock); }
+let dragFreeze=false, frozenOrder=null;
 function sortedTasks(){
+  if(dragFreeze && frozenOrder){
+    const byId=new Map(state.tasks.map(t=>[t.id,t]));
+    const out=[];
+    frozenOrder.forEach(id=>{ const t=byId.get(id); if(t){ out.push(t); byId.delete(id); } });
+    byId.forEach(t=>out.push(t));      /* 새로 생긴 항목은 뒤에 */
+    return out;
+  }
+  const _r=sortedTasksRaw();
+  frozenOrder=_r.map(t=>t.id);
+  return _r;
+}
+function sortedTasksRaw(){
   /* 기간정렬 Lock: 무엇을 추가/이동해도 항상 시작일 오름차순 강제 */
   if(dateLocked()){
     return state.tasks.slice().sort((a,b)=>{
@@ -2563,7 +2582,7 @@ function buildBody(){
     const cDet=mkCell('info-detail','detail');
     if(task._sid){
       const mk=document.createElement('span'); mk.className='shared-mark';
-      mk.style.cssText='position:absolute;right:6px;top:50%;transform:translateY(-50%);pointer-events:none;';
+      mk.style.cssText='position:absolute;right:50px;top:50%;transform:translateY(-50%);pointer-events:none;z-index:3;';
       mk.textContent='👥';
       try{
         const others=(task._members||[]).filter(x=>x!==(cloudUser&&cloudUser.id));
@@ -2719,7 +2738,7 @@ function buildBody(){
   const addRow=document.createElement('div'); addRow.className='lrow'; addRow.style.gridTemplateColumns=tpl;
   const addCell=document.createElement('div'); addCell.className='addrow-cell';
   const addBtn=document.createElement('button'); addBtn.textContent='+ 일정 추가';
-  addBtn.addEventListener('click',addTask);
+  addBtn.addEventListener('click',()=>addTask(true));
   addCell.appendChild(addBtn); addRow.appendChild(addCell); lb.appendChild(addRow);
 
   const spacer=document.createElement('div'); spacer.className='rrow spacer'; spacer.style.gridTemplateColumns=rtpl;
@@ -2735,12 +2754,13 @@ function buildBody(){
   applyKbdFocus();
 }
 
-function addTask(){
+function addTask(atBottom){
   pushHistory('일정 추가');
   const catId=(state.settings.filterCategory!=='all'? state.settings.filterCategory : state.categories[0].id);
-  const t={id:uid(), categoryId:catId, campaignId:null, detail:'', done:false, important:false, start:'', end:'', startTime:'', endTime:'', repeat:null, pinNew:true};
+  const t={id:uid(), categoryId:catId, campaignId:null, detail:'', done:false, important:false, start:'', end:'', startTime:'', endTime:'', repeat:null};
   /* 공유 카테고리에 만든 새 일정은 저장 시 자동으로 공유됩니다 (autoShareNew) */
-  state.tasks.unshift(t);                       /* 목록 맨 위에서 바로 입력 */
+  if(atBottom){ t.pinBottom=true; state.tasks.push(t); }
+  else { t.pinNew=true; state.tasks.unshift(t); }
   state.tasks.forEach((x,i)=>{ x._seq=i; });
   saveAll(); buildBody();
   kbdFocus={taskId:t.id, col:'detail'};
@@ -3833,9 +3853,17 @@ function renderCampaignList(focusId){
       if(!confirm(used>0?('이 캠페인을 쓰는 일정 '+used+'건은 캠페인이 비워집니다. 삭제할까요?'):'이 캠페인을 삭제할까요?')) return;
       state.campaigns=state.campaigns.filter(x=>x.id!==c.id);
       state.tasks.forEach(t=>{ if(t.campaignId===c.id) t.campaignId=null; });
+      if(state.campShares) delete state.campShares[c.id];
       saveAll(); renderCampaignList(); buildBody();
     });
-    row.append(sel, iconBtn, nameIn, colBtn, del);
+    const shb=document.createElement('button'); shb.type='button'; shb.className='btn';
+    shb.style.cssText='padding:4px 9px;font-size:11px;white-space:nowrap;';
+    const shn=((state.campShares||{})[c.id]||[]).length;
+    shb.textContent = shn? ('👥 '+shn+'명') : '👥 공유';
+    if(shn) shb.style.background='var(--accent-soft)';
+    shb.title='이 캠페인의 모든 일정(지난 일정 포함)을 동료와 공유합니다';
+    shb.addEventListener('click',()=>shareCampaign(c));
+    row.append(sel, iconBtn, nameIn, colBtn, shb, del);
     const pal=document.createElement('div'); pal.className='inline-palette'; pal.style.display='none';
     iconBtn.addEventListener('click',()=>toggleIconPalette(pal,c,iconBtn));
 
@@ -4477,15 +4505,50 @@ async function shareCategory(cat){
   saveAll(); renderCategoryList(); render();
   alert('“'+cat.name+'” 카테고리를 '+picked.length+'명과 공유했어요.\n지금 일정 '+list.length+'건이 공유되고, 앞으로 이 카테고리에 추가하는 일정도 자동으로 공유됩니다.');
 }
-/* 공유 카테고리에 새로 생긴 일정을 자동으로 공유 */
+/* ── 캠페인 단위 공유 (지난 일정 포함 전부) ── */
+async function shareCampaign(camp){
+  if(!clOn()){ alert('클라우드에 로그인해야 공유할 수 있어요.'); return; }
+  await clLoadBuddies();
+  if(!state.campShares) state.campShares={};
+  const cur=state.campShares[camp.id]||[];
+  const picked=await clPickBuddies(cur);
+  if(picked===null) return;
+
+  if(!picked.length){
+    if(cur.length && !confirm('“'+camp.name+'” 캠페인 공유를 해제할까요?')) return;
+    delete state.campShares[camp.id];
+    const mine=state.tasks.filter(t=>t.campaignId===camp.id && t._sid && t._owner===cloudUser.id);
+    for(const t of mine) await clUnshare(t);
+    saveAll(); renderCampaignList(); render();
+    return;
+  }
+  state.campShares[camp.id]=picked;
+  const members=Array.from(new Set([cloudUser.id].concat(picked)));
+  /* 날짜와 무관하게 이 캠페인의 모든 일정 */
+  const list=state.tasks.filter(t=>t.campaignId===camp.id && (!t._sid || t._owner===cloudUser.id));
+  for(const t of list){
+    if(t._sid){ try{ await sb.from('shared_tasks').update({members}).eq('id',t._sid); t._members=picked; }catch(e){} }
+    else await clCreateShare(t, picked);
+  }
+  saveAll(); renderCampaignList(); render();
+  alert('“'+camp.name+'” 캠페인을 '+picked.length+'명과 공유했어요.\n지난 일정 포함 '+list.length+'건이 공유되고, 앞으로 이 캠페인의 새 일정도 자동 공유됩니다.');
+}
+
+/* 공유 카테고리·캠페인에 새로 생긴 일정을 자동으로 공유 */
 let autoShareBusy=false;
 async function autoShareNew(){
   if(autoShareBusy || !clOn()) return;
-  const pend=state.tasks.filter(t=>!t._sid && t.categoryId && (state.catShares[t.categoryId]||[]).length && (t.detail||'').trim());
+  const CS=state.catShares||{}, PS=state.campShares||{};
+  const who=(t)=>{
+    const a=(t.categoryId && CS[t.categoryId])||[];
+    const b=(t.campaignId && PS[t.campaignId])||[];
+    return Array.from(new Set(a.concat(b)));
+  };
+  const pend=state.tasks.filter(t=>!t._sid && (t.detail||'').trim() && who(t).length);
   if(!pend.length) return;
   autoShareBusy=true;
   try{
-    for(const t of pend) await clCreateShare(t, state.catShares[t.categoryId]);
+    for(const t of pend) await clCreateShare(t, who(t));
     if(pend.length){ persistLocal(); render(); }
   }catch(e){}
   autoShareBusy=false;
@@ -4597,8 +4660,10 @@ function filterActive(){
 }
 function syncFilterBtn(){
   const b=document.getElementById('btnFilter'); if(!b) return;
-  b.style.background = filterActive()? 'var(--accent-soft)' : '';
+  /* 배경은 다른 버튼과 동일하게 두고, 켜지면 아이콘 색과 점으로만 표시 */
+  b.style.background='';
   b.style.color = filterActive()? 'var(--accent-deep)' : '';
+  b.classList.toggle('filter-on', filterActive());
 }
 /* 기간 필터 범위 계산 */
 function filterRangeBounds(){
@@ -4711,7 +4776,7 @@ document.getElementById('addHolidayBtn').addEventListener('click',()=>{
 });
 
 /* ===================== 불러오기 ===================== */
-document.getElementById('btnAddTop').addEventListener('click', addTask);
+document.getElementById('btnAddTop').addEventListener('click', ()=>addTask(false));
 document.getElementById('btnSave').addEventListener('click', async ()=>{
   if(CLOUD_MODE){
     if(!cloudUser){ showGate(); return; }
@@ -4839,12 +4904,14 @@ document.addEventListener('mousemove',(e)=>{
   }
   barDrag.moved=true;
   if(!barDrag.unlocked){ unlockSort(); barDrag.unlocked=true; }
-  delete task.pinBottom;
+  delete task.pinBottom; delete task.pinNew;
+  dragFreeze=true;          /* 드래그 중에는 행 순서 고정 */
   buildBody();
 });
 document.addEventListener('mouseup',()=>{
   if(!barDrag) return;
   document.body.style.cursor='';
+  dragFreeze=false;          /* 손을 떼는 순간 재정렬 */
   if(!barDrag.moved && histUndo.length){ histUndo.pop(); updateUndoButtons(); }
   document.querySelectorAll('#leftBody .lrow.drop-target').forEach(r=>r.classList.remove('drop-target'));
   if(barDrag.axis==='v' && barDrag.moved){
@@ -6171,7 +6238,10 @@ function renderMobileList(){
 
 /* ===== 상세 시트 ===== */
 let mSheetTaskId=null;
-function mCurTask(){ return mSheetTaskId? state.tasks.find(t=>t.id===mSheetTaskId) : null; }
+function mCurTask(){
+  if(mDraft && mSheetTaskId===mDraft.id) return mDraft;
+  return mSheetTaskId? state.tasks.find(t=>t.id===mSheetTaskId) : null;
+}
 
 function mFillCampSelect(task){
   const sel=document.getElementById('msCamp');
@@ -6186,8 +6256,13 @@ function mFillCampSelect(task){
 }
 
 function openMSheet(id){
-  const t=state.tasks.find(x=>x.id===id); if(!t) return;
+  const t=(mDraft && mDraft.id===id)? mDraft : state.tasks.find(x=>x.id===id);
+  if(!t) return;
   mSheetTaskId=id;
+  const isNew=!!(mDraft && mDraft.id===id);
+  document.getElementById('msDel').style.display = isNew? 'none' : '';   /* 새 일정엔 삭제 없음 */
+  document.getElementById('msOk').textContent = isNew? '등록' : '확인';
+  const hd=document.querySelector('#mSheet .ms-head b'); if(hd) hd.textContent = isNew? '새 일정' : '일정 상세';
   document.getElementById('msDetail').value=t.detail||'';
   document.getElementById('msLink').value=t.link||'';
   document.getElementById('msT1').value=t.startTime||'';
@@ -6202,6 +6277,7 @@ function openMSheet(id){
   document.getElementById('mSheet').classList.remove('hidden');
 }
 function closeMSheet(){
+  mDraft=null;                 /* 등록하지 않고 닫으면 버림 */
   mSheetTaskId=null;
   document.getElementById('mSheet').classList.add('hidden');
 }
@@ -6223,9 +6299,11 @@ function mPaintSheet(){
 }
 function mApply(fn, label){
   const t=mCurTask(); if(!t) return;
-  if(label) pushHistory(label);
+  const isDraft=!!(mDraft && t===mDraft);
+  if(label && !isDraft) pushHistory(label);
   fn(t);
-  saveAll(); renderMobileList(); mPaintSheet();
+  if(!isDraft){ saveAll(); renderMobileList(); }
+  mPaintSheet();
 }
 
 /* 상세 시트 이벤트 */
@@ -6235,7 +6313,10 @@ function mApply(fn, label){
 
   $('msBack').addEventListener('click', closeMSheet);
   $('msClose').addEventListener('click', closeMSheet);
-  $('msOk').addEventListener('click', closeMSheet);
+  $('msOk').addEventListener('click',()=>{
+    if(mDraft && mSheetTaskId===mDraft.id){ if(!mCommitDraft()) return; }
+    closeMSheet();
+  });
 
   $('msDetail').addEventListener('input',()=>{
     const t=mCurTask(); if(!t) return;
@@ -6425,11 +6506,11 @@ function closeVoice(){
   const el=document.getElementById('mVoice'); if(el) el.classList.add('hidden');
 }
 function vzReset(){
-  vzParsed=null;
+  vzParsed=null; vzAdded=false;
   document.getElementById('mvHeard').textContent='';
   document.getElementById('mvResult').classList.add('hidden');
   document.getElementById('mvSave').classList.add('hidden');
-  document.getElementById('mvStatus').textContent='마이크를 누르고 말해 주세요';
+  document.getElementById('mvStatus').textContent='마이크를 누르고 말해 주세요 (말하면 바로 등록돼요)';
   document.getElementById('mvOrb').classList.remove('rec');
 }
 let vzTimeout=null;
@@ -6450,7 +6531,7 @@ function vzStart(){
     let txt='';
     for(let i=0;i<e.results.length;i++) txt+=e.results[i][0].transcript;
     document.getElementById('mvHeard').textContent=txt;
-    if(e.results[e.results.length-1].isFinal) vzShowResult(txt);
+    if(e.results[e.results.length-1].isFinal){ vzStop(); vzQuickAdd(txt); }
   };
   vzRec.onerror=(e)=>{
     vzListening=false; clearTimeout(vzTimeout);
@@ -6465,7 +6546,7 @@ function vzStart(){
     vzListening=false; clearTimeout(vzTimeout);
     document.getElementById('mvOrb').classList.remove('rec');
     const heard=document.getElementById('mvHeard').textContent.trim();
-    if(heard && !vzParsed) vzShowResult(heard);
+    if(heard && !vzParsed) vzQuickAdd(heard);
   };
   try{ vzRec.start(); }catch(e){
     vzListening=false;
@@ -6493,7 +6574,27 @@ function vzStop(){
   vzListening=false;
   const o=document.getElementById('mvOrb'); if(o) o.classList.remove('rec');
 }
-/* 인식 결과를 확인 카드로 보여줌 — 바로 등록하지 않음 */
+/* 인식되는 즉시 등록 */
+let vzAdded=false;
+function vzQuickAdd(text){
+  if(vzAdded) return;                 /* onresult·onend 중복 호출 방지 */
+  if(!state||!state.categories) return;
+  vzAdded=true;
+  const p=vzParse(text);
+  const detail=(p.detail||text||'').trim();
+  if(!detail) return;
+  pushHistory('음성으로 일정 추가');
+  const t={id:uid(), categoryId:state.categories[0].id, campaignId:null,
+           detail:detail+' (음성인식으로 등록)', done:false, important:false,
+           start:p.date, end:p.date, startTime:p.time||'', endTime:'', repeat:null, link:''};
+  state.tasks.push(t);
+  state.tasks.forEach((x,i)=>{ x._seq=i; });
+  saveAll(); renderMobileList();
+  const st=document.getElementById('mvStatus');
+  if(st) st.textContent='등록했어요: '+detail+' · '+p.date+(p.time?(' '+p.time):'');
+  setTimeout(closeVoice, 1400);
+}
+/* 인식 결과를 확인 카드로 보여줌 (직접 입력 대비용) */
 function vzShowResult(text){
   if(!state||!state.categories) return;
   const p=vzParse(text);
@@ -6524,7 +6625,9 @@ function vzCommit(){
   const catId=document.getElementById('mvCat').value||state.categories[0].id;
   if(!detail){ alert('내용을 입력해 주세요.'); return; }
   pushHistory('음성으로 일정 추가');
-  const t={id:uid(), categoryId:catId, campaignId:null, detail, done:false, important:false,
+  const t={id:uid(), categoryId:catId, campaignId:null,
+           detail: detail+(/\(음성인식으로 등록\)$/.test(detail)?'':' (음성인식으로 등록)'),
+           done:false, important:false,
            start:dstr, end:dstr, startTime:tstr, endTime:'', repeat:null, link:''};
   state.tasks.push(t);
   state.tasks.forEach((x,i)=>{ x._seq=i; });
@@ -6651,7 +6754,7 @@ function baWalkTo(x,y,done){
   const dist=Math.hypot(dx,dy);
   if(dist<4){ baSetAct('idle'); done&&done(); return; }
   baFaceDir(dx);
-  const dur=Math.min(22, Math.max(1.2, dist/17));   /* 아주 느긋하게 약 17px/s */
+  const dur=Math.min(40, Math.max(2.2, dist/7));   /* 산책하듯 약 7px/s */
   el.style.transition='left '+dur+'s linear, top '+dur+'s linear';
   baSetAct('walk');
   baPlace(x,y);
@@ -6705,10 +6808,15 @@ function baCurious(){
   const a=baArea();
   /* 대상 옆(왼쪽 또는 오른쪽)에 서기 */
   const w=el.offsetWidth||52;
-  let tx=t.x-w-8, side=-1;
-  if(tx<a.x1){ tx=t.x+t.w+8; side=1; }
-  tx=Math.min(Math.max(tx, a.x1-30), a.x2);
   const ty=Math.min(Math.max(t.cy-30, a.y1-30), a.y2);
+  /* 왼쪽 → 오른쪽 순으로 서 볼 자리를 찾되, 겹치면 포기하고 빈자리로 */
+  let tx=null, side=-1;
+  const cand=[[t.x-w-12,-1],[t.x+t.w+12,1]];
+  for(const [cx,sd] of cand){
+    const px=Math.min(Math.max(cx, a.x1-30), a.x2);
+    if(!baHits(px, ty)){ tx=px; side=sd; break; }
+  }
+  if(tx===null){ const f=baFreeSpot(); baWalkTo(f.x, f.y); return; }
   baWalkTo(tx, ty, ()=>{
     baFaceDir(side>0? -1 : 1);      /* 대상 쪽을 바라봄 */
     baSetAct('poke', 3200);
@@ -7058,9 +7166,10 @@ function syncMFilterBtn(){
         || (state.settings.filterCampaign&&state.settings.filterCampaign!=='all')
         || !!state.settings.filterIncomplete;
   /* 다른 아이콘과 같은 밝은 배경 유지 — 켜졌을 때만 은은하게 */
-  b.style.background = on? 'var(--accent-soft)' : '';
+  b.style.background='';                      /* 항상 다른 아이콘과 같은 흰 배경 */
   b.style.color = on? 'var(--accent-deep)' : '';
-  b.classList.toggle('on', !!on);
+  b.classList.toggle('filter-on', !!on);
+  b.classList.remove('on');
 }
 
 /* 모바일 동료 시트 */
@@ -7148,16 +7257,24 @@ function mHistory(uid){
 }
 
 /* ===== 모바일 상단바 ===== */
+let mDraft=null;                 /* 확인을 누르기 전까지는 목록에 넣지 않음 */
 function mAddTask(){
   const catId=state.categories[0].id;
-  const t={id:uid(), categoryId:catId, campaignId:null, detail:'', done:false, important:false,
-           start:todayStr(), end:todayStr(), startTime:'', endTime:'', repeat:null, link:''};
-  pushHistory('일정 추가');
-  state.tasks.push(t);
-  state.tasks.forEach((x,i)=>{ x._seq=i; });
-  saveAll(); renderMobileList();
-  openMSheet(t.id);
+  mDraft={id:uid(), categoryId:catId, campaignId:null, detail:'', done:false, important:false,
+          start:todayStr(), end:todayStr(), startTime:'', endTime:'', repeat:null, link:''};
+  openMSheet(mDraft.id);
   setTimeout(()=>{ const d=document.getElementById('msDetail'); if(d) d.focus(); }, 60);
+}
+/* 작성 중인 새 일정을 실제로 등록 */
+function mCommitDraft(){
+  if(!mDraft) return false;
+  if(!(mDraft.detail||'').trim()){ alert('내용을 입력해 주세요.'); return false; }
+  pushHistory('일정 추가');
+  state.tasks.push(mDraft);
+  state.tasks.forEach((x,i)=>{ x._seq=i; });
+  mDraft=null;
+  saveAll(); renderMobileList();
+  return true;
 }
 function mSyncTop(){
   if(!IS_MOBILE) return;
