@@ -600,8 +600,22 @@ body.theme-excel .save-btn .sv-sub{color:rgba(255,255,255,0.75);}
 .mh-emo-pick button{border:1px solid var(--border);background:var(--panel);border-radius:8px;width:30px;height:28px;font-size:15px;cursor:pointer;padding:0;}
 .mh-emo-pick button:hover{background:var(--accent-soft);}
 .mh-player{width:0;height:0;overflow:hidden;}
+.mh-songs{max-height:150px;overflow:auto;margin-top:6px;display:flex;flex-direction:column;gap:3px;}
+.mh-songs .sg{display:flex;align-items:center;gap:7px;padding:5px 6px;border-radius:8px;cursor:pointer;border:1px solid transparent;}
+.mh-songs .sg:hover{background:var(--accent-soft);border-color:var(--accent);}
+.mh-songs .sg img{width:30px;height:30px;border-radius:5px;flex:0 0 auto;}
+.mh-songs .sg .sg-t{flex:1;min-width:0;font-size:calc(11px * var(--fs,1));line-height:1.3;}
+.mh-songs .sg .sg-t b{display:block;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.mh-songs .sg .sg-t small{color:var(--text-dim);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block;}
+.mh-now{margin-top:7px;display:flex;align-items:center;gap:8px;font-size:calc(11.5px * var(--fs,1));}
+.mh-now img{width:34px;height:34px;border-radius:6px;}
+.mh-now .nw-t{flex:1;min-width:0;}
+.mh-now .nw-t b{display:block;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.mh-now .nw-t small{color:var(--text-dim);display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.mh-now a{font-size:calc(10.5px * var(--fs,1));color:var(--accent-deep);text-decoration:none;white-space:nowrap;}
+.mh-now a:hover{text-decoration:underline;}
 /* 마이룸 */
-.mh-room{position:relative;flex:1;min-height:260px;border-radius:10px;overflow:hidden;border:1px solid var(--border-strong);background:#EFE6D8;}
+.mh-room{position:relative;width:100%;aspect-ratio:4/3;min-height:0;flex:0 0 auto;border-radius:10px;overflow:hidden;border:1px solid var(--border-strong);background:#EFE6D8;}
 .mh-room .rm-wall{position:absolute;left:0;right:0;top:0;height:62%;}
 .mh-room .rm-floor{position:absolute;left:0;right:0;bottom:0;height:38%;}
 .mh-room .rm-it{position:absolute;transform:translate(-50%,-100%);cursor:grab;user-select:none;line-height:1;}
@@ -609,7 +623,7 @@ body.theme-excel .save-btn .sv-sub{color:rgba(255,255,255,0.75);}
 .mh-room .rm-it svg{display:block;}
 .mh-room .rm-me{position:absolute;transform:translate(-50%,-100%);width:64px;height:96px;pointer-events:none;}
 .mh-room .rm-me svg{width:100%;height:100%;display:block;}
-.mh-tools{margin-top:8px;border-top:1px solid var(--border);padding-top:8px;}
+.mh-tools{margin-top:8px;border-top:1px solid var(--border);padding-top:8px;max-height:190px;overflow:auto;}
 .mh-tools.hidden{display:none;}
 .mh-tools .tl-row{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px;}
 .mh-tools .tl-row button{border:1px solid var(--border-strong);background:var(--panel);border-radius:8px;padding:4px 8px;font-size:calc(10.5px * var(--fs,1));cursor:pointer;font-family:inherit;color:var(--text);}
@@ -1601,20 +1615,26 @@ null
             <div class="field-label">상태메시지</div>
             <div class="row">
               <button class="btn mh-emo" id="mhEmo" title="기분 고르기">😊</button>
-              <input type="text" id="mhStatus" maxlength="60" placeholder="한 줄로 남겨보세요" style="flex:1;padding:7px 9px;border:1px solid var(--border-strong);border-radius:6px;font-size:calc(12px * var(--fs,1));font-family:inherit;">
+              <input type="text" id="mhStatus" maxlength="60" placeholder="한 줄로 남겨보세요" readonly style="flex:1;padding:7px 9px;border:1px solid var(--border-strong);border-radius:6px;font-size:calc(12px * var(--fs,1));font-family:inherit;">
+              <button class="btn" id="mhStatusEdit" title="상태메시지 수정">✏️</button>
+              <button class="btn primary hidden" id="mhStatusSave">저장</button>
             </div>
             <div class="mh-emo-pick hidden" id="mhEmoPick"></div>
           </div>
 
           <div class="mh-card">
-            <div class="field-label">배경음악 (유튜브)</div>
-            <div class="row">
-              <input type="text" id="mhBgm" placeholder="유튜브 주소 붙여넣기" autocomplete="off" style="flex:1;padding:7px 9px;border:1px solid var(--border-strong);border-radius:6px;font-size:calc(11.5px * var(--fs,1));font-family:inherit;">
+            <div class="field-label">배경음악</div>
+            <div class="row" id="mhSearchRow">
+              <input type="text" id="mhSong" placeholder="노래 제목 · 가수 검색" autocomplete="off" style="flex:1;padding:7px 9px;border:1px solid var(--border-strong);border-radius:6px;font-size:calc(11.5px * var(--fs,1));font-family:inherit;">
+              <button class="btn" id="mhSongGo">검색</button>
             </div>
+            <div id="mhSongList" class="mh-songs"></div>
+            <div class="mh-now" id="mhNow"></div>
             <div class="row" style="margin-top:6px;">
               <button class="btn" id="mhPlay" style="flex:1;">▶ 듣기</button>
               <button class="btn" id="mhStop">■ 정지</button>
             </div>
+            <audio id="mhAudio" style="display:none;"></audio>
             <div id="mhPlayer" class="mh-player"></div>
             <div class="hint" id="mhBgmMsg" style="margin-top:4px;"></div>
           </div>
@@ -1637,7 +1657,6 @@ null
             <div class="field-label">방명록</div>
             <div id="mhGuest" class="mh-guest"></div>
             <div class="mh-gb-write">
-              <div class="mh-stk" id="mhStkPick"></div>
               <div class="row">
                 <input type="text" id="mhGbIn" placeholder="방명록을 남겨보세요" autocomplete="off" style="flex:1;padding:7px 9px;border:1px solid var(--border-strong);border-radius:6px;font-size:calc(12px * var(--fs,1));font-family:inherit;">
                 <button class="btn primary" id="mhGbSend">남기기</button>
@@ -2104,7 +2123,7 @@ function exportBackup(){
 
 function updateFileStatusHint(t){ const el=document.getElementById('fileStatusHint'); if(el) el.textContent=t; }
 /* ═══════════════ 클라우드 저장 (Supabase) ═══════════════ */
-const APP_VER='ver 6.0', APP_BUILD='2026-08-07 21:00';
+const APP_VER='ver 6.1', APP_BUILD='2026-08-07 23:00';
 const LOGO_SRC='data:image/png;base64,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';
 function paintLogos(){ document.querySelectorAll('img.tdl-logo').forEach(i=>{ i.src=LOGO_SRC; }); }
 const IS_WEB = /^https?:$/i.test(location.protocol);
@@ -2714,6 +2733,10 @@ function buildBody(){
     pen.addEventListener('mousedown',(e)=>{ e.preventDefault(); e.stopPropagation(); });
     pen.addEventListener('click',(e)=>{
       e.preventDefault(); e.stopPropagation();
+      /* 같은 연필을 다시 누르면 닫기 */
+      if(!ctxMenu.classList.contains('hidden') && ctxTaskId===task.id){
+        ctxMenu.classList.add('hidden'); ctxTaskId=null; return;
+      }
       const r=pen.getBoundingClientRect();
       openTaskMenu(task.id, r.left-118, r.bottom+4, r.top);
     });
@@ -3475,7 +3498,8 @@ function openTaskMenu(taskId, x, y, anchorTop){
   ctxMenu.style.left=x+'px'; ctxMenu.style.top=y+'px';
   ctxMenu.style.visibility='';
 }
-document.addEventListener('click',(e)=>{ if(!ctxMenu.contains(e.target)) ctxMenu.classList.add('hidden'); });
+document.addEventListener('click',(e)=>{ if(!ctxMenu.contains(e.target) && !e.target.closest('.row-pen')) ctxMenu.classList.add('hidden'); });
+document.addEventListener('keydown',(e)=>{ if(e.key==='Escape' && !ctxMenu.classList.contains('hidden')){ ctxMenu.classList.add('hidden'); ctxTaskId=null; } }, true);
 document.addEventListener('scroll',()=>ctxMenu.classList.add('hidden'),true);
 function duplicateTask(id){
   const src=state.tasks.find(t=>t.id===id); if(!src) return;
@@ -4800,21 +4824,80 @@ function mhFlash(t){
   mhFlash._t=setTimeout(()=>{ e.textContent=''; }, 1600);
 }
 
-/* ── 배경음악 ── */
-function mhYtId(u){
-  const m=String(u||'').match(/(?:youtu\.be\/|v=|embed\/|shorts\/)([A-Za-z0-9_-]{11})/);
-  return m? m[1] : '';
+/* ── 배경음악: 곡 검색 (Apple iTunes 공개 검색 API · 키 불필요) ── */
+let mhSongs=[];
+function mhBgmObj(){
+  /* bgm 컬럼에 JSON 문자열로 곡 정보를 담음 (구버전 유튜브 주소도 호환) */
+  const raw=mhProfile().bgm||'';
+  if(!raw) return null;
+  try{ const o=JSON.parse(raw); if(o&&o.t) return o; }catch(e){}
+  return {t:'배경음악', a:'', url:raw, prev:'', art:''};
+}
+async function mhSearchSong(){
+  const q=(document.getElementById('mhSong').value||'').trim();
+  const box=document.getElementById('mhSongList');
+  const msg=document.getElementById('mhBgmMsg');
+  if(!q){ box.innerHTML=''; return; }
+  msg.textContent='찾는 중…'; box.innerHTML='';
+  try{
+    const r=await fetch('https://itunes.apple.com/search?media=music&limit=12&country=KR&term='+encodeURIComponent(q));
+    const j=await r.json();
+    mhSongs=(j.results||[]).map(x=>({
+      t:x.trackName||'', a:x.artistName||'', art:x.artworkUrl60||'',
+      prev:x.previewUrl||'', url:x.trackViewUrl||''
+    })).filter(x=>x.t);
+    if(!mhSongs.length){ msg.textContent='검색 결과가 없어요.'; return; }
+    msg.textContent='';
+    mhSongs.forEach((s,i)=>{
+      const el=document.createElement('div'); el.className='sg';
+      el.innerHTML=(s.art?'<img src="'+s.art+'" alt="">':'')
+        +'<div class="sg-t"><b>'+escapeHtml(s.t)+'</b><small>'+escapeHtml(s.a)+'</small></div>';
+      el.addEventListener('click',()=>mhPickSong(i));
+      box.appendChild(el);
+    });
+  }catch(e){
+    msg.textContent='검색에 실패했어요. 잠시 후 다시 시도해 주세요.';
+  }
+}
+async function mhPickSong(i){
+  const s=mhSongs[i]; if(!s) return;
+  document.getElementById('mhSongList').innerHTML='';
+  document.getElementById('mhSong').value='';
+  if(mhIsMine() && clOn()){
+    try{
+      await sb.from('profiles').upsert({user_id:cloudUser.id, bgm:JSON.stringify(s), updated_at:new Date().toISOString()},{onConflict:'user_id'});
+      const c=clProfiles[cloudUser.id]||(clProfiles[cloudUser.id]={});
+      c.bgm=JSON.stringify(s);
+      mhFlash('배경음악 저장됨');
+    }catch(e){}
+  }
+  mhPaintNow();
+}
+function mhPaintNow(){
+  const box=document.getElementById('mhNow'); if(!box) return;
+  const s=mhBgmObj();
+  if(!s){ box.innerHTML='<span class="hint" style="margin:0;">아직 선택한 곡이 없어요.</span>'; return; }
+  const search='https://www.melon.com/search/total/index.htm?q='+encodeURIComponent(s.t+' '+s.a);
+  box.innerHTML=(s.art?'<img src="'+s.art+'" alt="">':'')
+    +'<div class="nw-t"><b>'+escapeHtml(s.t)+'</b><small>'+escapeHtml(s.a)+'</small></div>'
+    +'<a href="'+escapeHtml(s.url||search)+'" target="_blank" rel="noopener">듣기 ↗</a>';
 }
 function mhPlayBgm(){
-  const url=mhIsMine()? document.getElementById('mhBgm').value : mhProfile().bgm;
-  const id=mhYtId(url);
+  const s=mhBgmObj();
   const msg=document.getElementById('mhBgmMsg');
-  if(!id){ msg.textContent='유튜브 주소를 확인해 주세요. (예: https://youtu.be/XXXXXXXXXXX)'; return; }
-  document.getElementById('mhPlayer').innerHTML=
-    '<iframe width="1" height="1" src="https://www.youtube.com/embed/'+id+'?autoplay=1&loop=1&playlist='+id+'" allow="autoplay" frameborder="0"></iframe>';
-  msg.textContent='재생 중이에요 🎵';
+  const au=document.getElementById('mhAudio');
+  if(!s){ msg.textContent='먼저 노래를 검색해서 골라주세요.'; return; }
+  if(s.prev){
+    au.src=s.prev; au.loop=true;
+    au.play().then(()=>{ msg.textContent='미리듣기 재생 중 🎵 (30초)'; })
+             .catch(()=>{ msg.textContent='재생하려면 한 번 더 눌러주세요.'; });
+    return;
+  }
+  msg.textContent='미리듣기가 없는 곡이에요. “듣기 ↗”로 들어보세요.';
 }
 function mhStopBgm(){
+  const au=document.getElementById('mhAudio');
+  if(au){ try{ au.pause(); au.currentTime=0; }catch(e){} }
   document.getElementById('mhPlayer').innerHTML='';
   document.getElementById('mhBgmMsg').textContent='';
 }
@@ -4839,7 +4922,10 @@ function mhRenderGuest(){
   mhGuests.forEach(g=>{
     const row=document.createElement('div'); row.className='mh-gb';
     const av=document.createElement('div'); av.className='gb-av';
-    try{ av.innerHTML=chSvg((clProfiles[g.author]||{}).avatar||{}); }catch(e){}
+    try{
+      const mine=(cloudUser && g.author===cloudUser.id);
+      av.innerHTML=chSvg(mine? lgProfile() : ((clProfiles[g.author]||{}).avatar||{}));
+    }catch(e){}
     const bd=document.createElement('div'); bd.className='gb-body';
     const dt=new Date(g.created_at);
     bd.innerHTML='<span class="gb-who">'+escapeHtml(clName(g.author))+'</span>'
@@ -4859,10 +4945,10 @@ function mhRenderGuest(){
 async function mhSendGuest(){
   const inp=document.getElementById('mhGbIn');
   const body=(inp.value||'').trim();
-  if(!body && !mhStk) return;
+  if(!body) return;
   try{
-    await sb.from('guestbook').insert({owner:mhOwner(), author:cloudUser.id, body:body||' ', sticker:mhStk||''});
-    inp.value=''; mhStk=''; mhRenderStk();
+    await sb.from('guestbook').insert({owner:mhOwner(), author:cloudUser.id, body:body, sticker:''});
+    inp.value='';
     await mhLoadGuest(); mhRenderGuest();
   }catch(e){ alert('방명록 저장 실패: '+(e.message||e)); }
 }
@@ -4887,24 +4973,30 @@ async function mhOpen(userId){
 async function mhRender(){
   const mine=mhIsMine();
   const pf=mhProfile();
-  document.getElementById('mhTitle').textContent = mine? '내 미니홈피' : (pf.nickname+'님의 미니홈피');
+  const label = mine? '내 미니홈피' : (pf.nickname+'님의 미니홈피');
+  document.getElementById('mhTitle').textContent = label;
+  const tab=document.querySelector('.cl-tab[data-ct="ava"]');
+  if(tab) tab.textContent = label;                 /* 탭 이름도 함께 */
   document.getElementById('mhBack').style.display = mine? 'none' : '';
   document.getElementById('mhNick').textContent = pf.nickname||'-';
   try{ document.getElementById('clAvaPrev').innerHTML=chSvg(pf.avatar); }catch(e){}
   /* 상태메시지 */
   const st=document.getElementById('mhStatus'), em=document.getElementById('mhEmo');
-  st.value=pf.status_msg||''; st.readOnly=!mine; st.style.opacity=mine?1:0.75;
+  st.value=pf.status_msg||''; st.readOnly=true; st.style.opacity=1;
   em.textContent=pf.status_emo||'😊'; em.disabled=!mine;
+  document.getElementById('mhStatusEdit').style.display = mine? '' : 'none';
+  document.getElementById('mhStatusSave').classList.add('hidden');
+  document.getElementById('mhEmoPick').classList.add('hidden');
   document.getElementById('mhEditAva').style.display = mine? '' : 'none';
   document.getElementById('mhRoomEdit').style.display = mine? '' : 'none';
-  /* BGM */
-  const bg=document.getElementById('mhBgm');
-  bg.value=pf.bgm||''; bg.readOnly=!mine;
+  /* 배경음악 */
+  document.getElementById('mhSearchRow').style.display = mine? '' : 'none';
+  document.getElementById('mhSongList').innerHTML='';
+  mhPaintNow();
   /* 마이룸 */
   mhRoom = (pf.room && pf.room.items)? JSON.parse(JSON.stringify(pf.room)) : mhRoomDefault();
   mhPaintRoom(); mhRenderTools();
   /* 방명록 */
-  mhRenderStk();
   await mhLoadGuest();
   mhRenderGuest();
 }
@@ -4915,13 +5007,11 @@ async function mhSaveProfileFields(){
       user_id:cloudUser.id,
       status_msg:document.getElementById('mhStatus').value.slice(0,60),
       status_emo:document.getElementById('mhEmo').textContent||'😊',
-      bgm:document.getElementById('mhBgm').value.trim(),
       updated_at:new Date().toISOString()
     },{onConflict:'user_id'});
     const c=clProfiles[cloudUser.id]||(clProfiles[cloudUser.id]={});
     c.status_msg=document.getElementById('mhStatus').value;
     c.status_emo=document.getElementById('mhEmo').textContent;
-    c.bgm=document.getElementById('mhBgm').value.trim();
     mhFlash('저장됨');
   }catch(e){}
 }
@@ -5068,10 +5158,24 @@ document.getElementById('clAvaSave').addEventListener('click', clSaveAva);
 document.getElementById('clAvaClose').addEventListener('click', ()=>{ hideModals(); showModal('collabModal'); clSetTab('ava'); });
 document.getElementById('mhEditAva').addEventListener('click', ()=>{ showModal('avaEditModal'); clRenderAva(); });
 document.getElementById('mhBack').addEventListener('click', ()=>mhOpen(null));
-document.getElementById('mhStatus').addEventListener('change', mhSaveProfileFields);
-document.getElementById('mhStatus').addEventListener('keydown',(e)=>{ e.stopPropagation(); if(e.key==='Enter'){ e.preventDefault(); mhSaveProfileFields(); } });
-document.getElementById('mhBgm').addEventListener('change', mhSaveProfileFields);
-document.getElementById('mhBgm').addEventListener('keydown',(e)=>e.stopPropagation());
+function mhStatusEditMode(on){
+  const st=document.getElementById('mhStatus');
+  st.readOnly=!on;
+  document.getElementById('mhStatusEdit').classList.toggle('hidden', on);
+  document.getElementById('mhStatusSave').classList.toggle('hidden', !on);
+  if(on){ st.focus(); st.select(); }
+}
+document.getElementById('mhStatusEdit').addEventListener('click',()=>mhStatusEditMode(true));
+document.getElementById('mhStatusSave').addEventListener('click', async ()=>{
+  await mhSaveProfileFields(); mhStatusEditMode(false);
+});
+document.getElementById('mhStatus').addEventListener('keydown',(e)=>{
+  e.stopPropagation();
+  if(e.key==='Enter'){ e.preventDefault(); mhSaveProfileFields().then(()=>mhStatusEditMode(false)); }
+  if(e.key==='Escape'){ e.preventDefault(); mhRender(); }
+});
+document.getElementById('mhSongGo').addEventListener('click', mhSearchSong);
+document.getElementById('mhSong').addEventListener('keydown',(e)=>{ e.stopPropagation(); if(e.key==='Enter'){ e.preventDefault(); mhSearchSong(); } });
 document.getElementById('mhPlay').addEventListener('click', mhPlayBgm);
 document.getElementById('mhStop').addEventListener('click', mhStopBgm);
 document.getElementById('mhGbSend').addEventListener('click', mhSendGuest);
@@ -8897,11 +9001,13 @@ function lgTick(){
 /* ---------- 캐릭터 만들기 ---------- */
 let lgDraft=null;
 function lgProfile(){
-  let pf=null;
+  let pf=null, fresh=false;
   try{ pf=JSON.parse(localStorage.getItem('tdl_lounge2')||'null'); }catch(e){}
-  if(!pf||typeof pf!=='object') pf=chRandom();
+  if(!pf||typeof pf!=='object'){ pf=chRandom(); fresh=true; }
   if(!pf.name){ const em=(cloudUser&&cloudUser.email)||''; pf.name = em? em.split('@')[0].slice(0,12) : ''; }
   ['sk','hs','hc','tp','bt','tt','pt','fc'].forEach(k=>{ if(typeof pf[k]!=='number') pf[k]=0; });
+  /* 처음 만든 캐릭터는 바로 저장 — 호출할 때마다 모습이 바뀌지 않도록 */
+  if(fresh){ try{ localStorage.setItem('tdl_lounge2', JSON.stringify(pf)); }catch(e){} }
   return pf;
 }
 function lgSaveProfile(){
