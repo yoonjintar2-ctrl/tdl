@@ -358,7 +358,7 @@ body.mob #mMicFab:active{transform:scale(0.93);}
 .su-lab{display:block;font-size:calc(11px * var(--fs,1));color:var(--text-dim);font-weight:600;margin:12px 0 5px;}
 #setupGate input{width:100%;padding:10px 12px;border:none;background:var(--bg);border-radius:12px;font-size:calc(12px * var(--fs,1));font-family:inherit;color:var(--text);outline:none;}
 .su-btns{display:flex;gap:6px;margin-top:16px;flex-wrap:wrap;}
-#userChip{display:flex;align-items:center;gap:6px;background:var(--bg);border-radius:20px;padding:4px 6px 4px 11px;font-size:calc(11px * var(--fs,1));color:var(--text-dim);white-space:nowrap;}
+#userChip{display:flex;align-items:center;gap:8px;}
 #userChip.hidden{display:none;}
 #userChip b{color:var(--text);font-weight:600;max-width:150px;overflow:hidden;text-overflow:ellipsis;}
 #userChip button{border:none;background:transparent;color:var(--text-dim);cursor:pointer;font-family:inherit;font-size:calc(10.5px * var(--fs,1));padding:3px 7px;border-radius:14px;}
@@ -382,10 +382,12 @@ body{font-family:var(--user-font,-apple-system,BlinkMacSystemFont,"Apple SD Goth
 #filters input[type=checkbox]{accent-color:var(--accent);cursor:pointer;}
 #filters select{background:var(--bg);color:var(--text);border:none;border-radius:20px;padding:6px 10px;font-size:calc(11.5px * var(--fs,1));font-family:inherit;cursor:pointer;}
 #histGroup{display:flex;align-items:center;gap:6px;flex:0 0 auto;}
-#topbar-right{display:flex;align-items:center;gap:6px;flex:0 0 auto;min-width:0;justify-content:flex-end;}
+#topbar-right{display:flex;align-items:center;gap:6px;flex:0 0 auto;min-width:0;justify-content:flex-end;margin-left:auto;}
 #newsTicker{flex:1 1 auto;min-width:0;overflow:hidden;white-space:nowrap;height:22px;position:relative;}
 #newsText{position:absolute;left:0;top:50%;margin-top:-8px;display:inline-block;font-size:calc(11.5px * var(--fs,1));line-height:calc(16px * var(--fs,1));color:var(--text-dim);opacity:0;white-space:nowrap;cursor:pointer;letter-spacing:-0.1px;will-change:transform;}
 #newsText:hover{color:var(--text);}
+#newsText .nw-it:hover{color:var(--accent-deep);text-decoration:underline;}
+#newsText .nw-sep{color:var(--accent);opacity:0.55;}
 #newsText.run{animation:newsPass var(--ndur,12s) linear forwards;}
 @keyframes newsPass{
   0%{transform:translateX(var(--nx0,100%));opacity:0;}
@@ -906,15 +908,20 @@ null
     <div id="topbarRow1">
       <div class="brand"><img class="tdl-logo" alt=""><span>TDL<span>.</span></span></div>
       <div id="filters">
-        <button class="tb-btn add-top" id="btnAddTop" title="새 일정 추가 (목록 맨 위에 생기고 바로 입력할 수 있어요)">＋ 일정 추가</button>
-        <button class="tb-btn" id="btnSearch" title="검색" style="position:relative;">🔍 검색<span id="searchDot" class="hidden" style="position:absolute;top:3px;right:5px;width:6px;height:6px;border-radius:50%;background:var(--accent);"></span></button>
+        <button class="tb-btn add-top" id="btnAddTop" title="새 일정 추가 (목록 맨 위에 생기고 바로 입력할 수 있어요)">＋ 일정</button>
+        <button class="tb-btn" id="btnSearch" title="검색" style="padding-left:11px;padding-right:11px;">🔍</button>
         <label><input type="checkbox" id="fltIncomplete"> 완료 숨김</label>
-        <button class="lock-toggle" id="btnDateLock" type="button" role="switch" aria-checked="false">
-          <span class="lt-label">기간으로 정렬</span>
+        <button class="lock-toggle" id="btnDateLock" type="button" role="switch" aria-checked="false" title="기간순 정렬">
+          <span class="lt-label">기간순</span>
           <span class="lt-track"><span class="lt-knob"></span></span>
-          <span class="lt-state">Unlock</span>
         </button>
         <button class="tb-btn" id="btnGoToday" title="오늘로 돌아가기">오늘로</button>
+      </div>
+      <div id="topbar-right">
+        <button class="tb-btn save-btn" id="btnSave"><span class="sv-main">💾 저장</span><span class="sv-sub" id="svSub">연결 필요</span></button>
+        <button class="tb-btn" id="btnCollab" title="동료 · 쪽지 · 아바타" style="position:relative;">👥 동료<span id="collabDot" class="hidden"></span></button>
+        <button class="tb-btn" id="btnQr" title="휴대폰으로 접속할 수 있는 QR 코드">📱 모바일</button>
+        <button class="tb-btn" id="btnSettings" title="설정" style="padding-left:11px;padding-right:11px;">⚙</button>
       </div>
     </div>
     <div id="topbarRow2">
@@ -923,13 +930,6 @@ null
         <button class="tb-btn hist-btn" id="btnRedoSort" style="padding:5px 12px;" title="다시 실행 (Ctrl+Shift+Z)">↷ 다시실행</button>
       </div>
       <div id="newsTicker" title="실시간 주요 뉴스 · 클릭하면 기사로 이동"><span id="newsText"></span></div>
-      <div id="topbar-right">
-        <button class="tb-btn save-btn" id="btnSave"><span class="sv-main">💾 저장</span><span class="sv-sub" id="svSub">연결 필요</span></button>
-        <div id="userChip" class="hidden"><b id="userEmail"></b><button id="btnSignOut">로그아웃</button></div>
-        <button class="tb-btn" id="btnCollab" title="동료 · 쪽지 · 아바타" style="position:relative;">👥 동료<span id="collabDot" class="hidden"></span></button>
-        <button class="tb-btn" id="btnQr" title="휴대폰으로 접속할 수 있는 QR 코드">📱 모바일 접속</button>
-        <button class="tb-btn" id="btnSettings">⚙ 설정</button>
-      </div>
     </div>
     <input type="file" id="importInput" accept=".json" style="display:none;">
   </div>
@@ -1290,6 +1290,11 @@ null
     <div class="hint" id="fileStatusHint">브라우저 저장소에 자동 저장 중입니다.</div>
     <div class="hint" id="cloudHint" style="display:none;">☁ 로그인 계정에 자동 저장됩니다. 다른 기기에서 같은 구글 계정으로 로그인하면 그대로 이어집니다.</div>
     <div class="hint">일정·메모·스티커·설정이 <b>모두 이 HTML 파일 안에</b> 저장됩니다. 파일 하나만 복사하거나 보내면 그대로 열려요.<br><br>웹페이지는 보안상 자기가 열린 파일의 경로를 알 수 없어서, <b>맨 처음 한 번만</b> 이 html 파일을 직접 골라야 합니다. 그 뒤로는 선택창 없이 <b>권한 승인 한 번</b>이면 이어서 자동 저장됩니다.</div>
+    <div class="field-label">계정</div>
+    <div class="row hidden" id="userChip">
+      <b id="userEmail" style="flex:1;font-size:calc(12px * var(--fs,1));color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></b>
+      <button class="btn" id="btnSignOut">로그아웃</button>
+    </div>
     <div class="field-label">기타</div>
     <div class="row">
       <button class="btn" id="openHolidayFromSettings">📅 공휴일 관리</button>
@@ -1318,7 +1323,6 @@ null
     <h2>👥 동료</h2>
     <div class="cl-tabs">
       <button class="cl-tab on" data-ct="buddy">동료</button>
-      <button class="cl-tab" data-ct="msg">쪽지</button>
       <button class="cl-tab" data-ct="ava">아바타</button>
     </div>
 
@@ -1335,17 +1339,6 @@ null
       <div id="clBuddyList" class="cl-list"></div>
     </div>
 
-    <div class="cl-pane hidden" id="ctMsg">
-      <div class="row">
-        <select id="clMsgTo" style="flex:1;padding:7px 9px;border:1px solid var(--border-strong);border-radius:6px;font-size:calc(12px * var(--fs,1));font-family:inherit;"></select>
-      </div>
-      <div id="clMsgLog" class="cl-log"></div>
-      <div class="row">
-        <input type="text" id="clMsgIn" placeholder="쪽지 내용" autocomplete="off" style="flex:1;padding:7px 9px;border:1px solid var(--border-strong);border-radius:6px;font-size:calc(12px * var(--fs,1));font-family:inherit;">
-        <button class="btn primary" id="clMsgSend">보내기</button>
-      </div>
-    </div>
-
     <div class="cl-pane hidden" id="ctAva">
       <div class="hint">동료들에게 보여질 닉네임과 캐릭터예요. 탕비실 캐릭터와 같이 적용됩니다.</div>
       <div class="cl-ava-wrap"><div id="clAvaPrev" class="cl-ava"></div></div>
@@ -1360,6 +1353,21 @@ null
     </div>
 
     <div class="modal-actions"><button class="btn" id="closeCollabModal">닫기</button></div>
+  </div>
+
+  <div class="modal hidden" id="composeModal" style="width:380px;">
+    <h2>✉ 쪽지 보내기</h2>
+    <div class="hint">받는 사람: <b id="cmpTo"></b></div>
+    <textarea id="cmpBody" rows="5" placeholder="내용을 입력하세요 (Ctrl+Enter로 보내기)" style="width:100%;padding:9px 10px;border:1px solid var(--border-strong);border-radius:8px;font-size:calc(12.5px * var(--fs,1));font-family:inherit;box-sizing:border-box;resize:vertical;"></textarea>
+    <div class="hint" id="cmpMsg"></div>
+    <div class="modal-actions"><button class="btn" id="cmpCancel">← 동료</button><button class="btn primary" id="cmpSend">보내기</button></div>
+  </div>
+
+  <div class="modal hidden" id="historyModal" style="width:420px;">
+    <h2>📄 쪽지 이력</h2>
+    <div class="hint" id="hstWho"></div>
+    <div id="hstLog" class="cl-log" style="height:300px;"></div>
+    <div class="modal-actions"><button class="btn" id="hstClose">← 동료</button><button class="btn primary" id="hstReply">✉ 답장</button></div>
   </div>
 
   <div class="modal hidden" id="shareModal" style="width:360px;">
@@ -1759,7 +1767,7 @@ function exportBackup(){
 
 function updateFileStatusHint(t){ const el=document.getElementById('fileStatusHint'); if(el) el.textContent=t; }
 /* ═══════════════ 클라우드 저장 (Supabase) ═══════════════ */
-const APP_VER='ver 4.1', APP_BUILD='2026-08-06 20:00';
+const APP_VER='ver 4.4', APP_BUILD='2026-08-06 23:00';
 const LOGO_SRC='data:image/png;base64,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';
 function paintLogos(){ document.querySelectorAll('img.tdl-logo').forEach(i=>{ i.src=LOGO_SRC; }); }
 const IS_WEB = /^https?:$/i.test(location.protocol);
@@ -3517,7 +3525,6 @@ function syncDateLockBtn(){
   const on=dateLocked();
   b.classList.toggle('on', on);
   b.setAttribute('aria-checked', on?'true':'false');
-  const st=b.querySelector('.lt-state'); if(st) st.textContent = on ? 'Lock' : 'Unlock';
   b.title = on
     ? '기간으로 정렬 켜짐 — 항상 시작일 순서로 정렬됩니다. 같은 날짜 안에서는 드래그로 순서를 바꿀 수 있어요. (클릭하면 해제)'
     : '기간으로 정렬 꺼짐 — 직접 배치한 순서를 씁니다. (클릭하면 시작일 순서로 강제 고정)';
@@ -3828,9 +3835,23 @@ function clRenderBuddies(){
     const other = b.requester===me? b.addressee : b.requester;
     const r=document.createElement('div'); r.className='cl-row';
     r.innerHTML='<div class="cl-mini">'+clAvatarSvg(other)+'</div><div class="cl-nm">'+escapeHtml(clName(other))+'<small>'+escapeHtml((clProfiles[other]||{}).email||'')+'</small></div>';
+
+    const send=document.createElement('button'); send.className='btn'; send.textContent='✉ 쪽지';
+    send.title='쪽지 보내기';
+    send.addEventListener('click',()=>openCompose(other));
+
+    const hist=document.createElement('button'); hist.className='btn';
+    const un=clMsgs.filter(m=>m.from_user===other && m.to_user===me && !m.read_at).length;
+    hist.textContent = un? ('📬 '+un) : '📄 이력';
+    if(un) hist.style.background='var(--imp-strong)';
+    hist.title='주고받은 쪽지 보기';
+    hist.addEventListener('click',()=>openHistory(other));
+
     const del=document.createElement('button'); del.className='btn'; del.textContent='삭제';
     del.addEventListener('click',()=>clRemove(b.id));
-    r.appendChild(del); bl.appendChild(r);
+
+    r.appendChild(send); r.appendChild(hist); r.appendChild(del);
+    bl.appendChild(r);
   });
 }
 
@@ -3843,50 +3864,8 @@ async function clLoadMsgs(){
     clUnread=clMsgs.filter(m=>m.to_user===cloudUser.id && !m.read_at).length;
   }catch(e){}
 }
-function clRenderMsgTargets(){
-  const sel=document.getElementById('clMsgTo'); if(!sel) return;
-  const cur=sel.value;
-  sel.innerHTML='';
-  clBuddyIds().forEach(id=>{
-    const o=document.createElement('option'); o.value=id; o.textContent=clName(id); sel.appendChild(o);
-  });
-  if(cur) sel.value=cur;
-}
-function clRenderMsgLog(){
-  const box=document.getElementById('clMsgLog'), sel=document.getElementById('clMsgTo');
-  if(!box||!sel) return;
-  const other=sel.value;
-  box.innerHTML='';
-  if(!other){ box.innerHTML='<div class="hint">동료를 먼저 추가해 주세요.</div>'; return; }
-  const me=cloudUser.id;
-  const list=clMsgs.filter(m=>(m.from_user===me&&m.to_user===other)||(m.from_user===other&&m.to_user===me));
-  if(!list.length){ box.innerHTML='<div class="hint">아직 주고받은 쪽지가 없어요.</div>'; return; }
-  list.forEach(m=>{
-    const el=document.createElement('div');
-    el.className='cl-msg '+(m.from_user===me?'me':'you');
-    const dt=new Date(m.created_at);
-    el.innerHTML=escapeHtml(m.body)+'<span class="cl-when">'+(dt.getMonth()+1)+'/'+dt.getDate()+' '+pad2(dt.getHours())+':'+pad2(dt.getMinutes())+'</span>';
-    box.appendChild(el);
-  });
-  box.scrollTop=box.scrollHeight;
-  /* 읽음 처리 */
-  const unread=list.filter(m=>m.to_user===me && !m.read_at).map(m=>m.id);
-  if(unread.length){
-    sb.from('notes_msg').update({read_at:new Date().toISOString()}).in('id',unread)
-      .then(()=>{ clMsgs.forEach(m=>{ if(unread.includes(m.id)) m.read_at=new Date().toISOString(); }); clUnread=0; clSyncDot(); });
-  }
-}
-async function clSendMsg(){
-  const inp=document.getElementById('clMsgIn'), sel=document.getElementById('clMsgTo');
-  const body=inp.value.trim(), to=sel.value;
-  if(!body||!to) return;
-  inp.value='';
-  try{
-    const {data}=await sb.from('notes_msg').insert({from_user:cloudUser.id,to_user:to,body}).select();
-    if(data&&data[0]) clMsgs.push(data[0]);
-    clRenderMsgLog();
-  }catch(e){ alert('쪽지 전송 실패: '+(e.message||e)); }
-}
+function clRenderMsgTargets(){}
+function clRenderMsgLog(){}
 
 /* ── 아바타 ── */
 function clRenderAva(){
@@ -4080,6 +4059,53 @@ function paintShareLine(task, cbId, whoId, lineId){
   });
 });
 
+/* ── 동료별 쪽지 팝업 ── */
+let msgTargetId=null;
+function openCompose(uid){
+  msgTargetId=uid;
+  document.getElementById('cmpTo').textContent=clName(uid);
+  document.getElementById('cmpBody').value='';
+  document.getElementById('cmpMsg').textContent='';
+  showModal('composeModal');
+  setTimeout(()=>document.getElementById('cmpBody').focus(),40);
+}
+async function sendCompose(){
+  const body=document.getElementById('cmpBody').value.trim();
+  if(!body||!msgTargetId) return;
+  try{
+    const {data,error}=await sb.from('notes_msg').insert({from_user:cloudUser.id,to_user:msgTargetId,body}).select();
+    if(error) throw error;
+    if(data&&data[0]) clMsgs.push(data[0]);
+    document.getElementById('cmpMsg').textContent='보냈어요.';
+    document.getElementById('cmpBody').value='';
+    setTimeout(()=>{ showModal('collabModal'); clRenderBuddies(); },600);
+  }catch(e){ document.getElementById('cmpMsg').textContent='전송 실패: '+(e.message||e); }
+}
+function openHistory(uid){
+  msgTargetId=uid;
+  document.getElementById('hstWho').textContent=clName(uid)+'님과 주고받은 쪽지';
+  const box=document.getElementById('hstLog');
+  const me=cloudUser.id;
+  const list=clMsgs.filter(m=>(m.from_user===me&&m.to_user===uid)||(m.from_user===uid&&m.to_user===me));
+  box.innerHTML='';
+  if(!list.length){ box.innerHTML='<div class="hint">아직 주고받은 쪽지가 없어요.</div>'; }
+  list.forEach(m=>{
+    const el=document.createElement('div');
+    el.className='cl-msg '+(m.from_user===me?'me':'you');
+    const dt=new Date(m.created_at);
+    el.innerHTML=escapeHtml(m.body)+'<span class="cl-when">'+(dt.getMonth()+1)+'/'+dt.getDate()+' '+pad2(dt.getHours())+':'+pad2(dt.getMinutes())+'</span>';
+    box.appendChild(el);
+  });
+  showModal('historyModal');
+  setTimeout(()=>{ box.scrollTop=box.scrollHeight; },30);
+  const unread=list.filter(m=>m.to_user===me && !m.read_at).map(m=>m.id);
+  if(unread.length){
+    sb.from('notes_msg').update({read_at:new Date().toISOString()}).in('id',unread)
+      .then(()=>{ clMsgs.forEach(m=>{ if(unread.includes(m.id)) m.read_at=new Date().toISOString(); });
+                  clUnread=clMsgs.filter(m=>m.to_user===me && !m.read_at).length; clSyncDot(); });
+  }
+}
+
 /* ── 카테고리 단위 공유 ── */
 async function shareCategory(cat){
   if(!clOn()){ alert('클라우드에 로그인해야 공유할 수 있어요.'); return; }
@@ -4167,18 +4193,18 @@ function clSetTab(k){
   clTab=k;
   document.querySelectorAll('.cl-tab').forEach(b=>b.classList.toggle('on', b.dataset.ct===k));
   document.getElementById('ctBuddy').classList.toggle('hidden', k!=='buddy');
-  document.getElementById('ctMsg').classList.toggle('hidden', k!=='msg');
   document.getElementById('ctAva').classList.toggle('hidden', k!=='ava');
   if(k==='ava') clRenderAva();
-  if(k==='msg'){ clRenderMsgTargets(); clRenderMsgLog(); }
 }
 document.querySelectorAll('.cl-tab').forEach(b=>b.addEventListener('click',()=>clSetTab(b.dataset.ct)));
 document.getElementById('clInvite').addEventListener('click', clInvite);
 document.getElementById('clEmail').addEventListener('keydown',(e)=>{ e.stopPropagation(); if(e.key==='Enter'){ e.preventDefault(); clInvite(); } });
-document.getElementById('clMsgTo').addEventListener('change', clRenderMsgLog);
-document.getElementById('clMsgSend').addEventListener('click', clSendMsg);
-document.getElementById('clMsgIn').addEventListener('keydown',(e)=>{ e.stopPropagation(); if(e.key==='Enter'){ e.preventDefault(); clSendMsg(); } });
 document.getElementById('clAvaSave').addEventListener('click', clSaveAva);
+document.getElementById('cmpSend').addEventListener('click', sendCompose);
+document.getElementById('cmpCancel').addEventListener('click', ()=>{ showModal('collabModal'); });
+document.getElementById('cmpBody').addEventListener('keydown',(e)=>{ e.stopPropagation(); if(e.key==='Enter'&&(e.ctrlKey||e.metaKey)){ e.preventDefault(); sendCompose(); } });
+document.getElementById('hstClose').addEventListener('click', ()=>{ showModal('collabModal'); clRenderBuddies(); });
+document.getElementById('hstReply').addEventListener('click', ()=>openCompose(msgTargetId));
 document.getElementById('clAvaRnd').addEventListener('click',()=>{
   const nm=lgDraft?lgDraft.name:'';
   lgDraft=Object.assign(chRandom(),{name:nm});
@@ -4205,8 +4231,8 @@ document.getElementById('searchModalClear').addEventListener('click',()=>{
   if(IS_MOBILE) renderMobileList(); else buildBody();
 });
 function syncSearchDot(){
-  const d=document.getElementById('searchDot');
-  if(d) d.classList.toggle('hidden', !(searchQuery||'').trim());
+  const b=document.getElementById('btnSearch');
+  if(b) b.style.background = (searchQuery||'').trim()? 'var(--accent-soft)' : '';
 }
 
 /* ===================== 데이터 복구 ===================== */
@@ -5517,27 +5543,41 @@ async function fetchNews(){
   return collected.length? collected : null;
 }
 
+/* 한 번에 여러 건을 이어 붙여 길게 흘려보냄 (티커 폭이 넓어진 만큼 많이 보이게) */
+const NEWS_BATCH=6;
 function showNextNews(){
   const wrap=document.getElementById('newsTicker'), el=document.getElementById('newsText');
   if(!wrap||!el||!newsItems.length) return;
-  const it=newsItems[newsIdx % newsItems.length];
-  newsIdx++;
   el.classList.remove('run');
   el.style.removeProperty('animation-duration');
-  el.textContent=it.title;
-  el.dataset.link=it.link||'';
-  el.title=it.title+(it.link?'  (클릭하면 열기)':'');
+  el.innerHTML='';
+  const n=Math.min(NEWS_BATCH, newsItems.length);
+  for(let k=0;k<n;k++){
+    const it=newsItems[(newsIdx+k) % newsItems.length];
+    if(k>0){
+      const sep=document.createElement('span');
+      sep.className='nw-sep'; sep.textContent='  ·  ';
+      el.appendChild(sep);
+    }
+    const s=document.createElement('span');
+    s.className='nw-it'; s.textContent=it.title;
+    if(it.link) s.dataset.link=it.link;
+    s.title=it.title+(it.link?'  (클릭하면 열기)':'');
+    el.appendChild(s);
+  }
+  newsIdx+=n;
   /* 폭을 측정해서 오른쪽 끝 → 왼쪽 끝까지 일정한 속도로 흐르게 */
   const tw=wrap.clientWidth||360, txw=el.scrollWidth||200;
   el.style.setProperty('--nx0', tw+'px');
   el.style.setProperty('--nx1', (-txw)+'px');
-  el.style.setProperty('--ndur', Math.max(4, (tw+txw)/newsSpeed).toFixed(2)+'s');
+  el.style.setProperty('--ndur', Math.max(6, (tw+txw)/newsSpeed).toFixed(2)+'s');
   void el.offsetWidth;
   el.classList.add('run');
 }
 document.getElementById('newsText').addEventListener('animationend',()=>{ showNextNews(); });
-document.getElementById('newsText').addEventListener('click',()=>{
-  const l=document.getElementById('newsText').dataset.link;
+document.getElementById('newsText').addEventListener('click',(e)=>{
+  const hit=e.target.closest? e.target.closest('.nw-it') : null;
+  const l=hit? hit.dataset.link : '';
   if(l) window.open(l,'_blank','noopener');
 });
 
