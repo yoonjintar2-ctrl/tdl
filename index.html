@@ -61,7 +61,10 @@ body.mob .modal-actions button{padding:12px 16px;font-size:13.5px;}
 #mTop .m-brand{font-size:20px;font-weight:800;color:var(--accent-deep);letter-spacing:-0.6px;}
 #mTop .m-brand span{color:var(--today);}
 #mTop .m-sp{flex:1;}
-.m-ic{width:40px;height:40px;border-radius:13px;border:none;background:var(--panel);color:var(--text);font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;font-family:inherit;line-height:1;}
+.m-ic{width:40px;height:40px;border-radius:13px;border:none;background:var(--panel);color:var(--text-dim);font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;font-family:inherit;line-height:1;transition:background .12s,color .12s;}
+.m-ic svg{width:21px;height:21px;display:block;}
+.m-ic:active{background:var(--accent-soft);color:var(--accent-deep);}
+.m-ic.on{background:var(--accent-soft);color:var(--accent-deep);}
 .m-ic:active{background:var(--accent-soft);}
 .m-ic.hidden{display:none;}
 .modal-actions .btn.hidden{display:none;}
@@ -298,10 +301,12 @@ body.theme-dark #topbar .brand,body.theme-dark #topbar .brand span{color:#D6D7DB
 
 /* 모바일 일정추가 플로팅 버튼 */
 #mFab{display:none;}
-body.mob #mFab{position:fixed;right:18px;bottom:24px;z-index:240;width:58px;height:58px;border-radius:50%;border:none;background:var(--accent);color:#fff;font-size:29px;line-height:1;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 22px rgba(40,34,60,0.3);padding:0;font-family:inherit;cursor:pointer;}
+body.mob #mFab{position:fixed;right:18px;bottom:24px;z-index:240;width:58px;height:58px;border-radius:50%;border:none;background:var(--accent);color:#fff;line-height:1;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 22px rgba(40,34,60,0.3);padding:0;font-family:inherit;cursor:pointer;}
+body.mob #mFab svg{width:26px;height:26px;}
 body.mob #mFab:active{transform:scale(0.93);}
 #mMicFab{display:none;}
-body.mob #mMicFab{position:fixed;right:18px;bottom:92px;z-index:240;width:50px;height:50px;border-radius:50%;border:1px solid var(--line-strong);background:var(--panel);color:var(--text);font-size:22px;line-height:1;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 18px rgba(40,34,60,0.22);padding:0;font-family:inherit;cursor:pointer;}
+body.mob #mMicFab{position:fixed;right:18px;bottom:92px;z-index:240;width:50px;height:50px;border-radius:50%;border:1px solid var(--line-strong);background:var(--panel);color:var(--text-dim);line-height:1;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 18px rgba(40,34,60,0.22);padding:0;font-family:inherit;cursor:pointer;}
+body.mob #mMicFab svg{width:22px;height:22px;}
 body.mob #mMicFab:active{transform:scale(0.93);}
 
 #mVoice,#mFilter,#mCollab{position:fixed;inset:0;z-index:420;display:flex;align-items:flex-end;}
@@ -1100,12 +1105,11 @@ null
   <div id="mTop">
     <div class="m-brand"><img class="tdl-logo" alt=""><span>TDL<span>.</span></span></div>
     <div class="m-sp"></div>
-    <button class="m-ic" id="mSearchBtn" title="검색">🔍</button>
-    <button class="m-ic" id="mFilterBtn" title="필터">⚗️</button>
-    <button class="m-ic" id="mCollabBtn" title="동료 · 쪽지" style="position:relative;">👥<span id="mCollabDot" class="hidden"></span></button>
-    <button class="m-ic" id="mSave" title="저장">☁</button>
-    <button class="m-ic" id="mInstall" title="홈 화면에 추가">📲</button>
-    <button class="m-ic" id="mUser" title="계정">👤</button>
+    <button class="m-ic" id="mSearchBtn" title="검색"></button>
+    <button class="m-ic" id="mFilterBtn" title="필터"></button>
+    <button class="m-ic" id="mCollabBtn" title="동료 · 쪽지" style="position:relative;"><span id="mCollabDot" class="hidden"></span></button>
+    <button class="m-ic" id="mInstall" title="홈 화면에 추가"></button>
+    <button class="m-ic" id="mUser" title="로그아웃"></button>
   </div>
   <div id="mSearchBar" class="hidden">
     <input type="text" id="mSearchIn" placeholder="세부내용 검색" autocomplete="off">
@@ -1113,14 +1117,14 @@ null
   </div>
   <div id="mSaveSub"></div>
   <div id="mList"></div>
-  <button id="mMicFab" title="음성으로 일정 추가">🎤</button>
-  <button id="mFab" title="일정 추가">＋</button>
+  <button id="mMicFab" title="음성으로 일정 추가"></button>
+  <button id="mFab" title="일정 추가"></button>
 </div>
 
 <div id="mVoice" class="hidden">
   <div class="mv-back" id="mvBack"></div>
   <div class="mv-card">
-    <div class="mv-head"><b>🎤 음성으로 추가</b><button class="ms-x" id="mvClose">✕</button></div>
+    <div class="mv-head"><b>음성으로 추가</b><button class="ms-x" id="mvClose">✕</button></div>
     <div class="mv-stage" id="mvStage">
       <div class="mv-orb" id="mvOrb">🎤</div>
       <div class="mv-status" id="mvStatus">마이크 버튼을 누르고 말해 주세요</div>
@@ -1153,7 +1157,7 @@ null
 <div id="mFilter" class="hidden">
   <div class="mv-back" id="mfBack"></div>
   <div class="mv-card">
-    <div class="mv-head"><b>⚗️ 필터</b><button class="ms-x" id="mfClose">✕</button></div>
+    <div class="mv-head"><b>필터</b><button class="ms-x" id="mfClose">✕</button></div>
     <div class="mv-lab">카테고리</div>
     <select id="mfCat"></select>
     <div class="mv-lab">캠페인</div>
@@ -1171,7 +1175,7 @@ null
 <div id="mCollab" class="hidden">
   <div class="mv-back" id="mcBack"></div>
   <div class="mv-card">
-    <div class="mv-head"><b>👥 동료</b><button class="ms-x" id="mcClose">✕</button></div>
+    <div class="mv-head"><b>동료</b><button class="ms-x" id="mcClose">✕</button></div>
     <div id="mcBody"></div>
     <div class="mv-acts"><button class="btn" id="mcCloseBtn" style="flex:1;">닫기</button></div>
   </div>
@@ -1938,7 +1942,7 @@ function exportBackup(){
 
 function updateFileStatusHint(t){ const el=document.getElementById('fileStatusHint'); if(el) el.textContent=t; }
 /* ═══════════════ 클라우드 저장 (Supabase) ═══════════════ */
-const APP_VER='ver 5.5', APP_BUILD='2026-08-07 11:00';
+const APP_VER='ver 5.6', APP_BUILD='2026-08-07 12:30';
 const LOGO_SRC='data:image/png;base64,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';
 function paintLogos(){ document.querySelectorAll('img.tdl-logo').forEach(i=>{ i.src=LOGO_SRC; }); }
 const IS_WEB = /^https?:$/i.test(location.protocol);
@@ -6812,6 +6816,24 @@ function initAvatar(){
   setInterval(baWander, 7000);
 }
 
+
+/* ── 모바일 아이콘 (단색 라인, 톤 통일) ── */
+function mIcon(name){
+  const A='stroke="currentColor" stroke-width="1.7" fill="none" stroke-linecap="round" stroke-linejoin="round"';
+  const P={
+    search:`<circle cx="10.5" cy="10.5" r="6.2" ${A}/><path d="M15.2 15.2 L20 20" ${A}/>`,
+    filter:`<path d="M3.5 5.2 h17 l-6.6 7.6 v5.6 l-3.8 2.2 v-7.8 Z" ${A}/>`,
+    people:`<circle cx="9" cy="9" r="3.1" ${A}/><path d="M3.6 19.4 c0-3 2.4-5 5.4-5 s5.4 2 5.4 5" ${A}/><path d="M15.6 6.4 a3 3 0 0 1 0 5.6" ${A}/><path d="M17 14.8 c2.3.5 3.7 2.3 3.7 4.6" ${A}/>`,
+    install:`<rect x="6.5" y="2.8" width="11" height="18.4" rx="2.4" ${A}/><path d="M12 7.6 v6.4 M9.4 11.6 L12 14.2 L14.6 11.6" ${A}/>`,
+    logout:`<path d="M14.5 3.6 H5.6 a1.6 1.6 0 0 0-1.6 1.6 v13.6 a1.6 1.6 0 0 0 1.6 1.6 h8.9" ${A}/><path d="M13.6 12 H20.4 M17.6 8.8 L20.8 12 L17.6 15.2" ${A}/>`,
+    mic:`<rect x="9.2" y="2.8" width="5.6" height="10.6" rx="2.8" ${A}/><path d="M5.6 11.2 a6.4 6.4 0 0 0 12.8 0" ${A}/><path d="M12 17.6 V21" ${A}/>`,
+    plus:`<path d="M12 5.2 V18.8 M5.2 12 H18.8" stroke="currentColor" stroke-width="2.1" fill="none" stroke-linecap="round"/>`,
+    close:`<path d="M6.4 6.4 L17.6 17.6 M17.6 6.4 L6.4 17.6" ${A}/>`,
+    user:`<circle cx="12" cy="8.4" r="3.6" ${A}/><path d="M4.8 20 c0-3.7 3.2-6.2 7.2-6.2 s7.2 2.5 7.2 6.2" ${A}/>`
+  };
+  return '<svg viewBox="0 0 24 24" width="21" height="21" aria-hidden="true">'+(P[name]||'')+'</svg>';
+}
+
 /* ═══════════════ 모바일: 필터 · 동료 ═══════════════ */
 function openMFilter(){
   const cat=document.getElementById('mfCat'), camp=document.getElementById('mfCamp');
@@ -6840,8 +6862,10 @@ function syncMFilterBtn(){
   const on=(state.settings.filterCategory&&state.settings.filterCategory!=='all')
         || (state.settings.filterCampaign&&state.settings.filterCampaign!=='all')
         || !!state.settings.filterIncomplete;
-  b.style.background = on? 'var(--accent)' : '';
-  b.style.color = on? '#fff' : '';
+  /* 다른 아이콘과 같은 밝은 배경 유지 — 켜졌을 때만 은은하게 */
+  b.style.background = on? 'var(--accent-soft)' : '';
+  b.style.color = on? 'var(--accent-deep)' : '';
+  b.classList.toggle('on', !!on);
 }
 
 /* 모바일 동료 시트 */
@@ -6942,17 +6966,21 @@ function mAddTask(){
 }
 function mSyncTop(){
   if(!IS_MOBILE) return;
-  const sub=document.getElementById('mSaveSub'), b=document.getElementById('mSave'), u=document.getElementById('mUser');
-  if(!sub||!b) return;
-  const src=document.getElementById('svSub'), sb=document.getElementById('btnSave');
+  const sub=document.getElementById('mSaveSub'), u=document.getElementById('mUser');
+  if(!sub) return;
+  const src=document.getElementById('svSub');
   sub.textContent = src ? (src.textContent||'') : '';
-  b.classList.toggle('need', !!(sb && sb.classList.contains('need')));
-  b.textContent = CLOUD_MODE ? '☁' : '💾';
   if(u) u.classList.remove('on');
 }
 (function(){
   const $=(id)=>document.getElementById(id);
   if(!$('mApp')) return;
+
+  /* 아이콘 주입 (톤 통일) */
+  const setIco=(id,nm)=>{ const e=$(id); if(!e) return; const dot=e.querySelector('#mCollabDot'); e.innerHTML=mIcon(nm); if(dot) e.appendChild(dot); };
+  setIco('mSearchBtn','search'); setIco('mFilterBtn','filter'); setIco('mCollabBtn','people');
+  setIco('mInstall','install'); setIco('mUser','logout');
+  setIco('mMicFab','mic'); setIco('mFab','plus');
 
   $('mFab').addEventListener('click', mAddTask);
   $('mMicFab').addEventListener('click', openVoice);
@@ -6989,7 +7017,6 @@ function mSyncTop(){
     $('mSearchBtn').classList.remove('on');
   });
 
-  $('mSave').addEventListener('click',()=>{ const b=$('btnSave'); if(b) b.click(); });
 
   $('mUser').addEventListener('click',()=>{
     if(!CLOUD_MODE){ alert('이 파일은 오프라인(파일 저장) 모드로 열렸습니다.'); return; }
