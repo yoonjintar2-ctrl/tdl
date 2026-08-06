@@ -796,6 +796,7 @@ details.repeat-details[open] summary{color:var(--accent-deep);}
 #settingsModal select,#settingsModal input[type=number],#bulkModal select,#bulkModal input[type=date]{padding:8px 12px;border:none;background:var(--bg);border-radius:12px;font-size:calc(12px * var(--fs,1));font-family:inherit;color:var(--text);outline:none;}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 <script>
 /* ═══════════════════════════════════════════════════════════
    온라인 설정 — 아래 두 값만 채우면 클라우드 저장이 켜집니다.
@@ -1200,7 +1201,17 @@ null
     </div>
     <div class="hint" id="fileStatusHint">브라우저 저장소에 자동 저장 중입니다.</div>
     <div class="hint" id="cloudHint" style="display:none;">☁ 로그인 계정에 자동 저장됩니다. 다른 기기에서 같은 구글 계정으로 로그인하면 그대로 이어집니다.</div>
-    <div class="hint">📧 Gmail에 새 메일이 오면 이 화면이 열려 있는 동안 우측 상단에 알림이 떠요. 처음 로그인할 때 Gmail 읽기 권한 동의가 필요하고, TDL 탭을 닫으면 알림도 멈춰요.</div>
+    <div class="field-label">📧 Gmail 새 메일 알림</div>
+    <div class="row" style="align-items:center;">
+      <span class="hint" id="gmailState" style="flex:1;margin:0;">연결 안 됨</span>
+      <button class="btn" id="gmailConnect">연결하기</button>
+      <button class="btn hidden" id="gmailDisconnect">연결 해제</button>
+    </div>
+    <div class="row">
+      <input type="text" id="gmailCid" placeholder="구글 OAuth 클라이언트 ID" autocomplete="off" style="flex:1;padding:6px 8px;border:1px solid var(--border-strong);border-radius:5px;font-size:calc(11px * var(--fs,1));font-family:inherit;">
+      <button class="btn" id="gmailCidSave">저장</button>
+    </div>
+    <div class="hint"><b>TDL 로그인 계정과 다른 구글 계정을 써도 됩니다.</b> 연결하기를 누르면 계정 선택창이 떠요. 새 메일이 오면 TDL 화면이 열려 있는 동안 우측 상단에 알림이 뜨고, 탭을 닫으면 알림도 멈춰요.</div>
     <div class="hint">일정·메모·스티커·설정이 <b>모두 이 HTML 파일 안에</b> 저장됩니다. 파일 하나만 복사하거나 보내면 그대로 열려요.<br><br>웹페이지는 보안상 자기가 열린 파일의 경로를 알 수 없어서, <b>맨 처음 한 번만</b> 이 html 파일을 직접 골라야 합니다. 그 뒤로는 선택창 없이 <b>권한 승인 한 번</b>이면 이어서 자동 저장됩니다.</div>
     <div class="field-label">기타</div>
     <div class="row">
@@ -1614,7 +1625,7 @@ function exportBackup(){
 
 function updateFileStatusHint(t){ const el=document.getElementById('fileStatusHint'); if(el) el.textContent=t; }
 /* ═══════════════ 클라우드 저장 (Supabase) ═══════════════ */
-const APP_VER='ver 3.8', APP_BUILD='2026-08-06 16:00';
+const APP_VER='ver 3.9', APP_BUILD='2026-08-06 17:30';
 const LOGO_SRC='data:image/png;base64,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';
 function paintLogos(){ document.querySelectorAll('img.tdl-logo').forEach(i=>{ i.src=LOGO_SRC; }); }
 const IS_WEB = /^https?:$/i.test(location.protocol);
@@ -1686,29 +1697,105 @@ async function initCloud(){
   }
   sb=window.supabase.createClient(cfg.url, cfg.anon, {auth:{persistSession:true, detectSessionInUrl:true, flowType:'pkce'}});
   const {data:{session}}=await sb.auth.getSession();
-  if(session && session.provider_token) gmailToken=session.provider_token;
   sb.auth.onAuthStateChange((ev,ses)=>{
-    if(ev==='SIGNED_OUT'){ cloudUser=null; gmailToken=null; stopGmailWatch(); showGate(); }
-    if(ses && ses.provider_token){ gmailToken=ses.provider_token; startGmailWatch(); }
+    if(ev==='SIGNED_OUT'){ cloudUser=null; showGate(); }
   });
   if(!session){ showGate(); return false; }
   cloudUser=session.user;
   hideGate();
   await cloudLoad();
-  if(gmailToken) startGmailWatch();
   return true;
 }
 function showGate(){ document.getElementById('gate').classList.remove('hidden'); }
 function hideGate(){ document.getElementById('gate').classList.add('hidden'); }
 function showSetupGate(){ document.getElementById('setupGate').classList.remove('hidden'); }
 
-/* ═══════════════ Gmail 새 메일 알림 (TDL이 켜져 있는 동안만) ═══════════════ */
+/* ═══════════════ Gmail 새 메일 알림 (TDL 로그인과 완전히 별개 계정) ═══════════════ */
+/* TDL 로그인(Supabase)과 분리되어 있어서 서로 다른 구글 계정을 써도 됩니다.       */
 const GMAIL_SEEN_KEY='tdl_gmail_seen', GMAIL_POLL_MS=90000;
+const GMAIL_CID_KEY='tdl_gmail_cid', GMAIL_TOK_KEY='tdl_gmail_tok';
+const GMAIL_SCOPE='https://www.googleapis.com/auth/gmail.readonly';
+let gmailTokenClient=null, gmailAddr='';
+
+function gmailClientId(){ try{ return (localStorage.getItem(GMAIL_CID_KEY)||'').trim(); }catch(e){ return ''; } }
+function saveGmailToken(tok, expiresIn){
+  try{ localStorage.setItem(GMAIL_TOK_KEY, JSON.stringify({t:tok, exp:Date.now()+((expiresIn||3600)-120)*1000})); }catch(e){}
+}
+function readGmailToken(){
+  try{
+    const d=JSON.parse(localStorage.getItem(GMAIL_TOK_KEY)||'null');
+    if(d && d.t && d.exp>Date.now()) return d.t;
+  }catch(e){}
+  return null;
+}
+function clearGmailToken(){ try{ localStorage.removeItem(GMAIL_TOK_KEY); }catch(e){} gmailToken=null; }
+
 function loadGmailSeen(){
   try{ const a=JSON.parse(localStorage.getItem(GMAIL_SEEN_KEY)||'[]'); return new Set(Array.isArray(a)?a:[]); }catch(e){ return new Set(); }
 }
 function saveGmailSeen(set){
   try{ localStorage.setItem(GMAIL_SEEN_KEY, JSON.stringify(Array.from(set).slice(-300))); }catch(e){}
+}
+
+/* 구글 토큰 클라이언트 준비 (GIS) */
+function ensureGmailClient(cb){
+  const cid=gmailClientId();
+  if(!cid){ cb && cb('연동할 구글 클라이언트 ID가 설정되지 않았어요.'); return; }
+  if(!window.google || !google.accounts || !google.accounts.oauth2){ cb && cb('구글 라이브러리를 아직 불러오지 못했어요. 잠시 후 다시 시도해 주세요.'); return; }
+  if(!gmailTokenClient){
+    gmailTokenClient=google.accounts.oauth2.initTokenClient({
+      client_id: cid,
+      scope: GMAIL_SCOPE,
+      callback: (resp)=>{
+        if(resp && resp.access_token){
+          gmailToken=resp.access_token; gmailDead=false;
+          saveGmailToken(resp.access_token, resp.expires_in);
+          fetchGmailAddress();
+          gmailBaseline=true;             /* 연결 직후 기존 메일은 알림 안 함 */
+          startGmailWatch(); syncGmailUI();
+        }
+      }
+    });
+  }
+  cb && cb(null);
+}
+/* 사용자가 직접 누르는 연결 버튼 (TDL 계정과 다른 계정 선택 가능) */
+function connectGmail(){
+  ensureGmailClient((err)=>{
+    if(err){ alert(err); return; }
+    gmailTokenClient.requestAccessToken({ prompt:'consent' });   /* 계정 선택창이 떠서 원하는 계정 고를 수 있음 */
+  });
+}
+function disconnectGmail(){
+  clearGmailToken(); stopGmailWatch(); gmailAddr=''; gmailDead=false;
+  try{ localStorage.removeItem(GMAIL_SEEN_KEY); }catch(e){}
+  gmailSeen=null; syncGmailUI();
+}
+async function fetchGmailAddress(){
+  try{
+    const r=await fetch('https://gmail.googleapis.com/gmail/v1/users/me/profile',{headers:{Authorization:'Bearer '+gmailToken}});
+    if(r.ok){ const j=await r.json(); gmailAddr=j.emailAddress||''; syncGmailUI(); }
+  }catch(e){}
+}
+function syncGmailUI(){
+  const st=document.getElementById('gmailState');
+  const btnC=document.getElementById('gmailConnect'), btnD=document.getElementById('gmailDisconnect');
+  if(!st) return;
+  if(gmailToken){
+    st.textContent='연결됨'+(gmailAddr?(' · '+gmailAddr):'');
+    if(btnC) btnC.classList.add('hidden');
+    if(btnD) btnD.classList.remove('hidden');
+  } else {
+    st.textContent='연결 안 됨';
+    if(btnC) btnC.classList.remove('hidden');
+    if(btnD) btnD.classList.add('hidden');
+  }
+}
+/* 앱 시작 시 저장된 토큰이 아직 살아있으면 이어서 감시 */
+function initGmail(){
+  const t=readGmailToken();
+  if(t){ gmailToken=t; fetchGmailAddress(); startGmailWatch(); }
+  syncGmailUI();
 }
 function startGmailWatch(){
   if(!gmailToken || gmailDead) return;
@@ -1724,7 +1811,9 @@ async function checkGmailUnread(){
   try{
     const r=await fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages?labelIds=INBOX&q='+encodeURIComponent('is:unread')+'&maxResults=8',
       { headers:{ Authorization:'Bearer '+gmailToken } });
-    if(r.status===401||r.status===403){ gmailDead=true; clearInterval(gmailPollTimer); return; }
+    if(r.status===401||r.status===403){    /* 토큰 만료 — 조용히 정리하고 재연결 안내 */
+      clearGmailToken(); clearInterval(gmailPollTimer); gmailPollTimer=null; syncGmailUI(); return;
+    }
     if(!r.ok) return;
     const j=await r.json();
     const msgs=(j.messages||[]).slice().reverse();
@@ -3635,6 +3724,18 @@ function syncSearchDot(){
 document.getElementById('exportBackupBtn').addEventListener('click', exportBackup);
 document.getElementById('importBackupBtn').addEventListener('click', ()=>{ document.getElementById('importInput').click(); });
 document.getElementById('openRestoreModal').addEventListener('click', ()=>{ showModal('restoreModal'); renderRestoreList(); });
+
+/* ===================== Gmail 연동 설정 ===================== */
+document.getElementById('gmailConnect').addEventListener('click', connectGmail);
+document.getElementById('gmailDisconnect').addEventListener('click', ()=>{
+  if(confirm('Gmail 알림 연동을 해제할까요?')) disconnectGmail();
+});
+document.getElementById('gmailCidSave').addEventListener('click', ()=>{
+  const v=document.getElementById('gmailCid').value.trim();
+  try{ localStorage.setItem(GMAIL_CID_KEY, v); }catch(e){}
+  gmailTokenClient=null;                        /* 새 ID로 다시 만들도록 */
+  alert(v? '저장했어요. 이제 "연결하기"를 눌러 주세요.' : '클라이언트 ID를 지웠어요.');
+});
 document.getElementById('closeRestoreModal').addEventListener('click', hideModals);
 function fmtBk(ts){ const d=new Date(ts); return (d.getMonth()+1)+'/'+d.getDate()+' '+pad2(d.getHours())+':'+pad2(d.getMinutes()); }
 function renderRestoreList(){
@@ -3940,6 +4041,8 @@ function initMiniCal(){
 document.getElementById('btnSettings').addEventListener('click',()=>{
   showModal('settingsModal'); populateFontSelect(FALLBACK_FONTS); renderToneGrid();
   paintFsButtons(); renderTickGrid();
+  document.getElementById('gmailCid').value=gmailClientId();
+  syncGmailUI();
   if(CLOUD_MODE){
     document.getElementById('cloudHint').style.display='';
     const cs=document.getElementById('connectSelfBtn'); if(cs) cs.style.display='none';
@@ -4984,11 +5087,7 @@ document.getElementById('gateGoogle').addEventListener('click', async ()=>{
   try{
     const {error}=await sb.auth.signInWithOAuth({
       provider:'google',
-      options:{
-        redirectTo: location.origin+location.pathname,
-        scopes:'https://www.googleapis.com/auth/gmail.readonly',
-        queryParams:{ access_type:'offline', prompt:'consent' }
-      }
+      options:{ redirectTo: location.origin+location.pathname }
     });
     if(error) throw error;
   }catch(e){ err.textContent='로그인 실패: '+(e.message||e); }
@@ -6498,9 +6597,10 @@ async function init(){
   booting=false;
   initTime();
   if(!IS_MOBILE) initNews();
+  if(IS_WEB) initGmail();
   syncSaveBtn();
   setInterval(syncSaveBtn, 15000);
-  if(!IS_MOBILE) setTimeout(()=>{ const gw=document.getElementById('gridWrap'); if(gw) gw.scrollLeft=Math.max(0,(todayIdx-2)*DATE_COL_W); },50);
+  if(!IS_MOBILE) setTimeout(()=>{ const gw=document.getElementById('gridWrap'); if(gw) gw.scrollLeft=Math.max(0, todayIdx*DATE_COL_W); },50);
 }
 init();
 
