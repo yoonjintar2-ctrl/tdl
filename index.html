@@ -353,11 +353,17 @@ body{font-family:var(--user-font,-apple-system,BlinkMacSystemFont,"Apple SD Goth
 #filters label:hover{background:var(--accent-soft);}
 #filters input[type=checkbox]{accent-color:var(--accent);cursor:pointer;}
 #filters select{background:var(--bg);color:var(--text);border:none;border-radius:20px;padding:6px 10px;font-size:calc(11.5px * var(--fs,1));font-family:inherit;cursor:pointer;}
-#searchBox{background:var(--bg);color:var(--text);border:none;border-radius:20px;padding:6px 12px;font-size:calc(11.5px * var(--fs,1));font-family:inherit;width:150px;outline:none;}
-#searchBox:focus{box-shadow:0 0 0 2px var(--accent-soft);width:190px;}
-#searchBox::placeholder{color:var(--text-dim);}
 #histGroup{display:flex;align-items:center;gap:6px;flex:0 0 auto;}
 #topbar-right{display:flex;align-items:center;gap:6px;flex:0 0 auto;min-width:0;justify-content:flex-end;}
+#mailToastWrap{position:fixed;top:16px;right:16px;z-index:900;display:flex;flex-direction:column;gap:8px;max-width:320px;pointer-events:none;}
+.mail-toast{pointer-events:auto;cursor:pointer;background:var(--panel);border:1px solid var(--line-strong);border-radius:12px;box-shadow:0 10px 26px rgba(40,34,60,0.22);padding:10px 30px 10px 12px;position:relative;animation:mtIn .22s ease-out;}
+.mail-toast.mt-out{animation:mtOut .28s ease-in forwards;}
+@keyframes mtIn{from{transform:translateX(24px);opacity:0;}to{transform:translateX(0);opacity:1;}}
+@keyframes mtOut{to{transform:translateX(24px);opacity:0;}}
+.mail-toast .mt-head{font-size:calc(11.5px * var(--fs,1));font-weight:600;color:var(--accent-deep);margin-bottom:3px;}
+.mail-toast .mt-subj{font-size:calc(12px * var(--fs,1));color:var(--text);line-height:1.35;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
+.mail-toast .mt-close{position:absolute;top:6px;right:8px;border:none;background:transparent;color:var(--text-dim);cursor:pointer;font-size:12px;padding:2px;}
+.mail-toast .mt-close:hover{color:var(--text);}
 #newsTicker{flex:1 1 auto;min-width:0;overflow:hidden;white-space:nowrap;height:22px;position:relative;}
 #newsText{position:absolute;left:0;top:50%;margin-top:-8px;display:inline-block;font-size:calc(11.5px * var(--fs,1));line-height:calc(16px * var(--fs,1));color:var(--text-dim);opacity:0;white-space:nowrap;cursor:pointer;letter-spacing:-0.1px;will-change:transform;}
 #newsText:hover{color:var(--text);}
@@ -846,21 +852,21 @@ null
   </div>
 </div>
 
+<div id="mailToastWrap"></div>
 <div id="app">
   <div id="topbar">
     <div id="topbarRow1">
       <div class="brand"><img class="tdl-logo" alt=""><span>TDL<span>.</span></span></div>
       <div id="filters">
         <button class="tb-btn add-top" id="btnAddTop" title="새 일정 추가 (맨 아래에 생기고 바로 입력할 수 있어요)">＋ 일정 추가</button>
-        <input type="text" id="searchBox" placeholder="🔍 세부내용 검색" autocomplete="off">
-        <label><input type="checkbox" id="fltIncomplete"> 완료일정 숨기기</label>
+        <button class="tb-btn" id="btnSearch" title="검색" style="position:relative;">🔍 검색<span id="searchDot" class="hidden" style="position:absolute;top:3px;right:5px;width:6px;height:6px;border-radius:50%;background:var(--accent);"></span></button>
+        <label><input type="checkbox" id="fltIncomplete"> 완료 숨김</label>
         <button class="lock-toggle" id="btnDateLock" type="button" role="switch" aria-checked="false">
           <span class="lt-label">기간으로 정렬</span>
           <span class="lt-track"><span class="lt-knob"></span></span>
           <span class="lt-state">Unlock</span>
         </button>
-        <button class="tb-btn" id="btnPastView" title="지난 일정 보기">🕐 지난 일정</button>
-        <button class="tb-btn hidden" id="btnGoToday" title="오늘로 돌아가기" style="background:#fff4e0;">◀ 오늘로</button>
+        <button class="tb-btn" id="btnGoToday" title="오늘로 돌아가기">◀ 오늘로</button>
       </div>
     </div>
     <div id="topbarRow2">
@@ -1194,6 +1200,7 @@ null
     </div>
     <div class="hint" id="fileStatusHint">브라우저 저장소에 자동 저장 중입니다.</div>
     <div class="hint" id="cloudHint" style="display:none;">☁ 로그인 계정에 자동 저장됩니다. 다른 기기에서 같은 구글 계정으로 로그인하면 그대로 이어집니다.</div>
+    <div class="hint">📧 Gmail에 새 메일이 오면 이 화면이 열려 있는 동안 우측 상단에 알림이 떠요. 처음 로그인할 때 Gmail 읽기 권한 동의가 필요하고, TDL 탭을 닫으면 알림도 멈춰요.</div>
     <div class="hint">일정·메모·스티커·설정이 <b>모두 이 HTML 파일 안에</b> 저장됩니다. 파일 하나만 복사하거나 보내면 그대로 열려요.<br><br>웹페이지는 보안상 자기가 열린 파일의 경로를 알 수 없어서, <b>맨 처음 한 번만</b> 이 html 파일을 직접 골라야 합니다. 그 뒤로는 선택창 없이 <b>권한 승인 한 번</b>이면 이어서 자동 저장됩니다.</div>
     <div class="field-label">기타</div>
     <div class="row">
@@ -1218,21 +1225,12 @@ null
     <div class="modal-actions"><button class="btn" id="closeRestoreModal">닫기</button></div>
   </div>
 
-  <div class="modal hidden" id="pastModal" style="width:340px;">
-    <h2>🕐 지난 일정 보기</h2>
-    <div class="hint">기본은 오늘부터 표시돼요. 필요할 때만 과거 날짜까지(최대 약 1년 전) 펼쳐서 볼 수 있어요. 다시 켜면 자동으로 오늘부터 보여줘요.</div>
-    <div class="row" style="flex-wrap:wrap;gap:6px;">
-      <button class="btn past-opt" data-days="30">1개월 전</button>
-      <button class="btn past-opt" data-days="90">3개월 전</button>
-      <button class="btn past-opt" data-days="180">6개월 전</button>
-      <button class="btn past-opt" data-days="365">1년 전</button>
-    </div>
-    <div class="field-label">특정 날짜로 이동</div>
+  <div class="modal hidden" id="searchModal" style="width:340px;">
+    <h2>🔍 검색</h2>
     <div class="row">
-      <input type="date" id="pastDateInput" style="flex:1;padding:6px 8px;border:1px solid var(--border-strong);border-radius:5px;font-size:calc(12px * var(--fs,1));font-family:inherit;">
-      <button class="btn primary" id="pastDateGo">이동</button>
+      <input type="text" id="searchModalInput" placeholder="세부내용 키워드" autocomplete="off" style="flex:1;padding:8px 10px;border:1px solid var(--border-strong);border-radius:8px;font-size:calc(13px * var(--fs,1));font-family:inherit;">
     </div>
-    <div class="modal-actions"><button class="btn" id="closePastModal">닫기</button></div>
+    <div class="modal-actions"><button class="btn" id="searchModalClear">지우기</button><button class="btn primary" id="closeSearchModal">닫기</button></div>
   </div>
 
   <div class="modal hidden" id="qrModal" style="width:370px;">
@@ -1616,7 +1614,7 @@ function exportBackup(){
 
 function updateFileStatusHint(t){ const el=document.getElementById('fileStatusHint'); if(el) el.textContent=t; }
 /* ═══════════════ 클라우드 저장 (Supabase) ═══════════════ */
-const APP_VER='ver 3.7', APP_BUILD='2026-08-05 16:00';
+const APP_VER='ver 3.8', APP_BUILD='2026-08-06 16:00';
 const LOGO_SRC='data:image/png;base64,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';
 function paintLogos(){ document.querySelectorAll('img.tdl-logo').forEach(i=>{ i.src=LOGO_SRC; }); }
 const IS_WEB = /^https?:$/i.test(location.protocol);
@@ -1649,6 +1647,7 @@ function cloudCfg(){
 let sb=null, cloudUser=null, cloudDirty=false, cloudTimer=null,
     lastCloudAt=0, cloudBusy=false, cloudPending=false, cloudReady=false;
 let booting=true, remoteHad=0, cloudLoadTry=0;
+let gmailToken=null, gmailPollTimer=null, gmailSeen=null, gmailBaseline=true, gmailDead=false;
 const SAFE_KEY='tdl_safe';
 function saveSafetyCopy(){
   try{
@@ -1687,18 +1686,83 @@ async function initCloud(){
   }
   sb=window.supabase.createClient(cfg.url, cfg.anon, {auth:{persistSession:true, detectSessionInUrl:true, flowType:'pkce'}});
   const {data:{session}}=await sb.auth.getSession();
+  if(session && session.provider_token) gmailToken=session.provider_token;
   sb.auth.onAuthStateChange((ev,ses)=>{
-    if(ev==='SIGNED_OUT'){ cloudUser=null; showGate(); }
+    if(ev==='SIGNED_OUT'){ cloudUser=null; gmailToken=null; stopGmailWatch(); showGate(); }
+    if(ses && ses.provider_token){ gmailToken=ses.provider_token; startGmailWatch(); }
   });
   if(!session){ showGate(); return false; }
   cloudUser=session.user;
   hideGate();
   await cloudLoad();
+  if(gmailToken) startGmailWatch();
   return true;
 }
 function showGate(){ document.getElementById('gate').classList.remove('hidden'); }
 function hideGate(){ document.getElementById('gate').classList.add('hidden'); }
 function showSetupGate(){ document.getElementById('setupGate').classList.remove('hidden'); }
+
+/* ═══════════════ Gmail 새 메일 알림 (TDL이 켜져 있는 동안만) ═══════════════ */
+const GMAIL_SEEN_KEY='tdl_gmail_seen', GMAIL_POLL_MS=90000;
+function loadGmailSeen(){
+  try{ const a=JSON.parse(localStorage.getItem(GMAIL_SEEN_KEY)||'[]'); return new Set(Array.isArray(a)?a:[]); }catch(e){ return new Set(); }
+}
+function saveGmailSeen(set){
+  try{ localStorage.setItem(GMAIL_SEEN_KEY, JSON.stringify(Array.from(set).slice(-300))); }catch(e){}
+}
+function startGmailWatch(){
+  if(!gmailToken || gmailDead) return;
+  if(gmailSeen===null) gmailSeen=loadGmailSeen();
+  clearInterval(gmailPollTimer);
+  checkGmailUnread();
+  gmailPollTimer=setInterval(checkGmailUnread, GMAIL_POLL_MS);
+}
+function stopGmailWatch(){ clearInterval(gmailPollTimer); gmailPollTimer=null; gmailBaseline=true; }
+async function checkGmailUnread(){
+  if(!gmailToken || gmailDead) return;
+  if(document.hidden) return;                    /* 탭이 보일 때만 확인 (TDL이 켜져 있을 때만) */
+  try{
+    const r=await fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages?labelIds=INBOX&q='+encodeURIComponent('is:unread')+'&maxResults=8',
+      { headers:{ Authorization:'Bearer '+gmailToken } });
+    if(r.status===401||r.status===403){ gmailDead=true; clearInterval(gmailPollTimer); return; }
+    if(!r.ok) return;
+    const j=await r.json();
+    const msgs=(j.messages||[]).slice().reverse();
+    for(const m of msgs){
+      if(gmailSeen.has(m.id)) continue;
+      gmailSeen.add(m.id);
+      if(!gmailBaseline){
+        try{
+          const dr=await fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/'+m.id+'?format=metadata&metadataHeaders=From&metadataHeaders=Subject',
+            { headers:{ Authorization:'Bearer '+gmailToken } });
+          if(dr.ok){
+            const dj=await dr.json();
+            const hs=(dj.payload&&dj.payload.headers)||[];
+            const subj=(hs.find(h=>h.name==='Subject')||{}).value||'(제목 없음)';
+            let from=(hs.find(h=>h.name==='From')||{}).value||'';
+            from=from.replace(/<.*?>/,'').replace(/"/g,'').trim();
+            showMailToast(subj, from, m.id);
+          }
+        }catch(e){}
+      }
+    }
+    gmailBaseline=false;
+    saveGmailSeen(gmailSeen);
+  }catch(e){ /* 네트워크 오류는 조용히 무시하고 다음 주기에 재시도 */ }
+}
+function showMailToast(subject, from, msgId){
+  const wrap=document.getElementById('mailToastWrap'); if(!wrap) return;
+  const card=document.createElement('div'); card.className='mail-toast';
+  card.innerHTML='<div class="mt-head">📧 새 메일'+(from?(' · '+escapeHtml(from)):'')+'</div><div class="mt-subj"></div><button class="mt-close">✕</button>';
+  card.querySelector('.mt-subj').textContent=subject;
+  card.addEventListener('click',(e)=>{
+    if(e.target.classList.contains('mt-close')) return;
+    window.open('https://mail.google.com/mail/u/0/#inbox/'+msgId,'_blank');
+  });
+  card.querySelector('.mt-close').addEventListener('click',(e)=>{ e.stopPropagation(); card.remove(); });
+  wrap.appendChild(card);
+  setTimeout(()=>{ card.classList.add('mt-out'); setTimeout(()=>card.remove(),300); }, 9000);
+}
 
 async function cloudLoad(){
   if(!sb||!cloudUser) return;
@@ -1800,9 +1864,10 @@ async function idbSet(k,v){ try{ const db=await idbOpen(); return new Promise((r
 async function idbGet(k){ try{ const db=await idbOpen(); return new Promise((res,rej)=>{ const tx=db.transaction('handles','readonly'); const r=tx.objectStore('handles').get(k); r.onsuccess=()=>res(r.result); r.onerror=()=>rej(r.error); }); }catch(e){ return null; } }
 /* ===================== 날짜 범위 ===================== */
 let dateRange=[], dateStrs=[], todayIdx=0;
+const PAST_WINDOW_DAYS=400;   /* 우측 영역은 기본적으로 이 만큼 과거까지 항상 스크롤해서 볼 수 있음 */
 function rebuildDateRange(){
   const t=startOfToday(), end=addMonths(t,6);
-  const off=Math.max(0, parseInt(state.settings.startOffset,10)||0);
+  const off=Math.max(PAST_WINDOW_DAYS, parseInt(state.settings.startOffset,10)||0);
   dateRange=[]; let cur=addDays(t,-off);
   while(cur<=end){ dateRange.push(new Date(cur)); cur=addDays(cur,1); }
   dateStrs=dateRange.map(fmt);
@@ -1946,10 +2011,8 @@ function sortedTasks(){
   });
 }
 function visibleTasks(){
-  let list=sortedTasks(); const ts=todayStr();
-  // 오른쪽 영역에 남은 날짜가 전혀 없는(모든 회차가 과거인) 항목은 자동 숨김 — 단, '지난 일정 보기' 중에는 숨기지 않음
-  const pastViewOn=(state.settings.startOffset||0)>0;
-  if(!pastViewOn) list=list.filter(t=>{ if(t.pinBottom) return true; return lastDateOf(t)>=ts; });
+  let list=sortedTasks();
+  // 과거 일정도 우측 영역을 과거로 스크롤하면 볼 수 있도록 항상 목록에 유지함 (필요하면 '완료 숨김'으로 정리)
   if(state.settings.filterIncomplete) list=list.filter(t=>!taskIsDone(t));
   if(state.settings.filterCategory && state.settings.filterCategory!=='all') list=list.filter(t=>t.categoryId===state.settings.filterCategory);
   const fc=state.settings.filterCampaign;
@@ -3368,7 +3431,6 @@ document.getElementById('btnDateLock').addEventListener('click',()=>{
 
 /* ===================== 검색 ===================== */
 let searchQuery='';
-document.getElementById('searchBox').addEventListener('input',(e)=>{ searchQuery=e.target.value; buildBody(); });
 
 /* ===================== 필터 ===================== */
 document.getElementById('fltIncomplete').addEventListener('change',(e)=>{ state.settings.filterIncomplete=e.target.checked; saveAll(); buildBody(); });
@@ -3545,26 +3607,29 @@ document.getElementById('closeHolidayModal').addEventListener('click',()=>{ hide
 document.getElementById('backToSettings').addEventListener('click',()=>{ showModal('settingsModal'); });
 document.getElementById('openHolidayFromSettings').addEventListener('click',()=>{ showModal('holidayModal'); renderHolidayList(); });
 
-/* ===================== 지난 일정 보기 ===================== */
-document.getElementById('btnPastView').addEventListener('click',()=>{
-  document.getElementById('pastDateInput').value=todayStr();
-  showModal('pastModal');
-});
-document.getElementById('closePastModal').addEventListener('click', hideModals);
+/* ===================== 오늘로 이동 ===================== */
 document.getElementById('btnGoToday').addEventListener('click', resetToToday);
-document.querySelectorAll('.past-opt').forEach(b=>{
-  b.addEventListener('click',()=>{
-    const days=parseInt(b.dataset.days,10)||30;
-    jumpToDate(fmt(addDays(startOfToday(),-days)));
-    hideModals();
-  });
+
+/* ===================== 검색 (팝업) ===================== */
+document.getElementById('btnSearch').addEventListener('click',()=>{
+  showModal('searchModal');
+  const inp=document.getElementById('searchModalInput');
+  inp.value=searchQuery||'';
+  setTimeout(()=>{ inp.focus(); inp.select(); },30);
 });
-document.getElementById('pastDateGo').addEventListener('click',()=>{
-  const v=document.getElementById('pastDateInput').value;
-  if(!v) return;
-  jumpToDate(v);
-  hideModals();
+document.getElementById('closeSearchModal').addEventListener('click', hideModals);
+document.getElementById('searchModalInput').addEventListener('keydown',(e)=>{ e.stopPropagation(); if(e.key==='Enter'){ e.preventDefault(); hideModals(); } });
+document.getElementById('searchModalInput').addEventListener('input',(e)=>{
+  searchQuery=e.target.value; syncSearchDot(); if(IS_MOBILE) renderMobileList(); else buildBody();
 });
+document.getElementById('searchModalClear').addEventListener('click',()=>{
+  searchQuery=''; document.getElementById('searchModalInput').value=''; syncSearchDot();
+  if(IS_MOBILE) renderMobileList(); else buildBody();
+});
+function syncSearchDot(){
+  const d=document.getElementById('searchDot');
+  if(d) d.classList.toggle('hidden', !(searchQuery||'').trim());
+}
 
 /* ===================== 데이터 복구 ===================== */
 document.getElementById('exportBackupBtn').addEventListener('click', exportBackup);
@@ -3791,25 +3856,22 @@ document.addEventListener('mouseup',()=>{
 function jumpToDate(dstr){
   let idx=dateStrs.indexOf(dstr);
   if(idx<0){
-    // 표시 범위를 벗어난 날짜면 시작 오프셋을 조정해 범위에 포함
+    // 표시 범위(기본 400일 전까지)를 더 벗어난 날짜면 시작 오프셋을 늘려서 범위에 포함
     const diff=Math.round((parseYMD(dstr)-startOfToday())/86400000);
-    if(diff<0){ state.settings.startOffset=Math.min(400, Math.abs(diff)+2); saveAll(); render(); idx=dateStrs.indexOf(dstr); }
+    if(diff<0){ state.settings.startOffset=Math.abs(diff)+2; saveAll(); render(); idx=dateStrs.indexOf(dstr); }
   }
   if(idx<0) return;
   selectedDate=dstr; applySelection();
   const gw=document.getElementById('gridWrap');
   gw.scrollLeft = Math.max(0, idx*DATE_COL_W - gw.clientWidth/2 + 200);
-  syncGoTodayBtn();
 }
+/* '오늘로': 오늘 날짜가 우측 영역 맨 왼쪽(1열)에 오도록 스크롤 */
 function resetToToday(){
-  state.settings.startOffset=0; saveAll(); render();
-  setTimeout(()=>{ const gw=document.getElementById('gridWrap'); if(gw) gw.scrollLeft=Math.max(0,(todayIdx-2)*DATE_COL_W); },20);
-  syncGoTodayBtn();
+  if((state.settings.startOffset||0)>0){ state.settings.startOffset=0; saveAll(); render(); }
+  selectedDate=todayStr(); applySelection();
+  setTimeout(()=>{ const gw=document.getElementById('gridWrap'); if(gw) gw.scrollLeft=Math.max(0, todayIdx*DATE_COL_W); },20);
 }
-function syncGoTodayBtn(){
-  const b=document.getElementById('btnGoToday');
-  if(b) b.classList.toggle('hidden', !(state.settings.startOffset>0));
-}
+function syncGoTodayBtn(){ /* 오늘로 버튼은 항상 노출 — 자유 스크롤 후 되돌아오는 용도 */ }
 /* ===================== 미니 달력 (우측 하단) ===================== */
 let mcState={year:startOfToday().getFullYear(), month:startOfToday().getMonth()};
 function renderMiniMonth(wrap, year, month){
@@ -4922,7 +4984,11 @@ document.getElementById('gateGoogle').addEventListener('click', async ()=>{
   try{
     const {error}=await sb.auth.signInWithOAuth({
       provider:'google',
-      options:{ redirectTo: location.origin+location.pathname }
+      options:{
+        redirectTo: location.origin+location.pathname,
+        scopes:'https://www.googleapis.com/auth/gmail.readonly',
+        queryParams:{ access_type:'offline', prompt:'consent' }
+      }
     });
     if(error) throw error;
   }catch(e){ err.textContent='로그인 실패: '+(e.message||e); }
