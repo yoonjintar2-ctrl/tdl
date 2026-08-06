@@ -40,6 +40,7 @@
   --row-h:calc(34px * var(--fs));
   --head-h:calc(68px * var(--fs));
   --topbar-h:calc(50px * var(--fs));
+  --ctl-h:calc(32px * var(--fs));
 }
 *{box-sizing:border-box;}
 /* ===================== 모바일 ===================== */
@@ -367,8 +368,12 @@ body{font-family:var(--user-font,-apple-system,BlinkMacSystemFont,"Apple SD Goth
 #app{display:flex;flex-direction:column;height:100vh;overflow:hidden;padding:10px 12px 12px;gap:10px;}
 
 #topbar{display:flex;flex-direction:column;align-items:stretch;gap:7px;background:var(--panel);border-radius:16px;padding:9px 16px;flex:0 0 auto;z-index:60;}
-#topbarRow1{display:flex;align-items:center;gap:14px;}
-#topbarRow2{display:flex;align-items:center;gap:10px;padding-top:7px;border-top:1px solid var(--border);}
+#topbarRow1{display:flex;align-items:center;gap:8px;min-height:var(--ctl-h);}
+#topbarRow2{display:flex;align-items:center;gap:8px;padding-top:8px;border-top:1px solid var(--border);min-height:var(--ctl-h);}
+/* 상단바 안의 모든 조작 요소를 같은 높이로 맞춤 */
+#topbar .tb-btn,#topbar .lock-toggle,#topbar #userChip,#topbar #filters label{
+  height:var(--ctl-h);box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;padding-top:0;padding-bottom:0;}
+#topbar .save-btn{height:var(--ctl-h);box-sizing:border-box;flex-direction:column;justify-content:center;gap:0;padding-top:0;padding-bottom:0;}
 #topbar .brand{font-size:calc(17px * var(--fs,1));font-weight:600;letter-spacing:0.2px;color:#3A3A3D;flex:0 0 auto;}
 #topbar .brand span{color:#3A3A3D;}
 #filters{display:flex;align-items:center;gap:8px;font-size:calc(12px * var(--fs,1));color:var(--text-dim);flex-wrap:wrap;}
@@ -411,6 +416,31 @@ body.theme-excel .save-btn .sv-sub{color:rgba(255,255,255,0.75);}
 .lock-toggle.on .lt-knob{left:17px;}
 .lock-toggle .lt-state{font-size:calc(11px * var(--fs,1));color:var(--text-dim);min-width:44px;text-align:left;}
 .lock-toggle.on .lt-state{color:var(--accent-deep);font-weight:600;}
+/* ── 협업(동료·쪽지·아바타) ── */
+#collabDot{position:absolute;top:2px;right:4px;min-width:15px;height:15px;border-radius:8px;background:var(--imp-strong);color:#7A4B00;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;padding:0 3px;box-sizing:border-box;}
+#collabDot.hidden{display:none;}
+.cl-tabs{display:flex;gap:5px;margin:4px 0 10px;}
+.cl-tab{flex:1;border:1px solid var(--border-strong);background:var(--bg);color:var(--text-dim);border-radius:8px;padding:7px;font-size:calc(12px * var(--fs,1));font-family:inherit;cursor:pointer;}
+.cl-tab.on{background:var(--accent);color:#fff;border-color:transparent;font-weight:600;}
+.cl-pane.hidden{display:none;}
+.cl-list{max-height:180px;overflow:auto;border:1px solid var(--border);border-radius:8px;}
+.cl-list:empty::after{content:'아직 없어요';display:block;padding:12px;text-align:center;color:var(--text-dim);font-size:calc(11.5px * var(--fs,1));}
+.cl-row{display:flex;align-items:center;gap:8px;padding:8px 10px;border-bottom:1px solid var(--border);}
+.cl-row:last-child{border-bottom:none;}
+.cl-row .cl-nm{flex:1;font-size:calc(12px * var(--fs,1));color:var(--text);min-width:0;}
+.cl-row .cl-nm small{display:block;color:var(--text-dim);font-size:calc(10px * var(--fs,1));overflow:hidden;text-overflow:ellipsis;}
+.cl-row .btn{padding:4px 10px;font-size:calc(11px * var(--fs,1));}
+.cl-mini{width:26px;height:34px;flex:0 0 auto;}
+.cl-mini svg{width:100%;height:100%;display:block;}
+.cl-log{height:210px;overflow:auto;border:1px solid var(--border);border-radius:8px;padding:8px;margin:8px 0;display:flex;flex-direction:column;gap:6px;}
+.cl-msg{max-width:78%;padding:6px 9px;border-radius:10px;font-size:calc(12px * var(--fs,1));line-height:1.4;word-break:break-word;}
+.cl-msg.me{align-self:flex-end;background:var(--accent);color:#fff;}
+.cl-msg.you{align-self:flex-start;background:var(--bg);color:var(--text);}
+.cl-msg .cl-when{display:block;font-size:calc(9px * var(--fs,1));opacity:0.7;margin-top:2px;}
+.cl-ava-wrap{display:flex;justify-content:center;padding:6px 0;}
+.cl-ava{width:74px;height:104px;}
+.cl-ava svg{width:100%;height:100%;display:block;}
+.shared-mark{color:var(--accent-deep);font-size:calc(10px * var(--fs,1));margin-left:4px;}
 .hist-btn{background:var(--panel);border:1px solid var(--line-strong);color:var(--text);font-weight:600;}
 .hist-btn:hover:not(:disabled){background:var(--accent-soft);color:var(--accent-deep);border-color:var(--accent);}
 .hist-btn:disabled{opacity:0.32;cursor:default;}
@@ -457,6 +487,11 @@ body.theme-excel .save-btn .sv-sub{color:rgba(255,255,255,0.75);}
 .rhead-day .cell .wd{font-size:calc(9.5px * var(--fs,1));line-height:calc(11px * var(--fs,1));}
 .rhead-day .cell .dn{font-size:calc(11.5px * var(--fs,1));font-weight:600;line-height:calc(14px * var(--fs,1));}
 .rhead-day .cell.offday{background:var(--off-bg);}
+/* 오늘 날짜 칸만 은은하게 강조 + 하단에 '오늘' 표시 */
+.rhead-day .cell.todaycell{background:var(--accent-soft);box-shadow:inset 0 -2px 0 var(--accent);}
+.rhead-day .cell.todaycell .wd,.rhead-day .cell.todaycell .dn{color:var(--accent-deep);}
+.rhead-day .cell.todaycell .dn{font-weight:700;}
+.rhead-day .cell .todaytag{font-size:calc(7px * var(--fs,1));line-height:calc(8px * var(--fs,1));color:var(--accent-deep);font-weight:700;letter-spacing:-0.3px;margin-top:1px;}
 .rhead-day .cell.offday .wd,.rhead-day .cell.offday .dn{color:var(--off-text);}
 
 .col-resizer{position:absolute;right:0;top:0;bottom:0;width:6px;cursor:col-resize;z-index:50;}
@@ -871,7 +906,7 @@ null
     <div id="topbarRow1">
       <div class="brand"><img class="tdl-logo" alt=""><span>TDL<span>.</span></span></div>
       <div id="filters">
-        <button class="tb-btn add-top" id="btnAddTop" title="새 일정 추가 (맨 아래에 생기고 바로 입력할 수 있어요)">＋ 일정 추가</button>
+        <button class="tb-btn add-top" id="btnAddTop" title="새 일정 추가 (목록 맨 위에 생기고 바로 입력할 수 있어요)">＋ 일정 추가</button>
         <button class="tb-btn" id="btnSearch" title="검색" style="position:relative;">🔍 검색<span id="searchDot" class="hidden" style="position:absolute;top:3px;right:5px;width:6px;height:6px;border-radius:50%;background:var(--accent);"></span></button>
         <label><input type="checkbox" id="fltIncomplete"> 완료 숨김</label>
         <button class="lock-toggle" id="btnDateLock" type="button" role="switch" aria-checked="false">
@@ -879,7 +914,7 @@ null
           <span class="lt-track"><span class="lt-knob"></span></span>
           <span class="lt-state">Unlock</span>
         </button>
-        <button class="tb-btn" id="btnGoToday" title="오늘로 돌아가기">◀ 오늘로</button>
+        <button class="tb-btn" id="btnGoToday" title="오늘로 돌아가기">오늘로</button>
       </div>
     </div>
     <div id="topbarRow2">
@@ -891,6 +926,7 @@ null
       <div id="topbar-right">
         <button class="tb-btn save-btn" id="btnSave"><span class="sv-main">💾 저장</span><span class="sv-sub" id="svSub">연결 필요</span></button>
         <div id="userChip" class="hidden"><b id="userEmail"></b><button id="btnSignOut">로그아웃</button></div>
+        <button class="tb-btn" id="btnCollab" title="동료 · 쪽지 · 아바타" style="position:relative;">👥 동료<span id="collabDot" class="hidden"></span></button>
         <button class="tb-btn" id="btnQr" title="휴대폰으로 접속할 수 있는 QR 코드">📱 모바일 접속</button>
         <button class="tb-btn" id="btnSettings">⚙ 설정</button>
       </div>
@@ -1007,6 +1043,10 @@ null
       <input type="text" id="msLink" placeholder="https://..." autocomplete="off" inputmode="url">
       <button id="msLinkGo">열기</button>
     </div>
+
+    <div class="ms-lab">동료와 함께</div>
+    <label class="chk-line"><input type="checkbox" id="msShare"> 👥 동료와 함께하는 일정</label>
+    <div class="hint" id="msShareWho"></div>
 
     <div class="ms-toggles">
       <button class="ms-tg" id="msDone">✅ 완료</button>
@@ -1181,6 +1221,8 @@ null
 
   <div class="modal hidden" id="datePopup" style="width:480px;">
     <h2>🗓 일정 날짜 설정</h2>
+    <label class="chk-line" id="dpShareLine" style="margin-bottom:8px;"><input type="checkbox" id="dpShare"> 👥 동료와 함께하는 일정</label>
+    <div class="hint" id="dpShareWho" style="margin-top:-4px;"></div>
     <div class="range-label" id="rangeLabel">-</div>
     <div class="hint">날짜를 클릭하면 시작=종료일로 지정돼요. 다른 날짜를 한 번 더 클릭하면 종료일이 설정됩니다.</div>
     <div class="cal-wrap" id="calWrap"></div>
@@ -1251,6 +1293,7 @@ null
     <div class="field-label">기타</div>
     <div class="row">
       <button class="btn" id="openHolidayFromSettings">📅 공휴일 관리</button>
+      <button class="btn" id="openCategoryFromSettings">🗂 카테고리 관리 · 공유</button>
     </div>
     <div class="field-label">데이터 안전</div>
     <div class="row">
@@ -1269,6 +1312,61 @@ null
     <div class="hint">기기에 자동으로 남아있는 이전 데이터입니다. 되돌리면 지금 화면의 내용이 대체됩니다.</div>
     <div id="restoreList" style="max-height:340px;overflow:auto;"></div>
     <div class="modal-actions"><button class="btn" id="closeRestoreModal">닫기</button></div>
+  </div>
+
+  <div class="modal hidden" id="collabModal" style="width:460px;">
+    <h2>👥 동료</h2>
+    <div class="cl-tabs">
+      <button class="cl-tab on" data-ct="buddy">동료</button>
+      <button class="cl-tab" data-ct="msg">쪽지</button>
+      <button class="cl-tab" data-ct="ava">아바타</button>
+    </div>
+
+    <div class="cl-pane" id="ctBuddy">
+      <div class="field-label">구글 아이디로 동료 요청</div>
+      <div class="row">
+        <input type="text" id="clEmail" placeholder="상대방 구글 이메일" autocomplete="off" style="flex:1;padding:7px 9px;border:1px solid var(--border-strong);border-radius:6px;font-size:calc(12px * var(--fs,1));font-family:inherit;">
+        <button class="btn primary" id="clInvite">요청</button>
+      </div>
+      <div class="hint" id="clInviteMsg"></div>
+      <div class="field-label">받은 요청</div>
+      <div id="clReqList" class="cl-list"></div>
+      <div class="field-label">내 동료</div>
+      <div id="clBuddyList" class="cl-list"></div>
+    </div>
+
+    <div class="cl-pane hidden" id="ctMsg">
+      <div class="row">
+        <select id="clMsgTo" style="flex:1;padding:7px 9px;border:1px solid var(--border-strong);border-radius:6px;font-size:calc(12px * var(--fs,1));font-family:inherit;"></select>
+      </div>
+      <div id="clMsgLog" class="cl-log"></div>
+      <div class="row">
+        <input type="text" id="clMsgIn" placeholder="쪽지 내용" autocomplete="off" style="flex:1;padding:7px 9px;border:1px solid var(--border-strong);border-radius:6px;font-size:calc(12px * var(--fs,1));font-family:inherit;">
+        <button class="btn primary" id="clMsgSend">보내기</button>
+      </div>
+    </div>
+
+    <div class="cl-pane hidden" id="ctAva">
+      <div class="hint">동료들에게 보여질 닉네임과 캐릭터예요. 탕비실 캐릭터와 같이 적용됩니다.</div>
+      <div class="cl-ava-wrap"><div id="clAvaPrev" class="cl-ava"></div></div>
+      <div class="field-label">닉네임</div>
+      <div class="row">
+        <input type="text" id="clNick" maxlength="12" placeholder="최대 12자" style="flex:1;padding:7px 9px;border:1px solid var(--border-strong);border-radius:6px;font-size:calc(12px * var(--fs,1));font-family:inherit;">
+        <button class="btn" id="clAvaRnd">🎲 랜덤</button>
+      </div>
+      <div id="clAvaOpts"></div>
+      <div class="row"><button class="btn primary" id="clAvaSave" style="flex:1;">저장</button></div>
+      <div class="hint" id="clAvaMsg"></div>
+    </div>
+
+    <div class="modal-actions"><button class="btn" id="closeCollabModal">닫기</button></div>
+  </div>
+
+  <div class="modal hidden" id="shareModal" style="width:360px;">
+    <h2>🤝 함께할 동료 선택</h2>
+    <div class="hint">선택한 동료의 TDL에도 이 일정이 나타나고, 어느 쪽에서 수정·완료해도 서로 반영돼요.</div>
+    <div id="shareList" class="cl-list"></div>
+    <div class="modal-actions"><button class="btn" id="shareCancel">취소</button><button class="btn primary" id="shareOk">확인</button></div>
   </div>
 
   <div class="modal hidden" id="searchModal" style="width:340px;">
@@ -1469,6 +1567,7 @@ function normalize(d){
   if(!Array.isArray(d.stickers)) d.stickers=[];
   if(!Array.isArray(d.notes)) d.notes=[];
   if(!Array.isArray(d._bk)) d._bk=[];
+  if(!d.catShares || typeof d.catShares!=='object') d.catShares={};   /* 카테고리별 공유 대상 */
   if(!d.time) d.time={};
   const T=d.time;
   if(!Array.isArray(T.alarms)) T.alarms=[];
@@ -1491,7 +1590,7 @@ function normalize(d){
     if(t.done===undefined) t.done=false;
     if(!t.categoryId) t.categoryId=d.categories[0].id;
     if(!catIds.includes(t.categoryId)) t.categoryId=d.categories[0].id;
-    if(!t.start && !t.pinBottom){ t.start=todayStr(); }      /* 날짜 미정 행은 비운 채로 둠 */
+    if(!t.start && !t.pinBottom && !t.pinNew){ t.start=todayStr(); }   /* 날짜 미정 행은 비운 채로 둠 */
     if(t.start && !t.end) t.end=t.start;
     if(t.campaignId && !d.campaigns.some(c=>c.id===t.campaignId)) t.campaignId=null;
   });
@@ -1660,7 +1759,7 @@ function exportBackup(){
 
 function updateFileStatusHint(t){ const el=document.getElementById('fileStatusHint'); if(el) el.textContent=t; }
 /* ═══════════════ 클라우드 저장 (Supabase) ═══════════════ */
-const APP_VER='ver 4.0', APP_BUILD='2026-08-06 18:30';
+const APP_VER='ver 4.1', APP_BUILD='2026-08-06 20:00';
 const LOGO_SRC='data:image/png;base64,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';
 function paintLogos(){ document.querySelectorAll('img.tdl-logo').forEach(i=>{ i.src=LOGO_SRC; }); }
 const IS_WEB = /^https?:$/i.test(location.protocol);
@@ -1827,7 +1926,21 @@ async function cloudWrite(){
 function saveAll(){
   if(booting) return;
   persistLocal();
+  syncSharedTasks();
   if(CLOUD_MODE) scheduleCloudSave(); else scheduleFileWrite();
+}
+/* 내가 고친 공유 일정을 서버에 밀어 넣어 동료 화면에도 반영 */
+let sharedSnap={};
+function syncSharedTasks(){
+  try{
+    if(typeof clOn!=='function' || !clOn()) return;
+    (state.tasks||[]).forEach(t=>{
+      if(!t._sid) return;
+      const sig=JSON.stringify(clPack(t));
+      if(sharedSnap[t._sid]!==sig){ sharedSnap[t._sid]=sig; clPushTask(t); }
+    });
+    if(typeof autoShareNew==='function') autoShareNew();
+  }catch(e){}
 }
 /* 사용자가 값을 수정하면 현재 정렬 순서를 배열에 고정하고 정렬을 해제 (다시 헤더를 눌러야 정렬됨) */
 function unlockSort(){
@@ -1973,16 +2086,18 @@ function sortedTasks(){
   /* 기간정렬 Lock: 무엇을 추가/이동해도 항상 시작일 오름차순 강제 */
   if(dateLocked()){
     return state.tasks.slice().sort((a,b)=>{
-      if(!!a.pinBottom!==!!b.pinBottom) return a.pinBottom?1:-1;   // 방금 추가한 빈 행은 잠시 맨 아래
+      if(!!a.pinNew!==!!b.pinNew) return a.pinNew?-1:1;            // 방금 추가한 빈 행은 맨 위
+      if(!!a.pinBottom!==!!b.pinBottom) return a.pinBottom?1:-1;
       const da=displayDate(a), db=displayDate(b);
       if(da!==db) return da<db?-1:1;
       return (a._seq||0)-(b._seq||0);   // 같은 날짜 안에서는 사용자가 배치한 순서 유지
     });
   }
   const sk=state.settings.sortKey;
-  if(!sk) return state.tasks.slice(); // 정렬 지정 없으면 사용자가 배치한 순서 그대로
+  if(!sk) return state.tasks.slice().sort((a,b)=>(!!a.pinNew!==!!b.pinNew)? (a.pinNew?-1:1) : 0);
   const dir=state.settings.sortDir==='desc'?-1:1;
   return state.tasks.slice().sort((a,b)=>{
+    if(!!a.pinNew!==!!b.pinNew) return a.pinNew?-1:1;
     if(!!a.pinBottom!==!!b.pinBottom) return a.pinBottom?1:-1;
     const va=cmpVal(a,sk), vb=cmpVal(b,sk);
     if(va<vb) return -1*dir;
@@ -2135,10 +2250,12 @@ function buildHeaders(){
   dateRange.forEach((dt,idx)=>{
     const hn=state.holidays[dateStrs[idx]];
     const d=document.createElement('div');
-    d.className='cell'+((isWeekend(dt)||hn)?' offday':'');
+    const isToday = dateStrs[idx]===todayStr();
+    d.className='cell'+((isWeekend(dt)||hn)?' offday':'')+(isToday?' todaycell':'');
     d.dataset.date=dateStrs[idx];
     d.style.cursor='pointer';
-    d.innerHTML='<div class="wd">'+WD[dt.getDay()]+'</div><div class="dn">'+dt.getDate()+'</div>'+(hn?'<div class="holn">'+escapeHtml(hn)+'</div>':'');
+    d.innerHTML='<div class="wd">'+WD[dt.getDay()]+'</div><div class="dn">'+dt.getDate()+'</div>'
+      +(isToday?'<div class="todaytag">오늘</div>':(hn?'<div class="holn">'+escapeHtml(hn)+'</div>':''));
     if(hn){ d.dataset.holiday=hn; }
     d.addEventListener('click',()=>{ selectedDate = (selectedDate===d.dataset.date)? null : d.dataset.date; applySelection(); });
     rd.appendChild(d);
@@ -2224,6 +2341,16 @@ function buildBody(){
     cCamp.appendChild(cbtn); lrow.appendChild(cCamp);
 
     const cDet=mkCell('info-detail','detail');
+    if(task._sid){
+      const mk=document.createElement('span'); mk.className='shared-mark';
+      mk.style.cssText='position:absolute;right:6px;top:50%;transform:translateY(-50%);pointer-events:none;';
+      mk.textContent='👥';
+      try{
+        const others=(task._members||[]).filter(x=>x!==(cloudUser&&cloudUser.id));
+        mk.title='공유 일정 · '+(others.length? others.map(clName).join(', ') : '나만');
+      }catch(e){}
+      cDet.appendChild(mk);
+    }
     const inp=document.createElement('input'); inp.type='text'; inp.value=task.detail||''; inp.placeholder='세부 내용 입력';
     let detailSnap=null, detailBefore=null;
     inp.addEventListener('focus',()=>{ detailSnap=snapTasks(); detailBefore=inp.value; });
@@ -2381,8 +2508,8 @@ function buildBody(){
 function addTask(){
   pushHistory('일정 추가');
   const catId=(state.settings.filterCategory!=='all'? state.settings.filterCategory : state.categories[0].id);
-  const t={id:uid(), categoryId:catId, campaignId:null, detail:'', done:false, important:false, start:'', end:'', startTime:'', endTime:'', repeat:null, pinBottom:true};
-  state.tasks.push(t);
+  const t={id:uid(), categoryId:catId, campaignId:null, detail:'', done:false, important:false, start:'', end:'', startTime:'', endTime:'', repeat:null, pinNew:true};
+  state.tasks.unshift(t);                       /* 목록 맨 위에서 바로 입력 */
   state.tasks.forEach((x,i)=>{ x._seq=i; });
   saveAll(); buildBody();
   kbdFocus={taskId:t.id, col:'detail'};
@@ -2507,7 +2634,7 @@ document.getElementById('applyBulkModal').addEventListener('click',()=>{
     }
     if(dn!=='keep') t.done=(dn==='yes');
     if(imp!=='keep') t.important=(imp==='yes');
-    if(useDate){ t.start=s; t.end=e2; delete t.pinBottom; }
+    if(useDate){ t.start=s; t.end=e2; delete t.pinBottom; delete t.pinNew; }
   });
   saveAll(); buildBody(); updateBulkBar(); hideModals();
 });
@@ -2994,6 +3121,7 @@ let calState=null, datePopupTaskId=null;
 function openDatePopup(taskId){
   const task=state.tasks.find(t=>t.id===taskId); if(!task) return;
   datePopupTaskId=taskId;
+  paintShareLine(task, 'dpShare', 'dpShareWho', 'dpShareLine');
   const base=parseYMD(task.start||todayStr());
   calState={year:base.getFullYear(), month:base.getMonth(), tempStart:task.start||todayStr(), tempEnd:task.end||todayStr(), phase:'start'};
 
@@ -3109,7 +3237,7 @@ document.getElementById('saveDatePopup').addEventListener('click',()=>{
   const task=state.tasks.find(t=>t.id===datePopupTaskId); if(!task) return hideModals();
   pushHistory('기간 변경');
   unlockSort(); task.start=calState.tempStart; task.end=calState.tempEnd;
-  delete task.pinBottom;                 /* 기간을 정하면 제자리로 정렬 */
+  delete task.pinBottom; delete task.pinNew;   /* 기간을 정하면 제자리로 정렬 */
   setTimeout(()=>{ syncTaskAlarm(task); saveAll(); renderAlarms(); },0);
   const t=document.getElementById('repeatType').value;
   if(t==='none'){ task.repeat=null; }
@@ -3562,6 +3690,13 @@ function renderCategoryList(focusId){
     if(focusId && c.id===focusId){ row.style.background='#eef1fd'; row.style.borderRadius='6px'; row.style.padding='4px'; }
     const inp=document.createElement('input'); inp.type='text'; inp.value=c.name; inp.placeholder='카테고리 이름';
     inp.addEventListener('input',()=>{ c.name=inp.value; saveAll(); });
+    const shb=document.createElement('button'); shb.className='btn';
+    shb.style.cssText='padding:4px 9px;font-size:11px;white-space:nowrap;';
+    const shn=(state.catShares[c.id]||[]).length;
+    shb.textContent = shn? ('👥 '+shn+'명') : '👥 공유';
+    if(shn) shb.style.background='var(--accent-soft)';
+    shb.title='이 카테고리의 일정을 동료와 공유합니다';
+    shb.addEventListener('click', ()=>shareCategory(c));
     const del=document.createElement('span'); del.className='del-mini'; del.textContent='×';
     del.addEventListener('click',()=>{
       if(state.categories.length<=1){ alert('카테고리는 최소 1개가 필요합니다.'); return; }
@@ -3572,9 +3707,10 @@ function renderCategoryList(focusId){
       state.tasks.forEach(t=>{ if(t.categoryId===c.id){ t.categoryId=fallback; t.campaignId=null; } });
       state.campaigns.forEach(cp=>{ if(cp.categoryId===c.id) cp.categoryId=fallback; });
       if(state.settings.filterCategory===c.id) state.settings.filterCategory='all';
+      delete state.catShares[c.id];
       saveAll(); renderCategoryList(); render();
     });
-    row.append(inp,del); wrap.appendChild(row);
+    row.append(inp,shb,del); wrap.appendChild(row);
   });
 }
 document.getElementById('addCategoryBtn').addEventListener('click',()=>{
@@ -3586,6 +3722,468 @@ document.getElementById('addCategoryBtn').addEventListener('click',()=>{
 document.getElementById('closeHolidayModal').addEventListener('click',()=>{ hideModals(); render(); });
 document.getElementById('backToSettings').addEventListener('click',()=>{ showModal('settingsModal'); });
 document.getElementById('openHolidayFromSettings').addEventListener('click',()=>{ showModal('holidayModal'); renderHolidayList(); });
+document.getElementById('openCategoryFromSettings').addEventListener('click',()=>{ showModal('categoryModal'); renderCategoryList(); });
+
+/* ═══════════════ 협업: 동료 · 공유일정 · 쪽지 · 아바타 ═══════════════ */
+let clBuddies=[], clReqs=[], clProfiles={}, clSharedRows=[], clMsgs=[], clUnread=0, clTab='buddy', clPollTimer=null;
+let shareResolve=null, shareSel=new Set();
+
+function clOn(){ return !!(sb && cloudUser); }
+function clName(uid){
+  if(uid===(cloudUser&&cloudUser.id)) return '나';
+  const p=clProfiles[uid];
+  return (p && (p.nickname||p.email)) || '동료';
+}
+function clAvatarSvg(uid){
+  const p=clProfiles[uid];
+  const a=(p && p.avatar && typeof p.avatar==='object' && Object.keys(p.avatar).length)? p.avatar : null;
+  try{ return chSvg(a||{sk:0,hs:0,hc:0,tp:0,bt:0}); }catch(e){ return ''; }
+}
+
+/* ── 내 프로필(닉네임·아바타)을 서버에 올려 동료에게 보이게 함 ── */
+async function clPushProfile(){
+  if(!clOn()) return;
+  let pf={}; try{ pf=lgProfile()||{}; }catch(e){}
+  const nick=(pf.name||'').trim() || ((cloudUser.email||'').split('@')[0]);
+  try{
+    await sb.from('profiles').upsert({
+      user_id: cloudUser.id, email: cloudUser.email||'', nickname: nick,
+      avatar: {sk:pf.sk|0, hs:pf.hs|0, hc:pf.hc|0, tp:pf.tp|0, bt:pf.bt|0},
+      updated_at: new Date().toISOString()
+    },{onConflict:'user_id'});
+  }catch(e){}
+}
+
+/* ── 동료 목록·요청·프로필 읽기 ── */
+async function clLoadBuddies(){
+  if(!clOn()) return;
+  try{
+    const {data,error}=await sb.from('buddies').select('*');
+    if(error) throw error;
+    const me=cloudUser.id;
+    clBuddies=(data||[]).filter(b=>b.status==='accepted');
+    clReqs=(data||[]).filter(b=>b.status==='pending' && b.addressee===me);
+    const ids=new Set();
+    (data||[]).forEach(b=>{ ids.add(b.requester); ids.add(b.addressee); });
+    ids.delete(me);
+    if(ids.size){
+      const {data:ps}=await sb.from('profiles').select('user_id,email,nickname,avatar').in('user_id',Array.from(ids));
+      (ps||[]).forEach(p=>{ clProfiles[p.user_id]=p; });
+    }
+  }catch(e){}
+}
+function clBuddyIds(){
+  const me=cloudUser? cloudUser.id : null;
+  return clBuddies.map(b=> b.requester===me? b.addressee : b.requester);
+}
+
+/* ── 동료 요청 보내기 ── */
+async function clInvite(){
+  const msg=document.getElementById('clInviteMsg');
+  const em=document.getElementById('clEmail').value.trim();
+  if(!em){ msg.textContent='이메일을 입력해 주세요.'; return; }
+  if(cloudUser && em.toLowerCase()===(cloudUser.email||'').toLowerCase()){ msg.textContent='본인은 추가할 수 없어요.'; return; }
+  msg.textContent='찾는 중…';
+  try{
+    const {data,error}=await sb.rpc('find_user_by_email',{p_email:em});
+    if(error) throw error;
+    const row=(data&&data[0])||null;
+    if(!row){ msg.textContent='해당 이메일로 TDL을 쓰는 사람을 찾지 못했어요. (상대방이 먼저 한 번 로그인해야 해요)'; return; }
+    if(clBuddyIds().includes(row.user_id)){ msg.textContent='이미 동료예요.'; return; }
+    const {error:e2}=await sb.from('buddies').insert({requester:cloudUser.id, addressee:row.user_id, status:'pending'});
+    if(e2){
+      msg.textContent = /duplicate|unique/i.test(e2.message||'') ? '이미 요청을 보냈어요.' : ('요청 실패: '+e2.message);
+      return;
+    }
+    msg.textContent='요청을 보냈어요. 상대가 승인하면 동료가 됩니다.';
+    document.getElementById('clEmail').value='';
+    await clLoadBuddies(); clRenderBuddies();
+  }catch(e){ msg.textContent='실패: '+(e.message||e); }
+}
+async function clAccept(id){
+  try{ await sb.from('buddies').update({status:'accepted'}).eq('id',id); }catch(e){}
+  await clLoadBuddies(); clRenderBuddies(); clSyncDot();
+}
+async function clRemove(id){
+  if(!confirm('이 관계를 삭제할까요?')) return;
+  try{ await sb.from('buddies').delete().eq('id',id); }catch(e){}
+  await clLoadBuddies(); clRenderBuddies(); clSyncDot();
+}
+
+function clRenderBuddies(){
+  const rq=document.getElementById('clReqList'), bl=document.getElementById('clBuddyList');
+  if(!rq||!bl) return;
+  rq.innerHTML=''; bl.innerHTML='';
+  clReqs.forEach(b=>{
+    const r=document.createElement('div'); r.className='cl-row';
+    r.innerHTML='<div class="cl-mini">'+clAvatarSvg(b.requester)+'</div><div class="cl-nm">'+escapeHtml(clName(b.requester))+'<small>'+escapeHtml((clProfiles[b.requester]||{}).email||'')+'</small></div>';
+    const ok=document.createElement('button'); ok.className='btn primary'; ok.textContent='승인';
+    ok.addEventListener('click',()=>clAccept(b.id));
+    const no=document.createElement('button'); no.className='btn'; no.textContent='거절';
+    no.addEventListener('click',()=>clRemove(b.id));
+    r.appendChild(ok); r.appendChild(no); rq.appendChild(r);
+  });
+  const me=cloudUser? cloudUser.id : null;
+  clBuddies.forEach(b=>{
+    const other = b.requester===me? b.addressee : b.requester;
+    const r=document.createElement('div'); r.className='cl-row';
+    r.innerHTML='<div class="cl-mini">'+clAvatarSvg(other)+'</div><div class="cl-nm">'+escapeHtml(clName(other))+'<small>'+escapeHtml((clProfiles[other]||{}).email||'')+'</small></div>';
+    const del=document.createElement('button'); del.className='btn'; del.textContent='삭제';
+    del.addEventListener('click',()=>clRemove(b.id));
+    r.appendChild(del); bl.appendChild(r);
+  });
+}
+
+/* ── 쪽지 ── */
+async function clLoadMsgs(){
+  if(!clOn()) return;
+  try{
+    const {data}=await sb.from('notes_msg').select('*').order('created_at',{ascending:true}).limit(500);
+    clMsgs=data||[];
+    clUnread=clMsgs.filter(m=>m.to_user===cloudUser.id && !m.read_at).length;
+  }catch(e){}
+}
+function clRenderMsgTargets(){
+  const sel=document.getElementById('clMsgTo'); if(!sel) return;
+  const cur=sel.value;
+  sel.innerHTML='';
+  clBuddyIds().forEach(id=>{
+    const o=document.createElement('option'); o.value=id; o.textContent=clName(id); sel.appendChild(o);
+  });
+  if(cur) sel.value=cur;
+}
+function clRenderMsgLog(){
+  const box=document.getElementById('clMsgLog'), sel=document.getElementById('clMsgTo');
+  if(!box||!sel) return;
+  const other=sel.value;
+  box.innerHTML='';
+  if(!other){ box.innerHTML='<div class="hint">동료를 먼저 추가해 주세요.</div>'; return; }
+  const me=cloudUser.id;
+  const list=clMsgs.filter(m=>(m.from_user===me&&m.to_user===other)||(m.from_user===other&&m.to_user===me));
+  if(!list.length){ box.innerHTML='<div class="hint">아직 주고받은 쪽지가 없어요.</div>'; return; }
+  list.forEach(m=>{
+    const el=document.createElement('div');
+    el.className='cl-msg '+(m.from_user===me?'me':'you');
+    const dt=new Date(m.created_at);
+    el.innerHTML=escapeHtml(m.body)+'<span class="cl-when">'+(dt.getMonth()+1)+'/'+dt.getDate()+' '+pad2(dt.getHours())+':'+pad2(dt.getMinutes())+'</span>';
+    box.appendChild(el);
+  });
+  box.scrollTop=box.scrollHeight;
+  /* 읽음 처리 */
+  const unread=list.filter(m=>m.to_user===me && !m.read_at).map(m=>m.id);
+  if(unread.length){
+    sb.from('notes_msg').update({read_at:new Date().toISOString()}).in('id',unread)
+      .then(()=>{ clMsgs.forEach(m=>{ if(unread.includes(m.id)) m.read_at=new Date().toISOString(); }); clUnread=0; clSyncDot(); });
+  }
+}
+async function clSendMsg(){
+  const inp=document.getElementById('clMsgIn'), sel=document.getElementById('clMsgTo');
+  const body=inp.value.trim(), to=sel.value;
+  if(!body||!to) return;
+  inp.value='';
+  try{
+    const {data}=await sb.from('notes_msg').insert({from_user:cloudUser.id,to_user:to,body}).select();
+    if(data&&data[0]) clMsgs.push(data[0]);
+    clRenderMsgLog();
+  }catch(e){ alert('쪽지 전송 실패: '+(e.message||e)); }
+}
+
+/* ── 아바타 ── */
+function clRenderAva(){
+  try{ if(!lgDraft) lgDraft=lgProfile(); }catch(e){ return; }
+  const pv=document.getElementById('clAvaPrev');
+  if(pv) pv.innerHTML=chSvg(lgDraft);
+  const nk=document.getElementById('clNick');
+  if(nk && !nk.value) nk.value=lgDraft.name||'';
+  const box=document.getElementById('clAvaOpts');
+  if(!box) return;
+  box.innerHTML='';
+  const mk=(label,key,len)=>{
+    const wrap=document.createElement('div');
+    wrap.innerHTML='<div class="field-label">'+label+'</div>';
+    const row=document.createElement('div'); row.className='row'; row.style.flexWrap='wrap';
+    for(let i=0;i<len;i++){
+      const b=document.createElement('button'); b.className='btn'; b.textContent=(i+1);
+      b.style.cssText='padding:4px 9px;font-size:11px;'+((lgDraft[key]||0)===i?'background:var(--accent);color:#fff;':'');
+      b.addEventListener('click',()=>{ lgDraft[key]=i; clRenderAva(); });
+      row.appendChild(b);
+    }
+    wrap.appendChild(row); box.appendChild(wrap);
+  };
+  mk('피부','sk',CH_SKIN.length); mk('머리 모양','hs',CH_HAIR.length);
+  mk('머리 색','hc',CH_HAIRC.length); mk('상의','tp',CH_TOP.length); mk('하의','bt',CH_BOT.length);
+}
+async function clSaveAva(){
+  if(!lgDraft) lgDraft=lgProfile();
+  lgDraft.name=(document.getElementById('clNick').value||'').trim().slice(0,12);
+  lgSaveProfile();
+  await clPushProfile();
+  document.getElementById('clAvaMsg').textContent='저장했어요. 동료들에게 이 모습과 닉네임으로 보여요.';
+}
+
+/* ── 공유 일정 ── */
+async function clLoadShared(){
+  if(!clOn()) return;
+  try{
+    const {data,error}=await sb.from('shared_tasks').select('*');
+    if(error) throw error;
+    clSharedRows=data||[];
+    const ids=new Set();
+    clSharedRows.forEach(r=>{ ids.add(r.owner); (r.members||[]).forEach(m=>ids.add(m)); });
+    ids.delete(cloudUser.id);
+    const need=Array.from(ids).filter(i=>!clProfiles[i]);
+    if(need.length){
+      const {data:ps}=await sb.from('profiles').select('user_id,email,nickname,avatar').in('user_id',need);
+      (ps||[]).forEach(p=>{ clProfiles[p.user_id]=p; });
+    }
+  }catch(e){}
+}
+/* 공유 일정을 내 화면 목록에 반영 (없는 카테고리·캠페인은 자동 생성) */
+function clMergeShared(){
+  if(!cloudUser) return;
+  let changed=false;
+  const seen=new Set();
+  clSharedRows.forEach(row=>{
+    const dt=row.data||{};
+    seen.add(row.id);
+    /* 카테고리 자동 추가 */
+    let catId=null;
+    if(dt.catName){
+      let c=state.categories.find(x=>x.name===dt.catName);
+      if(!c){ c={id:uid(), name:dt.catName}; state.categories.push(c); changed=true; }
+      catId=c.id;
+    }
+    catId=catId||state.categories[0].id;
+    /* 캠페인 자동 추가 */
+    let campId=null;
+    if(dt.campName){
+      let cp=state.campaigns.find(x=>x.name===dt.campName);
+      if(!cp){ cp={id:uid(), name:dt.campName, categoryId:catId, icon:dt.campIcon||'', color:dt.campColor||''}; state.campaigns.push(cp); changed=true; }
+      campId=cp.id;
+    }
+    let t=state.tasks.find(x=>x._sid===row.id);
+    if(!t){
+      t={id:uid(), _sid:row.id, _seq:state.tasks.length};
+      state.tasks.push(t); changed=true;
+    }
+    const before=JSON.stringify([t.detail,t.start,t.end,t.done,t.important,t.startTime,t.endTime,t.categoryId,t.campaignId]);
+    t.detail=dt.detail||''; t.start=dt.start||todayStr(); t.end=dt.end||t.start;
+    t.startTime=dt.startTime||''; t.endTime=dt.endTime||'';
+    t.done=!!dt.done; t.important=!!dt.important;
+    t.categoryId=catId; t.campaignId=campId;
+    t.repeat=dt.repeat||null; t.link=dt.link||'';
+    t._owner=row.owner; t._members=row.members||[];
+    if(JSON.stringify([t.detail,t.start,t.end,t.done,t.important,t.startTime,t.endTime,t.categoryId,t.campaignId])!==before) changed=true;
+  });
+  /* 서버에서 사라진 공유 일정은 내 목록에서도 제거 */
+  const before=state.tasks.length;
+  state.tasks=state.tasks.filter(t=>!t._sid || seen.has(t._sid));
+  if(state.tasks.length!==before) changed=true;
+  try{ clSharedRows.forEach(r=>{ const t=state.tasks.find(x=>x._sid===r.id); if(t) sharedSnap[r.id]=JSON.stringify(clPack(t)); }); }catch(e){}
+  if(changed){ persistLocal(); render(); }
+}
+/* 공유 일정 본문 만들기 (이름 기반이라 상대 TDL에서도 매칭됨) */
+function clPack(t){
+  const c=getCategory(t.categoryId), cp=getCampaign(t.campaignId);
+  return { detail:t.detail||'', start:t.start||todayStr(), end:t.end||t.start||todayStr(),
+    startTime:t.startTime||'', endTime:t.endTime||'', done:!!t.done, important:!!t.important,
+    repeat:t.repeat||null, link:t.link||'',
+    catName:c?c.name:'', campName:cp?cp.name:'', campIcon:cp?(cp.icon||''):'', campColor:cp?(cp.color||''):'' };
+}
+/* 공유 일정이 수정되면 서버에 반영 → 동료 화면에도 적용 */
+async function clPushTask(t){
+  if(!clOn() || !t || !t._sid) return;
+  try{
+    await sb.from('shared_tasks').update({ data: clPack(t), updated_at:new Date().toISOString(), updated_by:cloudUser.id }).eq('id',t._sid);
+  }catch(e){}
+}
+/* 새로 공유 만들기 */
+async function clCreateShare(t, memberIds){
+  if(!clOn()) return false;
+  try{
+    const members=Array.from(new Set([cloudUser.id].concat(memberIds)));
+    const {data,error}=await sb.from('shared_tasks').insert({owner:cloudUser.id, members, data:clPack(t)}).select();
+    if(error) throw error;
+    if(data&&data[0]){ t._sid=data[0].id; t._owner=cloudUser.id; t._members=members; clSharedRows.push(data[0]); }
+    return true;
+  }catch(e){ alert('공유 실패: '+(e.message||e)); return false; }
+}
+async function clUnshare(t){
+  if(!t._sid) return;
+  try{ await sb.from('shared_tasks').delete().eq('id',t._sid); }catch(e){}
+  clSharedRows=clSharedRows.filter(r=>r.id!==t._sid);
+  delete t._sid; delete t._owner; delete t._members;
+}
+/* 동료 선택 팝업 */
+function clPickBuddies(preset){
+  return new Promise(resolve=>{
+    shareSel=new Set(preset||[]);
+    const box=document.getElementById('shareList');
+    box.innerHTML='';
+    const ids=clBuddyIds();
+    if(!ids.length){ box.innerHTML='<div class="hint" style="padding:12px;">아직 동료가 없어요. 먼저 동료를 추가해 주세요.</div>'; }
+    ids.forEach(id=>{
+      const r=document.createElement('div'); r.className='cl-row';
+      const cb=document.createElement('input'); cb.type='checkbox'; cb.checked=shareSel.has(id);
+      cb.addEventListener('change',()=>{ if(cb.checked) shareSel.add(id); else shareSel.delete(id); });
+      const nm=document.createElement('div'); nm.className='cl-nm'; nm.textContent=clName(id);
+      r.appendChild(cb); r.appendChild(nm); box.appendChild(r);
+    });
+    shareResolve=resolve;
+    showModal('shareModal');
+  });
+}
+document.getElementById('shareCancel').addEventListener('click',()=>{ hideModals(); if(shareResolve){ shareResolve(null); shareResolve=null; } });
+document.getElementById('shareOk').addEventListener('click',()=>{ hideModals(); if(shareResolve){ shareResolve(Array.from(shareSel)); shareResolve=null; } });
+
+/* 일정 상세에서 "동료와 함께" 토글 */
+async function clToggleShare(taskId, want){
+  const t=state.tasks.find(x=>x.id===taskId); if(!t) return;
+  if(!want){ await clUnshare(t); saveAll(); render(); return; }
+  await clLoadBuddies();                 /* 방금 승인된 동료도 바로 뜨도록 */
+  const picked=await clPickBuddies(t._members||[]);
+  if(picked===null) { render(); return; }
+  if(!picked.length){ alert('함께할 동료를 한 명 이상 선택해 주세요.'); render(); return; }
+  if(t._sid){
+    try{ await sb.from('shared_tasks').update({members:Array.from(new Set([cloudUser.id].concat(picked)))}).eq('id',t._sid); }catch(e){}
+    t._members=picked;
+  } else {
+    await clCreateShare(t, picked);
+  }
+  saveAll(); render();
+}
+
+/* 공유 체크박스 상태 표시 (데스크탑 팝업 · 모바일 시트 공용) */
+function paintShareLine(task, cbId, whoId, lineId){
+  const cb=document.getElementById(cbId), who=document.getElementById(whoId);
+  const line=lineId? document.getElementById(lineId) : null;
+  if(!cb) return;
+  const on = clOn();
+  if(line) line.style.display = on? '' : 'none';
+  if(!on){ if(who) who.textContent=''; return; }
+  cb.checked=!!task._sid;
+  cb.dataset.taskId=task.id;
+  if(!who) return;
+  if(task._sid){
+    const others=(task._members||[]).filter(x=>x!==cloudUser.id);
+    const owner = task._owner===cloudUser.id ? '내가 만든 공유 일정' : (clName(task._owner)+'님이 공유한 일정');
+    who.textContent = owner + (others.length? (' · 함께: '+others.map(clName).join(', ')) : '');
+  } else who.textContent='';
+}
+['dpShare','msShare'].forEach(id=>{
+  const el=document.getElementById(id);
+  if(el) el.addEventListener('change', async (e)=>{
+    const tid=e.target.dataset.taskId;
+    await clToggleShare(tid, e.target.checked);
+    const t=state.tasks.find(x=>x.id===tid);
+    if(t) paintShareLine(t, id, id==='dpShare'?'dpShareWho':'msShareWho', id==='dpShare'?'dpShareLine':null);
+  });
+});
+
+/* ── 카테고리 단위 공유 ── */
+async function shareCategory(cat){
+  if(!clOn()){ alert('클라우드에 로그인해야 공유할 수 있어요.'); return; }
+  await clLoadBuddies();
+  const cur=state.catShares[cat.id]||[];
+  const picked=await clPickBuddies(cur);
+  if(picked===null) return;                       /* 취소 */
+
+  if(!picked.length){
+    /* 공유 해제: 이 카테고리에서 내가 만든 공유를 모두 되돌림 */
+    if(cur.length && !confirm('“'+cat.name+'” 카테고리 공유를 해제할까요?\n(이 카테고리의 공유 일정이 동료 화면에서 사라집니다)')) return;
+    delete state.catShares[cat.id];
+    const mine=state.tasks.filter(t=>t.categoryId===cat.id && t._sid && t._owner===cloudUser.id);
+    for(const t of mine) await clUnshare(t);
+    saveAll(); renderCategoryList(); render();
+    return;
+  }
+
+  state.catShares[cat.id]=picked;
+  const members=Array.from(new Set([cloudUser.id].concat(picked)));
+  const list=state.tasks.filter(t=>t.categoryId===cat.id && (!t._sid || t._owner===cloudUser.id));
+  let made=0;
+  for(const t of list){
+    if(t._sid){
+      try{ await sb.from('shared_tasks').update({members}).eq('id',t._sid); t._members=picked; }catch(e){}
+    } else {
+      if(await clCreateShare(t, picked)) made++;
+    }
+  }
+  saveAll(); renderCategoryList(); render();
+  alert('“'+cat.name+'” 카테고리를 '+picked.length+'명과 공유했어요.\n지금 일정 '+list.length+'건이 공유되고, 앞으로 이 카테고리에 추가하는 일정도 자동으로 공유됩니다.');
+}
+/* 공유 카테고리에 새로 생긴 일정을 자동으로 공유 */
+let autoShareBusy=false;
+async function autoShareNew(){
+  if(autoShareBusy || !clOn()) return;
+  const pend=state.tasks.filter(t=>!t._sid && t.categoryId && (state.catShares[t.categoryId]||[]).length && (t.detail||'').trim());
+  if(!pend.length) return;
+  autoShareBusy=true;
+  try{
+    for(const t of pend) await clCreateShare(t, state.catShares[t.categoryId]);
+    if(pend.length){ persistLocal(); render(); }
+  }catch(e){}
+  autoShareBusy=false;
+}
+
+/* ── 배지 · 주기적 갱신 ── */
+function clSyncDot(){
+  const dot=document.getElementById('collabDot'); if(!dot) return;
+  const n=clReqs.length+clUnread;
+  dot.textContent=n>9?'9+':String(n);
+  dot.classList.toggle('hidden', n===0);
+}
+async function clRefresh(){
+  if(!clOn()) return;
+  await clLoadBuddies();
+  await clLoadMsgs();
+  await clLoadShared();
+  clMergeShared();
+  autoShareNew();
+  clSyncDot();
+  const m=document.getElementById('collabModal');
+  if(m && !m.classList.contains('hidden')){
+    clRenderBuddies(); clRenderMsgTargets(); clRenderMsgLog();
+  }
+}
+async function initCollab(){
+  if(!clOn()) return;
+  await clPushProfile();
+  await clRefresh();
+  clearInterval(clPollTimer);
+  clPollTimer=setInterval(()=>{ if(!document.hidden) clRefresh(); }, 45000);
+}
+
+/* ── 모달 이벤트 ── */
+document.getElementById('btnCollab').addEventListener('click', async ()=>{
+  if(!clOn()){ alert('클라우드에 로그인해야 동료 기능을 쓸 수 있어요.'); return; }
+  showModal('collabModal');
+  clSetTab(clTab);
+  await clRefresh();
+  clRenderBuddies(); clRenderMsgTargets(); clRenderMsgLog(); clRenderAva();
+});
+document.getElementById('closeCollabModal').addEventListener('click', hideModals);
+function clSetTab(k){
+  clTab=k;
+  document.querySelectorAll('.cl-tab').forEach(b=>b.classList.toggle('on', b.dataset.ct===k));
+  document.getElementById('ctBuddy').classList.toggle('hidden', k!=='buddy');
+  document.getElementById('ctMsg').classList.toggle('hidden', k!=='msg');
+  document.getElementById('ctAva').classList.toggle('hidden', k!=='ava');
+  if(k==='ava') clRenderAva();
+  if(k==='msg'){ clRenderMsgTargets(); clRenderMsgLog(); }
+}
+document.querySelectorAll('.cl-tab').forEach(b=>b.addEventListener('click',()=>clSetTab(b.dataset.ct)));
+document.getElementById('clInvite').addEventListener('click', clInvite);
+document.getElementById('clEmail').addEventListener('keydown',(e)=>{ e.stopPropagation(); if(e.key==='Enter'){ e.preventDefault(); clInvite(); } });
+document.getElementById('clMsgTo').addEventListener('change', clRenderMsgLog);
+document.getElementById('clMsgSend').addEventListener('click', clSendMsg);
+document.getElementById('clMsgIn').addEventListener('keydown',(e)=>{ e.stopPropagation(); if(e.key==='Enter'){ e.preventDefault(); clSendMsg(); } });
+document.getElementById('clAvaSave').addEventListener('click', clSaveAva);
+document.getElementById('clAvaRnd').addEventListener('click',()=>{
+  const nm=lgDraft?lgDraft.name:'';
+  lgDraft=Object.assign(chRandom(),{name:nm});
+  lgSaveProfile(); clRenderAva();
+});
 
 /* ===================== 오늘로 이동 ===================== */
 document.getElementById('btnGoToday').addEventListener('click', resetToToday);
@@ -5161,6 +5759,7 @@ function mPaintSheet(){
   dbtn.textContent = isRep ? '✅ 이 회차 완료' : '✅ 완료';
   dbtn.classList.toggle('on', mIsDone(t));
   document.getElementById('msImp').classList.toggle('on', !!t.important);
+  paintShareLine(t, 'msShare', 'msShareWho', null);
 }
 function mApply(fn, label){
   const t=mCurTask(); if(!t) return;
@@ -6660,6 +7259,7 @@ async function init(){
   if(CLOUD_MODE || IS_WEB){ await initCloud(); syncUserChip(); }
   else { tryReconnectFile(); }
   booting=false;
+  if(CLOUD_MODE) initCollab();
   initTime();
   if(!IS_MOBILE) initNews();
   syncSaveBtn();
