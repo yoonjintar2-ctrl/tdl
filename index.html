@@ -400,39 +400,73 @@ body{font-family:var(--user-font,-apple-system,BlinkMacSystemFont,"Apple SD Goth
 #topbar-right{display:flex;align-items:center;gap:6px;flex:0 0 auto;min-width:0;justify-content:flex-end;}
 #newsTicker{flex:1 1 auto;min-width:60px;overflow:hidden;white-space:nowrap;height:22px;position:relative;}
 #newsTicker.hidden{display:none;}
-/* ── 우측 하단 상주 아바타 (크게 · 상반신만 노출) ── */
-#buddyAvatar{position:fixed;right:28px;bottom:0;z-index:300;width:var(--ba-w,238px);height:calc(var(--ba-w,238px) * 1.5);
-  margin-bottom:calc(var(--ba-w,238px) * -0.52);   /* 다리쪽은 화면 밖 → 상반신만 보임 */
-  cursor:grab;user-select:none;touch-action:none;}
+/* ── 우측 하단을 돌아다니는 작은 아바타 ── */
+#buddyAvatar{position:fixed;z-index:300;width:var(--ba-w,52px);height:calc(var(--ba-w,52px) * 1.5);
+  cursor:grab;user-select:none;touch-action:none;transition:left .9s linear, top .9s linear;}
 #buddyAvatar.hidden{display:none;}
-#buddyAvatar.dragging{cursor:grabbing;}
-#buddyAvatar #baBody{width:100%;height:100%;animation:baIdle 3.8s ease-in-out infinite;transform-origin:50% 100%;pointer-events:none;}
-#buddyAvatar #baBody svg{width:100%;height:100%;display:block;filter:drop-shadow(0 8px 18px rgba(40,34,60,0.20));overflow:visible;}
-#buddyAvatar:hover #baBody{animation:baHop .55s ease-in-out;}
-@keyframes baIdle{0%,100%{transform:translateY(0) scaleY(1);}50%{transform:translateY(-6px) scaleY(1.012);}}
-@keyframes baHop{0%,100%{transform:translateY(0);}40%{transform:translateY(-16px);}}
-/* 말할 때 입 움직임 */
-#buddyAvatar.talking .mth{animation:baTalk .26s steps(2,end) infinite alternate;transform-origin:32px 32px;transform-box:fill-box;}
+#buddyAvatar.dragging{cursor:grabbing;transition:none;}
+#buddyAvatar .ba-sh{position:absolute;left:14%;right:14%;bottom:-3px;height:7px;background:rgba(0,0,0,0.16);border-radius:50%;filter:blur(2px);}
+#buddyAvatar #baBody{position:absolute;inset:0;transform-origin:50% 100%;}
+#buddyAvatar #baBody svg{width:100%;height:100%;display:block;overflow:visible;filter:drop-shadow(0 3px 6px rgba(40,34,60,0.18));}
+#buddyAvatar #baBody svg *{transform-box:fill-box;}
+#buddyAvatar .lg-l,#buddyAvatar .lg-r{transform-origin:50% 6%;}
+#buddyAvatar .ar-l,#buddyAvatar .ar-r{transform-origin:50% 8%;}
+#buddyAvatar .torso{transform-origin:50% 100%;}
+#buddyAvatar.face-l #baBody{transform:scaleX(-1);}
+
+/* 동작 */
+#buddyAvatar.act-idle .torso{animation:chBob 3.2s ease-in-out infinite;}
+#buddyAvatar.act-walk .lg-l{animation:chLegA .44s linear infinite;}
+#buddyAvatar.act-walk .lg-r{animation:chLegB .44s linear infinite;}
+#buddyAvatar.act-walk .ar-l{animation:chArmB .44s linear infinite;}
+#buddyAvatar.act-walk .ar-r{animation:chArmA .44s linear infinite;}
+#buddyAvatar.act-walk .torso{animation:chBob .44s linear infinite;}
+#buddyAvatar.act-wave .ar-r{animation:chWave .4s ease-in-out infinite;}
+@keyframes baStretchA{0%,100%{transform:rotate(0)}45%{transform:rotate(-165deg)}}
+@keyframes baStretchB{0%,100%{transform:rotate(0)}45%{transform:rotate(165deg)}}
+@keyframes baStretchT{0%,100%{transform:translateY(0) scaleY(1)}45%{transform:translateY(-3px) scaleY(1.06)}}
+#buddyAvatar.act-stretch .ar-l{animation:baStretchB 2.6s ease-in-out infinite;}
+#buddyAvatar.act-stretch .ar-r{animation:baStretchA 2.6s ease-in-out infinite;}
+#buddyAvatar.act-stretch .torso{animation:baStretchT 2.6s ease-in-out infinite;}
+@keyframes baYawnM{0%,100%{transform:scaleY(1)}40%,60%{transform:scaleY(2.6)}}
+@keyframes baYawnT{0%,100%{transform:rotate(0)}50%{transform:rotate(-4deg)}}
+#buddyAvatar.act-yawn .mth{animation:baYawnM 3s ease-in-out infinite;transform-origin:32px 32px;}
+#buddyAvatar.act-yawn .torso{animation:baYawnT 3s ease-in-out infinite;}
+#buddyAvatar.act-yawn .ar-r{transform:rotate(-140deg);}
+@keyframes baHop2{0%,100%{transform:translateY(0)}40%{transform:translateY(-13px)}}
+#buddyAvatar.act-jump #baBody{animation:baHop2 .55s ease-out infinite;}
+#buddyAvatar.act-dance #baBody{animation:chDance .62s ease-in-out infinite;}
+#buddyAvatar.act-dance .ar-l{animation:chArmA .31s linear infinite;}
+#buddyAvatar.act-dance .ar-r{animation:chArmB .31s linear infinite;}
+/* 말할 때 입 */
+#buddyAvatar.talking .mth{animation:baTalk .26s steps(2,end) infinite alternate;transform-origin:32px 32px;}
 @keyframes baTalk{from{transform:scaleY(0.55);}to{transform:scaleY(1.5);}}
-/* 말풍선 — 커진 몸에 맞춰 확대 */
+
+/* 말풍선 — 더 넓고 오래 */
 #baBubble{position:absolute;left:50%;transform:translateX(-50%);
-  bottom:100%;margin-bottom:10px;
-  max-width:min(420px, 92vw);min-width:120px;
-  background:var(--panel);border:1.5px solid var(--line-strong);border-radius:18px;padding:14px 18px;
-  font-size:calc(14.5px * var(--fs,1));line-height:1.5;color:var(--text);
-  box-shadow:0 10px 28px rgba(40,34,60,0.22);animation:baPop .22s ease-out;
-  white-space:normal;word-break:keep-all;text-align:center;z-index:2;}
+  bottom:100%;margin-bottom:8px;
+  max-width:min(630px, 94vw);width:max-content;min-width:120px;
+  background:var(--panel);border:1.5px solid var(--line-strong);border-radius:16px;padding:11px 16px;
+  font-size:calc(13px * var(--fs,1));line-height:1.5;color:var(--text);
+  box-shadow:0 8px 24px rgba(40,34,60,0.2);animation:baPop .22s ease-out;
+  white-space:normal;word-break:keep-all;text-align:center;z-index:2;pointer-events:none;}
 #baBubble.hidden{display:none;}
-#baBubble::after{content:'';position:absolute;bottom:-11px;left:50%;margin-left:-9px;width:0;height:0;
-  border-left:9px solid transparent;border-right:9px solid transparent;border-top:11px solid var(--panel);
+#baBubble::after{content:'';position:absolute;bottom:-10px;left:50%;margin-left:-8px;width:0;height:0;
+  border-left:8px solid transparent;border-right:8px solid transparent;border-top:10px solid var(--panel);
   filter:drop-shadow(0 1.5px 0 var(--line-strong));}
 #baBubble.tip{border-color:var(--accent);background:var(--accent-soft);color:var(--accent-deep);font-weight:600;}
 #baBubble.tip::after{border-top-color:var(--accent-soft);}
-@keyframes baPop{from{opacity:0;transform:translateX(-50%) translateY(8px) scale(.94);}to{opacity:1;transform:translateX(-50%);}}
-#baMenu{position:fixed;z-index:360;background:var(--panel);border:1px solid var(--line-strong);border-radius:12px;box-shadow:0 10px 26px rgba(40,34,60,0.24);padding:5px;display:flex;flex-direction:column;gap:3px;min-width:180px;}
-#baMenu.hidden{display:none;}
-#baMenu button{border:none;background:transparent;color:var(--text);font-family:inherit;font-size:calc(12.5px * var(--fs,1));padding:9px 12px;border-radius:8px;cursor:pointer;text-align:left;}
-#baMenu button:hover{background:var(--accent-soft);color:var(--accent-deep);}
+@keyframes baPop{from{opacity:0;transform:translateX(-50%) translateY(6px) scale(.95);}to{opacity:1;transform:translateX(-50%);}}
+
+/* 캐릭터가 설치해 둔 시계 */
+#baClock{position:fixed;z-index:305;cursor:pointer;user-select:none;animation:baPop .3s ease-out;}
+#baClock.hidden{display:none;}
+#baClock .bc-box{background:#2B2F3A;border:2px solid #161A22;border-radius:8px;padding:6px 10px 5px;box-shadow:0 6px 16px rgba(40,34,60,0.3);text-align:center;}
+#baClock .bc-time{font-family:'Courier New',monospace;font-size:17px;font-weight:bold;letter-spacing:1px;color:#4BE38A;line-height:1.1;}
+#baClock.off .bc-time{color:#6C7480;}
+#baClock .bc-lab{font-size:8.5px;font-weight:700;color:#8A94A4;letter-spacing:.5px;margin-top:1px;}
+#baClock .bc-hint{font-size:9px;color:var(--text-dim);text-align:center;margin-top:3px;}
+#baClock:hover .bc-box{border-color:var(--accent);}
 /* 플로팅 버튼은 아바타보다 위에 */
 #miniCalFab,#stickerFab,#noteFab,#timeFab,#loungeFab{z-index:340;}
 #stickerPanel,#notePanel,#timePanel,#miniCal{z-index:345;}
@@ -995,13 +1029,11 @@ null
     <button class="bulk-btn ghost" id="bulkClearBtn">선택 해제</button>
   </div>
 
-  <div id="baMenu" class="hidden">
-    <button id="baOpenCollabBtn">👥 동료 · 쪽지 열기</button>
-    <button id="baStopTimer">⏹ 타이머 끄기</button>
-  </div>
+  <div id="baClock" class="hidden" title="타이머 · 알람"></div>
 
   <div id="buddyAvatar" class="hidden" title="눌러서 동료 · 쪽지 열기">
     <div id="baBubble" class="hidden"></div>
+    <div class="ba-sh"></div>
     <div id="baBody"></div>
   </div>
 
@@ -1423,10 +1455,12 @@ null
     <div class="cl-pane" id="ctBuddy">
       <div class="field-label">구글 아이디로 동료 요청</div>
       <div class="row">
-        <input type="text" id="clEmail" placeholder="상대방 구글 이메일" autocomplete="off" style="flex:1;padding:7px 9px;border:1px solid var(--border-strong);border-radius:6px;font-size:calc(12px * var(--fs,1));font-family:inherit;">
+        <input type="text" id="clEmail" list="clEmailList" placeholder="상대방 구글 이메일" autocomplete="off" style="flex:1;padding:7px 9px;border:1px solid var(--border-strong);border-radius:6px;font-size:calc(12px * var(--fs,1));font-family:inherit;">
+        <datalist id="clEmailList"></datalist>
         <button class="btn primary" id="clInvite">요청</button>
       </div>
       <div class="hint" id="clInviteMsg"></div>
+      <div class="hint">입력창을 누르면 TDL을 쓰는 분들의 주소가 자동완성으로 나와요. 아직 TDL을 안 쓰는 분이면 초대 메일을 보낼 수 있어요.</div>
       <div class="field-label">받은 요청</div>
       <div id="clReqList" class="cl-list"></div>
       <div class="field-label">내 동료</div>
@@ -1861,7 +1895,7 @@ function exportBackup(){
 
 function updateFileStatusHint(t){ const el=document.getElementById('fileStatusHint'); if(el) el.textContent=t; }
 /* ═══════════════ 클라우드 저장 (Supabase) ═══════════════ */
-const APP_VER='ver 5.2', APP_BUILD='2026-08-07 05:00';
+const APP_VER='ver 5.3', APP_BUILD='2026-08-07 07:00';
 const LOGO_SRC='data:image/png;base64,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';
 function paintLogos(){ document.querySelectorAll('img.tdl-logo').forEach(i=>{ i.src=LOGO_SRC; }); }
 const IS_WEB = /^https?:$/i.test(location.protocol);
@@ -3908,17 +3942,61 @@ function clBuddyIds(){
 }
 
 /* ── 동료 요청 보내기 ── */
+/* TDL을 쓰는 사람들의 메일 주소를 자동완성 후보로 */
+async function clLoadEmailHints(){
+  if(!clOn()) return;
+  try{
+    const {data}=await sb.from('profiles').select('email,nickname').limit(300);
+    const dl=document.getElementById('clEmailList'); if(!dl) return;
+    const mine=(cloudUser.email||'').toLowerCase();
+    const have=new Set(clBuddyIds());
+    dl.innerHTML='';
+    (data||[]).forEach(pr=>{
+      if(!pr.email) return;
+      if(pr.email.toLowerCase()===mine) return;
+      const o=document.createElement('option');
+      o.value=pr.email;
+      if(pr.nickname) o.label=pr.nickname;
+      dl.appendChild(o);
+    });
+  }catch(e){}
+}
+/* TDL 미사용자에게 보낼 초대 메일 (기본 메일 앱으로 열림) */
+function clSendInviteMail(em){
+  const site=location.origin+location.pathname;
+  const me=(cloudUser&&cloudUser.email)||'';
+  const subject='[TDL] '+(me? me+'님이 ':'')+'함께 일정을 관리하자고 초대했어요';
+  const body=
+    'TDL(Today Do List)에 초대합니다.\n\n'
+    +'바쁜 직장인을 위한 가볍고 편리한 스케줄 관리 프로그램이에요.\n'
+    +'아래 주소에 구글 계정으로 로그인하면 바로 시작할 수 있어요.\n\n'
+    +site+'\n\n'
+    +'로그인하신 뒤 알려주시면 동료로 연결해서 일정을 함께 관리하고 쪽지도 주고받을 수 있어요.\n\n'
+    +(me? ('보낸 사람: '+me+'\n') : '');
+  const url='mailto:'+encodeURIComponent(em)+'?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);
+  window.open(url,'_blank');
+}
 async function clInvite(){
   const msg=document.getElementById('clInviteMsg');
   const em=document.getElementById('clEmail').value.trim();
   if(!em){ msg.textContent='이메일을 입력해 주세요.'; return; }
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)){ msg.textContent='이메일 형식이 올바르지 않아요.'; return; }
   if(cloudUser && em.toLowerCase()===(cloudUser.email||'').toLowerCase()){ msg.textContent='본인은 추가할 수 없어요.'; return; }
   msg.textContent='찾는 중…';
   try{
     const {data,error}=await sb.rpc('find_user_by_email',{p_email:em});
     if(error) throw error;
     const row=(data&&data[0])||null;
-    if(!row){ msg.textContent='해당 이메일로 TDL을 쓰는 사람을 찾지 못했어요. (상대방이 먼저 한 번 로그인해야 해요)'; return; }
+    if(!row){
+      msg.textContent='아직 TDL을 쓰지 않는 분이에요. 초대 메일을 보낼까요?';
+      if(confirm(em+' 님은 아직 TDL 사용자가 아니에요.\n\n초대 메일을 보낼까요? (메일 앱이 열립니다)')){
+        clSendInviteMail(em);
+        msg.textContent='초대 메일 창을 열었어요. 상대가 가입한 뒤 다시 요청해 주세요.';
+      } else {
+        msg.textContent='초대를 취소했어요.';
+      }
+      return;
+    }
     if(clBuddyIds().includes(row.user_id)){ msg.textContent='이미 동료예요.'; return; }
     const {error:e2}=await sb.from('buddies').insert({requester:cloudUser.id, addressee:row.user_id, status:'pending'});
     if(e2){
@@ -4309,6 +4387,7 @@ function clSyncDot(){
 async function clRefresh(){
   if(!clOn()) return;
   await clLoadBuddies();
+  await clLoadEmailHints();
   await clLoadMsgs();
   await clLoadShared();
   clMergeShared();
@@ -6254,58 +6333,47 @@ function vzCommit(){
   closeVoice();
 }
 
-/* ═══════════════ 우측 상주 아바타 ═══════════════ */
+/* ═══════════════ 우측 하단을 돌아다니는 아바타 ═══════════════ */
 let baTimer=null, baHideTimer=null, baLastSaid=-1, baBooted=false;
+let baX=0, baY=0, baFace=1, baAct='idle', baActTimer=null, baMoveTimer=null, baHome=null;
+let baClockPos=null, baGoingToInstall=false;
 
-/* 손에 드는 소품: 빨간 알림 표지판 / 시계 */
+/* 알림 표지판(들고 있는 소품) */
 function baSignSvg(n){
   const txt = n>9? '9+' : String(n);
   return `<g class="ba-prop">
     <rect x="49.5" y="54" width="3" height="12" rx="1.5" fill="#8B5E3C"/>
-    <rect x="37" y="38" width="27" height="18" rx="4" fill="#E4483D" stroke="#B3352C" stroke-width="1.5"/>
+    <rect x="37" y="38" width="27" height="18" rx="4" fill="#D96B62" stroke="#B85850" stroke-width="1.5"/>
     <text x="50.5" y="51" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle" font-family="sans-serif">${txt}</text>
   </g>`;
 }
-function baClockSvg(label, sub){
-  /* 손에 든 디지털 시계 — 얼굴을 가리지 않도록 몸통 옆에 배치 */
-  return `<g class="ba-prop">
-    <rect x="32" y="42" width="34" height="18" rx="3.5" fill="#2B2F3A" stroke="#161A22" stroke-width="1.4"/>
-    <rect x="34.3" y="44.3" width="29.4" height="13.4" rx="2" fill="#101318"/>
-    <text x="49" y="54" font-size="7.6" font-weight="bold" fill="#4BE38A" text-anchor="middle" font-family="'Courier New',monospace" letter-spacing="0.2">${label||'--:--:--'}</text>
-    ${sub?`<text x="49" y="65" font-size="6" font-weight="bold" fill="#7A8699" text-anchor="middle" font-family="sans-serif">${sub}</text>`:''}
-  </g>`;
+function baHMS(sec){
+  sec=Math.max(0,Math.round(sec));
+  const h=Math.floor(sec/3600), m=Math.floor((sec%3600)/60), s=sec%60;
+  return pad2(h)+':'+pad2(m)+':'+pad2(s);
 }
-/* 지금 아바타가 들고 있어야 할 소품 판단 */
-function baProp(){
-  const n=(typeof clReqs!=='undefined'? clReqs.length:0)+(typeof clUnread!=='undefined'? clUnread:0);
-  if(n>0) return {kind:'sign', svg:baSignSvg(n), n};
-  const hms=(sec)=>{
-    sec=Math.max(0,Math.round(sec));
-    const h=Math.floor(sec/3600), m=Math.floor((sec%3600)/60), s=sec%60;
-    return pad2(h)+':'+pad2(m)+':'+pad2(s);
-  };
+/* 지금 알림이 몇 건인지 */
+function baAlerts(){
+  return (typeof clReqs!=='undefined'? clReqs.length:0)+(typeof clUnread!=='undefined'? clUnread:0);
+}
+/* 타이머/알람 상태 — 시계를 설치해야 하는지 */
+function baTimeState(){
   try{
     const T=TT(), t=T.timer;
-    /* 타이머는 켜져 있고(on) 남은 시간이 있을 때만 */
     if(t && t.on){
       if(t.running){
         const left=(t.endAt-Date.now())/1000;
-        if(left>0) return {kind:'timer', svg:baClockSvg(hms(left),'TIMER'), n:0};
-      } else if(t.remain>0){
-        return {kind:'timer', svg:baClockSvg(hms(t.remain),'PAUSE'), n:0};
+        if(left>0) return {kind:'timer', on:true, text:baHMS(left), lab:'TIMER'};
       }
+      if(t.remain>0) return {kind:'timer', on:false, text:baHMS(t.remain), lab:'PAUSED'};
     }
-    const al=(T.alarms||[]).filter(a=>a.on);
+    const al=(T.alarms||[]).filter(a=>a.at);
     if(al.length){
-      const at=al[0].at||'--:--';
-      return {kind:'alarm', svg:baClockSvg(at.length<=5? (at+':00') : at, 'ALARM'), n:0};
-    }
-    if(T.clock && T.clock.on){
-      const now=new Date();
-      return {kind:'clock', svg:baClockSvg(pad2(now.getHours())+':'+pad2(now.getMinutes())+':'+pad2(now.getSeconds()),''), n:0};
+      const a=al[0];
+      return {kind:'alarm', on:!!a.on, text:(a.at||'--:--'), lab:a.on?'ALARM':'ALARM OFF', id:a.id};
     }
   }catch(e){}
-  return {kind:'', svg:'', n:0};
+  return null;
 }
 function baRender(){
   const el=document.getElementById('buddyAvatar'); if(!el) return;
@@ -6314,13 +6382,131 @@ function baRender(){
   try{ pf=lgProfile(); }catch(e){}
   if(!pf){ el.classList.add('hidden'); return; }
   el.classList.remove('hidden');
-  const prop=baProp();
-  document.getElementById('baBody').innerHTML=chSvg(pf, prop.svg);
-  el.title = prop.kind==='sign'
-    ? ('새 알림 '+prop.n+'건 — 눌러서 확인')
-    : '눌러서 동료 · 쪽지 열기';
+  const n=baAlerts();
+  document.getElementById('baBody').innerHTML=chSvg(pf, n>0? baSignSvg(n) : '');
+  el.title = n>0 ? ('새 알림 '+n+'건 — 눌러서 확인') : '눌러서 동료 · 쪽지 열기';
 }
-/* 말풍선 */
+
+/* ── 위치 · 이동 ── */
+function baArea(){
+  /* 우측 하단 구역 안에서만 돌아다님 */
+  const w=window.innerWidth, h=window.innerHeight;
+  const aw=58, ah=87;
+  return { x1:Math.max(20, w-460), x2:w-aw-24, y1:Math.max(120, h-330), y2:h-ah-26 };
+}
+function baPlace(x,y,anim){
+  const el=document.getElementById('buddyAvatar'); if(!el) return;
+  const a=baArea();
+  baX=Math.min(Math.max(x,a.x1-40), a.x2+40);
+  baY=Math.min(Math.max(y,a.y1-40), a.y2+20);
+  el.style.transition = anim===false? 'none' : '';
+  el.style.left=baX+'px'; el.style.top=baY+'px';
+  el.style.right='auto'; el.style.bottom='auto';
+}
+function baSetAct(a, ms){
+  const el=document.getElementById('buddyAvatar'); if(!el) return;
+  ['idle','walk','wave','stretch','yawn','jump','dance'].forEach(k=>el.classList.remove('act-'+k));
+  baAct=a; el.classList.add('act-'+a);
+  clearTimeout(baActTimer);
+  if(ms) baActTimer=setTimeout(()=>baSetAct('idle'), ms);
+}
+function baFaceDir(dx){
+  const el=document.getElementById('buddyAvatar'); if(!el) return;
+  if(dx<-2) baFace=-1; else if(dx>2) baFace=1;
+  el.classList.toggle('face-l', baFace===-1);
+}
+/* 목적지까지 걸어가고, 도착하면 콜백 */
+function baWalkTo(x,y,done){
+  const el=document.getElementById('buddyAvatar'); if(!el) return;
+  const dx=x-baX, dy=y-baY;
+  const dist=Math.hypot(dx,dy);
+  if(dist<4){ baSetAct('idle'); done&&done(); return; }
+  baFaceDir(dx);
+  const dur=Math.min(3.2, Math.max(0.5, dist/110));   /* 대략 110px/s */
+  el.style.transition='left '+dur+'s linear, top '+dur+'s linear';
+  baSetAct('walk');
+  baPlace(x,y);
+  clearTimeout(baMoveTimer);
+  baMoveTimer=setTimeout(()=>{ baSetAct('idle'); done&&done(); }, dur*1000+60);
+}
+/* 무작위로 돌아다니거나 잠깐 다른 행동 */
+const BA_ACTS=[
+  {a:'stretch', ms:2600, say:null},
+  {a:'yawn',    ms:3000, say:null},
+  {a:'wave',    ms:2400, say:null},
+  {a:'jump',    ms:1200, say:null},
+  {a:'dance',   ms:2600, say:null}
+];
+function baWander(){
+  const el=document.getElementById('buddyAvatar');
+  if(!el || el.classList.contains('hidden') || document.hidden) return;
+  if(el.classList.contains('dragging') || baGoingToInstall) return;
+  const r=Math.random();
+  if(r<0.5){
+    const a=baArea();
+    baWalkTo(a.x1+Math.random()*(a.x2-a.x1), a.y1+Math.random()*(a.y2-a.y1));
+  } else {
+    const act=BA_ACTS[Math.floor(Math.random()*BA_ACTS.length)];
+    baSetAct(act.a, act.ms);
+  }
+}
+
+/* ── 시계 설치 ── */
+function baClockEl(){ return document.getElementById('baClock'); }
+function baHideClock(){ const c=baClockEl(); if(c) c.classList.add('hidden'); baClockPos=null; }
+function baSyncClock(){
+  const st=baTimeState(), c=baClockEl();
+  if(!c) return;
+  if(!st || IS_MOBILE){ baHideClock(); return; }
+  if(!baClockPos){
+    /* 아직 설치 전이면 아바타가 걸어가서 설치 */
+    if(baGoingToInstall) return;
+    baGoingToInstall=true;
+    const a=baArea();
+    const tx=a.x2, ty=a.y2;
+    baWalkTo(tx, ty, ()=>{
+      baClockPos={x:tx-4, y:ty-46};
+      c.style.left=baClockPos.x+'px'; c.style.top=baClockPos.y+'px';
+      c.classList.remove('hidden');
+      baGoingToInstall=false;
+      baSetAct('wave', 1600);
+      baPaintClock();
+    });
+    return;
+  }
+  c.classList.remove('hidden');
+  baPaintClock();
+}
+function baPaintClock(){
+  const st=baTimeState(), c=baClockEl();
+  if(!c||!st) return;
+  c.classList.toggle('off', !st.on);
+  c.innerHTML='<div class="bc-box"><div class="bc-time">'+escapeHtml(st.text)+'</div><div class="bc-lab">'+escapeHtml(st.lab)+'</div></div>'
+            + '<div class="bc-hint">'+(st.on?'눌러서 끄기':'눌러서 켜기')+'</div>';
+  c.title=(st.kind==='alarm'?'알람':'타이머')+' — 눌러서 '+(st.on?'끄기':'켜기');
+}
+/* 시계를 눌러 ON/OFF */
+function baToggleTime(){
+  const st=baTimeState(); if(!st) return;
+  try{
+    const T=TT();
+    if(st.kind==='alarm'){
+      const a=(T.alarms||[]).find(x=>x.id===st.id) || (T.alarms||[])[0];
+      if(a) a.on=!a.on;
+      if(typeof renderAlarms==='function') renderAlarms();
+    } else {
+      const t=T.timer;
+      if(t.running){ t.remain=Math.max(0,Math.round((t.endAt-Date.now())/1000)); t.running=false; }
+      else if(t.remain>0){ t.endAt=Date.now()+t.remain*1000; t.running=true; }
+      if(typeof syncTimerBtn==='function') syncTimerBtn();
+    }
+    saveAll();
+    if(typeof syncTimePanel==='function') syncTimePanel();
+  }catch(e){}
+  baPaintClock();
+}
+
+/* ── 말풍선 ── */
 function baSay(text, isTip){
   const b=document.getElementById('baBubble'); if(!b||!text) return;
   const el=document.getElementById('buddyAvatar');
@@ -6328,9 +6514,9 @@ function baSay(text, isTip){
   b.classList.toggle('tip', !!isTip);
   b.classList.remove('hidden');
   clearTimeout(baHideTimer);
-  /* 글자 수에 비례해 입을 움직임 */
   if(el) el.classList.add('talking');
-  const dur = Math.min(11000, Math.max(3500, text.length*140));
+  /* 읽을 시간을 넉넉히 (기존 대비 +50%) */
+  const dur=Math.min(18000, Math.max(6000, text.length*210));
   baHideTimer=setTimeout(()=>{
     b.classList.add('hidden');
     if(el) el.classList.remove('talking');
@@ -6340,61 +6526,38 @@ const BA_TIPS=[
   '동료 협업 기능은 나를 눌러서 실행해',
   '동료 협업 기능은 나를 눌러서 실행해 — 쪽지도 여기서 보내!',
   '카테고리 관리에서 카테고리째로 동료와 공유할 수 있어',
-  '＋ 일정을 누르면 맨 위에서 바로 입력할 수 있어'
+  '＋ 일정을 누르면 맨 위에서 바로 입력할 수 있어',
+  '세부내용 오른쪽 연필을 누르면 공유·복제·삭제를 할 수 있어'
 ];
-/* 가끔 말하기: 알림 > 팁 > 뉴스 */
 function baTick(){
   const el=document.getElementById('buddyAvatar');
   if(!el || el.classList.contains('hidden') || document.hidden) return;
-  const prop=baProp();
-  if(prop.kind==='sign'){
-    baSay('새 소식이 '+prop.n+'건 있어! 나를 눌러봐', true);
-    return;
-  }
-  /* 30% 확률로 안내, 나머지는 뉴스 한 줄 */
-  if(Math.random()<0.32){
-    baSay(BA_TIPS[Math.floor(Math.random()*BA_TIPS.length)], true);
-    return;
-  }
+  const n=baAlerts();
+  if(n>0){ baSay('새 소식이 '+n+'건 있어! 나를 눌러봐', true); baSetAct('jump',1200); return; }
+  if(Math.random()<0.32){ baSay(BA_TIPS[Math.floor(Math.random()*BA_TIPS.length)], true); return; }
   if(typeof newsItems!=='undefined' && newsItems.length){
     let i=Math.floor(Math.random()*newsItems.length);
     if(newsItems.length>1 && i===baLastSaid) i=(i+1)%newsItems.length;
     baLastSaid=i;
     const t=(newsItems[i].title||'').trim();
-    if(t) baSay(t.length>90? t.slice(0,88)+'…' : t, false);
+    if(t) baSay(t.length>110? t.slice(0,108)+'…' : t, false);
   }
 }
-/* 위치 기억 — 계정 단위 */
+
+/* ── 위치 기억(계정 단위) · 드래그 ── */
 function baPosKey(){
   const uid=(typeof cloudUser!=='undefined' && cloudUser)? cloudUser.id : 'local';
   return 'tdl_ba_pos_'+uid;
 }
 function baLoadPos(){
-  const el=document.getElementById('buddyAvatar'); if(!el) return;
   let pos=null;
   try{ pos=JSON.parse(localStorage.getItem(baPosKey())||'null'); }catch(e){}
-  if(pos && typeof pos.l==='number'){
-    el.style.left=pos.l+'px';
-    el.style.top=pos.t+'px';
-    el.style.right='auto';
-    el.style.bottom='auto';
-    el.style.marginBottom='0';
-    baClampPos();
-  } else {
-    el.style.left=''; el.style.top=''; el.style.right=''; el.style.bottom=''; el.style.marginBottom='';
-  }
+  const a=baArea();
+  if(pos && typeof pos.l==='number') baPlace(pos.l, pos.t, false);
+  else baPlace(a.x2, a.y2, false);
 }
 function baSavePos(l,t){
   try{ localStorage.setItem(baPosKey(), JSON.stringify({l:Math.round(l), t:Math.round(t)})); }catch(e){}
-}
-/* 화면 밖으로 완전히 나가지 않도록 */
-function baClampPos(){
-  const el=document.getElementById('buddyAvatar'); if(!el||el.style.left==='') return;
-  const w=el.offsetWidth||340, h=el.offsetHeight||510;
-  let l=parseFloat(el.style.left)||0, t=parseFloat(el.style.top)||0;
-  l=Math.min(Math.max(l, -w*0.55), window.innerWidth - w*0.45);
-  t=Math.min(Math.max(t, 0), window.innerHeight - h*0.18);
-  el.style.left=l+'px'; el.style.top=t+'px';
 }
 function baSetupDrag(el){
   let dragging=false, moved=false, sx=0, sy=0, ox=0, oy=0, lastUp=0;
@@ -6402,9 +6565,9 @@ function baSetupDrag(el){
     const pt=e.touches? e.touches[0] : e;
     dragging=true; moved=false;
     sx=pt.clientX; sy=pt.clientY;
-    const r=el.getBoundingClientRect();
-    ox=r.left; oy=r.top;
+    const r=el.getBoundingClientRect(); ox=r.left; oy=r.top;
     el.classList.add('dragging');
+    clearTimeout(baMoveTimer);
     if(e.cancelable) e.preventDefault();
   };
   const move=(e)=>{
@@ -6412,32 +6575,26 @@ function baSetupDrag(el){
     const pt=e.touches? e.touches[0] : e;
     const dx=pt.clientX-sx, dy=pt.clientY-sy;
     if(Math.abs(dx)>4||Math.abs(dy)>4) moved=true;
-    el.style.left=(ox+dx)+'px';
-    el.style.top=(oy+dy)+'px';
-    el.style.right='auto'; el.style.bottom='auto'; el.style.marginBottom='0';
+    baPlace(ox+dx, oy+dy, false);
     if(e.cancelable) e.preventDefault();
   };
   const up=()=>{
     if(!dragging) return;
     dragging=false; lastUp=Date.now();
     el.classList.remove('dragging');
-    if(moved){
-      baClampPos();
-      baSavePos(parseFloat(el.style.left)||0, parseFloat(el.style.top)||0);
-    } else {
-      baOpen();                       /* 안 움직였으면 클릭으로 처리 */
-    }
+    el.style.transition='';
+    if(moved) baSavePos(baX, baY); else baOpen();
   };
   el.addEventListener('mousedown', down);
   window.addEventListener('mousemove', move);
   window.addEventListener('mouseup', up);
-  /* 드래그 없이 click 이벤트만 오는 경우(키보드·접근성) 대비 */
-  el.addEventListener('click',()=>{ if(!dragging && !moved && Date.now()-lastUp>350) baOpen(); });
   el.addEventListener('touchstart', down, {passive:false});
   window.addEventListener('touchmove', move, {passive:false});
   window.addEventListener('touchend', up);
-  window.addEventListener('resize', baClampPos);
+  el.addEventListener('click',()=>{ if(!dragging && !moved && Date.now()-lastUp>350) baOpen(); });
+  window.addEventListener('resize',()=>{ baPlace(baX,baY,false); });
 }
+
 function baOpenCollab(){
   const b=document.getElementById('baBubble'); if(b) b.classList.add('hidden');
   const el=document.getElementById('buddyAvatar'); if(el) el.classList.remove('talking');
@@ -6446,57 +6603,25 @@ function baOpenCollab(){
   clSetTab(clTab);
   clRefresh().then(()=>{ clRenderBuddies(); clRenderAva(); });
 }
-/* 타이머·알람이 켜져 있으면 무엇을 할지 고르게 함 */
-function baOpen(){
-  const p=baProp();
-  const menu=document.getElementById('baMenu');
-  if((p.kind==='timer'||p.kind==='alarm') && menu){
-    const el=document.getElementById('buddyAvatar');
-    const r=el.getBoundingClientRect();
-    document.getElementById('baStopTimer').textContent = p.kind==='alarm'? '⏹ 알람 끄기' : '⏹ 타이머 끄기';
-    menu.dataset.kind=p.kind;
-    menu.style.left=Math.max(8, Math.min(r.left+r.width/2-90, window.innerWidth-190))+'px';
-    menu.style.top=Math.max(8, r.top-14)+'px';
-    menu.classList.remove('hidden');
-    return;
-  }
-  baOpenCollab();
-}
-function baStopTimerNow(){
-  const menu=document.getElementById('baMenu');
-  const kind=menu? menu.dataset.kind : 'timer';
-  try{
-    const T=TT();
-    if(kind==='alarm'){ (T.alarms||[]).forEach(a=>{ a.on=false; }); }
-    else { T.timer.on=false; T.timer.running=false; T.timer.remain=0; T.timer.endAt=0; }
-    saveAll();
-    if(typeof syncTimerFloat==='function') syncTimerFloat();
-    if(typeof syncTimePanel==='function') syncTimePanel();
-    if(typeof renderAlarms==='function') renderAlarms();
-    if(typeof syncTimerBtn==='function') syncTimerBtn();
-  }catch(e){}
-  if(menu) menu.classList.add('hidden');
-  baRender();
-}
+function baOpen(){ baSetAct('wave',1400); baOpenCollab(); }
+
 function initAvatar(){
   if(baBooted || IS_MOBILE) return;
   baBooted=true;
   baRender();
   baLoadPos();
+  baSetAct('idle');
   const el=document.getElementById('buddyAvatar');
   if(el) baSetupDrag(el);
-  const oc=document.getElementById('baOpenCollabBtn'), st=document.getElementById('baStopTimer');
-  if(oc) oc.addEventListener('click',()=>{ document.getElementById('baMenu').classList.add('hidden'); baOpenCollab(); });
-  if(st) st.addEventListener('click', baStopTimerNow);
-  document.addEventListener('mousedown',(e)=>{
-    const m=document.getElementById('baMenu');
-    if(m && !m.classList.contains('hidden') && !m.contains(e.target) && !el.contains(e.target)) m.classList.add('hidden');
-  });
-  setTimeout(()=>baSay('안녕! 동료 협업 기능은 나를 눌러서 실행해', true), 3000);
+  const c=baClockEl();
+  if(c) c.addEventListener('click', baToggleTime);
+  setTimeout(()=>{ baSay('안녕! 동료 협업 기능은 나를 눌러서 실행해', true); baSetAct('wave',2200); }, 3000);
   clearInterval(baTimer);
-  baTimer=setInterval(baTick, 22000);
-  setInterval(baRender, 1000);      /* 알림·타이머(초 단위) 반영 */
+  baTimer=setInterval(baTick, 26000);
+  setInterval(()=>{ baRender(); baSyncClock(); }, 1000);
+  setInterval(baWander, 9000);
 }
+
 /* ═══════════════ 모바일: 필터 · 동료 ═══════════════ */
 function openMFilter(){
   const cat=document.getElementById('mfCat'), camp=document.getElementById('mfCamp');
@@ -7279,10 +7404,10 @@ const LG_ZONES=[
 ];
 
 /* ---------- 캐릭터 ---------- */
-const CH_SKIN=['#F4D6BC','#E8BE9A','#CE9A72','#A9744E','#7C4F33','#FCE3CE'];
-const CH_HAIRC=['#2E2A28','#5A3B22','#8E5C2E','#C69A5A','#B1493C','#6B4E8E','#3D6EA8','#DADADA','#E8709A','#3FA88E','#F0C419','#8C2F39'];
-const CH_TOP=['#5B7FB5','#C96A6A','#6FA86B','#D6A250','#8E6FB5','#3F4A5A','#D07EA0','#4FA8A0','#E0E2E7','#2F3E46','#F2A65A','#7B9E87'];
-const CH_BOT=['#3F4756','#6B5A45','#4A5B4A','#7A4A4A','#2E3440','#8A7A5E','#5A6B8C','#B0A08A'];
+const CH_SKIN=['#F6DEC8','#EDC9AB','#D8A98A','#B98B6B','#957055','#FCE8D8'];
+const CH_HAIRC=['#4F4946','#736053','#9C836A','#CEB999','#B5857F','#9385A6','#7F9AB8','#E0DEDA','#DDACBC','#8DB6AC','#DECE9F','#9B6D73'];
+const CH_TOP=['#A2B3C9','#D2AEAE','#B0C7AE','#E0CBA9','#BBB1CD','#878F9A','#DCBBC9','#A7CAC6','#EDEDF0','#81888E','#E9CDB1','#B8C8BD'];
+const CH_BOT=['#878D98','#9D9284','#8C9789','#A99090','#797E86','#B4AA9A','#9CA6B6','#CDC5B9'];
 const CH_HAIR=['짧은','단발','포니','곱슬','장발','대머리','모자','투블럭','뱅','양갈래','묶은머리','웨이브','아프로','상투','보브','스파이크'];
 const CH_TT=['티셔츠','셔츠','후드','니트','자켓','원피스','민소매','터틀넥'];
 const CH_PT=['무지','가로줄','세로줄','도트','체크','브이','그라데이션'];
@@ -7411,7 +7536,7 @@ function chTop(tt, c, sk, pt, uid){
 
 /* ── 얼굴 ── */
 function chFace(fc){
-  const E='#2C2A28';
+  const E='#4A453F';
   const blush=`<circle cx="21" cy="29" r="2.6" fill="#E39B94" opacity=".45"/><circle cx="43" cy="29" r="2.6" fill="#E39B94" opacity=".45"/>`;
   const M=(inner)=>`<g class="mth">${inner}</g>`;   /* 입 — 말할 때 움직임 */
   switch(fc){
@@ -7445,8 +7570,8 @@ function chSvg(o,extra){
   const top=chTop((o.tt||0)%CH_TT.length, tc, sk, (o.pt||0)%CH_PT.length, uid);
   const face=chFace((o.fc||0)%CH_FACE.length);
   return `<svg viewBox="0 0 64 96">
-    <g class="lg-l"><rect x="22" y="58" width="9" height="30" rx="4" fill="${bt}"/><rect x="20" y="84" width="13" height="8" rx="3" fill="#3A3630"/></g>
-    <g class="lg-r"><rect x="33" y="58" width="9" height="30" rx="4" fill="${bt}"/><rect x="31" y="84" width="13" height="8" rx="3" fill="#3A3630"/></g>
+    <g class="lg-l"><rect x="22" y="58" width="9" height="30" rx="4" fill="${bt}"/><rect x="20" y="84" width="13" height="8" rx="3" fill="#5D564E"/></g>
+    <g class="lg-r"><rect x="33" y="58" width="9" height="30" rx="4" fill="${bt}"/><rect x="31" y="84" width="13" height="8" rx="3" fill="#5D564E"/></g>
     <g class="torso">
       ${top}
       <g class="head">
