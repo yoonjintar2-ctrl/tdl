@@ -866,7 +866,7 @@ body.theme-dark .date-btn:hover,body.theme-dark .info-detail input:focus{backgro
 .tone-chip .sw{height:34px;display:flex;align-items:flex-end;padding:5px;gap:3px;}
 .tone-chip .sw i{display:block;width:10px;height:10px;border-radius:20px;}
 
-#ctxMenu{position:fixed;background:var(--panel);border:none;border-radius:14px;box-shadow:0 10px 30px rgba(60,50,90,0.2);z-index:250;padding:6px;min-width:130px;}
+#ctxMenu{position:fixed;background:var(--panel);border:1px solid var(--line-strong);border-radius:14px;box-shadow:0 10px 30px rgba(40,34,60,0.18);z-index:250;padding:6px;min-width:150px;}
 #ctxMenu.hidden{display:none;}
 
 #miniCal{position:fixed;right:16px;bottom:72px;z-index:320;width:calc(452px * var(--fs));background:var(--panel);border:1px solid var(--line-strong);border-radius:14px;box-shadow:0 10px 30px rgba(40,34,60,0.18);padding:12px;}
@@ -1011,10 +1011,12 @@ body.sticker-arm #topbar,body.sticker-arm #stickerPanel,body.sticker-arm .modal{
 .sticker .st-h.rot{left:50%;top:-22px;margin-left:-6.5px;cursor:grab;background:var(--accent);}
 .sticker .st-del{position:absolute;left:-12px;top:-12px;width:17px;height:17px;border-radius:50%;background:#B86A85;color:#fff;font-size:calc(10px * var(--fs,1));line-height:calc(17px * var(--fs,1));text-align:center;cursor:pointer;box-sizing:border-box;font-weight:700;}
 .sticker .st-del:hover{background:#9d4f68;}
-#ctxMenu .item{padding:9px 12px;font-size:calc(12.5px * var(--fs,1));border-radius:10px;cursor:pointer;display:flex;align-items:center;gap:7px;color:#B86A85;}
-#ctxMenu .item.ctx-dup{color:var(--text);}
-#ctxMenu .item.ctx-dup:hover{background:var(--accent-soft);}
-#ctxMenu .item:hover{background:#FAF0F3;}
+#ctxMenu .item{padding:9px 12px;font-size:calc(12.5px * var(--fs,1));border-radius:10px;cursor:pointer;display:flex;align-items:center;gap:7px;color:var(--text);}
+#ctxMenu .item:hover{background:var(--accent-soft);color:var(--accent-deep);}
+#ctxMenu .item.danger{color:var(--text-dim);}
+#ctxMenu .item.danger:hover{background:rgba(0,0,0,0.07);color:var(--text);}
+#ctxMenu .item.disabled{opacity:0.4;cursor:default;}
+#ctxMenu .item.disabled:hover{background:transparent;color:var(--text);}
 
 .cal-wrap{display:flex;gap:16px;flex-wrap:nowrap;justify-content:center;}
 .cal-month{width:206px;flex:0 0 auto;}
@@ -1108,7 +1110,6 @@ null
         <button class="tb-btn add-top" id="btnAddTop" title="새 일정 추가 (목록 맨 위에 생기고 바로 입력할 수 있어요)">＋ 일정</button>
         <button class="tb-btn" id="btnSearch" title="검색" style="padding-left:11px;padding-right:11px;">🔍</button>
         <button class="tb-btn" id="btnFilter" title="필터 (기간 · 카테고리 · 캠페인)" style="padding-left:11px;padding-right:11px;"></button>
-        <label><input type="checkbox" id="fltIncomplete"> 완료 숨김</label>
         <button class="lock-toggle" id="btnDateLock" type="button" role="switch" aria-checked="false" title="기간순 정렬">
           <span class="lt-label">기간순</span>
           <span class="lt-track"><span class="lt-knob"></span></span>
@@ -1296,7 +1297,7 @@ null
   </div>
 </div>
 
-<div id="ctxMenu" class="hidden"><div class="item" id="ctxLink">🔗 링크 넣기</div><div class="item" id="ctxShare">👥 동료와 공유</div><div class="item ctx-dup" id="ctxDuplicate">📋 복제</div><div class="item" id="ctxDelete">🗑 삭제</div></div>
+<div id="ctxMenu" class="hidden"><div class="item" id="ctxLink">🔗 링크 넣기</div><div class="item" id="ctxShare">👥 동료와 공유</div><div class="item ctx-dup" id="ctxDuplicate">📋 복제</div><div class="item danger" id="ctxDelete">🗑 삭제</div></div>
 
 <div id="miniCal" class="hidden">
   <div id="miniCalHead">
@@ -1535,6 +1536,7 @@ null
     <div class="row">
       <button class="btn" id="openHolidayFromSettings">📅 공휴일 관리</button>
       <button class="btn" id="openCategoryFromSettings">🗂 카테고리 관리 · 공유</button>
+      <button class="btn" id="openCampaignFromSettings">🎯 캠페인 관리 · 공유</button>
     </div>
     <div class="field-label">데이터 안전</div>
     <div class="row">
@@ -1682,6 +1684,7 @@ null
     <h2>🤝 함께할 동료 선택</h2>
     <div class="hint">선택한 동료의 TDL에도 이 일정이 나타나고, 어느 쪽에서 수정·완료해도 서로 반영돼요.</div>
     <div id="shareList" class="cl-list"></div>
+    <div class="hint" id="shareHint"></div>
     <div class="modal-actions"><button class="btn" id="shareCancel">취소</button><button class="btn primary" id="shareOk">확인</button></div>
   </div>
 
@@ -2101,7 +2104,7 @@ function exportBackup(){
 
 function updateFileStatusHint(t){ const el=document.getElementById('fileStatusHint'); if(el) el.textContent=t; }
 /* ═══════════════ 클라우드 저장 (Supabase) ═══════════════ */
-const APP_VER='ver 5.9', APP_BUILD='2026-08-07 19:00';
+const APP_VER='ver 6.0', APP_BUILD='2026-08-07 21:00';
 const LOGO_SRC='data:image/png;base64,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';
 function paintLogos(){ document.querySelectorAll('img.tdl-logo').forEach(i=>{ i.src=LOGO_SRC; }); }
 const IS_WEB = /^https?:$/i.test(location.protocol);
@@ -2712,7 +2715,7 @@ function buildBody(){
     pen.addEventListener('click',(e)=>{
       e.preventDefault(); e.stopPropagation();
       const r=pen.getBoundingClientRect();
-      openTaskMenu(task.id, r.left-110, r.bottom+4);
+      openTaskMenu(task.id, r.left-118, r.bottom+4, r.top);
     });
     cDet.appendChild(pen);
     const inp=document.createElement('input'); inp.type='text'; inp.value=task.detail||''; inp.placeholder='세부 내용 입력';
@@ -2893,7 +2896,7 @@ function render(){
   rebuildDateRange();
   if(IS_MOBILE){ renderMobileList(); return; }
   buildCategoryFilter(); buildHeaders(); buildBody();
-  document.getElementById('fltIncomplete').checked=state.settings.filterIncomplete;
+  const _fi=document.getElementById('fltIncomplete'); if(_fi) _fi.checked=state.settings.filterIncomplete;
   const mc=document.getElementById('miniCal');
   if(mc && !mc.classList.contains('hidden')) renderMiniCal();
   syncHScroll(); renderStickers(); syncGoTodayBtn(); syncFilterBtn();
@@ -3444,7 +3447,7 @@ document.getElementById('sheet').addEventListener('contextmenu',(e)=>{
   e.preventDefault();
   openTaskMenu(el.dataset.taskId, e.clientX, e.clientY);
 });
-function openTaskMenu(taskId, x, y){
+function openTaskMenu(taskId, x, y, anchorTop){
   ctxTaskId=taskId;
   try{
     const _t=state.tasks.find(x2=>x2.id===ctxTaskId);
@@ -3452,13 +3455,25 @@ function openTaskMenu(taskId, x, y){
     if(_l) _l.textContent = (_t&&_t.link)? '🔗 링크 수정' : '🔗 링크 넣기';
     const _s=document.getElementById('ctxShare');
     if(_s){
-      _s.textContent = (_t&&_t._sid)? '👥 공유 해제' : '👥 동료와 공유';
+      const _lock=(typeof shareLockOf==='function')? shareLockOf(_t) : null;
+      _s.classList.toggle('disabled', !!_lock);
+      _s.textContent = _lock
+        ? ('👥 '+(_lock.by==='cat'?'카테고리':'캠페인')+' 공유 중')
+        : ((_t&&_t._sid)? '👥 공유 대상 변경' : '👥 동료와 공유');
+      _s.title = _lock? ('“'+_lock.name+'” 단위로 공유 중이라 개별 설정은 잠겨 있어요') : '';
       _s.style.display = (typeof clOn==='function' && clOn())? '' : 'none';
     }
   }catch(_e){}
-  if(x+150>window.innerWidth) x=window.innerWidth-156;
-  if(y+120>window.innerHeight) y=window.innerHeight-126;
-  ctxMenu.style.left=x+'px'; ctxMenu.style.top=y+'px'; ctxMenu.classList.remove('hidden');
+  ctxMenu.style.visibility='hidden';
+  ctxMenu.classList.remove('hidden');
+  ctxMenu.style.left='0px'; ctxMenu.style.top='0px';
+  const mw=ctxMenu.offsetWidth||160, mh=ctxMenu.offsetHeight||160;
+  if(x+mw>window.innerWidth-8) x=window.innerWidth-mw-8;
+  if(x<8) x=8;
+  if(y+mh>window.innerHeight-8) y=(anchorTop!=null? anchorTop-mh-6 : window.innerHeight-mh-8);
+  if(y<8) y=8;
+  ctxMenu.style.left=x+'px'; ctxMenu.style.top=y+'px';
+  ctxMenu.style.visibility='';
 }
 document.addEventListener('click',(e)=>{ if(!ctxMenu.contains(e.target)) ctxMenu.classList.add('hidden'); });
 document.addEventListener('scroll',()=>ctxMenu.classList.add('hidden'),true);
@@ -3482,13 +3497,15 @@ document.getElementById('ctxLink').addEventListener('click',()=>{
             || document.querySelector('#leftBody .lrow[data-task-id="'+ctxTaskId+'"]');
   openLinkPopup(anchor, t);
 });
-document.getElementById('ctxShare').addEventListener('click',async ()=>{
+document.getElementById('ctxShare').addEventListener('click',async (e)=>{
+  if(e.currentTarget.classList.contains('disabled')) return;
   ctxMenu.classList.add('hidden');
   if(!ctxTaskId) return;
   if(!clOn()){ alert('클라우드에 로그인해야 공유할 수 있어요.'); return; }
   const t=state.tasks.find(x=>x.id===ctxTaskId);
   if(!t) return;
-  await clToggleShare(ctxTaskId, !t._sid);
+  /* 이미 공유 중이면 해제가 아니라 '대상 변경' */
+  await clToggleShare(ctxTaskId, true);
 });
 document.getElementById('ctxDuplicate').addEventListener('click',()=>{
   ctxMenu.classList.add('hidden'); if(ctxTaskId) duplicateTask(ctxTaskId);
@@ -3936,7 +3953,7 @@ document.getElementById('btnDateLock').addEventListener('click',()=>{
 let searchQuery='';
 
 /* ===================== 필터 ===================== */
-document.getElementById('fltIncomplete').addEventListener('change',(e)=>{ state.settings.filterIncomplete=e.target.checked; saveAll(); buildBody(); });
+(function(){ const e=document.getElementById('fltIncomplete'); if(e) e.addEventListener('change',(ev)=>{ state.settings.filterIncomplete=ev.target.checked; saveAll(); buildBody(); }); })();
 
 /* ===================== 캠페인 관리 ===================== */
 document.getElementById('closeCampaignModal').addEventListener('click',()=>{ hideModals(); buildBody(); });
@@ -3975,9 +3992,16 @@ function renderCampaignList(focusId){
     const shb=document.createElement('button'); shb.type='button'; shb.className='btn';
     shb.style.cssText='padding:4px 9px;font-size:11px;white-space:nowrap;';
     const shn=((state.campShares||{})[c.id]||[]).length;
-    shb.textContent = shn? ('👥 '+shn+'명') : '👥 공유';
-    if(shn) shb.style.background='var(--accent-soft)';
-    shb.title='이 캠페인의 모든 일정(지난 일정 포함)을 동료와 공유합니다';
+    const catN=((state.catShares||{})[c.categoryId]||[]).length;
+    if(catN){
+      shb.textContent='👥 카테고리 공유 중';
+      shb.disabled=true; shb.style.opacity='0.45'; shb.style.cursor='default';
+      shb.title='상위 카테고리가 공유 중이라 이 캠페인도 자동으로 공유됩니다';
+    } else {
+      shb.textContent = shn? ('👥 '+shn+'명') : '👥 공유';
+      if(shn) shb.style.background='var(--accent-soft)';
+      shb.title='이 캠페인의 모든 일정(지난 일정 포함)을 동료와 공유합니다';
+    }
     shb.addEventListener('click',()=>shareCampaign(c));
     row.append(sel, iconBtn, nameIn, colBtn, shb, del);
     const pal=document.createElement('div'); pal.className='inline-palette'; pal.style.display='none';
@@ -4126,6 +4150,7 @@ document.getElementById('closeHolidayModal').addEventListener('click',()=>{ hide
 document.getElementById('backToSettings').addEventListener('click',()=>{ showModal('settingsModal'); });
 document.getElementById('openHolidayFromSettings').addEventListener('click',()=>{ showModal('holidayModal'); renderHolidayList(); });
 document.getElementById('openCategoryFromSettings').addEventListener('click',()=>{ showModal('categoryModal'); renderCategoryList(); });
+document.getElementById('openCampaignFromSettings').addEventListener('click',()=>{ showModal('campaignModal'); renderCampaignList(); });
 
 /* ═══════════════ 협업: 동료 · 공유일정 · 쪽지 · 아바타 ═══════════════ */
 let clBuddies=[], clReqs=[], clSent=[], clProfiles={}, clSharedRows=[], clMsgs=[], clUnread=0, clTab='buddy', clPollTimer=null;
@@ -4483,23 +4508,46 @@ async function clUnshare(t){
   delete t._sid; delete t._owner; delete t._members;
 }
 /* 동료 선택 팝업 */
-function clPickBuddies(preset){
+function clPickBuddies(preset, title){
   return new Promise(resolve=>{
-    shareSel=new Set(preset||[]);
+    const cur=new Set(preset||[]);
+    shareSel=new Set(cur);
     const box=document.getElementById('shareList');
+    const h=document.querySelector('#shareModal h2');
+    if(h) h.textContent = title || '🤝 함께할 동료 선택';
     box.innerHTML='';
     const ids=clBuddyIds();
     if(!ids.length){ box.innerHTML='<div class="hint" style="padding:12px;">아직 동료가 없어요. 먼저 동료를 추가해 주세요.</div>'; }
     ids.forEach(id=>{
       const r=document.createElement('div'); r.className='cl-row';
-      const cb=document.createElement('input'); cb.type='checkbox'; cb.checked=shareSel.has(id);
-      cb.addEventListener('change',()=>{ if(cb.checked) shareSel.add(id); else shareSel.delete(id); });
-      const nm=document.createElement('div'); nm.className='cl-nm'; nm.textContent=clName(id);
+      const cb=document.createElement('input'); cb.type='checkbox'; cb.checked=cur.has(id);
+      const nm=document.createElement('div'); nm.className='cl-nm';
+      nm.innerHTML=escapeHtml(clName(id))+(cur.has(id)? '<small>지금 공유 중 · 체크를 풀면 제외돼요</small>' : '<small>체크하면 새로 공유돼요</small>');
+      cb.addEventListener('change',()=>{
+        if(cb.checked) shareSel.add(id); else shareSel.delete(id);
+        nm.querySelector('small').textContent =
+          cb.checked ? (cur.has(id)?'지금 공유 중':'새로 추가됨') : (cur.has(id)?'제외됨':'공유 안 함');
+      });
       r.appendChild(cb); r.appendChild(nm); box.appendChild(r);
     });
+    const foot=document.getElementById('shareHint');
+    if(foot) foot.textContent = cur.size? ('현재 '+cur.size+'명과 공유 중이에요. 체크를 더하거나 풀어서 바꿀 수 있어요.') : '함께할 동료를 골라주세요.';
     shareResolve=resolve;
     showModal('shareModal');
   });
+}
+/* 이 일정이 상위(카테고리/캠페인) 공유에 이미 포함되는지 */
+function shareLockOf(task){
+  const CS=state.catShares||{}, PS=state.campShares||{};
+  if(task && task.categoryId && (CS[task.categoryId]||[]).length){
+    const c=getCategory(task.categoryId);
+    return {by:'cat', name:(c?c.name:'카테고리')};
+  }
+  if(task && task.campaignId && (PS[task.campaignId]||[]).length){
+    const cp=getCampaign(task.campaignId);
+    return {by:'camp', name:(cp?cp.name:'캠페인')};
+  }
+  return null;
 }
 document.getElementById('shareCancel').addEventListener('click',()=>{ hideModals(); if(shareResolve){ shareResolve(null); shareResolve=null; } });
 document.getElementById('shareOk').addEventListener('click',()=>{ hideModals(); if(shareResolve){ shareResolve(Array.from(shareSel)); shareResolve=null; } });
@@ -4507,11 +4555,21 @@ document.getElementById('shareOk').addEventListener('click',()=>{ hideModals(); 
 /* 일정 상세에서 "동료와 함께" 토글 */
 async function clToggleShare(taskId, want){
   const t=state.tasks.find(x=>x.id===taskId); if(!t) return;
+  const lock=shareLockOf(t);
+  if(lock){
+    alert('이 일정은 “'+lock.name+'” '+(lock.by==='cat'?'카테고리':'캠페인')+' 단위로 이미 공유되고 있어요.\n'
+        + (lock.by==='cat'?'카테고리':'캠페인')+' 관리에서 공유 대상을 바꿔주세요.');
+    render(); return;
+  }
   if(!want){ await clUnshare(t); saveAll(); render(); return; }
   await clLoadBuddies();                 /* 방금 승인된 동료도 바로 뜨도록 */
-  const picked=await clPickBuddies(t._members||[]);
+  const picked=await clPickBuddies(t._members||[], '🤝 이 일정을 함께할 동료');
   if(picked===null) { render(); return; }
-  if(!picked.length){ alert('함께할 동료를 한 명 이상 선택해 주세요.'); render(); return; }
+  if(!picked.length){
+    if(t._sid && confirm('선택한 동료가 없어요. 이 일정의 공유를 해제할까요?')){ await clUnshare(t); saveAll(); render(); }
+    else render();
+    return;
+  }
   if(t._sid){
     try{ await sb.from('shared_tasks').update({members:Array.from(new Set([cloudUser.id].concat(picked)))}).eq('id',t._sid); }catch(e){}
     t._members=picked;
@@ -4873,7 +4931,7 @@ async function shareCategory(cat){
   if(!clOn()){ alert('클라우드에 로그인해야 공유할 수 있어요.'); return; }
   await clLoadBuddies();
   const cur=state.catShares[cat.id]||[];
-  const picked=await clPickBuddies(cur);
+  const picked=await clPickBuddies(cur, '🤝 “'+cat.name+'” 카테고리 공유');
   if(picked===null) return;                       /* 취소 */
 
   if(!picked.length){
@@ -4903,10 +4961,16 @@ async function shareCategory(cat){
 /* ── 캠페인 단위 공유 (지난 일정 포함 전부) ── */
 async function shareCampaign(camp){
   if(!clOn()){ alert('클라우드에 로그인해야 공유할 수 있어요.'); return; }
+  const catShared=(state.catShares||{})[camp.categoryId]||[];
+  if(catShared.length){
+    const c=getCategory(camp.categoryId);
+    alert('“'+(c?c.name:'상위 카테고리')+'” 카테고리가 이미 공유 중이라, 이 캠페인은 자동으로 함께 공유돼요.\n카테고리 관리에서 대상을 바꿔주세요.');
+    return;
+  }
   await clLoadBuddies();
   if(!state.campShares) state.campShares={};
   const cur=state.campShares[camp.id]||[];
-  const picked=await clPickBuddies(cur);
+  const picked=await clPickBuddies(cur, '🤝 “'+camp.name+'” 캠페인 공유');
   if(picked===null) return;
 
   if(!picked.length){
