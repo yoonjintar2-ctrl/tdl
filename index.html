@@ -23,6 +23,8 @@
 <link rel="icon" type="image/png" sizes="32x32" href="icon-32.png">
 <link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
 <style>
+/* 공통: hidden 클래스는 항상 숨김 */
+.hidden{display:none !important;}
 :root{
   /* 기본 테마 = 포그 (JS 적용 전 깜빡임 방지) */
   --bg:#F6F6F7;
@@ -67,6 +69,15 @@ body.mob .modal-actions button{padding:12px 16px;font-size:13.5px;}
 #mTop .m-sp{flex:1;}
 .m-ic{width:40px;height:40px;border-radius:13px;border:none;background:var(--panel);color:var(--text-dim);font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;font-family:inherit;line-height:1;transition:background .12s,color .12s;}
 .m-ic svg{width:21px;height:21px;display:block;}
+/* 공통 아이콘 — 전부 같은 회색 톤 */
+.ic{display:inline-flex;align-items:center;justify-content:center;color:var(--text-dim);vertical-align:-3px;}
+.ic svg{width:15px;height:15px;display:block;}
+.tb-btn .ic{margin-right:1px;}
+.tb-btn.ic-only{padding-left:11px;padding-right:11px;}
+.tb-btn:hover .ic{color:var(--accent-deep);}
+#miniCalFab .ic,#noteFab .ic,#timeFab .ic,#loungeFab .ic,#commFab .ic{color:var(--text-dim);}
+#miniCalFab .ic svg,#noteFab .ic svg,#timeFab .ic svg,#loungeFab .ic svg,#commFab .ic svg{width:20px;height:20px;}
+#miniCalFab.on .ic,#noteFab.on .ic,#timeFab.on .ic,#loungeFab.on .ic{color:#fff;}
 .m-ic:active{background:var(--accent-soft);color:var(--accent-deep);}
 .m-ic.on{background:var(--accent-soft);color:var(--accent-deep);}
 .m-ic:active{background:var(--accent-soft);}
@@ -75,6 +86,7 @@ body.mob .modal-actions button{padding:12px 16px;font-size:13.5px;}
 .m-ic.on{background:var(--accent);color:#fff;}
 .m-ic.need{background:#F6E4EA;color:#B0526F;}
 #mSaveSub{display:none;}
+#mPull{height:0;overflow:hidden;transition:height .18s;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--text-dim);background:var(--bg);}
 #mSearchBar{display:flex;gap:6px;padding:0 12px 10px;background:var(--bg);flex:0 0 auto;}
 #mSearchBar.hidden{display:none;}
 #mSearchBar input{flex:1;border:none;background:var(--panel);border-radius:12px;padding:11px 13px;font-size:14px;font-family:inherit;color:var(--text);outline:none;}
@@ -521,12 +533,33 @@ body{font-family:var(--user-font,-apple-system,BlinkMacSystemFont,"Apple SD Goth
 #baClock:hover .bc-hint{opacity:1;}
 #baClock:hover .bc-time{color:var(--accent-deep);}
 /* 시계 메뉴 */
+#mhVisit{position:fixed;inset:0;z-index:400;display:flex;align-items:center;justify-content:center;}
+#mhVisit .mv2-back{position:absolute;inset:0;background:rgba(20,16,30,0.45);}
+#mhVisit .mv2-card{position:relative;z-index:2;background:var(--panel);border-radius:18px;box-shadow:0 24px 60px rgba(40,34,60,0.3);
+  width:min(820px,94vw);max-height:90vh;display:flex;flex-direction:column;overflow:hidden;}
+#mhVisit .mv2-head{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border);font-size:calc(14px * var(--fs,1));flex:0 0 auto;}
+#mhVisit .mv2-x{border:none;background:transparent;cursor:pointer;color:var(--text-dim);font-size:16px;padding:4px 8px;border-radius:8px;}
+#mhVisit .mv2-x:hover{background:var(--accent-soft);color:var(--accent-deep);}
+#mhVisit .mv2-body{flex:1 1 auto;overflow:auto;padding:16px 18px 20px;}
+body.mob #mhVisit .mv2-card{width:100vw;max-width:100vw;height:100dvh;max-height:100dvh;border-radius:0;}
+body.mob #mhVisit .mv2-head{position:sticky;top:0;background:var(--panel);z-index:3;padding:calc(12px + env(safe-area-inset-top,0px)) 16px 12px;}
+body.mob #mhVisit .mv2-body{padding:14px 14px calc(20px + env(safe-area-inset-bottom));}
+#shareInfo{position:fixed;z-index:360;background:var(--panel);border:1px solid var(--line-strong);border-radius:12px;box-shadow:0 12px 30px rgba(40,34,60,0.22);padding:11px 13px;width:250px;}
+#shareInfo.hidden{display:none;}
+#shareInfo .si-head{display:flex;align-items:center;justify-content:space-between;font-size:calc(12.5px * var(--fs,1));margin-bottom:7px;}
+#shareInfo .si-x{border:none;background:transparent;cursor:pointer;color:var(--text-dim);font-size:12px;}
+#shareInfo .si-body{font-size:calc(11.5px * var(--fs,1));color:var(--text);line-height:1.6;}
+#shareInfo .si-body .si-k{color:var(--text-dim);font-size:calc(10.5px * var(--fs,1));display:block;margin-top:6px;}
+#shareInfo .si-body .si-who{display:flex;flex-wrap:wrap;gap:4px;margin-top:3px;}
+#shareInfo .si-body .si-who span{background:var(--bg);border-radius:20px;padding:2px 9px;font-size:calc(10.5px * var(--fs,1));}
+#shareInfo .si-foot{margin-top:10px;}
+#shareInfo .si-foot .btn{width:100%;padding:7px;font-size:calc(11.5px * var(--fs,1));}
 #baClockMenu{position:fixed;z-index:360;background:var(--panel);border:1px solid var(--line-strong);border-radius:12px;box-shadow:0 10px 26px rgba(40,34,60,0.24);padding:5px;display:flex;flex-direction:column;gap:3px;min-width:170px;}
 #baClockMenu.hidden{display:none;}
 #baClockMenu button{border:none;background:transparent;color:var(--text);font-family:inherit;font-size:calc(12.5px * var(--fs,1));padding:9px 12px;border-radius:8px;cursor:pointer;text-align:left;}
 #baClockMenu button:hover{background:var(--accent-soft);color:var(--accent-deep);}
 /* 플로팅 버튼은 아바타보다 위에 */
-#miniCalFab,#stickerFab,#noteFab,#timeFab,#loungeFab{z-index:340;}
+#miniCalFab,#stickerFab,#noteFab,#timeFab,#loungeFab,#commFab{z-index:340;}
 #stickerPanel,#notePanel,#timePanel,#miniCal{z-index:345;}
 body.mob #buddyAvatar{display:none!important;}
 #newsText{position:absolute;left:0;top:50%;margin-top:-8px;display:inline-block;font-size:calc(11.5px * var(--fs,1));line-height:calc(16px * var(--fs,1));color:var(--text-dim);opacity:0;white-space:nowrap;cursor:pointer;letter-spacing:-0.1px;will-change:transform;}
@@ -575,6 +608,14 @@ body.theme-excel .save-btn .sv-sub{color:rgba(255,255,255,0.75);}
 .cl-row{display:flex;align-items:center;gap:8px;padding:8px 10px;border-bottom:1px solid var(--border);}
 .cl-row:last-child{border-bottom:none;}
 .cl-row .cl-nm{flex:1;font-size:calc(12px * var(--fs,1));color:var(--text);min-width:0;}
+.al-row{cursor:pointer;align-items:flex-start;}
+.al-row .ic{margin-top:2px;color:var(--text-dim);}
+.al-row.unread{background:var(--accent-soft);}
+.al-row.unread .cl-nm{font-weight:600;}
+.al-row:hover{background:var(--bg);}
+.cl-tab{position:relative;}
+#clAlarmDot{position:absolute;top:3px;right:5px;min-width:15px;height:15px;border-radius:8px;background:var(--imp-strong);color:#7A4B00;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;padding:0 3px;box-sizing:border-box;}
+#clAlarmDot.hidden{display:none;}
 .cl-row .cl-nm small{display:block;color:var(--text-dim);font-size:calc(10px * var(--fs,1));overflow:hidden;text-overflow:ellipsis;}
 .cl-row .btn{padding:4px 10px;font-size:calc(11px * var(--fs,1));}
 .cl-mini{width:26px;height:34px;flex:0 0 auto;}
@@ -687,7 +728,11 @@ body.mob #mhGbIn{font-size:15px;padding:10px;}
 body.mob .mh-gb .gb-x{opacity:1;}
 .cl-ava{width:74px;height:104px;}
 .cl-ava svg{width:100%;height:100%;display:block;}
-.shared-mark{color:var(--accent-deep);font-size:calc(10px * var(--fs,1));}
+.shared-mark{position:absolute;right:49px;top:50%;transform:translateY(-50%);border:none;background:transparent;cursor:pointer;padding:2px 3px;border-radius:6px;z-index:3;line-height:1;}
+.shared-mark .ic{color:var(--text-dim);}
+.shared-mark .ic svg{width:14px;height:14px;}
+.shared-mark:hover{background:rgba(0,0,0,0.06);}
+.shared-mark:hover .ic{color:var(--accent-deep);}
 .hist-btn{background:var(--panel);border:1px solid var(--line-strong);color:var(--text);font-weight:600;padding-left:8px !important;padding-right:8px !important;font-size:calc(10.5px * var(--fs,1)) !important;letter-spacing:-0.3px;}
 .hist-btn:hover:not(:disabled){background:var(--accent-soft);color:var(--accent-deep);border-color:var(--accent);}
 .hist-btn:disabled{opacity:0.32;cursor:default;}
@@ -941,16 +986,19 @@ body.theme-dark #miniCal{box-shadow:0 10px 30px rgba(0,0,0,0.45);}
 .mc-cell.sun,.mc-cell.hol{color:#c0554f;}
 .mc-cell.today{background:var(--accent-soft);font-weight:700;}
 .mc-cell.hol{font-weight:600;}
-#miniCalFab,#stickerFab,#noteFab,#timeFab,#loungeFab{position:fixed;bottom:16px;z-index:330;width:calc(46px * var(--fs));height:calc(46px * var(--fs));border-radius:50%;border:1px solid var(--line-strong);cursor:pointer;background:var(--panel);color:var(--text);font-size:calc(20px * var(--fs,1));box-shadow:0 6px 18px rgba(40,34,60,0.16);display:flex;align-items:center;justify-content:center;padding:0;line-height:1;}
+#miniCalFab,#stickerFab,#noteFab,#timeFab,#loungeFab,#commFab{position:fixed;bottom:16px;z-index:330;width:calc(46px * var(--fs));height:calc(46px * var(--fs));border-radius:50%;border:1px solid var(--line-strong);cursor:pointer;background:var(--panel);color:var(--text);font-size:calc(20px * var(--fs,1));box-shadow:0 6px 18px rgba(40,34,60,0.16);display:flex;align-items:center;justify-content:center;padding:0;line-height:1;}
 #miniCalFab{right:16px;}
 #noteFab{right:70px;}
 #timeFab{right:124px;}
 #loungeFab{right:178px;}
+#commFab{right:232px;}
 #stickerFab{display:none!important;}
+#commDot{position:absolute;top:-2px;right:-2px;min-width:17px;height:17px;border-radius:9px;background:var(--imp-strong);color:#7A4B00;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;padding:0 4px;box-sizing:border-box;border:2px solid var(--panel);}
+#commDot.hidden{display:none;}
 #loungeFab .lgb{position:absolute;left:50%;transform:translateX(-50%);bottom:-3px;font-size:calc(7.5px * var(--fs,1));font-weight:700;letter-spacing:-0.2px;color:var(--text-dim);background:var(--panel);border-radius:7px;padding:0 4px;line-height:1.5;box-shadow:0 1px 3px rgba(0,0,0,0.12);white-space:nowrap;}
 #loungeFab .lgb.hidden{display:none;}
 #loungeFab.away{border-color:var(--accent);}
-#miniCalFab:hover,#stickerFab:hover,#noteFab:hover,#timeFab:hover,#loungeFab:hover{background:var(--accent-soft);}
+#miniCalFab:hover,#stickerFab:hover,#noteFab:hover,#timeFab:hover,#loungeFab:hover,#commFab:hover{background:var(--accent-soft);}
 #miniCalFab.on,#stickerFab.on,#noteFab.on,#timeFab.on,#loungeFab.on{background:var(--accent);color:#fff;border-color:transparent;}
 body.theme-dark #miniCalFab,body.theme-dark #stickerFab,body.theme-dark #noteFab,body.theme-dark #timeFab,body.theme-dark #loungeFab{box-shadow:0 6px 18px rgba(0,0,0,0.45);}
 #timePanel{position:fixed;right:178px;bottom:72px;z-index:320;width:262px;background:var(--panel);border:1px solid var(--line-strong);border-radius:14px;box-shadow:0 10px 30px rgba(40,34,60,0.2);padding:11px;}
@@ -1159,9 +1207,9 @@ null
     <div id="topbarRow1">
       <div class="brand"><img class="tdl-logo" alt=""><span>TDL<span>.</span></span></div>
       <div id="filters">
-        <button class="tb-btn add-top" id="btnAddTop" title="새 일정 추가 (목록 맨 위에 생기고 바로 입력할 수 있어요)">＋ 일정</button>
-        <button class="tb-btn" id="btnSearch" title="검색" style="padding-left:11px;padding-right:11px;">🔍</button>
-        <button class="tb-btn" id="btnFilter" title="필터 (기간 · 카테고리 · 캠페인)" style="padding-left:11px;padding-right:11px;"></button>
+        <button class="tb-btn add-top" id="btnAddTop" title="새 일정 추가 (목록 맨 위에 생기고 바로 입력할 수 있어요)"><span class="ic" data-ic="plus"></span> 일정</button>
+        <button class="tb-btn ic-only" id="btnSearch" title="검색"><span class="ic" data-ic="search"></span></button>
+        <button class="tb-btn ic-only" id="btnFilter" title="필터 (기간 · 카테고리 · 캠페인)"><span class="ic" data-ic="filter"></span></button>
         <button class="lock-toggle" id="btnDateLock" type="button" role="switch" aria-checked="false" title="기간순 정렬">
           <span class="lt-label">기간순</span>
           <span class="lt-track"><span class="lt-knob"></span></span>
@@ -1174,8 +1222,8 @@ null
       <div id="topbar-right">
         <button class="tb-btn save-btn" id="btnSave"><span class="sv-main">💾 저장</span><span class="sv-sub" id="svSub">연결 필요</span></button>
         <span id="btnCollab" class="hidden"><span id="collabDot" class="hidden"></span></span>
-        <button class="tb-btn" id="btnQr" title="휴대폰으로 접속할 수 있는 QR 코드">📱 모바일</button>
-        <button class="tb-btn" id="btnSettings" title="설정" style="padding-left:11px;padding-right:11px;">⚙</button>
+        <button class="tb-btn" id="btnQr" title="휴대폰으로 접속할 수 있는 QR 코드"><span class="ic" data-ic="mobile"></span> 모바일</button>
+        <button class="tb-btn ic-only" id="btnSettings" title="설정"><span class="ic" data-ic="gear"></span></button>
       </div>
     </div>
     <input type="file" id="importInput" accept=".json" style="display:none;">
@@ -1360,8 +1408,9 @@ null
   </div>
   <div id="mcWrap"></div>
 </div>
-<button id="miniCalFab" title="달력">📅</button>
-<button id="loungeFab" title="사이버 탕비실 — 다른 사용자와 잡담">🍵<span class="lgb hidden" id="lgFabBadge">대기중</span></button>
+<button id="miniCalFab" title="달력"><span class="ic" data-ic="calendar"></span></button>
+<button id="loungeFab" title="사이버 탕비실 — 다른 사용자와 잡담"><span class="ic" data-ic="cup"></span><span class="lgb hidden" id="lgFabBadge">대기중</span></button>
+<button id="commFab" title="커뮤니케이션 — 동료 · 쪽지 · 미니홈피"><span class="ic" data-ic="chat"></span><span id="commDot" class="hidden"></span></button>
 
 <div id="lounge" class="hidden">
   <div class="lg-shell">
@@ -1421,7 +1470,7 @@ null
   <div class="np-listlabel" id="npListLabel">저장된 메모 <span style="font-weight:400;color:var(--text-dim);">— 바로 고치거나 ✏️ 로 크게 편집</span></div>
   <div id="noteList"></div>
 </div>
-<button id="noteFab" title="메모">📝</button>
+<button id="noteFab" title="메모"><span class="ic" data-ic="note"></span></button>
 <div id="timePanel" class="hidden">
   <div class="tp-head"><span>🕐 시간</span><button class="tp-close" id="tpClose">✕</button></div>
   <div class="tp-tabs">
@@ -1467,7 +1516,7 @@ null
     <div class="tp-note">표시된 시계는 드래그로 이동, 오른쪽 아래 점을 끌면 크기가 조절됩니다.</div>
   </div>
 </div>
-<button id="timeFab" title="타이머 · 알람 · 시계">🕐</button>
+<button id="timeFab" title="타이머 · 알람 · 시계"><span class="ic" data-ic="clock"></span></button>
 
 <div id="clockFloat" class="tfloat hidden"><span class="tf-main"></span><div class="tf-sub"></div><span class="tf-handle"></span></div>
 <div id="timerFloat" class="tfloat hidden"><span class="tf-main"></span><div class="tf-sub"></div><span class="tf-handle"></span></div>
@@ -1485,7 +1534,7 @@ null
     <div class="hint">캠페인의 카테고리, 아이콘, 이름을 설정할 수 있어요.<br>이름 오른쪽 <b>🎨 색상</b> 버튼을 누르면 20가지 테마 색상을 고를 수 있습니다. 고른 색은 캠페인 배지와 우측 일정 바에 은은하게 깔립니다.</div>
     <div id="campaignList"></div>
     <button class="add-line" id="addCampaignBtn">+ 캠페인 추가</button>
-    <div class="modal-actions"><button class="btn primary" id="closeCampaignModal">저장</button></div>
+    <div class="modal-actions"><button class="btn" id="closeCampaignModal2">닫기</button><button class="btn primary" id="closeCampaignModal">저장</button></div>
   </div>
 
   <div class="modal hidden" id="categoryModal">
@@ -1584,6 +1633,9 @@ null
       <b id="userEmail" style="flex:1;font-size:calc(12px * var(--fs,1));color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></b>
       <button class="btn" id="btnSignOut">로그아웃</button>
     </div>
+    <div class="field-label">플로팅 캐릭터</div>
+    <label class="chk-line"><input type="checkbox" id="setAvatarOn"> 화면에 캐릭터 표시</label>
+    <div class="hint">끄면 캐릭터와 말풍선이 사라져요. (타이머 시계는 계속 표시됩니다)</div>
     <div class="field-label">기타</div>
     <div class="row">
       <button class="btn" id="openHolidayFromSettings">📅 공휴일 관리</button>
@@ -1612,8 +1664,15 @@ null
   <div class="modal hidden" id="collabModal" style="width:min(820px, 94vw);">
     <h2>💬 커뮤니케이션</h2>
     <div class="cl-tabs">
+      <button class="cl-tab" data-ct="alarm">알람<span id="clAlarmDot" class="hidden"></span></button>
       <button class="cl-tab on" data-ct="buddy">동료</button>
       <button class="cl-tab" data-ct="ava">내 미니홈피</button>
+    </div>
+
+    <div class="cl-pane hidden" id="ctAlarm">
+      <div class="hint" id="alSummary"></div>
+      <div id="alList" class="cl-list" style="max-height:420px;"></div>
+      <div class="row" style="margin-top:8px;"><button class="btn" id="alClear" style="flex:1;">모두 읽음 처리</button></div>
     </div>
 
     <div class="cl-pane" id="ctBuddy">
@@ -1662,22 +1721,6 @@ null
             </div>
           </div>
 
-          <div class="mh-card">
-            <div class="field-label">배경음악</div>
-            <div class="mh-search" id="mhSearchRow">
-              <input type="text" id="mhSong" placeholder="노래 제목 · 가수" autocomplete="off">
-              <button class="btn" id="mhSongGo">검색</button>
-            </div>
-            <div id="mhSongList" class="mh-songs"></div>
-            <div class="mh-now" id="mhNow"></div>
-            <div class="mh-st-btns">
-              <button class="btn mh-wide" id="mhPlay">▶ 듣기</button>
-              <button class="btn mh-wide" id="mhStop">■ 정지</button>
-            </div>
-            <audio id="mhAudio" style="display:none;"></audio>
-            <div id="mhPlayer" class="mh-player"></div>
-            <div class="hint" id="mhBgmMsg" style="margin-top:4px;"></div>
-          </div>
         </div>
 
         <!-- 중: 마이룸 -->
@@ -1689,6 +1732,24 @@ null
             <div id="mhRoom" class="mh-room"></div>
             <div id="mhRoomTools" class="mh-tools hidden"></div>
           </div>
+          <div class="mh-card" id="mhBgmCard">
+            <div class="field-label">배경음악</div>
+            <div class="mh-search" id="mhSearchRow">
+              <input type="text" id="mhSong" placeholder="노래 제목 · 가수" autocomplete="off">
+              <button class="btn" id="mhSongGo">검색</button>
+            </div>
+            <div id="mhSongList" class="mh-songs"></div>
+            <div class="mh-now" id="mhNow"></div>
+            <div class="mh-st-btns">
+              <button class="btn mh-wide" id="mhPlay">▶ 듣기</button>
+              <button class="btn mh-wide" id="mhStop">■ 정지</button>
+              <button class="btn primary mh-wide hidden" id="mhSongSave">저장</button>
+            </div>
+            <audio id="mhAudio" style="display:none;"></audio>
+            <div id="mhPlayer" class="mh-player"></div>
+            <div class="hint" id="mhBgmMsg" style="margin-top:4px;"></div>
+          </div>
+        
         </div>
 
         <!-- 우: 방명록 -->
@@ -1737,6 +1798,20 @@ null
     <div class="hint" id="hstWho"></div>
     <div id="hstLog" class="cl-log" style="height:300px;"></div>
     <div class="modal-actions"><button class="btn" id="hstClose">← 동료</button><button class="btn primary" id="hstReply">✉ 답장</button></div>
+  </div>
+
+  <div id="mhVisit" class="hidden">
+    <div class="mv2-back" id="mhVisitBack"></div>
+    <div class="mv2-card">
+      <div class="mv2-head"><b id="mhVisitTitle">미니홈피</b><button class="mv2-x" id="mhVisitClose">✕</button></div>
+      <div class="mv2-body" id="mhVisitBody"></div>
+    </div>
+  </div>
+
+  <div id="shareInfo" class="hidden">
+    <div class="si-head"><b>공유 정보</b><button class="si-x" id="siClose">✕</button></div>
+    <div class="si-body" id="siBody"></div>
+    <div class="si-foot"><button class="btn" id="siEdit">공유 대상 수정</button></div>
   </div>
 
   <div class="modal hidden" id="shareModal" style="width:360px;">
@@ -1971,6 +2046,7 @@ function normalize(d){
   if(!Array.isArray(d._bk)) d._bk=[];
   if(!d.catShares || typeof d.catShares!=='object') d.catShares={};   /* 카테고리별 공유 대상 */
   if(d.settings.filterRange===undefined) d.settings.filterRange=null;
+  if(d.settings.avatarOn===undefined) d.settings.avatarOn=true;
   if(!d.campShares || typeof d.campShares!=='object') d.campShares={};   /* 캠페인별 공유 대상 */
   if(!d.time) d.time={};
   const T=d.time;
@@ -1992,8 +2068,8 @@ function normalize(d){
     if(t.endTime===undefined) t.endTime='';
     if(t.important===undefined) t.important=false;
     if(t.done===undefined) t.done=false;
-    if(!t.categoryId) t.categoryId=d.categories[0].id;
-    if(!catIds.includes(t.categoryId)) t.categoryId=d.categories[0].id;
+    if(t.categoryId===undefined) t.categoryId='';
+    if(t.categoryId && !catIds.includes(t.categoryId)) t.categoryId='';
     if(!t.start && !t.pinBottom && !t.pinNew){ t.start=todayStr(); }   /* 날짜 미정 행은 비운 채로 둠 */
     if(t.start && !t.end) t.end=t.start;
     if(t.campaignId && !d.campaigns.some(c=>c.id===t.campaignId)) t.campaignId=null;
@@ -2163,7 +2239,7 @@ function exportBackup(){
 
 function updateFileStatusHint(t){ const el=document.getElementById('fileStatusHint'); if(el) el.textContent=t; }
 /* ═══════════════ 클라우드 저장 (Supabase) ═══════════════ */
-const APP_VER='ver 6.2', APP_BUILD='2026-08-08 01:00';
+const APP_VER='ver 7.0', APP_BUILD='2026-08-08 04:00';
 const LOGO_SRC='data:image/png;base64,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';
 function paintLogos(){ document.querySelectorAll('img.tdl-logo').forEach(i=>{ i.src=LOGO_SRC; }); }
 const IS_WEB = /^https?:$/i.test(location.protocol);
@@ -2759,14 +2835,16 @@ function buildBody(){
 
     const cDet=mkCell('info-detail','detail');
     if(task._sid){
-      const mk=document.createElement('span'); mk.className='shared-mark';
-      mk.style.cssText='position:absolute;right:50px;top:50%;transform:translateY(-50%);pointer-events:none;z-index:3;';
-      mk.textContent='👥';
+      const mk=document.createElement('button'); mk.type='button'; mk.className='shared-mark';
+      mk.innerHTML='<span class="ic" data-ic="share"></span>';
       try{
         const others=(task._members||[]).filter(x=>x!==(cloudUser&&cloudUser.id));
-        mk.title='공유 일정 · '+(others.length? others.map(clName).join(', ') : '나만');
+        mk.title='공유 일정 · '+(others.length? others.map(clName).join(', ') : '나만')+' — 눌러서 자세히';
       }catch(e){}
+      mk.addEventListener('mousedown',(e)=>e.stopPropagation());
+      mk.addEventListener('click',(e)=>{ e.preventDefault(); e.stopPropagation(); openShareInfo(task, mk); });
       cDet.appendChild(mk);
+      paintIcons(cDet);
     }
     const pen=document.createElement('button'); pen.className='row-pen'; pen.type='button';
     pen.textContent='✏️'; pen.title='이 일정 메뉴 (공유·복제·삭제)';
@@ -4212,9 +4290,15 @@ document.getElementById('addCategoryBtn').addEventListener('click',()=>{
 /* ===================== 공휴일 ===================== */
 document.getElementById('closeHolidayModal').addEventListener('click',()=>{ hideModals(); render(); });
 document.getElementById('backToSettings').addEventListener('click',()=>{ showModal('settingsModal'); });
+document.getElementById('setAvatarOn').addEventListener('change',(e)=>{
+  state.settings.avatarOn=e.target.checked;
+  saveAll();
+  if(typeof baApplyVisible==='function') baApplyVisible();
+});
 document.getElementById('openHolidayFromSettings').addEventListener('click',()=>{ showModal('holidayModal'); renderHolidayList(); });
 document.getElementById('openCategoryFromSettings').addEventListener('click',()=>{ showModal('categoryModal'); renderCategoryList(); });
 document.getElementById('openCampaignFromSettings').addEventListener('click',()=>{ showModal('campaignModal'); renderCampaignList(); });
+document.getElementById('closeCampaignModal2').addEventListener('click', hideModals);
 
 /* ═══════════════ 협업: 동료 · 공유일정 · 쪽지 · 아바타 ═══════════════ */
 let clBuddies=[], clReqs=[], clSent=[], clProfiles={}, clSharedRows=[], clMsgs=[], clUnread=0, clTab='buddy', clPollTimer=null;
@@ -4389,7 +4473,7 @@ function clRenderBuddies(){
 
     const home=document.createElement('button'); home.className='btn'; home.textContent='🏠 미니홈피';
     home.title=clName(other)+'님의 미니홈피로 가기';
-    home.addEventListener('click',()=>mhOpen(other));
+    home.addEventListener('click',()=>mhVisit(other));
 
     const send=document.createElement('button'); send.className='btn'; send.textContent='✉ 쪽지';
     send.title='쪽지 보내기';
@@ -4600,6 +4684,47 @@ function clPickBuddies(preset, title){
     showModal('shareModal');
   });
 }
+/* 공유 상태 팝업 */
+let siTask=null;
+function openShareInfo(task, anchor){
+  siTask=task;
+  const box=document.getElementById('shareInfo');
+  const lock=shareLockOf(task);
+  const members=(task._members||[]).filter(x=>x!==(cloudUser&&cloudUser.id));
+  const unit = lock? (lock.by==='cat'? '카테고리 단위' : '캠페인 단위') : '이 일정만';
+  const src  = lock? ('“'+lock.name+'”') : '개별 지정';
+  document.getElementById('siBody').innerHTML=
+      '<span class="si-k">공유 방식</span>'+escapeHtml(unit)+' · '+escapeHtml(src)
+    + '<span class="si-k">함께 보는 사람 ('+members.length+'명)</span>'
+    + '<div class="si-who">'+(members.length? members.map(id=>'<span>'+escapeHtml(clName(id))+'</span>').join('') : '<span>없음</span>')+'</div>'
+    + ((task._owner && cloudUser && task._owner!==cloudUser.id)? ('<span class="si-k">만든 사람</span>'+escapeHtml(clName(task._owner))) : '');
+  const edit=document.getElementById('siEdit');
+  edit.textContent = lock? ((lock.by==='cat'?'카테고리':'캠페인')+' 관리에서 수정') : '공유 대상 수정';
+  const r=anchor.getBoundingClientRect();
+  box.classList.remove('hidden');
+  const bw=box.offsetWidth||250, bh=box.offsetHeight||160;
+  let x=r.right-bw, y=r.bottom+6;
+  if(x<8) x=8;
+  if(y+bh>window.innerHeight-8) y=r.top-bh-6;
+  box.style.left=x+'px'; box.style.top=Math.max(8,y)+'px';
+}
+document.getElementById('siClose').addEventListener('click',()=>document.getElementById('shareInfo').classList.add('hidden'));
+document.getElementById('siEdit').addEventListener('click', async ()=>{
+  const t=siTask; document.getElementById('shareInfo').classList.add('hidden');
+  if(!t) return;
+  const lock=shareLockOf(t);
+  if(lock){
+    showModal(lock.by==='cat'?'categoryModal':'campaignModal');
+    if(lock.by==='cat') renderCategoryList(); else renderCampaignList();
+    return;
+  }
+  await clToggleShare(t.id, true);
+});
+document.addEventListener('mousedown',(e)=>{
+  const b=document.getElementById('shareInfo');
+  if(b && !b.classList.contains('hidden') && !b.contains(e.target) && !e.target.closest('.shared-mark')) b.classList.add('hidden');
+});
+
 /* 이 일정이 상위(카테고리/캠페인) 공유에 이미 포함되는지 */
 function shareLockOf(task){
   const CS=state.catShares||{}, PS=state.campShares||{};
@@ -4909,23 +5034,32 @@ async function mhSearchSong(){
     msg.textContent='검색에 실패했어요. 잠시 후 다시 시도해 주세요.';
   }
 }
-async function mhPickSong(i){
+let mhPending=null;                 /* 고른 곡 (저장 전) */
+function mhPickSong(i){
   const s=mhSongs[i]; if(!s) return;
+  mhPending=s;
   document.getElementById('mhSongList').innerHTML='';
   document.getElementById('mhSong').value='';
-  if(mhIsMine() && clOn()){
-    try{
-      await sb.from('profiles').upsert({user_id:cloudUser.id, bgm:JSON.stringify(s), updated_at:new Date().toISOString()},{onConflict:'user_id'});
-      const c=clProfiles[cloudUser.id]||(clProfiles[cloudUser.id]={});
-      c.bgm=JSON.stringify(s);
-      mhFlash('배경음악 저장됨');
-    }catch(e){}
-  }
+  document.getElementById('mhSongSave').classList.remove('hidden');
+  document.getElementById('mhBgmMsg').textContent='“저장”을 누르면 다른 사람에게도 이 곡이 보여요.';
   mhPaintNow();
+}
+async function mhSaveSong(){
+  if(!mhPending || !mhIsMine() || !clOn()) return;
+  try{
+    await sb.from('profiles').upsert({user_id:cloudUser.id, bgm:JSON.stringify(mhPending), updated_at:new Date().toISOString()},{onConflict:'user_id'});
+    const c=clProfiles[cloudUser.id]||(clProfiles[cloudUser.id]={});
+    c.bgm=JSON.stringify(mhPending);
+    mhPending=null;
+    document.getElementById('mhSongSave').classList.add('hidden');
+    document.getElementById('mhBgmMsg').textContent='';
+    mhFlash('배경음악 저장됨');
+    mhPaintNow();
+  }catch(e){ document.getElementById('mhBgmMsg').textContent='저장 실패: '+(e.message||e); }
 }
 function mhPaintNow(){
   const box=document.getElementById('mhNow'); if(!box) return;
-  const s=mhBgmObj();
+  const s=mhPending || mhBgmObj();
   if(!s){ box.innerHTML='<span class="hint" style="margin:0;">아직 선택한 곡이 없어요.</span>'; return; }
   const search='https://www.melon.com/search/total/index.htm?q='+encodeURIComponent(s.t+' '+s.a);
   box.innerHTML=(s.art?'<img src="'+s.art+'" alt="">':'')
@@ -4933,7 +5067,7 @@ function mhPaintNow(){
     +'<a href="'+escapeHtml(s.url||search)+'" target="_blank" rel="noopener">듣기 ↗</a>';
 }
 function mhPlayBgm(){
-  const s=mhBgmObj();
+  const s=mhPending || mhBgmObj();
   const msg=document.getElementById('mhBgmMsg');
   const au=document.getElementById('mhAudio');
   if(!s){ msg.textContent='먼저 노래를 검색해서 골라주세요.'; return; }
@@ -5050,14 +5184,34 @@ function mhRenderStk(){
   });
 }
 
-/* 모바일: 같은 미니홈피를 전체 화면 모달로 */
-async function mhOpenMobile(userId){
+/* 동료 미니홈피 = 팝업 (PC·모바일 공통, 상단 X로 닫힘) */
+let mhHome=null;                 /* 원래 위치(내 미니홈피 탭) 기억 */
+async function mhVisit(userId){
   if(!clOn()){ alert('클라우드에 로그인해야 미니홈피를 쓸 수 있어요.'); return; }
-  showModal('collabModal');
-  document.getElementById('collabModal').classList.add('mh-mobile');
-  await clRefresh();
+  const grid=document.querySelector('#ctAva .mh-grid');
+  const body=document.getElementById('mhVisitBody');
+  if(grid && body && grid.parentElement!==body){
+    mhHome={parent:grid.parentElement, next:grid.nextSibling};
+    body.appendChild(grid);
+  }
+  document.getElementById('mhVisit').classList.remove('hidden');
   await mhOpen(userId);
+  document.getElementById('mhVisitTitle').textContent=document.getElementById('mhTitle').textContent;
 }
+function mhVisitClose(){
+  const grid=document.querySelector('#mhVisitBody .mh-grid');
+  if(grid && mhHome){
+    if(mhHome.next) mhHome.parent.insertBefore(grid, mhHome.next);
+    else mhHome.parent.appendChild(grid);
+    mhHome=null;
+  }
+  document.getElementById('mhVisit').classList.add('hidden');
+  mhTarget=null;
+  try{ mhStopBgm(); }catch(e){}
+  const cm=document.getElementById('collabModal');
+  if(cm && !cm.classList.contains('hidden')) mhRender();
+}
+async function mhOpenMobile(userId){ await mhVisit(userId); }
 /* ── 미니홈피 열기 ── */
 async function mhOpen(userId){
   mhTarget=userId||null;
@@ -5071,7 +5225,8 @@ async function mhRender(){
   const label = mine? '내 미니홈피' : (pf.nickname+'님의 미니홈피');
   document.getElementById('mhTitle').textContent = label;
   const tab=document.querySelector('.cl-tab[data-ct="ava"]');
-  if(tab) tab.textContent = label;                 /* 탭 이름도 함께 */
+  if(tab) tab.textContent = mine? '내 미니홈피' : tab.textContent;
+  const vt=document.getElementById('mhVisitTitle'); if(vt) vt.textContent=label;
   document.getElementById('mhBack').style.display = mine? 'none' : '';
   document.getElementById('mhNick').textContent = pf.nickname||'-';
   try{ document.getElementById('clAvaPrev').innerHTML=chSvg(pf.avatar); }catch(e){}
@@ -5087,6 +5242,14 @@ async function mhRender(){
   /* 배경음악 */
   document.getElementById('mhSearchRow').style.display = mine? '' : 'none';
   document.getElementById('mhSongList').innerHTML='';
+  mhPending=null;
+  document.getElementById('mhSongSave').classList.add('hidden');
+  document.getElementById('mhBgmMsg').textContent='';
+  const bc=document.getElementById('mhBgmCard'); if(bc) bc.classList.remove('hidden');
+  /* 남의 미니홈피에서는 수정 계열 버튼을 아예 감춤 */
+  ['mhStatusEdit','mhStatusSave','mhEditAva','mhRoomEdit','mhEmo'].forEach(id=>{
+    const e=document.getElementById(id); if(e) e.style.display = mine? '' : 'none';
+  });
   mhPaintNow();
   /* 마이룸 */
   mhRoom = (pf.room && pf.room.items)? JSON.parse(JSON.stringify(pf.room)) : mhRoomDefault();
@@ -5198,28 +5361,124 @@ async function autoShareNew(){
   autoShareBusy=false;
 }
 
-/* ── 배지 · 주기적 갱신 ── */
-function clSyncDot(){
-  const n=clReqs.length+clUnread;
-  [['collabDot'],['mCollabDot']].forEach(([id])=>{
-    const dot=document.getElementById(id); if(!dot) return;
-    dot.textContent=n>9?'9+':String(n);
-    dot.classList.toggle('hidden', n===0);
+/* ═══════════════ 알림 센터 ═══════════════ */
+const AL_SEEN_KEY='tdl_notif_seen';
+let alSeen=null, alItems=[];
+function alLoadSeen(){
+  if(alSeen) return alSeen;
+  try{ alSeen=new Set(JSON.parse(localStorage.getItem(AL_SEEN_KEY)||'[]')); }catch(e){ alSeen=new Set(); }
+  return alSeen;
+}
+function alSaveSeen(){
+  try{ localStorage.setItem(AL_SEEN_KEY, JSON.stringify(Array.from(alLoadSeen()).slice(-500))); }catch(e){}
+}
+/* 여러 곳의 소식을 하나의 목록으로 */
+function alBuild(){
+  const me=cloudUser? cloudUser.id : null;
+  const out=[];
+  if(!me) { alItems=[]; return; }
+  clReqs.forEach(b=>out.push({id:'req:'+b.id, at:b.created_at, ic:'people',
+    txt:clName(b.requester)+'님이 동료 요청을 보냈어요.', go:'buddy'}));
+  clBuddies.forEach(b=>{
+    if(b.requester===me) out.push({id:'acc:'+b.id, at:b.created_at, ic:'people',
+      txt:clName(b.addressee)+'님이 동료 요청을 수락했어요.', go:'buddy'});
+  });
+  clMsgs.forEach(m=>{
+    if(m.to_user===me) out.push({id:'msg:'+m.id, at:m.created_at, ic:'chat',
+      txt:clName(m.from_user)+'님의 쪽지: '+(m.body||'').slice(0,30), go:'buddy'});
+  });
+  (alGuest||[]).forEach(g=>{
+    if(g.author!==me) out.push({id:'gb:'+g.id, at:g.created_at, ic:'note',
+      txt:clName(g.author)+'님이 방명록을 남겼어요: '+(g.body||'').slice(0,26), go:'ava'});
+  });
+  clSharedRows.forEach(r=>{
+    if(r.owner!==me) out.push({id:'sh:'+r.id, at:r.updated_at||new Date().toISOString(), ic:'share',
+      txt:clName(r.owner)+'님이 일정에 초대했어요: '+((r.data&&r.data.detail)||'').slice(0,26), go:null});
+  });
+  out.sort((a,b)=> new Date(b.at||0) - new Date(a.at||0));
+  alItems=out.slice(0,120);
+}
+function alUnseen(){
+  const s=alLoadSeen();
+  return alItems.filter(x=>!s.has(x.id));
+}
+function alMarkAllSeen(){
+  const s=alLoadSeen();
+  alItems.forEach(x=>s.add(x.id));
+  alSaveSeen(); alSyncBadges(); alRender();
+}
+function alRender(){
+  const box=document.getElementById('alList'); if(!box) return;
+  const s=alLoadSeen();
+  box.innerHTML='';
+  const sum=document.getElementById('alSummary');
+  if(!alItems.length){ box.innerHTML='<div class="hint" style="padding:14px;">새로운 소식이 없어요.</div>'; if(sum) sum.textContent=''; return; }
+  const un=alUnseen().length;
+  if(sum) sum.textContent = un? ('읽지 않은 소식 '+un+'건') : '모두 확인했어요.';
+  alItems.forEach(it=>{
+    const r=document.createElement('div'); r.className='cl-row al-row'+(s.has(it.id)?'':' unread');
+    const dt=new Date(it.at||Date.now());
+    r.innerHTML='<span class="ic" data-ic="'+it.ic+'"></span>'
+      +'<div class="cl-nm">'+escapeHtml(it.txt)
+      +'<small>'+(dt.getMonth()+1)+'/'+dt.getDate()+' '+pad2(dt.getHours())+':'+pad2(dt.getMinutes())+'</small></div>';
+    if(it.go) r.addEventListener('click',()=>{ clSetTab(it.go); });
+    box.appendChild(r);
+  });
+  paintIcons(box);
+}
+function alSyncBadges(){
+  const n=alUnseen().length;
+  [['commDot'],['clAlarmDot'],['collabDot'],['mCollabDot']].forEach(([id])=>{
+    const e=document.getElementById(id); if(!e) return;
+    e.textContent = n>9? '9+' : String(n);
+    e.classList.toggle('hidden', n===0);
   });
   if(typeof baRender==='function') baRender();
 }
+/* 방명록 알림용 — 내 미니홈피 글 */
+let alGuest=[];
+async function alLoadGuest(){
+  if(!clOn()) return;
+  try{
+    const {data}=await sb.from('guestbook').select('id,owner,author,body,created_at').eq('owner',cloudUser.id).order('created_at',{ascending:false}).limit(50);
+    alGuest=data||[];
+  }catch(e){}
+}
+
+/* ── 배지 · 주기적 갱신 ── */
+function clSyncDot(){
+  alBuild();
+  alSyncBadges();
+}
+let alPrevShared=null;
 async function clRefresh(){
   if(!clOn()) return;
   await clLoadBuddies();
   await clLoadEmailHints();
   await clLoadMsgs();
   await clLoadShared();
+  await alLoadGuest();
+  /* 새로 초대받은 공유 일정이 있으면 캐릭터가 알려줌 */
+  const mine=cloudUser.id;
+  const nowIds=new Set(clSharedRows.filter(r=>r.owner!==mine).map(r=>r.id));
+  if(alPrevShared){
+    const added=[...nowIds].filter(id=>!alPrevShared.has(id));
+    if(added.length && typeof baSay==='function'){
+      const r=clSharedRows.find(x=>x.id===added[0]);
+      const who=r? clName(r.owner) : '동료';
+      const what=(r&&r.data&&r.data.detail)? ('“'+r.data.detail.slice(0,20)+'”') : '';
+      baSay(who+'님이 '+what+' 일정에 초대했어! 나를 눌러서 확인해', true);
+      baSetAct('jump',1200);
+    }
+  }
+  alPrevShared=nowIds;
   clMergeShared();
   autoShareNew();
   clSyncDot();
   const m=document.getElementById('collabModal');
   if(m && !m.classList.contains('hidden')){
-    clRenderBuddies(); clRenderMsgTargets(); clRenderMsgLog();
+    clRenderBuddies();
+    if(clTab==='alarm') alRender();
   }
 }
 async function initCollab(){
@@ -5242,17 +5501,28 @@ document.getElementById('closeCollabModal').addEventListener('click', ()=>{ docu
 function clSetTab(k){
   clTab=k;
   document.querySelectorAll('.cl-tab').forEach(b=>b.classList.toggle('on', b.dataset.ct===k));
+  document.getElementById('ctAlarm').classList.toggle('hidden', k!=='alarm');
   document.getElementById('ctBuddy').classList.toggle('hidden', k!=='buddy');
   document.getElementById('ctAva').classList.toggle('hidden', k!=='ava');
   if(k==='ava'){ mhRender(); }
+  if(k==='alarm'){ alRender(); alMarkAllSeen(); }
 }
 document.querySelectorAll('.cl-tab').forEach(b=>b.addEventListener('click',()=>clSetTab(b.dataset.ct)));
 document.getElementById('clInvite').addEventListener('click', clInvite);
 document.getElementById('clEmail').addEventListener('keydown',(e)=>{ e.stopPropagation(); if(e.key==='Enter'){ e.preventDefault(); clInvite(); } });
+document.getElementById('alClear').addEventListener('click', alMarkAllSeen);
 document.getElementById('clAvaSave').addEventListener('click', clSaveAva);
 document.getElementById('clAvaClose').addEventListener('click', ()=>{ hideModals(); showModal('collabModal'); clSetTab('ava'); });
 document.getElementById('mhEditAva').addEventListener('click', ()=>{ showModal('avaEditModal'); clRenderAva(); });
-document.getElementById('mhBack').addEventListener('click', ()=>mhOpen(null));
+document.getElementById('mhBack').addEventListener('click', ()=>{
+  if(!document.getElementById('mhVisit').classList.contains('hidden')) mhVisitClose();
+  else mhOpen(null);
+});
+document.getElementById('mhVisitClose').addEventListener('click', mhVisitClose);
+document.getElementById('mhVisitBack').addEventListener('click', mhVisitClose);
+document.addEventListener('keydown',(e)=>{
+  if(e.key==='Escape' && !document.getElementById('mhVisit').classList.contains('hidden')){ e.preventDefault(); mhVisitClose(); }
+}, true);
 function mhStatusEditMode(on){
   const st=document.getElementById('mhStatus');
   st.readOnly=!on;
@@ -5270,6 +5540,7 @@ document.getElementById('mhStatus').addEventListener('keydown',(e)=>{
   if(e.key==='Escape'){ e.preventDefault(); mhRender(); }
 });
 document.getElementById('mhSongGo').addEventListener('click', mhSearchSong);
+document.getElementById('mhSongSave').addEventListener('click', mhSaveSong);
 document.getElementById('mhSong').addEventListener('keydown',(e)=>{ e.stopPropagation(); if(e.key==='Enter'){ e.preventDefault(); mhSearchSong(); } });
 document.getElementById('mhPlay').addEventListener('click', mhPlayBgm);
 document.getElementById('mhStop').addEventListener('click', mhStopBgm);
@@ -5279,6 +5550,8 @@ document.getElementById('mhRoomEdit').addEventListener('click', ()=>{
   mhRoomEdit=!mhRoomEdit; mhSel=null;
   document.getElementById('mhRoomEdit').classList.toggle('on', mhRoomEdit);
   document.getElementById('mhRoomEdit').textContent = mhRoomEdit? '✓ 완료' : '🛋 꾸미기';
+  const bc=document.getElementById('mhBgmCard');
+  if(bc) bc.classList.toggle('hidden', mhRoomEdit);   /* 편집 중엔 잠시 가림 */
   mhPaintRoom(); mhRenderTools();
 });
 document.getElementById('mhEmo').addEventListener('click', ()=>{
@@ -5374,6 +5647,15 @@ function filterRangeBounds(){
 }
 (function(){ const b=document.getElementById('btnFilter'); if(b && typeof mIcon==='function') b.innerHTML=mIcon('filter'); })();
 document.getElementById('btnFilter').addEventListener('click', openFilterModal);
+(function(){
+  const cf=document.getElementById('commFab');
+  if(cf) cf.addEventListener('click',()=>{
+    if(!clOn()){ alert('클라우드에 로그인하면 커뮤니케이션 기능을 쓸 수 있어요.'); return; }
+    showModal('collabModal');
+    clSetTab(clTab);
+    clRefresh().then(()=>{ clRenderBuddies(); });
+  });
+})();
 document.getElementById('fmApply').addEventListener('click', applyFilterModal);
 document.getElementById('fmReset').addEventListener('click', resetFilterModal);
 document.getElementById('fmRange').addEventListener('change',(e)=>{
@@ -5595,10 +5877,14 @@ document.addEventListener('mousemove',(e)=>{
   if(!barDrag.unlocked){ unlockSort(); barDrag.unlocked=true; }
   delete task.pinBottom; delete task.pinNew;
   dragFreeze=true;          /* 드래그 중에는 행 순서 고정 */
-  buildBody();
+  /* 매 픽셀마다 전체를 다시 그리지 않고 다음 프레임에 한 번만 */
+  if(!barDrag.raf){
+    barDrag.raf=requestAnimationFrame(()=>{ if(barDrag) barDrag.raf=0; buildBody(); });
+  }
 });
 document.addEventListener('mouseup',()=>{
   if(!barDrag) return;
+  if(barDrag.raf){ cancelAnimationFrame(barDrag.raf); barDrag.raf=0; }
   document.body.style.cursor='';
   dragFreeze=false;          /* 손을 떼는 순간 재정렬 */
   if(!barDrag.moved && histUndo.length){ histUndo.pop(); updateUndoButtons(); }
@@ -5713,6 +5999,8 @@ function initMiniCal(){
 document.getElementById('btnSettings').addEventListener('click',()=>{
   showModal('settingsModal'); populateFontSelect(FALLBACK_FONTS); renderToneGrid();
   paintFsButtons(); renderTickGrid();
+  const av=document.getElementById('setAvatarOn');
+  if(av) av.checked = state.settings.avatarOn!==false;
   if(CLOUD_MODE){
     document.getElementById('cloudHint').style.display='';
     const cs=document.getElementById('connectSelfBtn'); if(cs) cs.style.display='none';
@@ -7265,23 +7553,54 @@ function vzStop(){
 }
 /* 인식되는 즉시 등록 */
 let vzAdded=false;
+/* 말 속에 기존 카테고리·캠페인 이름이 있으면 그것만 사용 (새로 만들지 않음) */
+function vzMatchGroups(text){
+  const s=(text||'');
+  let catId=null, campId=null, used=[];
+  (state.categories||[]).forEach(c=>{
+    if(c.name && c.name.length>=2 && s.includes(c.name)){ catId=c.id; used.push(c.name); }
+  });
+  (state.campaigns||[]).forEach(c=>{
+    if(c.name && c.name.length>=2 && s.includes(c.name)){ campId=c.id; used.push(c.name); }
+  });
+  if(campId && !catId){ const cp=getCampaign(campId); if(cp) catId=cp.categoryId; }
+  return {catId, campId, used};
+}
+function vzSpeak(txt){
+  try{
+    if(!('speechSynthesis' in window)) return;
+    window.speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(txt);
+    u.lang='ko-KR'; u.rate=1.02;
+    window.speechSynthesis.speak(u);
+  }catch(e){}
+}
 function vzQuickAdd(text){
   if(vzAdded) return;                 /* onresult·onend 중복 호출 방지 */
   if(!state||!state.categories) return;
   vzAdded=true;
   const p=vzParse(text);
-  const detail=(p.detail||text||'').trim();
+  let detail=(p.detail||text||'').trim();
   if(!detail) return;
+  const g=vzMatchGroups(text);
+  /* 그룹 이름은 내용에서 덜어냄 */
+  g.used.forEach(nm=>{ detail=detail.replace(nm,' '); });
+  detail=detail.replace(/\s{2,}/g,' ').trim() || (p.detail||text).trim();
   pushHistory('음성으로 일정 추가');
-  const t={id:uid(), categoryId:state.categories[0].id, campaignId:null,
+  const t={id:uid(), categoryId:g.catId||'', campaignId:g.campId||null,
            detail:detail+' (음성인식으로 등록)', done:false, important:false,
            start:p.date, end:p.date, startTime:p.time||'', endTime:'', repeat:null, link:''};
   state.tasks.push(t);
   state.tasks.forEach((x,i)=>{ x._seq=i; });
   saveAll(); renderMobileList();
+  /* 어떻게 알아들었는지 소리로 확인 */
+  const dd=parseYMD(p.date);
+  const when=(dd.getMonth()+1)+'월 '+dd.getDate()+'일'+(p.time? (' '+parseInt(p.time,10)+'시'+(p.time.slice(3)!=='00'? (' '+parseInt(p.time.slice(3),10)+'분'):'')) : '');
+  const catNm=g.catId? (getCategory(g.catId)||{}).name : '';
+  vzSpeak(when+' '+detail+(catNm? (', '+catNm+' 카테고리'):'')+' 등록했어요.');
   const st=document.getElementById('mvStatus');
-  if(st) st.textContent='등록했어요: '+detail+' · '+p.date+(p.time?(' '+p.time):'');
-  setTimeout(closeVoice, 1400);
+  if(st) st.textContent='“'+detail+'” · '+p.date+(p.time?(' '+p.time):'')+' 등록 완료';
+  setTimeout(closeVoice, 2600);
 }
 /* 인식 결과를 확인 카드로 보여줌 (직접 입력 대비용) */
 function vzShowResult(text){
@@ -7345,7 +7664,7 @@ function baHMS(sec){
 }
 /* 지금 알림이 몇 건인지 */
 function baAlerts(){
-  return (typeof clReqs!=='undefined'? clReqs.length:0)+(typeof clUnread!=='undefined'? clUnread:0);
+  try{ return (typeof alUnseen==='function')? alUnseen().length : 0; }catch(e){ return 0; }
 }
 /* 타이머/알람 상태 — 시계를 설치해야 하는지 */
 function baTimeState(){
@@ -7366,9 +7685,15 @@ function baTimeState(){
   }catch(e){}
   return null;
 }
+function baApplyVisible(){
+  const el=document.getElementById('buddyAvatar'); if(!el) return;
+  const on = !IS_MOBILE && (!state || state.settings.avatarOn!==false);
+  el.classList.toggle('hidden', !on);
+  if(!on){ const b=document.getElementById('baBubble'); if(b) b.classList.add('hidden'); }
+}
 function baRender(){
   const el=document.getElementById('buddyAvatar'); if(!el) return;
-  if(IS_MOBILE){ el.classList.add('hidden'); return; }
+  if(IS_MOBILE || (state && state.settings.avatarOn===false)){ el.classList.add('hidden'); return; }
   let pf=null;
   try{ pf=lgProfile(); }catch(e){}
   if(!pf){ el.classList.add('hidden'); return; }
@@ -7380,10 +7705,10 @@ function baRender(){
 
 /* ── 위치 · 이동 ── */
 function baArea(){
-  /* 브라우저 창의 우측 40% · 하단 40% 안에서 자유롭게 */
+  /* 브라우저 창의 우측 25% 안에서만 (세로는 하단 40%) */
   const w=window.innerWidth, h=window.innerHeight;
   const aw=52, ah=78;
-  return { x1:Math.round(w*0.60), x2:w-aw-16, y1:Math.round(h*0.60), y2:h-ah-16 };
+  return { x1:Math.round(w*0.75), x2:w-aw-16, y1:Math.round(h*0.60), y2:h-ah-16 };
 }
 /* 피해야 할 것들(플로팅 버튼·설치한 시계)의 화면 위치 */
 function baObstacles(){
@@ -7443,7 +7768,7 @@ function baWalkTo(x,y,done){
   const dist=Math.hypot(dx,dy);
   if(dist<4){ baSetAct('idle'); done&&done(); return; }
   baFaceDir(dx);
-  const dur=Math.min(70, Math.max(4, dist/3));   /* 아주 천천히 약 3px/s */
+  const dur=Math.min(90, Math.max(6, dist/2));   /* 더 느리게 약 2px/s */
   el.style.transition='left '+dur+'s linear, top '+dur+'s linear';
   baSetAct('walk');
   baPlace(x,y);
@@ -7466,8 +7791,8 @@ function baWander(){
   if(!el || el.classList.contains('hidden') || document.hidden) return;
   if(el.classList.contains('dragging')) return;
   const r=Math.random();
-  if(r<0.28){ baCurious(); return; }              /* 구경하러 가기 */
-  if(r<0.68){
+  if(r<0.20){ baCurious(); return; }              /* 구경하러 가기 */
+  if(r<0.50){
     const s=baFreeSpot();
     baWalkTo(s.x, s.y);
   } else {
@@ -7799,7 +8124,7 @@ function initAvatar(){
   clearInterval(baTimer);
   baTimer=setInterval(baTick, 26000);
   setInterval(()=>{ baRender(); baSyncClock(); }, 1000);
-  setInterval(baWander, 7000);
+  setInterval(baWander, 16000);
   setInterval(()=>{
     const el=document.getElementById('buddyAvatar');
     if(!el || el.classList.contains('hidden') || el.classList.contains('dragging')) return;
@@ -7821,9 +8146,26 @@ function mIcon(name){
     mic:`<rect x="9.2" y="2.8" width="5.6" height="10.6" rx="2.8" ${A}/><path d="M5.6 11.2 a6.4 6.4 0 0 0 12.8 0" ${A}/><path d="M12 17.6 V21" ${A}/>`,
     plus:`<path d="M12 5.2 V18.8 M5.2 12 H18.8" stroke="currentColor" stroke-width="2.1" fill="none" stroke-linecap="round"/>`,
     close:`<path d="M6.4 6.4 L17.6 17.6 M17.6 6.4 L6.4 17.6" ${A}/>`,
-    user:`<circle cx="12" cy="8.4" r="3.6" ${A}/><path d="M4.8 20 c0-3.7 3.2-6.2 7.2-6.2 s7.2 2.5 7.2 6.2" ${A}/>`
+    user:`<circle cx="12" cy="8.4" r="3.6" ${A}/><path d="M4.8 20 c0-3.7 3.2-6.2 7.2-6.2 s7.2 2.5 7.2 6.2" ${A}/>`,
+    gear:`<circle cx="12" cy="12" r="3.2" ${A}/><path d="M12 2.8 v2.2 M12 19 v2.2 M4.5 12 H2.3 M21.7 12 H19.5 M6.2 6.2 L4.7 4.7 M19.3 19.3 l-1.5-1.5 M17.8 6.2 l1.5-1.5 M4.7 19.3 l1.5-1.5" ${A}/>`,
+    mobile:`<rect x="7" y="2.6" width="10" height="18.8" rx="2.4" ${A}/><path d="M10.6 18.4 h2.8" ${A}/>`,
+    calendar:`<rect x="3.4" y="5" width="17.2" height="16" rx="2.6" ${A}/><path d="M3.4 9.6 h17.2 M8 2.8 v3.6 M16 2.8 v3.6" ${A}/>`,
+    note:`<path d="M5 3.4 h9.6 L19.4 8.2 V20.6 a1.6 1.6 0 0 1-1.6 1.6 H5 a1.6 1.6 0 0 1-1.6-1.6 V5 A1.6 1.6 0 0 1 5 3.4Z" ${A}/><path d="M14 3.6 v5 h5 M7.4 13 h9 M7.4 17 h6" ${A}/>`,
+    clock:`<circle cx="12" cy="12" r="9" ${A}/><path d="M12 6.8 V12 l3.4 2" ${A}/>`,
+    cup:`<path d="M4.4 7.6 h12.2 v6.2 a5 5 0 0 1-5 5 H9.4 a5 5 0 0 1-5-5Z" ${A}/><path d="M16.6 9.4 h1.8 a2.6 2.6 0 0 1 0 5.2 h-1.8" ${A}/><path d="M7.6 2.6 v2.4 M11 2.6 v2.4 M14.4 2.6 v2.4" ${A}/>`,
+    chat:`<path d="M20.6 13.4 a7.4 7.4 0 0 1-7.4 7.4 H5.2 l-2.8 2.2 V13.4 a7.4 7.4 0 0 1 7.4-7.4 h3.4 a7.4 7.4 0 0 1 7.4 7.4Z" ${A}/><path d="M8.6 13.4 h7.6" ${A}/>`,
+    bell:`<path d="M18 9.6 a6 6 0 1 0-12 0 c0 6-2.2 7.6-2.2 7.6 h16.4 s-2.2-1.6-2.2-7.6Z" ${A}/><path d="M10.2 20.6 a2.2 2.2 0 0 0 3.6 0" ${A}/>`,
+    share:`<circle cx="17.6" cy="5.6" r="2.8" ${A}/><circle cx="6.4" cy="12" r="2.8" ${A}/><circle cx="17.6" cy="18.4" r="2.8" ${A}/><path d="M8.9 10.6 L15.1 7 M8.9 13.4 L15.1 17" ${A}/>`
   };
   return '<svg viewBox="0 0 24 24" width="21" height="21" aria-hidden="true">'+(P[name]||'')+'</svg>';
+}
+/* data-ic 가 붙은 곳을 모두 같은 톤의 회색 아이콘으로 채움 */
+function paintIcons(root){
+  (root||document).querySelectorAll('.ic[data-ic]').forEach(e=>{
+    if(e.dataset.done) return;
+    e.innerHTML=mIcon(e.dataset.ic);
+    e.dataset.done='1';
+  });
 }
 
 /* ═══════════════ 모바일: 필터 · 동료 ═══════════════ */
@@ -7890,7 +8232,7 @@ function renderMCollab(){
   const mine=document.createElement('button'); mine.className='btn primary';
   mine.style.cssText='width:100%;padding:11px;margin-bottom:4px;';
   mine.textContent='🏠 내 미니홈피';
-  mine.addEventListener('click',()=>{ closeMCollab(); mhOpenMobile(null); });
+  mine.addEventListener('click',()=>{ closeMCollab(); mhVisit(null); });
   box.appendChild(mine);
   const h2=document.createElement('div'); h2.className='mv-lab'; h2.textContent='내 동료'; box.appendChild(h2);
   const ids=clBuddyIds();
@@ -7902,7 +8244,7 @@ function renderMCollab(){
     const un=clMsgs.filter(m=>m.from_user===other&&m.to_user===me&&!m.read_at).length;
     const home=document.createElement('button'); home.className='btn'; home.textContent='🏠';
     home.title='미니홈피';
-    home.addEventListener('click',()=>{ closeMCollab(); mhOpenMobile(other); });
+    home.addEventListener('click',()=>{ closeMCollab(); mhVisit(other); });
     const send=document.createElement('button'); send.className='btn'; send.textContent='✉';
     send.addEventListener('click',()=>mCompose(other));
     const hist=document.createElement('button'); hist.className='btn';
@@ -7990,6 +8332,32 @@ function mSyncTop(){
   setIco('mSearchBtn','search'); setIco('mFilterBtn','filter'); setIco('mCollabBtn','people');
   setIco('mInstall','install'); setIco('mUser','logout');
   setIco('mMicFab','mic'); setIco('mFab','plus');
+
+  /* 당겨서 새로고침 */
+  (function(){
+    const list=$('mList'); if(!list) return;
+    let sy=0, pulling=false, dist=0;
+    const ind=document.createElement('div'); ind.id='mPull'; ind.textContent='↓ 당겨서 새로고침';
+    list.parentElement.insertBefore(ind, list);
+    list.addEventListener('touchstart',(e)=>{
+      if(list.scrollTop>0) return;
+      sy=e.touches[0].clientY; pulling=true; dist=0;
+    },{passive:true});
+    list.addEventListener('touchmove',(e)=>{
+      if(!pulling) return;
+      dist=e.touches[0].clientY-sy;
+      if(dist>0){
+        ind.style.height=Math.min(64,dist*0.5)+'px';
+        ind.textContent = dist>90? '놓으면 새로고침' : '↓ 당겨서 새로고침';
+      }
+    },{passive:true});
+    list.addEventListener('touchend',()=>{
+      if(!pulling) return;
+      pulling=false;
+      if(dist>90){ ind.textContent='새로고침 중…'; setTimeout(()=>location.reload(),120); }
+      else ind.style.height='0px';
+    });
+  })();
 
   $('mFab').addEventListener('click', mAddTask);
   $('mMicFab').addEventListener('click', openVoice);
@@ -9332,6 +9700,7 @@ async function init(){
   if(CLOUD_MODE || IS_WEB){ await initCloud(); syncUserChip(); }
   else { tryReconnectFile(); }
   booting=false;
+  paintIcons();
   if(CLOUD_MODE) initCollab();
   if(!IS_MOBILE){ initAvatar(); baLoadPos(); }
   initTime();
