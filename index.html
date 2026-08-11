@@ -876,8 +876,8 @@ body.mob .mh-gb .gb-x{opacity:1;}
 .ava-edit-modal{max-height:88vh;display:flex;flex-direction:column;}
 .ava-edit-body{display:flex;gap:16px;flex:1;min-height:0;}
 .ava-edit-left{flex:0 0 200px;display:flex;flex-direction:column;gap:8px;}
-.ava-edit-stage{background:linear-gradient(180deg, var(--accent-soft) 0%, var(--bg) 100%);border-radius:16px;border:1px solid var(--line-strong);padding:10px;display:flex;align-items:center;justify-content:center;}
-.ava-edit-stage .cl-ava{transform:scale(1.9);}
+.ava-edit-stage{background:linear-gradient(180deg, var(--accent-soft) 0%, var(--bg) 100%);border-radius:16px;border:1px solid var(--line-strong);padding:10px;display:flex;align-items:center;justify-content:center;min-height:220px;box-sizing:border-box;}
+.ava-edit-stage .cl-ava{transform:scale(1.9);margin:14px 0;}
 .ava-edit-rnd{width:100%;padding:9px 0;font-weight:600;}
 .ava-edit-coin{margin-top:auto;padding:9px 10px;border-radius:10px;background:var(--bg);font-size:calc(12px * var(--fs,1));color:var(--text-dim);text-align:center;}
 .ava-edit-coin b{color:var(--accent-deep);}
@@ -898,6 +898,10 @@ body.mob .mh-gb .gb-x{opacity:1;}
 .ava-opt.shop-item .si-ic{font-size:20px;}
 .ava-opt.shop-item .si-nm{font-size:11px;font-weight:600;margin:2px 0;}
 .ava-opt.shop-item .si-pr{font-size:10.5px;opacity:.85;}
+.ava-opt.locked{opacity:.72;}
+.ava-lock{display:inline-block;margin-left:5px;font-size:10px;font-weight:700;color:var(--accent-deep);background:var(--imp-bg);border-radius:20px;padding:1px 6px;vertical-align:middle;}
+.ava-swatch.locked{position:relative;opacity:.55;}
+.ava-swatch.locked .ava-lock{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.28);border-radius:50%;font-size:13px;color:#fff;padding:0;margin:0;}
 body.mob .ava-edit-body{flex-direction:column;}
 body.mob .ava-edit-left{flex:0 0 auto;flex-direction:row;flex-wrap:wrap;align-items:center;}
 body.mob .ava-edit-stage{flex:0 0 auto;width:96px;height:96px;}
@@ -2476,7 +2480,7 @@ function exportBackup(){
 
 function updateFileStatusHint(t){ const el=document.getElementById('fileStatusHint'); if(el) el.textContent=t; }
 /* ═══════════════ 클라우드 저장 (Supabase) ═══════════════ */
-const APP_VER='ver 8.4', APP_BUILD='2026-08-11 17:30';
+const APP_VER='ver 8.5', APP_BUILD='2026-08-11 19:00';
 const LOGO_SRC='data:image/png;base64,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';
 function paintLogos(){ document.querySelectorAll('img.tdl-logo').forEach(i=>{ i.src=LOGO_SRC; }); }
 const IS_WEB = /^https?:$/i.test(location.protocol);
@@ -4704,6 +4708,7 @@ function coinMyProfile(){
   if(!Array.isArray(p.coin_log)) p.coin_log=[];
   if(!Array.isArray(p.owned_outfits)) p.owned_outfits=[];
   if(!Array.isArray(p.owned_items)) p.owned_items=[];
+  if(!p.owned_opts || typeof p.owned_opts!=='object') p.owned_opts={};
   return p;
 }
 function coinBalance(){ const p=coinMyProfile(); return p? p.coins : 0; }
@@ -4712,7 +4717,7 @@ async function coinPersist(p){
   try{
     await sb.from('profiles').upsert({
       user_id:cloudUser.id, coins:p.coins, coin_log:p.coin_log.slice(-COIN_LOG_MAX),
-      owned_outfits:p.owned_outfits, owned_items:p.owned_items, updated_at:new Date().toISOString()
+      owned_outfits:p.owned_outfits, owned_items:p.owned_items, owned_opts:p.owned_opts||{}, updated_at:new Date().toISOString()
     },{onConflict:'user_id'});
   }catch(e){}
 }
@@ -4772,7 +4777,7 @@ async function clLoadBuddies(){
     (data||[]).forEach(b=>{ ids.add(b.requester); ids.add(b.addressee); });
     ids.add(me);                       /* 내 프로필도 함께 (미니홈피 복원용) */
     if(ids.size){
-      const {data:ps}=await sb.from('profiles').select('user_id,email,nickname,avatar,status_msg,status_emo,bgm,room,mbti,blood,info_open,coins,coin_log,owned_outfits,owned_items').in('user_id',Array.from(ids));
+      const {data:ps}=await sb.from('profiles').select('user_id,email,nickname,avatar,status_msg,status_emo,bgm,room,mbti,blood,info_open,coins,coin_log,owned_outfits,owned_items,owned_opts').in('user_id',Array.from(ids));
       (ps||[]).forEach(p=>{ clProfiles[p.user_id]=p; clProfRev++; });
     }
   }catch(e){}
@@ -4940,10 +4945,47 @@ const AVA_CATS=[
   {id:'hair', name:'💇 헤어'},
   {id:'top',  name:'👕 상의'},
   {id:'bot',  name:'👖 하의'},
-  {id:'shop', name:'🛍 옷장'},
+  {id:'onepiece', name:'👗 한벌옷'},
   {id:'item', name:'🎒 아이템'}
 ];
 let avaCat='face';
+/* ── 외모/헤어/상의/하의 유료 옵션 — 미리보기는 무료, 저장할 때만 구매 ── */
+const TT_PRICE=[0,6,8,10,16,16,0,6,18,20,20,32,24];  /* CH_TT 인덱스별 가격(0=무료) */
+function optPrice(key,i){
+  i=i||0;
+  if(key==='sk') return 0;                 /* 피부색은 항상 무료 */
+  if(key==='tt') return TT_PRICE[i]||0;
+  const FREE={hs:6,hc:4,fc:4,tp:4,bt:3}[key]||0;
+  const STEP={hs:3,hc:3,fc:4,tp:2,bt:3}[key]||3;
+  const BASE={hs:6,hc:5,fc:5,tp:4,bt:4}[key]||4;
+  if(i<FREE) return 0;
+  return BASE+(i-FREE)*STEP;
+}
+function avaOptOwned(key,i){
+  const price=optPrice(key,i);
+  if(price<=0) return true;
+  const p=coinMyProfile(); if(!p) return false;
+  if(!p.owned_opts) p.owned_opts={};
+  return !!((p.owned_opts[key]||[]).includes(i));
+}
+/* 기존에 이미 저장돼 있던 내 아바타 모습은 유료화 이후에도 그대로 무료로 유지 — 에디터를 열 때 한 번, 조용히 소유 처리 */
+let avaGrandfathered=false;
+function avaGrandfatherCurrent(){
+  if(avaGrandfathered) return;
+  avaGrandfathered=true;
+  try{
+    const cur=lgProfile(); const p=coinMyProfile(); if(!cur||!p) return;
+    let changed=false;
+    ['sk','hs','hc','fc','tt','tp','bt'].forEach(k=>{
+      const i=cur[k]||0;
+      if(optPrice(k,i)>0 && !avaOptOwned(k,i)){
+        if(!Array.isArray(p.owned_opts[k])) p.owned_opts[k]=[];
+        p.owned_opts[k].push(i); changed=true;
+      }
+    });
+    if(changed) coinPersist(p);
+  }catch(e){}
+}
 function clRenderAva(){
   try{ if(!lgDraft) lgDraft=lgProfile(); }catch(e){ return; }
   const pv=document.getElementById('clAvaPrev2');
@@ -4967,25 +5009,32 @@ function clRenderAva(){
   const box=document.getElementById('clAvaOpts');
   if(!box) return;
   box.innerHTML='';
-  const mkColor=(label,key,list)=>{
+  const lockBadge=(price)=>price>0?('<span class="ava-lock">🔒'+price+'</span>'):'';
+  const mkColor=(label,key,list,idxList)=>{
     const wrap=document.createElement('div');
     wrap.innerHTML='<div class="field-label">'+label+'</div>';
     const row=document.createElement('div'); row.className='ava-swatch-grid';
-    list.forEach((col,i)=>{
-      const b=document.createElement('button'); b.className='ava-swatch'+(((lgDraft[key]||0)===i)?' on':'');
-      b.title=label+' '+(i+1);
+    (idxList||list.map((x,i)=>i)).forEach(i=>{
+      const col=list[i];
+      const price=optPrice(key,i), owned=avaOptOwned(key,i);
+      const b=document.createElement('button'); b.className='ava-swatch'+(((lgDraft[key]||0)===i)?' on':'')+(owned?'':' locked');
+      b.title=label+' '+(i+1)+(price>0?(owned?' (구매완료)':' — 🪙'+price):'');
       b.style.background=col;
+      if(price>0 && !owned) b.innerHTML='<span class="ava-lock">🔒</span>';
       b.addEventListener('click',()=>{ lgDraft[key]=i; clRenderAva(); });
       row.appendChild(b);
     });
     wrap.appendChild(row); box.appendChild(wrap);
   };
-  const mkName=(label,key,names)=>{
+  const mkName=(label,key,names,idxList)=>{
     const wrap=document.createElement('div');
     wrap.innerHTML='<div class="field-label">'+label+'</div>';
     const row=document.createElement('div'); row.className='ava-opt-grid';
-    names.forEach((nm,i)=>{
-      const b=document.createElement('button'); b.className='ava-opt'+((lgDraft[key]||0)===i?' on':''); b.textContent=nm;
+    (idxList||names.map((x,i)=>i)).forEach(i=>{
+      const nm=names[i];
+      const price=optPrice(key,i), owned=avaOptOwned(key,i);
+      const b=document.createElement('button'); b.className='ava-opt'+((lgDraft[key]||0)===i?' on':'')+(owned?'':' locked');
+      b.innerHTML=escapeHtml(nm)+lockBadge(owned?0:price);
       b.addEventListener('click',()=>{ lgDraft[key]=i; clRenderAva(); });
       row.appendChild(b);
     });
@@ -4993,13 +5042,53 @@ function clRenderAva(){
   };
   if(avaCat==='face'){ mkColor('피부색','sk',CH_SKIN); mkName('얼굴 표정','fc',CH_FACE); }
   else if(avaCat==='hair'){ mkName('머리 모양','hs',CH_HAIR); mkColor('머리 색','hc',CH_HAIRC); }
-  else if(avaCat==='top'){ mkName('상의 종류','tt',CH_TT); mkColor('상의 색','tp',CH_TOP); mkName('상의 패턴','pt',CH_PT); }
-  else if(avaCat==='bot'){ mkColor('하의 색','bt',CH_BOT); }
-  else if(avaCat==='shop'){ renderAvaShopTab(box); }
+  else if(avaCat==='top'){
+    mkName('상의 종류','tt',CH_TT,TOP_IDX); mkColor('상의 색','tp',CH_TOP);
+    if(isOnepiece(lgDraft.tt||0)){ const h=document.createElement('div'); h.className='hint'; h.textContent='현재 한벌옷을 입고 있어서 상의 종류 선택이 적용되지 않아요. 먼저 다른 상의를 골라주세요.'; box.appendChild(h); }
+  }
+  else if(avaCat==='bot'){
+    mkColor('하의 색','bt',CH_BOT);
+    if(isOnepiece(lgDraft.tt||0)){ const h=document.createElement('div'); h.className='hint'; h.textContent='한벌옷을 입고 있어서 하의 색상이 가려져 보여요.'; box.appendChild(h); }
+  }
+  else if(avaCat==='onepiece'){
+    const wrap=document.createElement('div'); wrap.innerHTML='<div class="field-label">한벌옷</div>'; box.appendChild(wrap);
+    const row=document.createElement('div'); row.className='ava-opt-grid';
+    const noneBtn=document.createElement('button'); noneBtn.className='ava-opt'+(!isOnepiece(lgDraft.tt||0)?' on':''); noneBtn.textContent='입지 않음';
+    noneBtn.addEventListener('click',()=>{ lgDraft.tt=0; clRenderAva(); });
+    row.appendChild(noneBtn);
+    ONEPIECE_IDX.forEach(i=>{
+      const price=optPrice('tt',i), owned=avaOptOwned('tt',i);
+      const b=document.createElement('button'); b.className='ava-opt'+((lgDraft.tt||0)===i?' on':'')+(owned?'':' locked');
+      b.innerHTML=escapeHtml(CH_TT[i])+lockBadge(owned?0:price);
+      b.addEventListener('click',()=>{ lgDraft.tt=i; clRenderAva(); });
+      row.appendChild(b);
+    });
+    box.appendChild(row);
+    mkColor('한벌옷 색','tp',CH_TOP);
+  }
   else if(avaCat==='item'){ renderAvaItemTab(box); }
 }
 async function clSaveAva(){
   if(!lgDraft) lgDraft=lgProfile();
+  /* 미리보기 중 적용한 유료 옵션이 있으면 저장 시점에 구매 처리 (무료 미리보기 → 저장할 때만 결제) */
+  const KEYS=['sk','hs','hc','fc','tt','tp','bt'];
+  const need=[];
+  KEYS.forEach(k=>{
+    const i=lgDraft[k]||0;
+    if(!avaOptOwned(k,i)) need.push({key:k, i, price:optPrice(k,i)});
+  });
+  if(need.length){
+    const total=need.reduce((s,n)=>s+n.price,0);
+    const label={sk:'피부색',hs:'머리 모양',hc:'머리 색',fc:'표정',tt:'상의/한벌옷',tp:'색상',bt:'하의 색'};
+    const listTxt=need.map(n=>label[n.key]+' 🪙'+n.price).join(', ');
+    if(!confirm('새로 고른 항목을 저장하려면 구매가 필요해요.\n'+listTxt+'\n총 '+coinFmt(total)+'돌리코인. 구매하고 저장할까요?')) return;
+    if(total>coinBalance()){ alert('돌리코인이 부족해요. (필요 '+coinFmt(total)+' / 보유 '+coinFmt(coinBalance())+')'); return; }
+    const ok=await coinAdjust(-total, 'buy_opt', need.map(n=>n.key+':'+n.i).join(','));
+    if(!ok){ alert('돌리코인이 부족해요.'); return; }
+    const p=coinMyProfile();
+    need.forEach(n=>{ if(!Array.isArray(p.owned_opts[n.key])) p.owned_opts[n.key]=[]; p.owned_opts[n.key].push(n.i); });
+    await coinPersist(p);
+  }
   lgDraft.name=(document.getElementById('clNick').value||'').trim().slice(0,12);
   lgSaveProfile();
   await clPushProfile();
@@ -5021,7 +5110,7 @@ async function clLoadShared(){
     ids.delete(cloudUser.id);
     const need=Array.from(ids).filter(i=>!clProfiles[i]);
     if(need.length){
-      const {data:ps}=await sb.from('profiles').select('user_id,email,nickname,avatar,status_msg,status_emo,bgm,room,mbti,blood,info_open,coins,coin_log,owned_outfits,owned_items').in('user_id',need);
+      const {data:ps}=await sb.from('profiles').select('user_id,email,nickname,avatar,status_msg,status_emo,bgm,room,mbti,blood,info_open,coins,coin_log,owned_outfits,owned_items,owned_opts').in('user_id',need);
       (ps||[]).forEach(p=>{ clProfiles[p.user_id]=p; clProfRev++; });
     }
   }catch(e){}
@@ -5562,7 +5651,7 @@ async function mhLoadGuest(){
     mhGuests=data||[];
     const need=new Set(mhGuests.map(g=>g.author).filter(id=>!clProfiles[id]));
     if(need.size){
-      const {data:ps}=await sb.from('profiles').select('user_id,email,nickname,avatar,status_msg,status_emo,bgm,room,mbti,blood,info_open,coins,coin_log,owned_outfits,owned_items').in('user_id',Array.from(need));
+      const {data:ps}=await sb.from('profiles').select('user_id,email,nickname,avatar,status_msg,status_emo,bgm,room,mbti,blood,info_open,coins,coin_log,owned_outfits,owned_items,owned_opts').in('user_id',Array.from(need));
       (ps||[]).forEach(p=>{ clProfiles[p.user_id]=p; });
     }
   }catch(e){ mhGuests=[]; }
@@ -6126,7 +6215,7 @@ document.getElementById('clAvaClose').addEventListener('click', ()=>{
   const nk=document.getElementById('clNick'); if(nk) nk.value='';   /* 닉네임 입력칸도 함께 초기화 (다음 열 때 저장된 값으로 다시 채워짐) */
   hideModals(); showModal('collabModal'); clSetTab('ava');
 });
-document.getElementById('mhEditAva').addEventListener('click', ()=>{ showModal('avaEditModal'); clRenderAva(); });
+document.getElementById('mhEditAva').addEventListener('click', ()=>{ avaGrandfatherCurrent(); showModal('avaEditModal'); clRenderAva(); });
 document.getElementById('mhBack').addEventListener('click', ()=>{
   if(!document.getElementById('mhVisit').classList.contains('hidden')) mhVisitClose();
   else mhOpen(null);
@@ -9820,7 +9909,10 @@ const CH_HAIRC=['#4F4946','#736053','#9C836A','#CEB999','#B5857F','#9385A6','#7F
 const CH_TOP=['#A2B3C9','#D2AEAE','#B0C7AE','#E0CBA9','#BBB1CD','#878F9A','#DCBBC9','#A7CAC6','#EDEDF0','#81888E','#E9CDB1','#B8C8BD'];
 const CH_BOT=['#878D98','#9D9284','#8C9789','#A99090','#797E86','#B4AA9A','#9CA6B6','#CDC5B9'];
 const CH_HAIR=['짧은','단발','포니','곱슬','장발','대머리','모자','투블럭','뱅','양갈래','묶은머리','웨이브','아프로','상투','보브','스파이크','댕기머리','반묶음','투블럭펌','베레모','옆가르마','리본머리'];
-const CH_TT=['티셔츠','셔츠','후드','니트','자켓','원피스','민소매','터틀넥'];
+const CH_TT=['티셔츠','셔츠','후드','니트','자켓','A라인 원피스','민소매','터틀넥','슬립 원피스','니트 원피스','셔츠 원피스','파티 드레스','오프숄더 원피스'];
+const TOP_IDX=[0,1,2,3,4,6,7];        /* 상의 탭에 노출되는 일반 상의 종류 */
+const ONEPIECE_IDX=[5,8,9,10,11,12];  /* 한벌옷 탭에 노출되는 원피스류 */
+function isOnepiece(tt){ return ONEPIECE_IDX.includes(tt); }
 const CH_PT=['무지','가로줄','세로줄','도트','체크','브이','그라데이션'];
 const CH_FACE=['기본','웃음','윙크','시크','졸림','놀람','장난','수줍'];
 
@@ -9869,47 +9961,56 @@ function getOutfit(id){ return OUTFIT_CATALOG.find(o=>o.id===id); }
 
 /* ═══════════════ 아이템 상점 (액세서리) ═══════════════ */
 const ITEM_CATALOG=[
-  {id:'i1',name:'장난감 칼',icon:'🗡️',price:5},
-  {id:'i2',name:'스마트폰',icon:'📱',price:6},
-  {id:'i3',name:'백팩',icon:'🎒',price:8},
-  {id:'i4',name:'명품백',icon:'👜',price:35},
-  {id:'i5',name:'헤드셋',icon:'🎧',price:9},
-  {id:'i6',name:'선글라스',icon:'🕶️',price:7},
-  {id:'i7',name:'왕관',icon:'👑',price:40},
-  {id:'i8',name:'마법 지팡이',icon:'🪄',price:15},
-  {id:'i9',name:'풍선',icon:'🎈',price:3},
-  {id:'i10',name:'커피컵',icon:'☕',price:2},
-  {id:'i11',name:'우산',icon:'☂️',price:6},
-  {id:'i12',name:'기타',icon:'🎸',price:18},
-  {id:'i13',name:'축구공',icon:'⚽',price:5},
-  {id:'i14',name:'농구공',icon:'🏀',price:5},
-  {id:'i15',name:'책',icon:'📖',price:4},
-  {id:'i16',name:'카메라',icon:'📷',price:12},
-  {id:'i17',name:'꽃다발',icon:'💐',price:8},
-  {id:'i18',name:'손목시계',icon:'⌚',price:16},
-  {id:'i19',name:'캡모자',icon:'🧢',price:6},
-  {id:'i20',name:'목도리',icon:'🧣',price:7},
-  {id:'i21',name:'장갑',icon:'🧤',price:4},
-  {id:'i22',name:'장식용 검',icon:'⚔️',price:22},
-  {id:'i23',name:'방패',icon:'🛡️',price:20},
-  {id:'i24',name:'마이크',icon:'🎤',price:11},
-  {id:'i25',name:'스케이트보드',icon:'🛹',price:14},
-  {id:'i26',name:'자전거벨',icon:'🔔',price:3},
-  {id:'i27',name:'지갑',icon:'👛',price:9},
-  {id:'i28',name:'반지',icon:'💍',price:28},
-  {id:'i29',name:'아이스크림',icon:'🍦',price:2},
-  {id:'i30',name:'열쇠고리',icon:'🔑',price:3}
+  {id:'i1',name:'장난감 칼',icon:'🗡️',price:5,slot:'hand'},
+  {id:'i2',name:'스마트폰',icon:'📱',price:6,slot:'hand'},
+  {id:'i3',name:'백팩',icon:'🎒',price:8,slot:'back'},
+  {id:'i4',name:'명품백',icon:'👜',price:35,slot:'hand'},
+  {id:'i5',name:'헤드셋',icon:'🎧',price:9,slot:'head'},
+  {id:'i6',name:'선글라스',icon:'🕶️',price:7,slot:'face'},
+  {id:'i7',name:'왕관',icon:'👑',price:40,slot:'head'},
+  {id:'i8',name:'마법 지팡이',icon:'🪄',price:15,slot:'hand'},
+  {id:'i9',name:'풍선',icon:'🎈',price:3,slot:'hand'},
+  {id:'i10',name:'커피컵',icon:'☕',price:2,slot:'hand'},
+  {id:'i11',name:'우산',icon:'☂️',price:6,slot:'hand'},
+  {id:'i12',name:'기타',icon:'🎸',price:18,slot:'hand'},
+  {id:'i13',name:'축구공',icon:'⚽',price:5,slot:'hand'},
+  {id:'i14',name:'농구공',icon:'🏀',price:5,slot:'hand'},
+  {id:'i15',name:'책',icon:'📖',price:4,slot:'hand'},
+  {id:'i16',name:'카메라',icon:'📷',price:12,slot:'hand'},
+  {id:'i17',name:'꽃다발',icon:'💐',price:8,slot:'hand'},
+  {id:'i18',name:'손목시계',icon:'⌚',price:16,slot:'wrist'},
+  {id:'i19',name:'캡모자',icon:'🧢',price:6,slot:'head'},
+  {id:'i20',name:'목도리',icon:'🧣',price:7,slot:'neck'},
+  {id:'i21',name:'장갑',icon:'🧤',price:4,slot:'hand'},
+  {id:'i22',name:'장식용 검',icon:'⚔️',price:22,slot:'hand'},
+  {id:'i23',name:'방패',icon:'🛡️',price:20,slot:'hand'},
+  {id:'i24',name:'마이크',icon:'🎤',price:11,slot:'hand'},
+  {id:'i25',name:'스케이트보드',icon:'🛹',price:14,slot:'hand'},
+  {id:'i26',name:'자전거벨',icon:'🔔',price:3,slot:'hand'},
+  {id:'i27',name:'지갑',icon:'👛',price:9,slot:'hand'},
+  {id:'i28',name:'반지',icon:'💍',price:28,slot:'wrist'},
+  {id:'i29',name:'아이스크림',icon:'🍦',price:2,slot:'hand'},
+  {id:'i30',name:'열쇠고리',icon:'🔑',price:3,slot:'hand'}
 ];
+const ITEM_SLOT_POS={
+  head:{x:32,y:11,size:15}, face:{x:32,y:27,size:12}, neck:{x:32,y:35,size:12},
+  back:{x:11,y:47,size:15}, wrist:{x:17,y:64,size:10}, hand:{x:49,y:64,size:15}
+};
 function getItem(id){ return ITEM_CATALOG.find(x=>x.id===id); }
 /* 착용 중인 아이템을 캐릭터 옆에 작은 아이콘으로 얹어 그림 */
 function avaItemOverlay(pf){
   const ids=(pf&&pf.items)||[];
   if(!ids.length) return '';
-  return ids.slice(0,4).map((id,i)=>{
+  return ids.map(id=>{
     const it=getItem(id); if(!it) return '';
-    const x=6+ (i%2)*46, y=66+Math.floor(i/2)*16;
-    return '<text x="'+x+'" y="'+y+'" font-size="13">'+it.icon+'</text>';
+    const pos=ITEM_SLOT_POS[it.slot]||{x:32,y:70,size:13};
+    return '<text x="'+pos.x+'" y="'+pos.y+'" font-size="'+pos.size+'" text-anchor="middle" dominant-baseline="middle">'+it.icon+'</text>';
   }).join('');
+}
+/* 같은 부위(slot)에 이미 착용 중인 아이템이 있으면 자동으로 벗김 */
+function avaUnequipSlot(slot){
+  if(!lgDraft || !Array.isArray(lgDraft.items)) return;
+  lgDraft.items=lgDraft.items.filter(id=>{ const ex=getItem(id); return !ex || ex.slot!==slot; });
 }
 function avaOwnsOutfit(id){ const p=coinMyProfile(); return !!(p&&p.owned_outfits.includes(id)); }
 function avaOwnsItem(id){ const p=coinMyProfile(); return !!(p&&p.owned_items.includes(id)); }
@@ -9936,14 +10037,16 @@ async function avaBuyItem(it){
   p.owned_items.push(it.id); await coinPersist(p);
   if(!lgDraft) lgDraft=lgProfile();
   if(!Array.isArray(lgDraft.items)) lgDraft.items=[];
+  avaUnequipSlot(it.slot);
   lgDraft.items.push(it.id);
   clRenderAva();
 }
 function avaToggleItem(id){
   if(!lgDraft) lgDraft=lgProfile();
   if(!Array.isArray(lgDraft.items)) lgDraft.items=[];
+  const it=getItem(id);
   const i=lgDraft.items.indexOf(id);
-  if(i>=0) lgDraft.items.splice(i,1); else lgDraft.items.push(id);
+  if(i>=0) lgDraft.items.splice(i,1); else { if(it) avaUnequipSlot(it.slot); lgDraft.items.push(id); }
   clRenderAva();
 }
 function renderAvaShopTab(box){
@@ -9976,19 +10079,28 @@ function renderAvaItemTab(box){
 }
 
 /* ── 머리 모양: [뒤 레이어, 앞 레이어] · 머리 중심 (32,24) r=15 ── */
-function chHair(hs,hc){
+function chHair(hs,hc,sk){
   /* 머리 중심 (32,24) r=15 · 정수리 y=9 · 눈 y=26
      기본 캡: 옆머리는 y=20까지 내려오고 앞머리가 이마를 덮도록 아래로 볼록하게 */
+  sk = sk || '#F6DEC8';
   const dk=chShade(hc,-18);
   const CAP=`M16.5 20 q0 -17 15.5 -17 q15.5 0 15.5 17 q-15.5 4.5 -31 0Z`;
   const cap=`<path d="${CAP}" fill="${hc}"/>`;
+  const partLine=`<path d="M32 9 L31.6 18" stroke="${dk}" stroke-width="1" opacity=".45" stroke-linecap="round"/>`;
+  const capCenter=cap+partLine;   /* 5:5 가르마: 중앙 가르마 라인 */
+  const sideFrontL=`<path d="M16.5 19 Q17.5 4 33 4 Q47.5 4 47.5 20 Q38 14 30 17 Q22 20 16.5 19 Z" fill="${hc}"/><path d="M23 9 Q30 13 41 11" stroke="${dk}" stroke-width="1.1" opacity=".4" fill="none" stroke-linecap="round"/>`;
+  const sideFrontR=`<path d="M47.5 19 Q46.5 4 31 4 Q16.5 4 16.5 20 Q26 14 34 17 Q42 20 47.5 19 Z" fill="${hc}"/><path d="M41 9 Q34 13 23 11" stroke="${dk}" stroke-width="1.1" opacity=".4" fill="none" stroke-linecap="round"/>`;
+  const curtain=cap+partLine+`<path d="M15 19 q-4 2 -3 6 q3 -1 4 -4Z" fill="${hc}"/><path d="M49 19 q4 2 3 6 q-3 -1 -4 -4Z" fill="${hc}"/>`;   /* 깻잎머리: 끝이 바깥으로 살짝 말림 */
+  const himeBang=`<path d="M17 20 Q17.5 6 32 6 Q46.5 6 47 20 Q32 23 17 20 Z" fill="${hc}"/>`;
+  const himeLockL=`<path d="M18 19 Q15 30 16 45 Q16.5 58 19 68 Q22 58 20 45 Q20 30 22 19 Z" fill="${hc}"/>`;
+  const himeLockR=`<path d="M46 19 Q49 30 48 45 Q47.5 58 45 68 Q42 58 44 45 Q44 30 42 19 Z" fill="${hc}"/>`;   /* 히메컷: 짧은 일자 앞머리 + 긴 옆머리 */
   switch(hs){
     /* 짧은 */
     case 0: return ['', cap];
-    /* 단발 */
+    /* 단발 (5:5 가르마) */
     case 1: return [
       `<path d="M17 19 q15 -16 30 0 l1 19 q-1 4 -4 3 l-2 -16 q-9 5 -18 0 l-2 16 q-3 1 -4 -3Z" fill="${hc}"/>`,
-      cap];
+      capCenter];
     /* 포니테일 */
     case 2: return [
       `<path d="M44 16 q12 6 11 20 q-1 12 -8 16 q5 -15 -6 -29Z" fill="${hc}"/>`,
@@ -9997,72 +10109,71 @@ function chHair(hs,hc){
     case 3: return [
       `<circle cx="20" cy="14" r="8" fill="${hc}"/><circle cx="32" cy="8" r="9.5" fill="${hc}"/><circle cx="44" cy="14" r="8" fill="${hc}"/>`,
       `<path d="M16.5 20 q0 -16 15.5 -16 q15.5 0 15.5 16 q-15.5 4.5 -31 0Z" fill="${hc}"/>`];
-    /* 장발 */
+    /* 장발 (히메컷: 짧은 앞머리 + 긴 옆머리) */
     case 4: return [
-      `<path d="M16 19 q16 -17 32 0 l2 30 q-1 4 -5 3 l-2 -26 q-11 6 -22 0 l-2 26 q-4 1 -5 -3Z" fill="${hc}"/>`,
-      cap];
+      `<path d="M20 20 q12 5 24 0 l2 30 q-1 4 -5 3 l-2 -26 q-9 4 -18 0 l-2 26 q-4 1 -5 -3Z" fill="${hc}"/>`,
+      himeBang+himeLockL+himeLockR];
     /* 대머리 */
     case 5: return ['', `<path d="M18 19 q14 -9 28 0 q-1 -9 -14 -9 q-13 0 -14 9Z" fill="${hc}" opacity=".4"/>`];
     /* 모자 */
     case 6: return ['',
-      `<path d="M18 18 q0 -14 14 -14 q14 0 14 14Z" fill="${hc}"/><path d="M13 17 h38 a3.5 3.5 0 0 1 0 7 h-38 a3.5 3.5 0 0 1 0 -7Z" fill="${hc}"/><path d="M45 17.5 h13 a2.5 2.5 0 0 1 0 6 h-13Z" fill="${hc}" opacity=".8"/>`];
+      `<path d="M18 18 q0 -14 14 -14 q14 0 14 14Z" fill="${hc}"/><path d="M13.5 17.2 h37 a3.6 3.6 0 0 1 0 7.2 h-37 a3.6 3.6 0 0 1 0 -7.2Z" fill="${hc}"/><path d="M45.5 17.6 h12.5 a2.8 2.8 0 0 1 0 5.6 h-12.5Z" fill="${dk}" opacity=".85"/><circle cx="32" cy="9.5" r="1.6" fill="${dk}"/>`];
     /* 투블럭 */
     case 7: return ['',
-      `<path d="M17.5 19 q0 -16 14.5 -16 q14.5 0 14.5 16 q-14.5 4 -29 0Z" fill="${hc}"/><path d="M17.5 19 q2 -6 7 -8 l-1 9Z" fill="${dk}"/>`];
+      `<path d="M17.5 19 q0 -16 14.5 -16 q14.5 0 14.5 16 q-14.5 4 -29 0Z" fill="${hc}"/><path d="M17.5 19 q1.5 -7 7.5 -9 l-1 9Z" fill="${dk}" opacity=".85"/><path d="M32.5 19 q1.5 -7 7.5 -9 l-1 9Z" fill="${dk}" opacity=".55"/>`];
     /* 뱅(일자 앞머리) */
     case 8: return [
       `<path d="M17 20 q15 -17 30 0 l0 15 q-2 3 -4 1 l0 -13 q-11 4 -22 0 l0 13 q-2 2 -4 -1Z" fill="${hc}"/>`,
-      `<path d="M16.5 22 q0 -19 15.5 -19 q15.5 0 15.5 19 q-15.5 2 -31 0Z" fill="${hc}"/>`];
-    /* 양갈래 */
+      `<path d="M16.5 21.5 q0 -18.5 15.5 -18.5 q15.5 0 15.5 18.5 q-15.5 1.6 -31 0Z" fill="${hc}"/>`];
+    /* 양갈래 (5:5 가르마) */
     case 9: return [
       `<circle cx="14" cy="31" r="6.5" fill="${hc}"/><circle cx="50" cy="31" r="6.5" fill="${hc}"/><path d="M17 20 q15 -17 30 0 l0 11 q-15 4 -30 0Z" fill="${hc}"/>`,
-      cap];
-    /* 묶은머리(번) */
+      capCenter];
+    /* 묶은머리(번) — 옆으로 쓸어넘긴 앞머리 */
     case 10: return [
       `<circle cx="32" cy="5" r="7" fill="${hc}"/>`,
-      cap];
+      sideFrontL];
     /* 웨이브 장발 */
     case 11: return [
       `<path d="M16 19 q16 -17 32 0 q3 16 0 28 q-2 5 -5 2 q3 -12 0 -20 q-11 6 -22 0 q-3 8 0 20 q-3 3 -5 -2 q-3 -12 0 -28Z" fill="${hc}"/>`,
-      `<path d="M16.5 20 q0 -17 15.5 -17 q15.5 0 15.5 17 q-8 5 -15.5 3 q-7.5 2 -15.5 -3Z" fill="${hc}"/>`];
+      `<path d="M16.5 20 q0 -17 15.5 -17 q15.5 0 15.5 17 q-8 5 -15.5 3 q-7.5 2 -15.5 -3Z" fill="${hc}"/>`+partLine];
     /* 아프로 */
     case 12: return [
-      `<circle cx="32" cy="16" r="19" fill="${hc}"/>`,
-      `<path d="M16.5 20 q0 -15 15.5 -15 q15.5 0 15.5 15 q-15.5 4.5 -31 0Z" fill="${dk}" opacity=".45"/>`];
+      `<circle cx="32" cy="16" r="19" fill="${hc}"/><circle cx="24" cy="9" r="5" fill="${dk}" opacity=".3"/><circle cx="41" cy="8" r="4.5" fill="${dk}" opacity=".25"/><circle cx="46" cy="20" r="4" fill="${dk}" opacity=".22"/>`,
+      `<path d="M16.5 20 q0 -15.5 15.5 -15.5 q15.5 0 15.5 15.5 q-15.5 4 -31 0Z" fill="${hc}"/>`];
     /* 상투 */
     case 13: return [
-      `<circle cx="32" cy="4.5" r="5" fill="${hc}"/><rect x="30" y="7" width="4" height="5" fill="${hc}"/>`,
+      `<circle cx="32" cy="4" r="5.6" fill="${hc}"/><rect x="29.6" y="7.5" width="4.8" height="5" fill="${hc}"/>`,
       `<path d="M17 19 q0 -16 15 -16 q15 0 15 16 q-15 4 -30 0Z" fill="${hc}"/>`];
-    /* 보브 */
+    /* 보브 (깻잎머리) */
     case 14: return [
-      `<path d="M16.5 19 q15.5 -17 31 0 l1 15 q-2 4 -5 2 l-1 -12 q-10.5 5 -21 0 l-1 12 q-3 2 -5 -2Z" fill="${hc}"/>`,
-      cap];
+      `<path d="M16.5 19 q15.5 -17 31 0 l0.6 14 q-2 4 -5 2 l-0.6 -11 q-10.5 5 -21 0 l-0.6 11 q-3 2 -5 -2Z" fill="${hc}"/>`,
+      curtain];
     /* 스파이크 */
     case 15: return ['',
       `<path d="M16.5 20 l3.5 -12 l3.5 8 l4 -13 l4.5 11 l4 -12 l3.5 13 l4 -8 l4 13 q-15.5 4.5 -31 0Z" fill="${hc}"/>`];
     /* 댕기머리 (양쪽 땋은 머리) */
     case 16: return [
-      `<path d="M15 24 q-4 10 1 22 q3 5 6 2 q-5 -12 -2 -22Z" fill="${hc}"/><path d="M49 24 q4 10 -1 22 q-3 5 -6 2 q5 -12 2 -22Z" fill="${hc}"/><g opacity=".5" stroke="${dk}" stroke-width="1"><path d="M15 28 h5 M14 33 h6 M14 38 h6"/><path d="M49 28 h-5 M50 33 h-6 M50 38 h-6"/></g>`,
+      `<path d="M15 24 q-4 10 1 22 q3 5 6 2 q-5 -12 -2 -22Z" fill="${hc}"/><path d="M49 24 q4 10 -1 22 q-3 5 -6 2 q5 -12 2 -22Z" fill="${hc}"/><g opacity=".55" stroke="${dk}" stroke-width="1"><path d="M15 28 h5 M14 33 h6 M14 38 h6"/><path d="M49 28 h-5 M50 33 h-6 M50 38 h-6"/></g>`,
       cap];
-    /* 반묶음 */
+    /* 반묶음 — 뒤통수 위쪽에 작은 번 */
     case 17: return [
-      `<path d="M43 16 q9 3 8 13 q-1 8 -7 10 q3 -10 -3 -19Z" fill="${hc}"/>`,
-      `<path d="M17 20 q15 -17 30 0 l0 12 q-15 4 -30 0Z" fill="${hc}"/>`];
+      `<ellipse cx="40" cy="9" rx="7.5" ry="6.5" fill="${hc}"/><ellipse cx="40" cy="9" rx="7.5" ry="6.5" fill="none" stroke="${dk}" stroke-width="1" opacity=".4"/>`,
+      cap];
     /* 투블럭펌(곱슬+투블럭) */
     case 18: return [
       `<circle cx="24" cy="13" r="7" fill="${hc}"/><circle cx="32" cy="9" r="8" fill="${hc}"/><circle cx="40" cy="13" r="7" fill="${hc}"/>`,
-      `<path d="M17.5 19 q0 -14 14.5 -14 q14.5 0 14.5 14 q-14.5 4 -29 0Z" fill="${hc}"/><path d="M17.5 19 q2 -6 7 -8 l-1 9Z" fill="${dk}"/>`];
+      `<path d="M17.5 19 q0 -14 14.5 -14 q14.5 0 14.5 14 q-14.5 4 -29 0Z" fill="${hc}"/><path d="M17.5 19 q1.5 -6 7.5 -8 l-1 9Z" fill="${dk}" opacity=".8"/>`];
     /* 베레모 */
     case 19: return ['',
       `<ellipse cx="30" cy="10" rx="16" ry="8" fill="${hc}"/><circle cx="42" cy="6" r="2.4" fill="${hc}"/><path d="M18 19 q0 -8 14 -9 q14 1 14 9Z" fill="${dk}" opacity=".5"/>`];
-    /* 옆가르마 */
+    /* 옆가르마 — 실제로 보이는 앞머리 층에 비대칭 스윕 적용 */
     case 20: return [
-      `<path d="M20 19 q1 -16 13 -17 q-6 3 -6 9 q9 -3 15 4 q2 3 0 5 q-11 -3 -22 -1Z" fill="${hc}"/>`,
-      cap];
+      '', sideFrontR];
     /* 리본머리 */
     default: return [
       `<path d="M17 19 q15 -16 30 0 l1 19 q-1 4 -4 3 l-2 -16 q-9 5 -18 0 l-2 16 q-3 1 -4 -3Z" fill="${hc}"/><path d="M42 14 l6 -4 l1 4 l-5 3 l5 3 l-1 4 l-6 -4 q-2 -3 0 -6Z" fill="#D9788F"/><circle cx="42" cy="14" r="2" fill="#C4576F"/>`,
-      cap];
+      capCenter];
   }
 }
 /* 색을 밝게/어둡게 */
@@ -10099,6 +10210,13 @@ function chTop(tt, c, sk, pt, uid){
   const bareR=`<g class="ar-r"><rect x="44" y="38" width="8" height="24" rx="4" fill="${sk}"/><circle cx="48" cy="63" r="4.6" fill="${sk}"/></g>`;
   const body=`<rect x="19" y="36" width="26" height="26" rx="8" fill="${c}"/>`;
   const clip=`<clipPath id="tc${uid}"><rect x="19" y="36" width="26" height="26" rx="8"/></clipPath>`;
+  /* 한벌옷(원피스)은 허리~밑단까지 하체를 덮도록 훨씬 큰 영역을 사용 */
+  const clipOP=`<clipPath id="tc${uid}"><rect x="6" y="36" width="52" height="54" rx="6"/></clipPath>`;
+  const dressBase=(hemY,hemW,cc)=>{
+    const hipW=26+(hemW-26)*0.3;
+    const hl=32-hemW/2, hr=32+hemW/2, pl=32-hipW/2, pr=32+hipW/2;
+    return `<path d="M19 36 L45 36 L${pr} 50 L${hr} ${hemY} L${hl} ${hemY} L${pl} 50 Z" fill="${cc}"/>`;
+  };
   switch(tt){
     case 1: /* 셔츠 */
       return `${clip}${body}${pat}<rect x="30.5" y="36" width="3" height="26" fill="${lt}"/><path d="M26 36 l6 6 l6 -6 l-2 -2 h-8Z" fill="${sk}"/><circle cx="32" cy="48" r="1" fill="${dk}"/><circle cx="32" cy="54" r="1" fill="${dk}"/>${armL}${armR}`;
@@ -10108,8 +10226,18 @@ function chTop(tt, c, sk, pt, uid){
       return `${clip}${body}${pat}<g opacity=".35" stroke="${dk}" stroke-width="1"><path d="M21 40 h22 M21 45 h22 M21 50 h22 M21 55 h22"/></g><rect x="19" y="58" width="26" height="4" rx="2" fill="${dk}" opacity=".6"/>${armL}${armR}`;
     case 4: /* 자켓 */
       return `${clip}<rect x="19" y="36" width="26" height="26" rx="8" fill="${lt}"/>${pat}<path d="M19 36 h11 l-4 26 h-7 a8 8 0 0 1 0 -8Z" fill="${c}"/><path d="M45 36 h-11 l4 26 h7 a8 8 0 0 0 0 -8Z" fill="${c}"/><path d="M28 36 l4 8 l4 -8" fill="${sk}"/>${armL}${armR}`;
-    case 5: /* 원피스 */
-      return `${clip}<path d="M19 36 h26 v14 l5 12 h-36 l5 -12Z" fill="${c}"/>${pat}<rect x="19" y="36" width="26" height="4" fill="${lt}"/>${bareL}${bareR}`;
+    case 5: /* A라인 원피스 — 허리~무릎까지 하체를 덮는 기본 한벌옷 */
+      return `${clipOP}<g clip-path="url(#tc${uid})">${dressBase(76,44,c)}</g><rect x="19" y="36" width="26" height="4" fill="${lt}"/>${bareL}${bareR}`;
+    case 8: /* 슬립 원피스 — 얇은 끈, 슬림 실루엣 */
+      return `${clipOP}<g clip-path="url(#tc${uid})">${dressBase(82,34,c)}</g><path d="M23 36 l-1 -5 M41 36 l1 -5" stroke="${c}" stroke-width="2" stroke-linecap="round"/>${bareL}${bareR}`;
+    case 9: /* 니트 원피스 — 긴 소매 + 골지 텍스처 */
+      return `${clipOP}<g clip-path="url(#tc${uid})">${dressBase(84,38,c)}<g opacity=".3" stroke="${dk}" stroke-width="1"><path d="M15 55 h34 M15 63 h34 M15 71 h34 M15 79 h34"/></g></g>${armL}${armR}`;
+    case 10: /* 셔츠 원피스 — 카라 + 벨트 라인 */
+      return `${clipOP}<g clip-path="url(#tc${uid})">${dressBase(80,40,c)}<rect x="14" y="52" width="36" height="3" fill="${dk}" opacity=".55"/></g><rect x="30.5" y="36" width="3" height="14" fill="${lt}"/><path d="M26 36 l6 6 l6 -6 l-2 -2 h-8Z" fill="${sk}"/>${armL}${armR}`;
+    case 11: /* 파티 드레스 — 풍성한 스커트 + 반짝이 */
+      return `${clipOP}<g clip-path="url(#tc${uid})">${dressBase(78,52,c)}<g fill="${lt}" opacity=".8"><circle cx="20" cy="60" r="1.3"/><circle cx="28" cy="68" r="1.3"/><circle cx="36" cy="62" r="1.3"/><circle cx="44" cy="70" r="1.3"/><circle cx="24" cy="74" r="1.3"/><circle cx="40" cy="76" r="1.3"/></g></g>${bareL}${bareR}`;
+    case 12: /* 오프숄더 원피스 — 넓게 파인 목선 */
+      return `${clipOP}<g clip-path="url(#tc${uid})">${dressBase(80,42,c)}<path d="M19 38 q13 7 26 0 l0 4 q-13 6 -26 0Z" fill="${sk}"/></g>${bareL}${bareR}`;
     case 6: /* 민소매 */
       return `${clip}${body}${pat}<path d="M22 36 q10 7 20 0 l0 4 q-10 6 -20 0Z" fill="${sk}"/>${bareL}${bareR}`;
     case 7: /* 터틀넥 */
@@ -10151,7 +10279,7 @@ function chSvg(o,extra){
   const hc=CH_HAIRC[(o.hc||0)%CH_HAIRC.length];
   const tc=CH_TOP[(o.tp||0)%CH_TOP.length];
   const bt=CH_BOT[(o.bt||0)%CH_BOT.length];
-  const H=chHair((o.hs||0)%CH_HAIR.length, hc);
+  const H=chHair((o.hs||0)%CH_HAIR.length, hc, sk);
   const top=chTop((o.tt||0)%CH_TT.length, tc, sk, (o.pt||0)%CH_PT.length, uid);
   const face=chFace((o.fc||0)%CH_FACE.length);
   return `<svg viewBox="0 0 64 96">
