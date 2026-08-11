@@ -58,7 +58,7 @@ body.mob input,body.mob select,body.mob textarea{font-size:16px !important;}
 body.mob{overflow:hidden;}
 body.mob #app{display:none!important;}
 body.mob #miniCalFab,body.mob #stickerFab,body.mob #noteFab,body.mob #timeFab,body.mob #loungeFab,body.mob #lounge,body.mob #bulkBar,body.mob #stickerGhost,body.mob #stickerPanel,body.mob #notePanel,body.mob #timePanel{display:none!important;}
-body.mob #mApp{display:flex;flex-direction:column;height:100vh;height:100dvh;overflow:hidden;background:var(--bg);}
+body.mob #mApp{display:flex;flex-direction:column;height:100vh;height:100dvh;overflow:hidden;background:var(--bg);padding:6px;box-sizing:border-box;}
 body.mob #mSheet{display:block;}
 body.mob #mSheet.hidden{display:none;}
 body.mob .modal{width:auto;max-width:94vw;padding:18px 16px;position:relative;}
@@ -422,7 +422,7 @@ body.mob #mMicFab:active{transform:scale(0.93);}
 #userChip button:hover{background:var(--accent-soft);color:var(--accent-deep);}
 html,body{margin:0;padding:0;height:100%;background:var(--bg);color:var(--text);font-size:calc(13px * var(--fs,1));}
 body{font-family:var(--user-font,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic","Segoe UI",Roboto,sans-serif);}
-#app{display:flex;flex-direction:column;height:100vh;overflow:hidden;padding:10px 12px 12px;gap:10px;}
+#app{display:flex;flex-direction:column;height:100vh;overflow:hidden;padding:16px 18px 18px;gap:10px;}
 body{background:linear-gradient(180deg, var(--bg) 0%, color-mix(in srgb, var(--bg) 84%, #000 16%) 100%);background-attachment:fixed;}
 body.mob{background:linear-gradient(180deg, var(--bg) 0%, color-mix(in srgb, var(--bg) 86%, #000 14%) 100%);background-attachment:fixed;}
 body.mob #mApp{background:transparent;}
@@ -903,10 +903,12 @@ body.mob .mh-gb .gb-x{opacity:1;}
 .ava-swatch.locked{position:relative;opacity:.55;}
 .ava-swatch.locked .ava-lock{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.28);border-radius:50%;font-size:13px;color:#fff;padding:0;margin:0;}
 body.mob .ava-edit-body{flex-direction:column;}
-body.mob .ava-edit-left{flex:0 0 auto;flex-direction:row;flex-wrap:wrap;align-items:center;}
-body.mob .ava-edit-stage{flex:0 0 auto;width:96px;height:96px;}
-body.mob .ava-edit-rnd{flex:1;width:auto;}
-body.mob .ava-edit-coin{flex:0 0 100%;margin-top:4px;}
+body.mob .ava-edit-left{flex:0 0 auto;flex-direction:column;align-items:stretch;gap:8px;}
+body.mob .ava-edit-stage{flex:0 0 auto;width:100%;height:180px;min-height:180px;}
+body.mob .ava-edit-stage .cl-ava{transform:scale(1.5);margin:24px 0;}
+body.mob .ava-edit-rnd{width:100%;}
+body.mob .ava-edit-coin{margin-top:0;}
+body.mob .ava-cat-tab{min-width:48px;padding:6px 3px;font-size:calc(10px * var(--fs,1));}
 .mc-tabs{display:flex;gap:4px;margin-bottom:10px;}
 .mc-tab{flex:1;border:1px solid var(--border-strong);background:var(--bg);color:var(--text-dim);border-radius:10px;padding:9px 0;font-size:13px;font-family:inherit;cursor:pointer;}
 .mc-tab.on{background:var(--accent);color:#fff;border-color:transparent;font-weight:700;}
@@ -989,7 +991,7 @@ body.mob .ava-edit-coin{flex:0 0 100%;margin-top:4px;}
 .rrow.spacer .cell{background:var(--panel);}
 .rrow.spacer .cell.offday{background:var(--off-bg);}
 
-.overlay{position:fixed;inset:0;background:rgba(40,34,60,0.32);z-index:300;display:flex;align-items:center;justify-content:center;}
+.overlay{position:fixed;inset:0;background:rgba(40,34,60,0.32);z-index:460;display:flex;align-items:center;justify-content:center;}
 /* ===== 엑셀 테마: 격자·각진 모서리·초록 헤더 ===== */
 body.theme-excel{background:#E6E6E6;}
 body.theme-excel #app{padding:6px;gap:6px;}
@@ -1808,6 +1810,9 @@ null
     <div class="field-label">플로팅 캐릭터</div>
     <label class="chk-line"><input type="checkbox" id="setAvatarOn"> 화면에 캐릭터 표시</label>
     <div class="hint">끄면 캐릭터와 말풍선이 사라져요. (타이머 시계는 계속 표시됩니다)</div>
+    <div class="field-label">미니홈피 · 방문객</div>
+    <label class="chk-line"><input type="checkbox" id="setBlockStrangers"> 모르는 사람의 파도타기 금지</label>
+    <div class="hint">켜두면 동료가 아닌 사람은 방명록 등을 통해 내 미니홈피에 들어올 수 없어요.</div>
     <div class="field-label">기타</div>
     <div class="row">
       <button class="btn" id="openHolidayFromSettings">📅 공휴일 관리</button>
@@ -2480,7 +2485,7 @@ function exportBackup(){
 
 function updateFileStatusHint(t){ const el=document.getElementById('fileStatusHint'); if(el) el.textContent=t; }
 /* ═══════════════ 클라우드 저장 (Supabase) ═══════════════ */
-const APP_VER='ver 8.5', APP_BUILD='2026-08-11 19:00';
+const APP_VER='ver 8.6', APP_BUILD='2026-08-11 21:00';
 const LOGO_SRC='data:image/png;base64,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';
 function paintLogos(){ document.querySelectorAll('img.tdl-logo').forEach(i=>{ i.src=LOGO_SRC; }); }
 const IS_WEB = /^https?:$/i.test(location.protocol);
@@ -3962,6 +3967,12 @@ document.getElementById('ctxDelete').addEventListener('click',()=>{
 const overlay=document.getElementById('overlay');
 function showModal(id){
   document.querySelectorAll('.modal').forEach(m=>m.classList.add('hidden'));
+  /* 모바일 전체화면 시트(커뮤니케이션 등)가 열려 있는 채로 모달을 띄우면 뒤로 가려 보이던 문제 — 항상 먼저 닫음 */
+  if(IS_MOBILE){
+    ['mVoice','mFilter','mCollab','mDday','mTime','mLink'].forEach(sid=>{
+      const e=document.getElementById(sid); if(e) e.classList.add('hidden');
+    });
+  }
   overlay.classList.remove('hidden');
   const m=document.getElementById(id);
   m.classList.remove('hidden');
@@ -4777,7 +4788,7 @@ async function clLoadBuddies(){
     (data||[]).forEach(b=>{ ids.add(b.requester); ids.add(b.addressee); });
     ids.add(me);                       /* 내 프로필도 함께 (미니홈피 복원용) */
     if(ids.size){
-      const {data:ps}=await sb.from('profiles').select('user_id,email,nickname,avatar,status_msg,status_emo,bgm,room,mbti,blood,info_open,coins,coin_log,owned_outfits,owned_items,owned_opts').in('user_id',Array.from(ids));
+      const {data:ps}=await sb.from('profiles').select('user_id,email,nickname,avatar,status_msg,status_emo,bgm,room,mbti,blood,info_open,coins,coin_log,owned_outfits,owned_items,owned_opts,mh_block_strangers').in('user_id',Array.from(ids));
       (ps||[]).forEach(p=>{ clProfiles[p.user_id]=p; clProfRev++; });
     }
   }catch(e){}
@@ -4785,6 +4796,20 @@ async function clLoadBuddies(){
 function clBuddyIds(){
   const me=cloudUser? cloudUser.id : null;
   return clBuddies.map(b=> b.requester===me? b.addressee : b.requester);
+}
+/* 모르는 사람의 파도타기 금지 — 방명록 등을 통해 남의 미니홈피로 갈 수 있는지 확인 */
+function mhCanVisit(userId){
+  const me=cloudUser&&cloudUser.id;
+  if(!me||!userId||userId===me) return true;
+  if(clBuddyIds().includes(userId)) return true;
+  const pf=clProfiles[userId];
+  return !(pf && pf.mh_block_strangers);
+}
+async function mhTryVisit(userId){
+  if(!userId) return;
+  if(!mhCanVisit(userId)){ alert('상대방이 지인 외에는 미니홈피를 비공개로 설정했어요.'); return; }
+  if(IS_MOBILE && typeof mhOpenMobile==='function') await mhOpenMobile(userId);
+  else await mhVisit(userId);
 }
 
 /* ── 동료 요청 보내기 ── */
@@ -4955,6 +4980,7 @@ function optPrice(key,i){
   i=i||0;
   if(key==='sk') return 0;                 /* 피부색은 항상 무료 */
   if(key==='tt') return TT_PRICE[i]||0;
+  if(key==='bp') return BP_PRICE[i]||0;
   const FREE={hs:6,hc:4,fc:4,tp:4,bt:3}[key]||0;
   const STEP={hs:3,hc:3,fc:4,tp:2,bt:3}[key]||3;
   const BASE={hs:6,hc:5,fc:5,tp:4,bt:4}[key]||4;
@@ -4976,7 +5002,8 @@ function avaGrandfatherCurrent(){
   try{
     const cur=lgProfile(); const p=coinMyProfile(); if(!cur||!p) return;
     let changed=false;
-    ['sk','hs','hc','fc','tt','tp','bt'].forEach(k=>{
+    ['sk','hs','hc','fc','tt','tp','bt','bp'].forEach(k=>{
+      if(k==='bp' && typeof CH_BP==='undefined') return;
       const i=cur[k]||0;
       if(optPrice(k,i)>0 && !avaOptOwned(k,i)){
         if(!Array.isArray(p.owned_opts[k])) p.owned_opts[k]=[];
@@ -5009,7 +5036,7 @@ function clRenderAva(){
   const box=document.getElementById('clAvaOpts');
   if(!box) return;
   box.innerHTML='';
-  const lockBadge=(price)=>price>0?('<span class="ava-lock">🔒'+price+'</span>'):'';
+  const lockBadge=(price)=>price>0?('<span class="ava-lock">🔒'+coinFmt(price)+'</span>'):'';
   const mkColor=(label,key,list,idxList)=>{
     const wrap=document.createElement('div');
     wrap.innerHTML='<div class="field-label">'+label+'</div>';
@@ -5018,7 +5045,7 @@ function clRenderAva(){
       const col=list[i];
       const price=optPrice(key,i), owned=avaOptOwned(key,i);
       const b=document.createElement('button'); b.className='ava-swatch'+(((lgDraft[key]||0)===i)?' on':'')+(owned?'':' locked');
-      b.title=label+' '+(i+1)+(price>0?(owned?' (구매완료)':' — 🪙'+price):'');
+      b.title=label+' '+(i+1)+(price>0?(owned?' (구매완료)':' — 🪙'+coinFmt(price)):'');
       b.style.background=col;
       if(price>0 && !owned) b.innerHTML='<span class="ava-lock">🔒</span>';
       b.addEventListener('click',()=>{ lgDraft[key]=i; clRenderAva(); });
@@ -5035,7 +5062,7 @@ function clRenderAva(){
       const price=optPrice(key,i), owned=avaOptOwned(key,i);
       const b=document.createElement('button'); b.className='ava-opt'+((lgDraft[key]||0)===i?' on':'')+(owned?'':' locked');
       b.innerHTML=escapeHtml(nm)+lockBadge(owned?0:price);
-      b.addEventListener('click',()=>{ lgDraft[key]=i; clRenderAva(); });
+      b.addEventListener('click',()=>{ lgDraft[key]=i; if(key==='tt') lgDraft.pt=0; clRenderAva(); });
       row.appendChild(b);
     });
     wrap.appendChild(row); box.appendChild(wrap);
@@ -5047,8 +5074,8 @@ function clRenderAva(){
     if(isOnepiece(lgDraft.tt||0)){ const h=document.createElement('div'); h.className='hint'; h.textContent='현재 한벌옷을 입고 있어서 상의 종류 선택이 적용되지 않아요. 먼저 다른 상의를 골라주세요.'; box.appendChild(h); }
   }
   else if(avaCat==='bot'){
-    mkColor('하의 색','bt',CH_BOT);
-    if(isOnepiece(lgDraft.tt||0)){ const h=document.createElement('div'); h.className='hint'; h.textContent='한벌옷을 입고 있어서 하의 색상이 가려져 보여요.'; box.appendChild(h); }
+    mkName('하의 종류','bp',CH_BP); mkColor('하의 색','bt',CH_BOT);
+    if(isOnepiece(lgDraft.tt||0)){ const h=document.createElement('div'); h.className='hint'; h.textContent='한벌옷을 입고 있어서 하의가 가려져 보여요.'; box.appendChild(h); }
   }
   else if(avaCat==='onepiece'){
     const wrap=document.createElement('div'); wrap.innerHTML='<div class="field-label">한벌옷</div>'; box.appendChild(wrap);
@@ -5071,22 +5098,29 @@ function clRenderAva(){
 async function clSaveAva(){
   if(!lgDraft) lgDraft=lgProfile();
   /* 미리보기 중 적용한 유료 옵션이 있으면 저장 시점에 구매 처리 (무료 미리보기 → 저장할 때만 결제) */
-  const KEYS=['sk','hs','hc','fc','tt','tp','bt'];
+  const KEYS=['sk','hs','hc','fc','tt','tp','bt','bp'];
   const need=[];
   KEYS.forEach(k=>{
+    if(k==='bp' && typeof CH_BP==='undefined') return;
     const i=lgDraft[k]||0;
     if(!avaOptOwned(k,i)) need.push({key:k, i, price:optPrice(k,i)});
   });
+  (lgDraft.items||[]).forEach(id=>{
+    if(!avaOwnsItem(id)){ const it=getItem(id); if(it) need.push({key:'item', i:id, price:it.price, label:it.name}); }
+  });
   if(need.length){
     const total=need.reduce((s,n)=>s+n.price,0);
-    const label={sk:'피부색',hs:'머리 모양',hc:'머리 색',fc:'표정',tt:'상의/한벌옷',tp:'색상',bt:'하의 색'};
-    const listTxt=need.map(n=>label[n.key]+' 🪙'+n.price).join(', ');
+    const label={sk:'피부색',hs:'머리 모양',hc:'머리 색',fc:'표정',tt:'상의/한벌옷',tp:'색상',bt:'하의 색',bp:'하의 종류'};
+    const listTxt=need.map(n=>(n.label||label[n.key])+' 🪙'+coinFmt(n.price)).join(', ');
     if(!confirm('새로 고른 항목을 저장하려면 구매가 필요해요.\n'+listTxt+'\n총 '+coinFmt(total)+'돌리코인. 구매하고 저장할까요?')) return;
     if(total>coinBalance()){ alert('돌리코인이 부족해요. (필요 '+coinFmt(total)+' / 보유 '+coinFmt(coinBalance())+')'); return; }
     const ok=await coinAdjust(-total, 'buy_opt', need.map(n=>n.key+':'+n.i).join(','));
     if(!ok){ alert('돌리코인이 부족해요.'); return; }
     const p=coinMyProfile();
-    need.forEach(n=>{ if(!Array.isArray(p.owned_opts[n.key])) p.owned_opts[n.key]=[]; p.owned_opts[n.key].push(n.i); });
+    need.forEach(n=>{
+      if(n.key==='item'){ if(!p.owned_items.includes(n.i)) p.owned_items.push(n.i); }
+      else { if(!Array.isArray(p.owned_opts[n.key])) p.owned_opts[n.key]=[]; p.owned_opts[n.key].push(n.i); }
+    });
     await coinPersist(p);
   }
   lgDraft.name=(document.getElementById('clNick').value||'').trim().slice(0,12);
@@ -5110,7 +5144,7 @@ async function clLoadShared(){
     ids.delete(cloudUser.id);
     const need=Array.from(ids).filter(i=>!clProfiles[i]);
     if(need.length){
-      const {data:ps}=await sb.from('profiles').select('user_id,email,nickname,avatar,status_msg,status_emo,bgm,room,mbti,blood,info_open,coins,coin_log,owned_outfits,owned_items,owned_opts').in('user_id',need);
+      const {data:ps}=await sb.from('profiles').select('user_id,email,nickname,avatar,status_msg,status_emo,bgm,room,mbti,blood,info_open,coins,coin_log,owned_outfits,owned_items,owned_opts,mh_block_strangers').in('user_id',need);
       (ps||[]).forEach(p=>{ clProfiles[p.user_id]=p; clProfRev++; });
     }
   }catch(e){}
@@ -5651,7 +5685,7 @@ async function mhLoadGuest(){
     mhGuests=data||[];
     const need=new Set(mhGuests.map(g=>g.author).filter(id=>!clProfiles[id]));
     if(need.size){
-      const {data:ps}=await sb.from('profiles').select('user_id,email,nickname,avatar,status_msg,status_emo,bgm,room,mbti,blood,info_open,coins,coin_log,owned_outfits,owned_items,owned_opts').in('user_id',Array.from(need));
+      const {data:ps}=await sb.from('profiles').select('user_id,email,nickname,avatar,status_msg,status_emo,bgm,room,mbti,blood,info_open,coins,coin_log,owned_outfits,owned_items,owned_opts,mh_block_strangers').in('user_id',Array.from(need));
       (ps||[]).forEach(p=>{ clProfiles[p.user_id]=p; });
     }
   }catch(e){ mhGuests=[]; }
@@ -5662,11 +5696,12 @@ function mhRenderGuest(){
   if(!mhGuests.length){ box.innerHTML='<div class="hint">아직 방명록이 없어요. 첫 글을 남겨보세요!</div>'; return; }
   mhGuests.forEach(g=>{
     const row=document.createElement('div'); row.className='mh-gb';
-    const av=document.createElement('div'); av.className='gb-av';
+    const av=document.createElement('div'); av.className='gb-av'; av.style.cursor='pointer'; av.title=clName(g.author)+'님의 미니홈피로 이동';
     try{
       const mine=(cloudUser && g.author===cloudUser.id);
       av.innerHTML=chSvg(mine? lgProfile() : ((clProfiles[g.author]||{}).avatar||{}));
     }catch(e){}
+    av.addEventListener('click', ()=>mhTryVisit(g.author));
     const bd=document.createElement('div'); bd.className='gb-body';
     const dt=new Date(g.created_at);
     bd.innerHTML='<span class="gb-who">'+escapeHtml(clName(g.author))+'</span>'
@@ -6719,10 +6754,21 @@ document.getElementById('btnSettings').addEventListener('click',()=>{
   paintFsButtons(); renderTickGrid();
   const av=document.getElementById('setAvatarOn');
   if(av) av.checked = state.settings.avatarOn!==false;
+  const bs=document.getElementById('setBlockStrangers');
+  if(bs){ const me=cloudUser&&clProfiles[cloudUser.id]; bs.checked=!!(me&&me.mh_block_strangers); }
   if(CLOUD_MODE){
     document.getElementById('cloudHint').style.display='';
     const cs=document.getElementById('connectSelfBtn'); if(cs) cs.style.display='none';
   }
+});
+document.getElementById('setBlockStrangers').addEventListener('change', async (e)=>{
+  if(!clOn()){ e.target.checked=!e.target.checked; alert('클라우드 로그인 후 사용할 수 있어요.'); return; }
+  const val=e.target.checked;
+  try{
+    await sb.from('profiles').upsert({user_id:cloudUser.id, mh_block_strangers:val, updated_at:new Date().toISOString()},{onConflict:'user_id'});
+    const c=clProfiles[cloudUser.id]||(clProfiles[cloudUser.id]={});
+    c.mh_block_strangers=val;
+  }catch(err){}
 });
 function buildWeatherSelect(){ /* 지역 선택 제거 · 서울 고정 */ }
 function paintFsButtons(){
@@ -9908,7 +9954,9 @@ const CH_SKIN=['#F6DEC8','#EDC9AB','#D8A98A','#B98B6B','#957055','#FCE8D8'];
 const CH_HAIRC=['#4F4946','#736053','#9C836A','#CEB999','#B5857F','#9385A6','#7F9AB8','#E0DEDA','#DDACBC','#8DB6AC','#DECE9F','#9B6D73'];
 const CH_TOP=['#A2B3C9','#D2AEAE','#B0C7AE','#E0CBA9','#BBB1CD','#878F9A','#DCBBC9','#A7CAC6','#EDEDF0','#81888E','#E9CDB1','#B8C8BD'];
 const CH_BOT=['#878D98','#9D9284','#8C9789','#A99090','#797E86','#B4AA9A','#9CA6B6','#CDC5B9'];
-const CH_HAIR=['짧은','단발','포니','곱슬','장발','대머리','모자','투블럭','뱅','양갈래','묶은머리','웨이브','아프로','상투','보브','스파이크','댕기머리','반묶음','투블럭펌','베레모','옆가르마','리본머리'];
+const CH_BP=['긴바지','반바지','긴 치마','짧은 치마','카고 치마','카고 바지','나팔바지'];
+const BP_PRICE=[0,6,10,8,14,12,12];
+const CH_HAIR=['짧은','단발','포니','곱슬','장발','대머리','모자','투블럭','뱅','양갈래','묶은머리','웨이브','아프로','상투','보브','스파이크','댕기머리','반묶음','투블럭펌','베레모','옆가르마','리본머리','긴 웨이브','C컬 단발'];
 const CH_TT=['티셔츠','셔츠','후드','니트','자켓','A라인 원피스','민소매','터틀넥','슬립 원피스','니트 원피스','셔츠 원피스','파티 드레스','오프숄더 원피스'];
 const TOP_IDX=[0,1,2,3,4,6,7];        /* 상의 탭에 노출되는 일반 상의 종류 */
 const ONEPIECE_IDX=[5,8,9,10,11,12];  /* 한벌옷 탭에 노출되는 원피스류 */
@@ -9996,6 +10044,15 @@ const ITEM_SLOT_POS={
   head:{x:32,y:11,size:15}, face:{x:32,y:27,size:12}, neck:{x:32,y:35,size:12},
   back:{x:11,y:47,size:15}, wrist:{x:17,y:64,size:10}, hand:{x:49,y:64,size:15}
 };
+/* 부위 기본 위치만으로는 눈·귀 등에 잘 안 맞는 아이템들은 개별 보정 */
+const ITEM_FIT={
+  i5:{x:32,y:16,size:23},   /* 헤드셋 — 귀 높이까지 크게 감싸도록 */
+  i6:{x:32,y:26,size:19},   /* 선글라스 — 두 눈을 정확히 덮도록 */
+  i7:{x:32,y:6,size:15},    /* 왕관 — 정수리 위에 살짝 얹히도록 */
+  i19:{x:32,y:9,size:19},   /* 캡모자 — 머리 위를 넓게 덮도록 */
+  i11:{x:50,y:58,size:25},  /* 우산 — 손에 든 것치고 너무 작지 않도록 */
+  i20:{x:32,y:36,size:16}   /* 목도리 — 목을 넉넉히 두르도록 */
+};
 function getItem(id){ return ITEM_CATALOG.find(x=>x.id===id); }
 /* 착용 중인 아이템을 캐릭터 옆에 작은 아이콘으로 얹어 그림 */
 function avaItemOverlay(pf){
@@ -10003,7 +10060,7 @@ function avaItemOverlay(pf){
   if(!ids.length) return '';
   return ids.map(id=>{
     const it=getItem(id); if(!it) return '';
-    const pos=ITEM_SLOT_POS[it.slot]||{x:32,y:70,size:13};
+    const pos=ITEM_FIT[id]||ITEM_SLOT_POS[it.slot]||{x:32,y:70,size:13};
     return '<text x="'+pos.x+'" y="'+pos.y+'" font-size="'+pos.size+'" text-anchor="middle" dominant-baseline="middle">'+it.icon+'</text>';
   }).join('');
 }
@@ -10028,19 +10085,7 @@ function avaEquipOutfit(o){
   lgDraft.tt=o.tt; lgDraft.pt=o.pt; lgDraft.tp=o.tp; lgDraft.bt=o.bt;
   clRenderAva();
 }
-async function avaBuyItem(it){
-  const p=coinMyProfile();
-  if(avaOwnsItem(it.id)){ avaToggleItem(it.id); return; }
-  if(!confirm('“'+it.name+'” 을(를) '+coinFmt(it.price)+'돌리코인에 구매할까요?')) return;
-  const ok=await coinAdjust(-it.price, 'buy_item', it.name);
-  if(!ok){ alert('돌리코인이 부족해요.'); return; }
-  p.owned_items.push(it.id); await coinPersist(p);
-  if(!lgDraft) lgDraft=lgProfile();
-  if(!Array.isArray(lgDraft.items)) lgDraft.items=[];
-  avaUnequipSlot(it.slot);
-  lgDraft.items.push(it.id);
-  clRenderAva();
-}
+/* 아이템도 옷과 동일하게 — 눌러보는 건 무료 미리보기, 실제 구매/차감은 저장할 때 한번에 */
 function avaToggleItem(id){
   if(!lgDraft) lgDraft=lgProfile();
   if(!Array.isArray(lgDraft.items)) lgDraft.items=[];
@@ -10057,7 +10102,7 @@ function renderAvaShopTab(box){
   OUTFIT_CATALOG.forEach(o=>{
     const owned=avaOwnsOutfit(o.id), eq=owned&&avaOutfitEquipped(o);
     const b=document.createElement('button'); b.className='ava-opt shop-item'+(eq?' on':'');
-    b.innerHTML='<div class="si-tag">'+o.tag+'</div><div class="si-nm">'+escapeHtml(o.name)+'</div><div class="si-pr">'+(owned?'보유중':('🪙 '+o.price))+'</div>';
+    b.innerHTML='<div class="si-tag">'+o.tag+'</div><div class="si-nm">'+escapeHtml(o.name)+'</div><div class="si-pr">'+(owned?'보유중':('🪙 '+coinFmt(o.price)))+'</div>';
     b.addEventListener('click',()=>avaBuyOutfit(o));
     grid.appendChild(b);
   });
@@ -10065,14 +10110,14 @@ function renderAvaShopTab(box){
 }
 function renderAvaItemTab(box){
   const hint=document.createElement('div'); hint.className='hint';
-  hint.textContent='구매한 아이템은 눌러서 착용/해제할 수 있어요. (여러 개 동시 착용 가능)';
+  hint.textContent='아이템을 눌러서 자유롭게 입어볼 수 있어요. 안 산 아이템은 저장할 때 구매돼요.';
   box.appendChild(hint);
   const grid=document.createElement('div'); grid.className='ava-opt-grid';
   ITEM_CATALOG.forEach(it=>{
-    const owned=avaOwnsItem(it.id), on=owned && lgDraft && (lgDraft.items||[]).includes(it.id);
-    const b=document.createElement('button'); b.className='ava-opt shop-item'+(on?' on':'');
-    b.innerHTML='<div class="si-ic">'+it.icon+'</div><div class="si-nm">'+escapeHtml(it.name)+'</div><div class="si-pr">'+(owned?(on?'착용중':'보유중'):('🪙 '+it.price))+'</div>';
-    b.addEventListener('click',()=>avaBuyItem(it));
+    const owned=avaOwnsItem(it.id), on=lgDraft && (lgDraft.items||[]).includes(it.id);
+    const b=document.createElement('button'); b.className='ava-opt shop-item'+(on?' on':'')+(owned?'':' locked');
+    b.innerHTML='<div class="si-ic">'+it.icon+'</div><div class="si-nm">'+escapeHtml(it.name)+'</div><div class="si-pr">'+(owned?(on?'착용중':'보유중'):('🔒 🪙'+coinFmt(it.price)))+'</div>';
+    b.addEventListener('click',()=>avaToggleItem(it.id));
     grid.appendChild(b);
   });
   box.appendChild(grid);
@@ -10171,9 +10216,17 @@ function chHair(hs,hc,sk){
     case 20: return [
       '', sideFrontR];
     /* 리본머리 */
-    default: return [
+    case 21: return [
       `<path d="M17 19 q15 -16 30 0 l1 19 q-1 4 -4 3 l-2 -16 q-9 5 -18 0 l-2 16 q-3 1 -4 -3Z" fill="${hc}"/><path d="M42 14 l6 -4 l1 4 l-5 3 l5 3 l-1 4 l-6 -4 q-2 -3 0 -6Z" fill="#D9788F"/><circle cx="42" cy="14" r="2" fill="#C4576F"/>`,
       capCenter];
+    /* 긴 웨이브 생머리 — 웨이브 장발보다 부드럽고 자연스러운 결 */
+    case 22: return [
+      `<path d="M16 19 q16 -17 32 0 q2 14 0 24 q-1 4 -4 1 q2 -10 -1 -18 q-11 5 -22 0 q-3 8 -1 18 q-3 3 -4 -1 q-2 -10 0 -24Z" fill="${hc}"/><g opacity=".3" stroke="${dk}" stroke-width="1" fill="none"><path d="M19 34 q3 4 0 8"/><path d="M45 34 q-3 4 0 8"/></g>`,
+      capCenter];
+    /* C컬 단발 — 끝이 안쪽으로 살짝 말린 단발 */
+    default: return [
+      `<path d="M17 19 q15 -16 30 0 l1 18 q-1 5 -5 2 q4 -4 0 -7 l-1 -14 q-9 5 -18 0 l-1 14 q-4 3 0 7 q-4 3 -5 -2Z" fill="${hc}"/>`,
+      cap];
   }
 }
 /* 색을 밝게/어둡게 */
@@ -10272,6 +10325,42 @@ function chFace(fc){
   }
 }
 let chUid=0;
+/* ── 하의 종류: [왼다리, 오른다리] · 허리 y=58 · 발 y=84 ── */
+function chBottom(bp,c,sk){
+  const dk=chShade(c,-24);
+  const shoeL=`<rect x="20" y="84" width="13" height="8" rx="3" fill="#5D564E"/>`;
+  const shoeR=`<rect x="31" y="84" width="13" height="8" rx="3" fill="#5D564E"/>`;
+  switch(bp){
+    case 1: /* 반바지 */
+      return [
+        `<rect x="21" y="58" width="11" height="14" rx="4" fill="${c}"/><rect x="22" y="70" width="9" height="14" rx="4" fill="${sk}"/>${shoeL}`,
+        `<rect x="32" y="58" width="11" height="14" rx="4" fill="${c}"/><rect x="33" y="70" width="9" height="14" rx="4" fill="${sk}"/>${shoeR}`];
+    case 2: /* 긴 치마 */
+      return [
+        `<path d="M20 58 L32 58 L32 84 L14 84 Z" fill="${c}"/>${shoeL}`,
+        `<path d="M44 58 L32 58 L32 84 L50 84 Z" fill="${c}"/>${shoeR}`];
+    case 3: /* 짧은 치마 */
+      return [
+        `<path d="M20 58 L32 58 L32 70 L17 70 Z" fill="${c}"/><rect x="22" y="70" width="9" height="14" rx="4" fill="${sk}"/>${shoeL}`,
+        `<path d="M44 58 L32 58 L32 70 L47 70 Z" fill="${c}"/><rect x="33" y="70" width="9" height="14" rx="4" fill="${sk}"/>${shoeR}`];
+    case 4: /* 카고 치마 */
+      return [
+        `<path d="M20 58 L32 58 L32 84 L14 84 Z" fill="${c}"/><rect x="15" y="65" width="7" height="9" rx="1.5" fill="${dk}" opacity=".55"/>${shoeL}`,
+        `<path d="M44 58 L32 58 L32 84 L50 84 Z" fill="${c}"/><rect x="42" y="65" width="7" height="9" rx="1.5" fill="${dk}" opacity=".55"/>${shoeR}`];
+    case 5: /* 카고 바지 */
+      return [
+        `<rect x="22" y="58" width="9" height="30" rx="4" fill="${c}"/><rect x="21" y="64" width="7" height="8" rx="1.5" fill="${dk}" opacity=".55"/>${shoeL}`,
+        `<rect x="33" y="58" width="9" height="30" rx="4" fill="${c}"/><rect x="36" y="64" width="7" height="8" rx="1.5" fill="${dk}" opacity=".55"/>${shoeR}`];
+    case 6: /* 나팔바지 */
+      return [
+        `<path d="M22 58 L31 58 L33 88 L19 88 Z" fill="${c}"/>${shoeL}`,
+        `<path d="M33 58 L42 58 L45 88 L31 88 Z" fill="${c}"/>${shoeR}`];
+    default: /* 긴바지 — 기존 유저 하위호환 기본값 */
+      return [
+        `<rect x="22" y="58" width="9" height="30" rx="4" fill="${c}"/>${shoeL}`,
+        `<rect x="33" y="58" width="9" height="30" rx="4" fill="${c}"/>${shoeR}`];
+  }
+}
 function chSvg(o,extra){
   o=o||{};
   const uid=(++chUid);
@@ -10282,9 +10371,10 @@ function chSvg(o,extra){
   const H=chHair((o.hs||0)%CH_HAIR.length, hc, sk);
   const top=chTop((o.tt||0)%CH_TT.length, tc, sk, (o.pt||0)%CH_PT.length, uid);
   const face=chFace((o.fc||0)%CH_FACE.length);
+  const BOT=chBottom((o.bp||0)%CH_BP.length, bt, sk);
   return `<svg viewBox="0 0 64 96">
-    <g class="lg-l"><rect x="22" y="58" width="9" height="30" rx="4" fill="${bt}"/><rect x="20" y="84" width="13" height="8" rx="3" fill="#5D564E"/></g>
-    <g class="lg-r"><rect x="33" y="58" width="9" height="30" rx="4" fill="${bt}"/><rect x="31" y="84" width="13" height="8" rx="3" fill="#5D564E"/></g>
+    <g class="lg-l">${BOT[0]}</g>
+    <g class="lg-r">${BOT[1]}</g>
     <g class="torso">
       ${top}
       <g class="head">
@@ -10299,8 +10389,9 @@ function chSvg(o,extra){
 }
 function chRandom(){
   const R=(n)=>Math.floor(Math.random()*n);
+  const PICK=(arr)=>arr[R(arr.length)];
   return {sk:R(CH_SKIN.length), hs:R(CH_HAIR.length), hc:R(CH_HAIRC.length), tp:R(CH_TOP.length),
-          bt:R(CH_BOT.length), tt:R(CH_TT.length), pt:R(CH_PT.length), fc:R(CH_FACE.length)};
+          bt:R(CH_BOT.length), bp:R((typeof CH_BP!=='undefined'&&CH_BP.length)||1), tt:PICK(TOP_IDX), pt:0, fc:R(CH_FACE.length)};
 }
 
 /* ---------- 상태 ---------- */
