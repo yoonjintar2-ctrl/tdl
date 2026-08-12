@@ -556,7 +556,9 @@ body.mob #mApp{background:transparent;}
 #baClock:hover .bc-hint{opacity:1;}
 #baClock:hover .bc-time{color:var(--accent-deep);}
 /* 시계 메뉴 */
-#mhVisit{position:fixed;inset:0;z-index:400;display:flex;align-items:center;justify-content:center;}
+#mhVisit{position:fixed;inset:0;z-index:600;display:flex;align-items:center;justify-content:center;}
+/* 아바타 편집 창은 미니홈피 팝업보다도 위 */
+#avaEditModal{z-index:700;}
 #mhVisit .mv2-back{position:absolute;inset:0;background:rgba(20,16,30,0.45);}
 #mhVisit .mv2-card{position:relative;z-index:2;background:var(--panel);border-radius:18px;box-shadow:0 24px 60px rgba(40,34,60,0.3);
   width:min(820px,94vw);max-height:90vh;display:flex;flex-direction:column;overflow:hidden;}
@@ -901,6 +903,8 @@ body.mob .ava-bg-dot{width:18px;height:18px;}
 .ava-opt-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(72px,1fr));gap:6px;}
 .ava-opt{border:1px solid var(--border-strong);background:var(--bg);color:var(--text);border-radius:10px;padding:8px 4px;font-size:calc(11px * var(--fs,1));cursor:pointer;font-family:inherit;width:100%;text-align:center;}
 .ava-opt-group{margin-bottom:12px;}
+.ava-color-opt{background:var(--accent-soft);border-radius:12px;padding:9px 11px 11px;margin-top:2px;}
+.ava-color-opt .field-label{margin-bottom:6px;}
 .al-tag{display:inline-block;margin-right:6px;padding:1px 7px;border-radius:20px;background:var(--accent-soft);color:var(--accent-deep);font-weight:600;font-size:calc(10px * var(--fs,1));}
 .ava-opt.has-thumb{padding:5px 3px 6px;line-height:1.35;}
 .ava-thumb{width:100%;height:46px;overflow:hidden;display:flex;align-items:flex-start;justify-content:center;pointer-events:none;margin-bottom:2px;}
@@ -2556,7 +2560,7 @@ function exportBackup(){
 
 function updateFileStatusHint(t){ const el=document.getElementById('fileStatusHint'); if(el) el.textContent=t; }
 /* ═══════════════ 클라우드 저장 (Supabase) ═══════════════ */
-const APP_VER='ver 10.0', APP_BUILD='2026-08-12 15:20';
+const APP_VER='ver 10.2', APP_BUILD='2026-08-12 17:10';
 const LOGO_SRC='data:image/png;base64,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';
 function paintLogos(){ document.querySelectorAll('img.tdl-logo').forEach(i=>{ i.src=LOGO_SRC; }); }
 const IS_WEB = /^https?:$/i.test(location.protocol);
@@ -5283,6 +5287,15 @@ function clRenderAva(){
       (groups[t.k]=groups[t.k]||{label:t.label,items:[]}).items.push(i);
     });
     Object.keys(groups).sort((a,b)=>a-b).forEach(k=>mkGroup(groups[k].label,'tt',CH_TT,groups[k].items));
+    /* 선택한 옷이 색을 고를 수 있는 종류면 팔레트를 함께 보여줌 */
+    if(ttColorable(lgDraft.tt||0)){
+      const w=document.createElement('div'); w.className='ava-opt-group ava-color-opt';
+      w.innerHTML='<div class="field-label ava-opt-group-h">🎨 '+escapeHtml(CH_TT[lgDraft.tt||0])+' 색상</div>';
+      box.appendChild(w);
+      mkColor('','tp',CH_TOP);
+      const row=box.lastElementChild;
+      if(row) w.appendChild(row);
+    }
   }
   else if(avaCat==='item'){ renderAvaItemTab(box); }
 }
@@ -10447,6 +10460,9 @@ const FREE_TT=[0,1,2,3,5,6,26];
 /* 의상 탭에 노출되는 전체 목록 — '입지 않음'을 맨 앞에 두고, 최근 추가한 코스튬이 먼저 보이도록 정렬(데이터 인덱스는 그대로 유지) */
 const ONEPIECE_IDX=[0,6,1,3,2,5,26,36,41,31,37,8,13,25,27,39,44,10,9,19,12,16,4,42,14,22,24,32,40,45,43,15,28,30,38,11,23,29,17,18,33,35];
 function isOnepiece(tt){ return ONEPIECE_IDX.includes(tt); }
+/* 디자인이 단순해서 색을 골라 입을 수 있는 의상 (고른 색이 그대로 원단 색이 됨) */
+const TT_COLORABLE=new Set([1,2,3,5,6,8,9,10,11,26,36,41]);
+function ttColorable(tt){ return TT_COLORABLE.has(tt); }
 const CH_PT=['무지','가로줄','세로줄','도트','체크','브이','그라데이션'];
 const CH_FACE=['기본','웃음','윙크','시크','졸림','놀람','장난','수줍'];
 
@@ -10866,7 +10882,7 @@ function chHair(hs,hc,sk){
   const dk=chShade(hc,-18);
   /* 앞머리가 일자로 떨어지지 않도록, 오른쪽 가르마에서 왼쪽으로 흘러내리는 곡선으로 잡는다 */
   const CAP=`M16.5 20 q0 -17 15.5 -17 q15.5 0 15.5 17 C45.6 17.4 41.4 13 36.8 14.6 C29.4 17 23 21.4 16.5 20 Z`;
-  const wisp=`<path d="M17.6 19.4 q3.4 3.2 7.6 2.4 q-3.6 2.4 -8 0.6 Z" fill="${hc}"/><path d="M44.8 18.6 q2.2 2.6 4.2 2.2 q-2.4 1.8 -5 -0.4 Z" fill="${hc}"/>`;
+  const wisp=``;
   const cap=`<path d="${CAP}" fill="${hc}"/>`+wisp;
   const partLine=`<path d="M32 9 L31.6 18" stroke="${dk}" stroke-width="1" opacity=".45" stroke-linecap="round"/>`;
   /* 가운데 가르마 계열 — 이마 가운데가 드러나고 좌우로 부드럽게 갈라짐 */
@@ -10896,7 +10912,11 @@ function chHair(hs,hc,sk){
       `<path d="M16.5 20 q0 -16 15.5 -16 q15.5 0 15.5 16 q-15.5 4.5 -31 0Z" fill="${hc}"/>`];
     /* 장발 (히메컷: 짧은 앞머리 + 긴 옆머리) */
     case 4: return [
-      `<path d="M20 20 q12 5 24 0 l2 30 q-1 4 -5 3 l-2 -26 q-9 4 -18 0 l-2 26 q-4 1 -5 -3Z" fill="${hc}"/>`,
+      `<path d="M17 18 C13.4 30 12.6 44 14.4 58 C15 63.4 16.6 66.6 19.4 67.6 C21.6 68.4 22.6 66.6 22 63.4 C19.8 51 19.6 36 22.4 22 Z" fill="${hc}"/>`
+      +`<path d="M47 18 C50.6 30 51.4 44 49.6 58 C49 63.4 47.4 66.6 44.6 67.6 C42.4 68.4 41.4 66.6 42 63.4 C44.2 51 44.4 36 41.6 22 Z" fill="${hc}"/>`
+      +`<path d="M20 19 C17 32 16.6 46 18.6 60 L26 60 C24 46 24 32 26.4 20 Z" fill="${hc}"/>`
+      +`<path d="M44 19 C47 32 47.4 46 45.4 60 L38 60 C40 46 40 32 37.6 20 Z" fill="${hc}"/>`
+      +`<g opacity=".25" stroke="${dk}" stroke-width="1.1" fill="none" stroke-linecap="round"><path d="M19.6 26 C17.6 38 17.6 50 19 60"/><path d="M44.4 26 C46.4 38 46.4 50 45 60"/></g>`,
       himeBang+himeLockL+himeLockR];
     /* 대머리 */
     case 5: return ['', `<path d="M18 19 q14 -9 28 0 q-1 -9 -14 -9 q-13 0 -14 9Z" fill="${hc}" opacity=".4"/>`];
@@ -10920,11 +10940,14 @@ function chHair(hs,hc,sk){
       sideFrontL];
     /* 웨이브 장발 */
     case 11: return [
-      `<path d="M16 19 q16 -17 32 0 q3 16 0 28 q-2 5 -5 2 q3 -12 0 -20 q-11 6 -22 0 q-3 8 0 20 q-3 3 -5 -2 q-3 -12 0 -28Z" fill="${hc}"/>`,
+      `<path d="M16 19 q16 -17 32 0 C51.4 32 51.6 44 48.4 54 C47 58.4 44 59.6 42.4 57 C45.6 47 45.4 36 42.6 27 C36 31 28 31 21.4 27 C18.6 36 18.4 47 21.6 57 C20 59.6 17 58.4 15.6 54 C12.4 44 12.6 32 16 19 Z" fill="${hc}"/>`
+      +`<path d="M15.8 33 C12.6 42 13 51 16.2 58 C18.4 62.6 22.6 62 22 57.4 C20 50 20 42 21.6 35 Z" fill="${hc}"/>`
+      +`<path d="M48.2 33 C51.4 42 51 51 47.8 58 C45.6 62.6 41.4 62 42 57.4 C44 50 44 42 42.4 35 Z" fill="${hc}"/>`
+      +`<g opacity=".22" stroke="${dk}" stroke-width="1.1" fill="none" stroke-linecap="round"><path d="M18.4 34 C16.4 42 16.6 50 18.6 56"/><path d="M45.6 34 C47.6 42 47.4 50 45.4 56"/></g>`,
       `<path d="M16.5 20 q0 -17 15.5 -17 q15.5 0 15.5 17 q-8 5 -15.5 3 q-7.5 2 -15.5 -3Z" fill="${hc}"/>`+partLine];
     /* 아프로 */
     case 12: return [
-      `<circle cx="32" cy="16" r="19" fill="${hc}"/><circle cx="24" cy="9" r="5" fill="${dk}" opacity=".3"/><circle cx="41" cy="8" r="4.5" fill="${dk}" opacity=".25"/><circle cx="46" cy="20" r="4" fill="${dk}" opacity=".22"/>`,
+      `<circle cx="32" cy="18.5" r="17.5" fill="${hc}"/><circle cx="21.5" cy="10.5" r="6.5" fill="${hc}"/><circle cx="42.5" cy="10" r="6" fill="${hc}"/><circle cx="32" cy="5.5" r="7.5" fill="${hc}"/><circle cx="16.5" cy="20" r="6" fill="${hc}"/><circle cx="47.5" cy="20" r="6" fill="${hc}"/><g opacity=".22" fill="${dk}"><circle cx="24" cy="11" r="4.4"/><circle cx="41" cy="10.5" r="4"/><circle cx="46" cy="21" r="3.6"/></g>`,
       `<path d="M16.5 20 q0 -15.5 15.5 -15.5 q15.5 0 15.5 15.5 q-15.5 4 -31 0Z" fill="${hc}"/>`];
     /* 상투 */
     case 13: return [
@@ -10961,7 +10984,10 @@ function chHair(hs,hc,sk){
       capCenter+`<path d="M27 3.5 l-7 -3.5 l0 4.5 l5.5 2 l-5.5 2 l0 4.5 l7 -3.5 q2.2 -3 0 -6Z" fill="#D9788F"/><circle cx="27" cy="3.5" r="2.1" fill="#C4576F"/>`];
     /* 긴 웨이브 생머리 — 웨이브 장발보다 부드럽고 자연스러운 결 */
     case 22: return [
-      `<path d="M16 19 q16 -17 32 0 q2 14 0 24 q-1 4 -4 1 q2 -10 -1 -18 q-11 5 -22 0 q-3 8 -1 18 q-3 3 -4 -1 q-2 -10 0 -24Z" fill="${hc}"/><g opacity=".3" stroke="${dk}" stroke-width="1" fill="none"><path d="M19 34 q3 4 0 8"/><path d="M45 34 q-3 4 0 8"/></g>`,
+      `<path d="M16 19 q16 -17 32 0 C52 34 53 50 49.6 64 C48.6 68.4 44.6 69.4 43.4 65.6 C47 52 46.6 38 42.6 27 C36 31 28 31 21.4 27 C17.4 38 17 52 20.6 65.6 C19.4 69.4 15.4 68.4 14.4 64 C11 50 12 34 16 19 Z" fill="${hc}"/>`
+      +`<path d="M15.6 36 C12.4 47 12.6 58 16.4 67 C18.8 72.4 24 71.4 23 66 C20.4 56 20.4 46 22 38 Z" fill="${hc}"/>`
+      +`<path d="M48.4 36 C51.6 47 51.4 58 47.6 67 C45.2 72.4 40 71.4 41 66 C43.6 56 43.6 46 42 38 Z" fill="${hc}"/>`
+      +`<g opacity=".22" stroke="${dk}" stroke-width="1.1" fill="none" stroke-linecap="round"><path d="M18.6 38 C16 48 16.4 58 19 65"/><path d="M45.4 38 C48 48 47.6 58 45 65"/></g>`,
       capCenter];
     /* C컬 단발 — 끝이 안쪽으로 살짝 말린 단발 */
     case 23: return [
@@ -11046,6 +11072,7 @@ function chPattern(pt, base, uid){
 /* ── 상의 종류 ── */
 function chTop(tt, c, sk, pt, uid){
   const pat=chPattern(pt,c,uid);
+  const dk=chShade(c,-22), lt=chShade(c,28);
   /* ── 공통 좌표 기준 ────────────────────────────────────────────────
      어깨 y=36 · 허리/골반 y=58 · 발목 y=84
      몸통 x19~45 · 팔 x12~20 / x44~52 · 손 cy=63
@@ -11108,11 +11135,11 @@ function chTop(tt, c, sk, pt, uid){
         <g class="ar-l"><rect x="12" y="38" width="8" height="24" rx="4" fill="${sk}"/><ellipse cx="16.4" cy="42" rx="6.4" ry="5.4" fill="#FBF8F3"/><circle cx="16" cy="63" r="4.6" fill="${sk}"/></g>
         <g class="ar-r"><rect x="44" y="38" width="8" height="24" rx="4" fill="${sk}"/><ellipse cx="47.6" cy="42" rx="6.4" ry="5.4" fill="#FBF8F3"/><circle cx="48" cy="63" r="4.6" fill="${sk}"/></g>`;
     case 36: /* 남성 미니멀 — 화이트 셔츠 + 베이지 슬랙스 */
-      return `${suitClip(84)}<g clip-path="${CLIP}">${suit('#F7F5F0',84)}<rect x="19" y="57" width="26" height="27" fill="#D6C6A4"/>
+      return `${suitClip(84)}<g clip-path="${CLIP}">${suit(c,84)}<rect x="19" y="57" width="26" height="27" fill="#D6C6A4"/>
         <rect x="19" y="55" width="26" height="3" fill="#C4B18C"/><path d="M32 58 v26" stroke="#C8B896" stroke-width="0.8"/></g>
         <rect x="30.6" y="36" width="2.8" height="21" fill="#EAE6DC"/><path d="M28 36 L32 41.4 L36 36 Z" fill="${sk}"/>
         <path d="M20 35 L31 36 L26.6 43.4 Z" fill="#EAE6DC"/><path d="M44 35 L33 36 L37.4 43.4 Z" fill="#EAE6DC"/>
-        <g fill="#D8D2C4"><circle cx="32" cy="47" r="0.9"/><circle cx="32" cy="52" r="0.9"/></g>${arms('#F7F5F0')}`;
+        <g fill="#D8D2C4"><circle cx="32" cy="47" r="0.9"/><circle cx="32" cy="52" r="0.9"/></g>${arms(c)}`;
     case 37: /* 남성 시티보이 — 그레이 후디 + 연청 데님 */
       return `${suitClip(84)}<g clip-path="${CLIP}">${suit('#BCC0C6',84)}<rect x="19" y="57" width="26" height="27" fill="#A9C4E0"/>
         <g stroke="#8FAECD" stroke-width="0.9" opacity=".85"><path d="M25 59 v25 M39 59 v25"/></g><rect x="19" y="55" width="26" height="3" fill="#95B3D2"/></g>
@@ -11143,9 +11170,9 @@ function chTop(tt, c, sk, pt, uid){
         <g fill="#2E2E36"><rect x="20.4" y="72" width="9.4" height="2.6" rx="1"/><rect x="34.2" y="72" width="9.4" height="2.6" rx="1"/></g>${arms('#17171B')}`;
     case 41: /* 여성 미니멀 — 화이트 크롭 탱크 + 차콜 와이드 팬츠 */
       return `${suitClip(84,26,13)}<g clip-path="${CLIP}">${suit('#3A3E46',84,26,13)}
-        <path d="M19 36 L45 36 L45 52 Q32 55.4 19 52 Z" fill="#F7F5F0"/>
+        <path d="M19 36 L45 36 L45 52 Q32 55.4 19 52 Z" fill="${c}"/>
         <rect x="19" y="52" width="26" height="3.4" fill="#2E323A"/>
-        <path d="M22 36 q10 7 20 0 l0 4 q-10 6 -20 0Z" fill="${sk}"/></g>${arms('#F7F5F0',0)}`;
+        <path d="M22 36 q10 7 20 0 l0 4 q-10 6 -20 0Z" fill="${sk}"/></g>${arms(c,0)}`;
     case 42: /* 여성 시티보이 — 네이비 스트라이프 셔츠 원피스 */
       return `${dressClip(80,42)}<g clip-path="${CLIP}">${dress('#2C3E5C',80,42)}
         <g stroke="#E8EDF4" stroke-width="1.1" opacity=".9"><path d="M22 36 L19 80 M27 36 L26 80 M32 36 L32 80 M37 36 L38 80 M42 36 L45 80"/></g>
@@ -11175,29 +11202,29 @@ function chTop(tt, c, sk, pt, uid){
         <g fill="#3A3A42"><rect x="20.6" y="72" width="10" height="2" rx="1"/><rect x="33.4" y="72" width="10" height="2" rx="1"/></g>${arms('#17171B',11)}`;
     /* ═══ 상의형 (하의는 따로 고른 것이 보임) ═══ */
     case 1: /* 셔츠 — 옅은 하늘색 드레스셔츠 + 뾰족 카라 */
-      return `${topClip}${topBody('#A9C6DE')}${pat}<rect x="30.5" y="36" width="3" height="26" fill="#EDF3F8"/><path d="M28 36 L32 41.5 L36 36 Z" fill="${sk}"/><path d="M20 35 L31 36 L26.5 43.5 Z" fill="#EDF3F8"/><path d="M44 35 L33 36 L37.5 43.5 Z" fill="#EDF3F8"/><circle cx="32" cy="48" r="1" fill="#7E9DB8"/><circle cx="32" cy="54" r="1" fill="#7E9DB8"/>${arms('#A9C6DE')}`;
+      return `${topClip}${topBody(c)}${pat}<rect x="30.5" y="36" width="3" height="26" fill="${lt}"/><path d="M28 36 L32 41.5 L36 36 Z" fill="${sk}"/><path d="M20 35 L31 36 L26.5 43.5 Z" fill="${lt}"/><path d="M44 35 L33 36 L37.5 43.5 Z" fill="${lt}"/><circle cx="32" cy="48" r="1" fill="${dk}"/><circle cx="32" cy="54" r="1" fill="${dk}"/>${arms(c)}`;
     case 2: /* 후드 — 후드 + 캥거루 포켓 + 끈 */
-      return `${topClip}${topBody('#8C98AE')}${pat}<path d="M22 36 q10 9 20 0 q2 6 -10 8 q-12 -2 -10 -8Z" fill="#6C7890"/><rect x="26" y="50" width="12" height="8" rx="3" fill="#6C7890" opacity=".8"/><path d="M30 40 v7 M34 40 v7" stroke="#E7EAF0" stroke-width="1.4"/>${arms('#8C98AE')}`;
+      return `${topClip}${topBody(c)}${pat}<path d="M22 36 q10 9 20 0 q2 6 -10 8 q-12 -2 -10 -8Z" fill="${dk}"/><rect x="26" y="50" width="12" height="8" rx="3" fill="${dk}" opacity=".8"/><path d="M30 40 v7 M34 40 v7" stroke="${lt}" stroke-width="1.4"/>${arms(c)}`;
     case 3: /* 니트 — 골지 텍스처 + 밑단 밴드 */
-      return `${topClip}${topBody('#D3A88C')}${pat}<g opacity=".4" stroke="#B0836A" stroke-width="1"><path d="M21 40 h22 M21 45 h22 M21 50 h22 M21 55 h22"/></g><rect x="19" y="58" width="26" height="4" rx="2" fill="#B0836A"/>${arms('#D3A88C')}`;
+      return `${topClip}${topBody(c)}${pat}<g opacity=".4" stroke="${dk}" stroke-width="1"><path d="M21 40 h22 M21 45 h22 M21 50 h22 M21 55 h22"/></g><rect x="19" y="58" width="26" height="4" rx="2" fill="${dk}"/>${arms(c)}`;
     case 4: /* 라이더 자켓 — 앞이 벌어져 안에 흰 라운드티가 보이고, 아래는 청바지 */
       return `${suitClip(84)}<g clip-path="${CLIP}">${suit('#1C1C20',84)}<rect x="19" y="57" width="26" height="27" fill="#4A6285"/><g stroke="#3A506D" stroke-width="0.9" opacity=".8"><path d="M25 59 v25 M39 59 v25"/></g><rect x="19" y="55" width="26" height="4" fill="#2B2B30"/><path d="M26.5 36 L37.5 36 L36.5 57 L27.5 57 Z" fill="#F2EFE8"/><path d="M19 36 L27.5 36 L25.5 57 L19 57 Z" fill="#26262C"/><path d="M45 36 L36.5 36 L38.5 57 L45 57 Z" fill="#26262C"/><path d="M19 36 L28 36 L24.5 47 L19 43.5 Z" fill="#131318"/><path d="M45 36 L36 36 L39.5 47 L45 43.5 Z" fill="#131318"/><g fill="#B9BFC8"><rect x="25.6" y="40" width="1.4" height="17" rx="0.7"/><circle cx="22" cy="50" r="1"/><circle cx="42" cy="50" r="1"/></g><path d="M24 35.5 L40 35.5 L40 39.5 q-8 5.5 -16 0 Z" fill="${sk}"/><path d="M24.6 38.6 q7.4 4.6 14.8 0 l0 1.5 q-7.4 4.8 -14.8 0Z" fill="#F2EFE8"/></g><rect x="27" y="54" width="10" height="4" rx="1" fill="#C9A227"/>${arms('#1C1C20')}`;
     case 6: /* 민소매 */
-      return `${topClip}${topBody('#EFE9E0')}${pat}<path d="M22 36 q10 7 20 0 l0 4 q-10 6 -20 0Z" fill="${sk}"/>${arms('#EFE9E0',0)}`;
+      return `${topClip}${topBody(c)}${pat}<path d="M22 36 q10 7 20 0 l0 4 q-10 6 -20 0Z" fill="${sk}"/>${arms(c,0)}`;
     case 7: /* 터틀넥 — 목을 감싸는 두툼한 롤넥 */
       return `${topClip}${topBody('#7C8B76')}${pat}<rect x="24.5" y="29.5" width="15" height="11" rx="5.5" fill="#7C8B76"/><path d="M25.5 33.5 h13 M25.5 37 h13" stroke="#63715D" stroke-width="1" opacity=".55"/>${arms('#7C8B76')}`;
 
     /* ═══ 원피스 · 드레스 (치마형) ═══ */
     case 5: /* A라인 원피스 */
-      return `${dressClip(78,44)}<g clip-path="${CLIP}">${dress('#C98CA0',78,44)}<rect x="19" y="36" width="26" height="4" fill="#E0AEBE"/></g>${arms('#C98CA0',0)}`;
+      return `${dressClip(78,44)}<g clip-path="${CLIP}">${dress(c,78,44)}<rect x="19" y="36" width="26" height="4" fill="${lt}"/></g>${arms(c,0)}`;
     case 8: /* 슬립 원피스 — 얇은 끈 + 슬림 실루엣 */
-      return `${dressClip(82,34)}<g clip-path="${CLIP}">${dress('#B99EC4',82,34)}</g><path d="M23 36 l-1 -5 M41 36 l1 -5" stroke="#B99EC4" stroke-width="2" stroke-linecap="round"/>${arms('#B99EC4',0)}`;
+      return `${dressClip(82,34)}<g clip-path="${CLIP}">${dress(c,82,34)}</g><path d="M23 36 l-1 -5 M41 36 l1 -5" stroke="${c}" stroke-width="2" stroke-linecap="round"/>${arms(c,0)}`;
     case 9: /* 니트 원피스 — 골지 + 긴소매 */
-      return `${dressClip(84,38)}<g clip-path="${CLIP}">${dress('#A8896B',84,38)}<g opacity=".35" stroke="#8A6F55" stroke-width="1"><path d="M15 55 h34 M15 63 h34 M15 71 h34 M15 79 h34"/></g></g>${arms('#A8896B')}`;
+      return `${dressClip(84,38)}<g clip-path="${CLIP}">${dress(c,84,38)}<g opacity=".35" stroke="${dk}" stroke-width="1"><path d="M15 55 h34 M15 63 h34 M15 71 h34 M15 79 h34"/></g></g>${arms(c)}`;
     case 10: /* 셔츠 원피스 — 카라 + 벨트 */
-      return `${dressClip(80,40)}<g clip-path="${CLIP}">${dress('#93AFC2',80,40)}<rect x="14" y="54" width="36" height="3" fill="#6E8598"/></g><rect x="30.5" y="36" width="3" height="14" fill="#DCE7EE"/><path d="M26 36 l6 6 l6 -6 l-2 -2 h-8Z" fill="${sk}"/>${arms('#93AFC2')}`;
+      return `${dressClip(80,40)}<g clip-path="${CLIP}">${dress(c,80,40)}<rect x="14" y="54" width="36" height="3" fill="${dk}"/></g><rect x="30.5" y="36" width="3" height="14" fill="${lt}"/><path d="M26 36 l6 6 l6 -6 l-2 -2 h-8Z" fill="${sk}"/>${arms(c)}`;
     case 11: /* 파티 드레스 — 풍성한 스커트 + 반짝이 */
-      return `${dressClip(78,52)}<g clip-path="${CLIP}">${dress('#A8325A',78,52)}<g fill="#E9A9BF" opacity=".85"><circle cx="20" cy="60" r="1.3"/><circle cx="28" cy="68" r="1.3"/><circle cx="36" cy="62" r="1.3"/><circle cx="44" cy="70" r="1.3"/><circle cx="24" cy="74" r="1.3"/><circle cx="40" cy="76" r="1.3"/></g><rect x="14" y="50" width="36" height="5" fill="#F0C33C"/><rect x="14" y="50" width="36" height="1.2" fill="#F7DC80"/></g><rect x="29" y="50" width="6" height="5" rx="1" fill="#D4A62A"/>${arms('#A8325A',0)}`;
+      return `${dressClip(78,52)}<g clip-path="${CLIP}">${dress(c,78,52)}<g fill="${lt}" opacity=".85"><circle cx="20" cy="60" r="1.3"/><circle cx="28" cy="68" r="1.3"/><circle cx="36" cy="62" r="1.3"/><circle cx="44" cy="70" r="1.3"/><circle cx="24" cy="74" r="1.3"/><circle cx="40" cy="76" r="1.3"/></g><rect x="14" y="50" width="36" height="5" fill="#F0C33C"/><rect x="14" y="50" width="36" height="1.2" fill="#F7DC80"/></g><rect x="29" y="50" width="6" height="5" rx="1" fill="#D4A62A"/>${arms(c,0)}`;
     case 12: { /* 오프숄더 원피스 — 목선 자체를 아래로 깎아 목 주변엔 원단이 아예 없음 */
       const hem=80, hemW=42, hipW=26+(hemW-26)*0.3;
       const hl=32-hemW/2, hr=32+hemW/2, pl=32-hipW/2, pr=32+hipW/2;
@@ -11227,7 +11254,7 @@ function chTop(tt, c, sk, pt, uid){
     case 25: /* 잠수복 — 해녀복처럼 온몸이 검정인 원피스 수트 */
       return `${suitClip(84,25,10)}<g clip-path="${CLIP}">${suit('#141518',84,25,10)}<path d="M25 36 q7 6 14 0 l0 3 q-7 5 -14 0Z" fill="#26282D"/><g stroke="#26282D" stroke-width="1" opacity=".8"><path d="M19 58 h26 M19 70 h26"/></g></g>${arms('#141518')}`;
     case 26: /* 사이클 저지 — 저지 + 짧은 빕숏 */
-      return `${suitClip(70,25,10)}<g clip-path="${CLIP}">${suit('#E2A33C',70,25,10)}<rect x="19" y="56" width="26" height="14" fill="#2B2E33"/><rect x="19" y="46" width="26" height="4" fill="#F4EFE6"/><rect x="19" y="52" width="26" height="3" fill="#3F7EA8"/></g>${arms('#E2A33C',12)}`;
+      return `${suitClip(70,25,10)}<g clip-path="${CLIP}">${suit(c,70,25,10)}<rect x="19" y="56" width="26" height="14" fill="#2B2E33"/><rect x="19" y="46" width="26" height="4" fill="${lt}"/><rect x="19" y="52" width="26" height="3" fill="${dk}"/></g>${arms(c,12)}`;
     case 27: /* 카우보이 — 셔츠 + 데님 + 프린지 조끼 + 버클 */
       return `${suitClip(84)}<g clip-path="${CLIP}">${suit('#C9B393',84)}<rect x="19" y="56" width="26" height="28" fill="#4A6285"/><g stroke="#385071" stroke-width="0.9" opacity=".7"><path d="M25 58 v26 M39 58 v26"/></g></g><path d="M19 36 h9 l-1 20 q-4 1 -8 0Z" fill="#6B4A34"/><path d="M45 36 h-9 l1 20 q4 1 8 0Z" fill="#6B4A34"/><g stroke="#5A3E2B" stroke-width="0.9"><path d="M20 56 v4 M23 56 v4 M41 56 v4 M44 56 v4"/></g><rect x="28" y="54" width="8" height="5" rx="1" fill="#C9A227"/>${arms('#C9B393')}`;
     case 30: /* 근위병 — 레드코트 + 골드 버튼 (어깨 트림이 몸통 밖으로 나가지 않도록 클립 안에서 그림) */
