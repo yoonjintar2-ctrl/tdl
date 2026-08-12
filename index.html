@@ -2536,7 +2536,7 @@ function exportBackup(){
 
 function updateFileStatusHint(t){ const el=document.getElementById('fileStatusHint'); if(el) el.textContent=t; }
 /* ═══════════════ 클라우드 저장 (Supabase) ═══════════════ */
-const APP_VER='ver 8.8', APP_BUILD='2026-08-12 01:00';
+const APP_VER='ver 8.9', APP_BUILD='2026-08-12 03:30';
 const LOGO_SRC='data:image/png;base64,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';
 function paintLogos(){ document.querySelectorAll('img.tdl-logo').forEach(i=>{ i.src=LOGO_SRC; }); }
 const IS_WEB = /^https?:$/i.test(location.protocol);
@@ -5047,7 +5047,7 @@ const AVA_CATS=[
 ];
 let avaCat='face';
 /* ── 외모/헤어/상의/하의 유료 옵션 — 미리보기는 무료, 저장할 때만 구매 ── */
-const TT_PRICE=[0,6,8,10,16,16,0,6,18,20,20,32,24,20,26,28,24,30,32];  /* CH_TT 인덱스별 가격(0=무료) */
+const TT_PRICE=[0,6,8,10,16,16,0,6,18,20,20,32,24,20,26,28,24,30,32,22,30,30,26,34,24,22,16,22,28,32,30,14,20,26];  /* CH_TT 인덱스별 가격(0=무료) */
 function optPrice(key,i){
   i=i||0;
   if(key==='sk') return 0;                 /* 피부색은 항상 무료 */
@@ -5140,7 +5140,7 @@ function clRenderAva(){
     wrap.appendChild(row); box.appendChild(wrap);
   };
   if(avaCat==='face'){ mkColor('피부색','sk',CH_SKIN); mkName('얼굴 표정','fc',CH_FACE); }
-  else if(avaCat==='hair'){ mkName('머리 모양','hs',CH_HAIR); mkColor('머리 색','hc',CH_HAIRC); }
+  else if(avaCat==='hair'){ mkName('머리 모양','hs',CH_HAIR,HAIR_IDX); mkColor('머리 색','hc',CH_HAIRC); }
   else if(avaCat==='top'){
     mkName('상의 종류','tt',CH_TT,TOP_IDX); mkColor('상의 색','tp',CH_TOP);
     if(isOnepiece(lgDraft.tt||0)){ const h=document.createElement('div'); h.className='hint'; h.textContent='현재 한벌옷을 입고 있어서 상의 종류 선택이 적용되지 않아요. 먼저 다른 상의를 골라주세요.'; box.appendChild(h); }
@@ -10123,10 +10123,13 @@ const CH_TOP=['#A2B3C9','#D2AEAE','#B0C7AE','#E0CBA9','#BBB1CD','#878F9A','#DCBB
 const CH_BOT=['#878D98','#9D9284','#8C9789','#A99090','#797E86','#B4AA9A','#9CA6B6','#CDC5B9','#2B2B2E','#1F2A44','#3B4B6B','#4A4A3A','#5C2A32','#EDEAE2'];
 const CH_BP=['긴바지','반바지','긴 치마','짧은 치마','카고 치마','카고 바지','나팔바지'];
 const BP_PRICE=[0,6,10,8,14,12,12];
-const CH_HAIR=['짧은','단발','포니','곱슬','장발','대머리','모자','투블럭','뱅','양갈래','묶은머리','웨이브','아프로','상투','보브','스파이크','댕기머리','반묶음','투블럭펌','베레모','옆가르마','리본머리','긴 웨이브','C컬 단발','갓','5:5 가르마','모히칸','트윈 브레이드','사이드 포니'];
-const CH_TT=['티셔츠','셔츠','후드','니트','자켓','A라인 원피스','민소매','터틀넥','슬립 원피스','니트 원피스','셔츠 원피스','파티 드레스','오프숄더 원피스','죄수복','삐에로 의상','소방관','요리사','우주비행사','기사 갑옷'];
+const CH_HAIR=['짧은','단발','포니','곱슬','장발','대머리','모자','투블럭','뱅','양갈래','묶은머리','웨이브','아프로','상투','보브','스파이크','댕기머리','반묶음','투블럭펌','베레모','옆가르마','리본머리','긴 웨이브','C컬 단발','갓','5:5 가르마','모히칸','트윈 브레이드','사이드 포니','헤어밴드 웨이브','크라운 브레이드','콘로우','리젠트','픽시컷','곱슬 탑노트','플라워핀 웨이브','업두'];
+/* 헤어 선택 목록에 노출되는 순서 — 최근 추가한 스타일이 먼저 보이도록(데이터 인덱스 자체는 그대로 유지) */
+const HAIR_IDX=[26,27,28,29,30,31,32,33,34,35,36,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25];
+const CH_TT=['티셔츠','셔츠','후드','니트','자켓','A라인 원피스','민소매','터틀넥','슬립 원피스','니트 원피스','셔츠 원피스','파티 드레스','오프숄더 원피스','죄수복','삐에로 의상','소방관','요리사','우주비행사','기사 갑옷','경찰관','한복','기모노','발레리나','로열로브','스코틀랜드 킬트','잠수복','사이클 저지','카우보이','해적','마법사 로브','근위병','작업복','의사 가운','턱시도'];
 const TOP_IDX=[0,1,2,3,4,6,7];                       /* 상의 탭에 노출되는 일반 상의 종류 */
-const ONEPIECE_IDX=[5,8,9,10,11,12,13,14,15,16,17,18];  /* 한벌옷 탭에 노출되는 원피스·코스튬류 */
+/* 한벌옷 탭에 노출되는 원피스·코스튬류 — 최근 추가한 코스튬이 먼저 보이도록 정렬(데이터 인덱스는 그대로 유지) */
+const ONEPIECE_IDX=[19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,13,14,15,16,17,18,5,8,9,10,11,12];
 function isOnepiece(tt){ return ONEPIECE_IDX.includes(tt); }
 const CH_PT=['무지','가로줄','세로줄','도트','체크','브이','그라데이션'];
 const CH_FACE=['기본','웃음','윙크','시크','졸림','놀람','장난','수줍'];
@@ -10431,6 +10434,34 @@ function chHair(hs,hc,sk){
     case 28: return [
       `<path d="M43.5 15 q13.5 5 9.5 22 q-2 7.5 -7.5 9.5 q3.5 -13.5 -5 -25.5Z" fill="${hc}"/><rect x="40.5" y="13.5" width="7" height="4.5" rx="2.2" fill="${dk}"/>`,
       sideFrontL];
+    /* 헤어밴드 웨이브 — 어깨선 웨이브 + 헤어밴드 */
+    case 29: return [
+      `<path d="M16 19 q16 -17 32 0 q3 16 0 28 q-2 5 -5 2 q3 -12 0 -20 q-11 6 -22 0 q-3 8 0 20 q-3 3 -5 -2 q-3 -12 0 -28Z" fill="${hc}"/>`,
+      `<path d="M16.5 20 q0 -17 15.5 -17 q15.5 0 15.5 17 q-8 5 -15.5 3 q-7.5 2 -15.5 -3Z" fill="${hc}"/><rect x="15" y="15.3" width="34" height="4" rx="2" fill="#C4576F"/>`];
+    /* 크라운 브레이드 — 정수리를 가로지르는 땋은 헤일로(밝은 크림톤 대비로 항상 잘 보이게) */
+    case 30: return ['',
+      `<path d="M16.5 20 q0 -17 15.5 -17 q15.5 0 15.5 17 q-15.5 4 -31 0Z" fill="${hc}"/><path d="M18 12 Q32 2 46 12" stroke="${hc}" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M18 12 Q32 2 46 12" stroke="#F4EFE6" stroke-width="1.3" fill="none" stroke-linecap="round" opacity=".6" stroke-dasharray="2.4 2.4"/>`];
+    /* 콘로우 — 두피에 붙는 일자 브레이드 라인(밝은 크림톤으로 어떤 머리색에서도 보이게) */
+    case 31: return ['',
+      `<path d="M16.5 20 q0 -17 15.5 -17 q15.5 0 15.5 17 q-15.5 4 -31 0Z" fill="${hc}"/><g stroke="#F4EFE6" stroke-width="1" opacity=".55" fill="none"><path d="M20 5 Q20 15 19 20"/><path d="M26 3.5 Q26 14 25.5 20"/><path d="M32 3 Q32 13 32 20"/><path d="M38 3.5 Q38 14 38.5 20"/><path d="M44 5 Q44 15 45 20"/></g>`];
+    /* 리젠트(올백) — 뒤로 넘긴 볼륨 스타일 */
+    case 32: return ['',
+      `<path d="M16.5 19 q1 -18 15.5 -18 q14.5 0 15.5 18 q-6 -6 -15.5 -6 q-9.5 0 -15.5 6Z" fill="${hc}"/><path d="M20 9 Q32 2 44 9" stroke="${dk}" stroke-width="1" opacity=".4" fill="none"/>`];
+    /* 픽시컷 — 짧고 비대칭으로 쓸어넘긴 스타일 */
+    case 33: return ['',
+      `<path d="M17 19 q1 -17 16 -17 q14 0 14.5 15 q-3 -5 -9.5 -3 q3 5 -1 8 q-11 3 -20 -3Z" fill="${hc}"/>`];
+    /* 곱슬 탑노트 — 높게 묶은 곱슬머리 */
+    case 34: return [
+      `<circle cx="32" cy="4" r="6" fill="${hc}"/>`,
+      `<circle cx="21" cy="15" r="6" fill="${hc}"/><circle cx="32" cy="11" r="6.5" fill="${hc}"/><circle cx="43" cy="15" r="6" fill="${hc}"/>`];
+    /* 플라워핀 웨이브 — 긴 웨이브 + 옆머리 꽃 장식 */
+    case 35: return [
+      `<path d="M16 19 q16 -17 32 0 q2 14 0 24 q-1 4 -4 1 q2 -10 -1 -18 q-11 5 -22 0 q-3 8 -1 18 q-3 3 -4 -1 q-2 -10 0 -24Z" fill="${hc}"/><g opacity=".3" stroke="${dk}" stroke-width="1" fill="none"><path d="M19 34 q3 4 0 8"/><path d="M45 34 q-3 4 0 8"/></g>`,
+      capCenter+`<circle cx="42" cy="7" r="2.4" fill="#E39B94"/><circle cx="44.5" cy="8.5" r="2" fill="#E8B4C8"/><circle cx="40" cy="9" r="2" fill="#E8B4C8"/><circle cx="43" cy="5" r="1.6" fill="#F4E38A"/>`];
+    /* 업두(올림머리) — 정수리 위로 또렷하게 솟은 번 + 팽팽하게 넘긴 옆머리 */
+    case 36: return [
+      `<ellipse cx="32" cy="3.5" rx="7.5" ry="6" fill="${hc}"/><ellipse cx="32" cy="3.5" rx="7.5" ry="6" fill="none" stroke="${dk}" stroke-width="1" opacity=".4"/>`,
+      `<path d="M16.5 20 q0 -17 15.5 -17 q15.5 0 15.5 17 q-15.5 4 -31 0Z" fill="${hc}"/><path d="M18 18 q-1.5 4 0 7" stroke="${sk}" stroke-width="1.3" opacity=".85" fill="none"/><path d="M46 18 q1.5 4 0 7" stroke="${sk}" stroke-width="1.3" opacity=".85" fill="none"/>`];
     /* 예비 기본값 — 5:5 가르마와 동일(색인 범위를 벗어난 값에 대한 안전장치) */
     default: return [
       `<path d="M17 20 q15 -17 30 0 l1 30 q-2 4 -5 1 l-1 -25 q-10 4 -20 0 l-1 25 q-3 3 -5 -1Z" fill="${hc}"/>`,
@@ -10511,6 +10542,36 @@ function chTop(tt, c, sk, pt, uid){
       return `${clipOP}<g clip-path="url(#tc${uid})">${dressBase(80,40,c)}</g><rect x="24" y="44" width="16" height="10" rx="2" fill="#3D4A5C"/><circle cx="27.5" cy="49" r="1.5" fill="#4CC2E2"/><circle cx="32" cy="49" r="1.5" fill="#E2574C"/><circle cx="36.5" cy="49" r="1.5" fill="#E2C94C"/><rect x="26" y="33" width="12" height="5" rx="2.5" fill="#C7CBD1"/>${armL}${armR}<rect x="12" y="37" width="8" height="9" rx="3" fill="#C7CBD1"/><rect x="44" y="37" width="8" height="9" rx="3" fill="#C7CBD1"/>`;
     case 18: /* 기사 갑옷 — 전신 판금 갑옷(가슴 문장 + 견갑 + 그리브) */
       return `${clipOP}<g clip-path="url(#tc${uid})">${dressBase(80,38,'#B9BFC8')}<rect x="12" y="70" width="16" height="10" rx="3" fill="#8F97A3"/><rect x="36" y="70" width="16" height="10" rx="3" fill="#8F97A3"/></g><path d="M19 36 h26 l0 6 q-13 4 -26 0 Z" fill="#8F97A3"/><path d="M28 46 L32 43 L36 46 L36 56 L32 60 L28 56 Z" fill="${c}"/>${armL}${armR}<rect x="12" y="37" width="8" height="9" rx="3" fill="#8F97A3"/><rect x="44" y="37" width="8" height="9" rx="3" fill="#8F97A3"/>`;
+    case 19: /* 경찰관 — 정복(벨트 라인 + 방패형 배지) */
+      return `${clipOP}<g clip-path="url(#tc${uid})">${dressBase(80,40,'#2B3A55')}<rect x="10" y="66" width="44" height="4" fill="#1D2740"/></g><path d="M28 40 L36 40 L36 46 Q36 50.5 32 52.5 Q28 50.5 28 46 Z" fill="#C9A227"/><path d="M32 41 L32 49" stroke="#2B3A55" stroke-width="1" opacity=".4"/>${armL}${armR}`;
+    case 20: /* 한복 — 저고리 + 치마, 옷고름 리본 */
+      return `${clipOP}<g clip-path="url(#tc${uid})">${dressBase(84,48,c)}</g><path d="M19 36 q13 8 26 0 l0 5 q-13 7 -26 0Z" fill="#F4EFE6"/><path d="M29 41.5 Q26 44.5 27.3 50.5 Q29 48.5 30 44.5Z" fill="#4C8C6B"/><path d="M35 41.5 Q38 44.5 36.7 50.5 Q35 48.5 34 44.5Z" fill="#4C8C6B"/><circle cx="32" cy="42.5" r="1.6" fill="#4C8C6B"/>${bareL}${bareR}`;
+    case 21: /* 기모노 — 겹쳐 여민 앞섶 + 넓은 오비 */
+      return `${clipOP}<g clip-path="url(#tc${uid})">${dressBase(84,42,c)}<path d="M22 36 L32 52 L42 36" fill="none" stroke="${dk}" stroke-width="2"/><rect x="20" y="54" width="24" height="9" fill="#F4EFE6"/><rect x="29" y="54" width="6" height="9" fill="#C4576F"/></g>${armL}${armR}`;
+    case 22: /* 발레리나 — 피팅 보디스 + 풍성한 튀튀 */
+      return `${clipOP}<g clip-path="url(#tc${uid})">${dressBase(70,58,'#F4E8EF')}<ellipse cx="32" cy="68" rx="27" ry="6" fill="#F9F1F6" opacity=".9"/></g><rect x="24" y="36" width="16" height="16" rx="6" fill="${c}"/>${bareL}${bareR}`;
+    case 23: /* 로열로브 — 모피 트리밍 망토 + 금장식 */
+      return `${clipOP}<g clip-path="url(#tc${uid})">${dressBase(84,50,'#7A2331')}<rect x="10" y="36" width="44" height="7" fill="#F4EFE6"/><g fill="#3B3B3B" opacity=".25"><circle cx="14" cy="39" r="1.3"/><circle cx="20" cy="39" r="1.3"/><circle cx="44" cy="39" r="1.3"/><circle cx="50" cy="39" r="1.3"/></g></g><rect x="29" y="36" width="6" height="30" fill="#C9A227"/>${armL}${armR}`;
+    case 24: /* 스코틀랜드 킬트 — 타탄 체크 + 스포란 */
+      return `${clipOP}<g clip-path="url(#tc${uid})">${dressBase(74,44,'#8C2A33')}<g stroke="#2B2B2E" stroke-width="1" opacity=".5"><path d="M14 50 L50 78 M50 50 L14 78"/></g></g><rect x="19" y="36" width="26" height="10" fill="#F4EFE6"/><ellipse cx="32" cy="60" rx="6" ry="7" fill="#5C4A38"/>${armL}${armR}`;
+    case 25: /* 잠수복 — 웨트슈트 + 웨이트벨트 */
+      return `${clipOP}<g clip-path="url(#tc${uid})">${dressBase(80,38,'#2B2E33')}<path d="M19 40 L45 40 L44 84 L20 84 Z" fill="${c}" opacity=".35"/><rect x="12" y="66" width="40" height="4" fill="#C9A227"/></g>${armL}${armR}`;
+    case 26: /* 사이클 저지 — 레이싱 스트라이프 */
+      return `${clipOP}<g clip-path="url(#tc${uid})">${dressBase(64,36,c)}<path d="M19 40 L45 40 L44 64 L20 64 Z" fill="${lt}" opacity=".4"/><rect x="19" y="52" width="26" height="4" fill="#F4EFE6"/></g>${armL}${armR}`;
+    case 27: /* 카우보이 — 프린지 조끼 + 버클 */
+      return `${clipOP}<g clip-path="url(#tc${uid})">${dressBase(78,40,'#6B4A34')}</g><path d="M19 36 h26 l0 20 q-13 4 -26 0Z" fill="${dk}" opacity=".3"/><rect x="27" y="52" width="10" height="6" rx="1" fill="#C9A227"/>${armL}${armR}`;
+    case 28: /* 해적 — 롱코트 + 새시 + 크로스 스트랩 */
+      return `${clipOP}<g clip-path="url(#tc${uid})">${dressBase(84,46,'#3B3138')}<path d="M22 36 L32 50 L42 36" fill="none" stroke="#C9A227" stroke-width="1.6"/></g><path d="M14 38 L48 66" stroke="#7A2331" stroke-width="5" opacity=".85"/><rect x="20" y="60" width="24" height="6" fill="#7A2331"/>${armL}${armR}`;
+    case 29: /* 마법사 로브 — 별무늬 + 로프 벨트 */
+      return `${clipOP}<g clip-path="url(#tc${uid})">${dressBase(86,52,'#2C2A4A')}<g fill="#F4D35E"><circle cx="20" cy="55" r="1.2"/><circle cx="30" cy="65" r="1.5"/><circle cx="42" cy="58" r="1.2"/><circle cx="46" cy="72" r="1.4"/><circle cx="24" cy="76" r="1.2"/></g></g><rect x="19" y="58" width="26" height="3" fill="#C9A227" opacity=".8"/>${armL}${armR}`;
+    case 30: /* 근위병 — 레드코트 + 블랙 트림 + 골드 버튼 */
+      return `${clipOP}<g clip-path="url(#tc${uid})">${dressBase(80,42,'#A6231F')}<rect x="10" y="36" width="44" height="6" fill="#1E1E1E"/><g fill="#C9A227"><circle cx="32" cy="44" r="1.2"/><circle cx="32" cy="50" r="1.2"/><circle cx="32" cy="56" r="1.2"/></g></g>${armL}${armR}`;
+    case 31: /* 작업복 — 안전조끼 + 반사 스트라이프 */
+      return `${clipOP}<g clip-path="url(#tc${uid})">${dressBase(80,40,'#4A4F58')}<path d="M12 40 L52 40 L50 78 L14 78 Z" fill="#F4A11E" opacity=".92"/><rect x="14" y="50" width="36" height="4" fill="#F4EFE6"/><rect x="14" y="62" width="36" height="4" fill="#F4EFE6"/></g>${armL}${armR}`;
+    case 32: /* 의사 가운 — 청진기 + ID 카드 */
+      return `${clipOP}<g clip-path="url(#tc${uid})">${dressBase(84,42,'#F4F1E8')}<path d="M30.5 36 v40" stroke="#D8D2C2" stroke-width="1.4"/></g><path d="M20 40 q6 14 12 16 q6 -2 12 -16" fill="none" stroke="#5C6A78" stroke-width="1.6"/><circle cx="32" cy="55" r="2.4" fill="#5C6A78"/><rect x="37" y="42" width="6" height="8" rx="1" fill="#4C9EE2"/>${armL}${armR}`;
+    case 33: /* 턱시도 — 보타이 + 화이트 셔츠 프론트 */
+      return `${clipOP}<g clip-path="url(#tc${uid})">${dressBase(84,38,'#1E1E22')}<path d="M25 36 L32 50 L39 36 Z" fill="#F4EFE6"/></g><path d="M28 38 l4 3 l4 -3 l-1 3 l1 2 l-4 -1 l-4 1 l1 -2Z" fill="#1E1E22"/>${armL}${armR}`;
     case 6: /* 민소매 */
       return `${clip}${body}${pat}<path d="M22 36 q10 7 20 0 l0 4 q-10 6 -20 0Z" fill="${sk}"/>${bareL}${bareR}`;
     case 7: /* 터틀넥 — 목을 감싸는 두툼한 롤넥 */
