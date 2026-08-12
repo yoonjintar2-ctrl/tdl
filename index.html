@@ -214,7 +214,8 @@ body.theme-dark .lg-zlab{color:rgba(255,255,255,0.11);}
 .lg-ch svg{position:absolute;left:0;bottom:6px;width:64px;height:96px;overflow:visible;}
 .lg-ch svg *{transform-box:fill-box;}
 .lg-ch .lg-l,.lg-ch .lg-r{transform-origin:50% 6%;}
-.lg-ch .ar-l,.lg-ch .ar-r{transform-origin:50% 8%;}
+.lg-ch .ar-l,.lg-ch .ar-r,.lg-ch .it-hand-l,.lg-ch .it-hand{transform-origin:50% 8%;}
+.it-hand,.it-hand-l{transform-origin:50% 8%;}
 .lg-ch .torso{transform-origin:50% 100%;}
 
 @keyframes chLegA{0%,100%{transform:rotate(24deg)}50%{transform:rotate(-24deg)}}
@@ -224,26 +225,26 @@ body.theme-dark .lg-zlab{color:rgba(255,255,255,0.11);}
 @keyframes chBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-2.5px)}}
 .lg-ch.walk .lg-l{animation:chLegA .44s linear infinite;}
 .lg-ch.walk .lg-r{animation:chLegB .44s linear infinite;}
-.lg-ch.walk .ar-l{animation:chArmB .44s linear infinite;}
-.lg-ch.walk .ar-r{animation:chArmA .44s linear infinite;}
+.lg-ch.walk .ar-l,.lg-ch.walk .it-hand-l{animation:chArmB .44s linear infinite;}
+.lg-ch.walk .ar-r,.lg-ch.walk .it-hand{animation:chArmA .44s linear infinite;}
 .lg-ch.walk .torso{animation:chBob .44s linear infinite;}
 
 .lg-ch.sit .lg-l{transform:rotate(74deg);}
 .lg-ch.sit .lg-r{transform:rotate(74deg);}
 .lg-ch.sit svg{bottom:-16px;}
-.lg-ch.sit .ar-l{transform:rotate(24deg);}
-.lg-ch.sit .ar-r{transform:rotate(24deg);}
+.lg-ch.sit .ar-l,.lg-ch.sit .it-hand-l{transform:rotate(24deg);}
+.lg-ch.sit .ar-r,.lg-ch.sit .it-hand{transform:rotate(24deg);}
 .lg-ch.sit .chsh{opacity:0.35;}
 
 @keyframes chWave{0%,100%{transform:rotate(-150deg)}50%{transform:rotate(-115deg)}}
-.lg-ch.wave .ar-r{animation:chWave .38s ease-in-out infinite;}
+.lg-ch.wave .ar-r,.lg-ch.wave .it-hand{animation:chWave .38s ease-in-out infinite;}
 @keyframes chJump{0%{transform:translateY(0)}30%{transform:translateY(-26px)}55%{transform:translateY(-26px)}100%{transform:translateY(0)}}
 .lg-ch.jump .flip{animation:chJump .5s ease-out;}
 @keyframes chSleep{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-3px) rotate(-3deg)}}
 @keyframes chSleepArm{0%,100%{transform:rotate(7deg)}50%{transform:rotate(11deg)}}
 .lg-ch.sleep{opacity:.8;}
 .lg-ch.sleep .torso{animation:chSleep 2.8s ease-in-out infinite;}
-.lg-ch.sleep .ar-l,.lg-ch.sleep .ar-r{animation:chSleepArm 2.8s ease-in-out infinite;}
+.lg-ch.sleep .ar-l,.lg-ch.sleep .ar-r,.lg-ch.sleep .it-hand-l,.lg-ch.sleep .it-hand{animation:chSleepArm 2.8s ease-in-out infinite;}
 .lg-ch.sleep .lg-l{transform:rotate(4deg);}
 .lg-ch.sleep .lg-r{transform:rotate(-4deg);}
 @keyframes chZ{0%{transform:translate(0,0) scale(.8);opacity:0}25%{opacity:.95}100%{transform:translate(12px,-26px) scale(1.2);opacity:0}}
@@ -251,8 +252,8 @@ body.theme-dark .lg-zlab{color:rgba(255,255,255,0.11);}
 .lg-ch .zzz.hidden{display:none;}
 @keyframes chDance{0%{transform:rotate(-9deg) translateY(0)}25%{transform:rotate(0deg) translateY(-7px)}50%{transform:rotate(9deg) translateY(0)}75%{transform:rotate(0deg) translateY(-7px)}100%{transform:rotate(-9deg) translateY(0)}}
 .lg-ch.dance .flip{animation:chDance .62s ease-in-out infinite;}
-.lg-ch.dance .ar-l{animation:chArmA .31s linear infinite;}
-.lg-ch.dance .ar-r{animation:chArmB .31s linear infinite;}
+.lg-ch.dance .ar-l,.lg-ch.dance .it-hand-l{animation:chArmA .31s linear infinite;}
+.lg-ch.dance .ar-r,.lg-ch.dance .it-hand{animation:chArmB .31s linear infinite;}
 
 .lg-ch .nm{position:absolute;left:50%;top:-6px;transform:translateX(-50%);font-size:11px;font-weight:700;color:#3B3A45;background:rgba(255,255,255,0.88);border-radius:9px;padding:1px 8px;white-space:nowrap;width:max-content;max-width:150px;overflow:hidden;text-overflow:ellipsis;}
 body.theme-dark .lg-ch .nm{color:#E8E8EC;background:rgba(0,0,0,0.55);}
@@ -457,7 +458,7 @@ body.mob #mApp{background:transparent;}
 #buddyAvatar #baBody svg{width:100%;height:100%;display:block;overflow:visible;filter:drop-shadow(0 3px 6px rgba(40,34,60,0.18));}
 #buddyAvatar #baBody svg *{transform-box:fill-box;}
 #buddyAvatar .lg-l,#buddyAvatar .lg-r{transform-origin:50% 6%;}
-#buddyAvatar .ar-l,#buddyAvatar .ar-r{transform-origin:50% 8%;}
+#buddyAvatar .ar-l,#buddyAvatar .ar-r,#buddyAvatar .it-hand-l,#buddyAvatar .it-hand{transform-origin:50% 8%;}
 #buddyAvatar .torso{transform-origin:50% 100%;}
 #buddyAvatar.face-l #baBody{transform:scaleX(-1);}
 
@@ -465,29 +466,29 @@ body.mob #mApp{background:transparent;}
 #buddyAvatar.act-idle .torso{animation:chBob 3.2s ease-in-out infinite;}
 #buddyAvatar.act-walk .lg-l{animation:chLegA 2.6s ease-in-out infinite;}
 #buddyAvatar.act-walk .lg-r{animation:chLegB 2.6s ease-in-out infinite;}
-#buddyAvatar.act-walk .ar-l{animation:chArmB 2.6s ease-in-out infinite;}
-#buddyAvatar.act-walk .ar-r{animation:chArmA 2.6s ease-in-out infinite;}
+#buddyAvatar.act-walk .ar-l,#buddyAvatar.act-walk .it-hand-l{animation:chArmB 2.6s ease-in-out infinite;}
+#buddyAvatar.act-walk .ar-r,#buddyAvatar.act-walk .it-hand{animation:chArmA 2.6s ease-in-out infinite;}
 #buddyAvatar.act-walk .torso{animation:chBob 2.6s ease-in-out infinite;}
-#buddyAvatar.act-wave .ar-r{animation:chWave .4s ease-in-out infinite;}
+#buddyAvatar.act-wave .ar-r,#buddyAvatar.act-wave .it-hand{animation:chWave .4s ease-in-out infinite;}
 @keyframes baStretchA{0%,100%{transform:rotate(0)}45%{transform:rotate(-165deg)}}
 @keyframes baStretchB{0%,100%{transform:rotate(0)}45%{transform:rotate(165deg)}}
 @keyframes baStretchT{0%,100%{transform:translateY(0) scaleY(1)}45%{transform:translateY(-3px) scaleY(1.06)}}
-#buddyAvatar.act-stretch .ar-l{animation:baStretchB 2.6s ease-in-out infinite;}
-#buddyAvatar.act-stretch .ar-r{animation:baStretchA 2.6s ease-in-out infinite;}
+#buddyAvatar.act-stretch .ar-l,#buddyAvatar.act-stretch .it-hand-l{animation:baStretchB 2.6s ease-in-out infinite;}
+#buddyAvatar.act-stretch .ar-r,#buddyAvatar.act-stretch .it-hand{animation:baStretchA 2.6s ease-in-out infinite;}
 #buddyAvatar.act-stretch .torso{animation:baStretchT 2.6s ease-in-out infinite;}
 @keyframes baYawnM{0%,100%{transform:scaleY(1)}40%,60%{transform:scaleY(2.6)}}
 @keyframes baYawnT{0%,100%{transform:rotate(0)}50%{transform:rotate(-4deg)}}
 #buddyAvatar.act-yawn .mth{animation:baYawnM 3s ease-in-out infinite;transform-origin:50% 50%;}
 #buddyAvatar.act-yawn .torso{animation:baYawnT 3s ease-in-out infinite;}
-#buddyAvatar.act-yawn .ar-r{transform:rotate(-140deg);}
+#buddyAvatar.act-yawn .ar-r,#buddyAvatar.act-yawn .it-hand{transform:rotate(-140deg);}
 @keyframes baHop2{0%,100%{transform:translateY(0)}40%{transform:translateY(-13px)}}
 #buddyAvatar.act-jump #baBody{animation:baHop2 .55s ease-out infinite;}
 #buddyAvatar.act-dance #baBody{animation:chDance .62s ease-in-out infinite;}
 /* 골프 스윙 */
 @keyframes baGolfA{0%,100%{transform:rotate(-20deg)}30%{transform:rotate(-125deg)}55%{transform:rotate(60deg)}}
 @keyframes baGolfT{0%,100%{transform:rotate(0)}30%{transform:rotate(-14deg)}55%{transform:rotate(16deg)}}
-#buddyAvatar.act-golf .ar-r{animation:baGolfA 2.6s ease-in-out infinite;}
-#buddyAvatar.act-golf .ar-l{animation:baGolfA 2.6s ease-in-out infinite;}
+#buddyAvatar.act-golf .ar-r,#buddyAvatar.act-golf .it-hand{animation:baGolfA 2.6s ease-in-out infinite;}
+#buddyAvatar.act-golf .ar-l,#buddyAvatar.act-golf .it-hand-l{animation:baGolfA 2.6s ease-in-out infinite;}
 #buddyAvatar.act-golf .torso{animation:baGolfT 2.6s ease-in-out infinite;}
 /* 푸시업 */
 @keyframes baPushB{0%,100%{transform:rotate(-72deg) translateY(0)}50%{transform:rotate(-72deg) translateY(9px)}}
@@ -495,11 +496,11 @@ body.mob #mApp{background:transparent;}
 /* 커피 마시기 */
 @keyframes baCoffeeA{0%,100%{transform:rotate(0)}35%,65%{transform:rotate(-115deg)}}
 @keyframes baCoffeeH{0%,100%{transform:rotate(0)}35%,65%{transform:rotate(-11deg)}}
-#buddyAvatar.act-coffee .ar-r{animation:baCoffeeA 3.2s ease-in-out infinite;}
+#buddyAvatar.act-coffee .ar-r,#buddyAvatar.act-coffee .it-hand{animation:baCoffeeA 3.2s ease-in-out infinite;}
 #buddyAvatar.act-coffee .head{animation:baCoffeeH 3.2s ease-in-out infinite;transform-origin:32px 38px;}
 /* 마우스에 매달리기 */
-#buddyAvatar.hang .ar-l{transform:rotate(168deg);}
-#buddyAvatar.hang .ar-r{transform:rotate(-168deg);}
+#buddyAvatar.hang .ar-l,#buddyAvatar.hang .it-hand-l{transform:rotate(168deg);}
+#buddyAvatar.hang .ar-r,#buddyAvatar.hang .it-hand{transform:rotate(-168deg);}
 #buddyAvatar.hang .lg-l{animation:baDangleA .7s ease-in-out infinite;}
 #buddyAvatar.hang .lg-r{animation:baDangleB .7s ease-in-out infinite;}
 #buddyAvatar.hang #baBody{animation:baSway .9s ease-in-out infinite;transform-origin:50% 8%;}
@@ -509,13 +510,13 @@ body.mob #mApp{background:transparent;}
 @keyframes baSway{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(4deg)}}
 @keyframes baSwayL{0%,100%{transform:scaleX(-1) rotate(-4deg)}50%{transform:scaleX(-1) rotate(4deg)}}
 #buddyAvatar.hang .ba-sh{opacity:0;}
-#buddyAvatar.act-dance .ar-l{animation:chArmA .31s linear infinite;}
-#buddyAvatar.act-dance .ar-r{animation:chArmB .31s linear infinite;}
+#buddyAvatar.act-dance .ar-l,#buddyAvatar.act-dance .it-hand-l{animation:chArmA .31s linear infinite;}
+#buddyAvatar.act-dance .ar-r,#buddyAvatar.act-dance .it-hand{animation:chArmB .31s linear infinite;}
 /* 신기해서 건드려보기 — 팔을 뻗었다 오므리고 고개를 갸웃 */
 @keyframes baPokeA{0%,100%{transform:rotate(0)}30%{transform:rotate(-78deg)}45%{transform:rotate(-64deg)}60%{transform:rotate(-78deg)}}
 @keyframes baPokeH{0%,100%{transform:rotate(0)}35%{transform:rotate(11deg)}70%{transform:rotate(-8deg)}}
 @keyframes baPokeB{0%,100%{transform:translateX(0)}35%{transform:translateX(3px)}}
-#buddyAvatar.act-poke .ar-r{animation:baPokeA 2.1s ease-in-out infinite;}
+#buddyAvatar.act-poke .ar-r,#buddyAvatar.act-poke .it-hand{animation:baPokeA 2.1s ease-in-out infinite;}
 #buddyAvatar.act-poke .head{animation:baPokeH 2.1s ease-in-out infinite;transform-origin:32px 38px;}
 #buddyAvatar.act-poke .torso{animation:baPokeB 2.1s ease-in-out infinite;}
 /* 말할 때 입 */
@@ -899,6 +900,7 @@ body.mob .ava-bg-dot{width:18px;height:18px;}
 .ava-opt-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(72px,1fr));gap:6px;}
 .ava-opt{border:1px solid var(--border-strong);background:var(--bg);color:var(--text);border-radius:10px;padding:8px 4px;font-size:calc(11px * var(--fs,1));cursor:pointer;font-family:inherit;width:100%;text-align:center;}
 .ava-opt-group{margin-bottom:12px;}
+.al-tag{display:inline-block;margin-right:6px;padding:1px 7px;border-radius:20px;background:var(--accent-soft);color:var(--accent-deep);font-weight:600;font-size:calc(10px * var(--fs,1));}
 .ava-opt.has-thumb{padding:5px 3px 6px;line-height:1.35;}
 .ava-thumb{width:100%;height:46px;overflow:hidden;display:flex;align-items:flex-start;justify-content:center;pointer-events:none;margin-bottom:2px;}
 .ava-thumb svg{display:block;}
@@ -1032,7 +1034,7 @@ body.theme-dark .overlay{background:rgba(0,0,0,0.5);}
 body.theme-dark .modal{box-shadow:0 24px 60px rgba(0,0,0,0.5);}
 body.theme-dark .date-btn:hover,body.theme-dark .info-detail input:focus{background:var(--accent-soft);}
 .overlay.hidden{display:none;}
-.modal{background:var(--panel);border-radius:20px;box-shadow:0 24px 60px rgba(60,50,90,0.22);width:470px;max-width:92vw;max-height:86vh;overflow:auto;padding:22px 24px;}
+.modal{position:relative;z-index:500;background:var(--panel);border-radius:20px;box-shadow:0 24px 60px rgba(60,50,90,0.22);width:470px;max-width:92vw;max-height:86vh;overflow:auto;padding:22px 24px;}
 .modal.hidden{display:none;}
 .modal h2{margin:0 0 12px;font-size:calc(15px * var(--fs,1));font-weight:600;color:var(--accent-deep);}
 .modal .row{display:flex;align-items:center;gap:6px;margin-bottom:8px;}
@@ -1851,7 +1853,7 @@ null
     <label class="chk-line"><input type="checkbox" id="setAvatarOn"> 화면에 캐릭터 표시</label>
     <div class="hint">끄면 캐릭터와 말풍선이 사라져요. (타이머 시계는 계속 표시됩니다)</div>
     <div class="field-label">미니홈피 · 방문객</div>
-    <label class="chk-line"><input type="checkbox" id="setBlockStrangers"> 모르는 사람의 파도타기 금지</label>
+    <label class="chk-line"><input type="checkbox" id="setBlockStrangers"> 모르는 사람에게 내 미니홈피 비공개</label>
     <div class="hint">켜두면 동료가 아닌 사람은 방명록 등을 통해 내 미니홈피에 들어올 수 없어요.</div>
     <div class="field-label">기타</div>
     <div class="row">
@@ -2552,7 +2554,7 @@ function exportBackup(){
 
 function updateFileStatusHint(t){ const el=document.getElementById('fileStatusHint'); if(el) el.textContent=t; }
 /* ═══════════════ 클라우드 저장 (Supabase) ═══════════════ */
-const APP_VER='ver 9.3', APP_BUILD='2026-08-12 07:30';
+const APP_VER='ver 9.5', APP_BUILD='2026-08-12 09:20';
 const LOGO_SRC='data:image/png;base64,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';
 function paintLogos(){ document.querySelectorAll('img.tdl-logo').forEach(i=>{ i.src=LOGO_SRC; }); }
 const IS_WEB = /^https?:$/i.test(location.protocol);
@@ -4050,7 +4052,16 @@ function showModal(id){
     m.insertBefore(x, m.firstChild);
   }
 }
-function hideModals(){ overlay.classList.add('hidden'); document.querySelectorAll('.modal').forEach(m=>m.classList.add('hidden')); }
+function hideModals(){
+  overlay.classList.add('hidden');
+  document.querySelectorAll('.modal').forEach(m=>m.classList.add('hidden'));
+  /* 미니홈피 팝업은 .modal 이 아니라서 따로 정리해줘야 한다.
+     열린 채로 남으면 다음에 오버레이가 열릴 때 위로 다시 튀어나와 화면을 막는다. */
+  try{
+    const v=document.getElementById('mhVisit');
+    if(v && !v.classList.contains('hidden') && typeof mhVisitClose==='function') mhVisitClose();
+  }catch(e){}
+}
 overlay.addEventListener('mousedown',(e)=>{ if(e.target===overlay) hideModals(); });
 /* 어떤 팝업이든 ESC로 닫힘 */
 document.addEventListener('keydown',(e)=>{
@@ -4885,7 +4896,7 @@ function clBuddyIds(){
   const me=cloudUser? cloudUser.id : null;
   return clBuddies.map(b=> b.requester===me? b.addressee : b.requester);
 }
-/* 모르는 사람의 파도타기 금지 — 방명록 등을 통해 남의 미니홈피로 갈 수 있는지 확인 */
+/* 모르는 사람에게 내 미니홈피 비공개 — 방명록 등을 통해 남의 미니홈피로 갈 수 있는지 확인 */
 function mhCanVisit(userId){
   const me=cloudUser&&cloudUser.id;
   if(!me||!userId||userId===me) return true;
@@ -5262,8 +5273,16 @@ async function clSaveAva(){
   lgSaveProfile();
   await clPushProfile();
   if(typeof baRender==='function') baRender();
-  hideModals(); showModal('collabModal');
-  mhTarget=null; await mhRender();
+  /* 아바타 편집 창만 닫고 원래 보고 있던 화면(미니홈피/커뮤니케이션)으로 자연스럽게 복귀 */
+  const mhWasOpen = !document.getElementById('mhVisit').classList.contains('hidden');
+  if(mhWasOpen){
+    document.getElementById('avaEditModal').classList.add('hidden');
+    mhTarget=null; await mhRender();
+  }else{
+    hideModals();
+    if(!IS_MOBILE) showModal('collabModal');
+    mhTarget=null; await mhRender();
+  }
   mhFlash('캐릭터 저장됨');
 }
 
@@ -5348,7 +5367,8 @@ async function clCreateShare(t, memberIds){
   if(!clOn()) return false;
   try{
     const members=Array.from(new Set([cloudUser.id].concat(memberIds)));
-    const {data,error}=await sb.from('shared_tasks').insert({owner:cloudUser.id, members, data:clPack(t)}).select();
+    const nowIso=new Date().toISOString();
+    const {data,error}=await sb.from('shared_tasks').insert({owner:cloudUser.id, members, data:clPack(t), created_at:nowIso, updated_at:nowIso, updated_by:cloudUser.id}).select();
     if(error) throw error;
     if(data&&data[0]){ t._sid=data[0].id; t._owner=cloudUser.id; t._members=members; clSharedRows.push(data[0]); }
     return true;
@@ -6156,6 +6176,14 @@ function alSaveSeen(at){
   }
 }
 /* 여러 곳의 소식을 하나의 목록으로 */
+/* 공유일정 알림에 붙일 카테고리·캠페인 라벨 (clPack 이 이미 이름을 담아 둠) */
+function alTaskTag(d){
+  if(!d) return '';
+  const out=[];
+  if(d.campName) out.push(((d.campIcon||'')+' '+d.campName).trim());
+  if(d.catName) out.push(d.catName);
+  return out.join(' · ');
+}
 function alBuild(){
   const me=cloudUser? cloudUser.id : null;
   const out=[];
@@ -6175,8 +6203,18 @@ function alBuild(){
       txt:clName(g.author)+'님이 방명록을 남겼어요: '+(g.body||'').slice(0,26), go:'ava'});
   });
   clSharedRows.forEach(r=>{
-    if(r.owner!==me) out.push({id:'sh:'+r.id, at:r.updated_at||new Date().toISOString(), ic:'share',
-      txt:clName(r.owner)+'님이 일정에 초대했어요: '+((r.data&&r.data.detail)||'').slice(0,26), go:null});
+    if(r.owner===me) return;                 /* 내가 만든 일정은 알림 대상이 아님 */
+    if(r.updated_by===me) return;            /* 내가 직접 고친 건 나에게 알리지 않음 */
+    const created=r.created_at||null, upd=r.updated_at||created;
+    /* 만든 시각과 마지막 수정 시각이 눈에 띄게 다르면 '수정'으로 본다.
+       created_at 컬럼을 아직 추가하지 않은 기존 데이터는 수정자로 판별 */
+    let edited=false;
+    if(created && upd) edited = (new Date(upd).getTime() - new Date(created).getTime()) > 5000;
+    else if(r.updated_by && r.updated_by!==r.owner) edited=true;
+    const who=clName(edited? (r.updated_by||r.owner) : r.owner);
+    out.push({id:'sh:'+r.id, at:upd||new Date().toISOString(), ic:'share',
+      txt:who+'님이 일정을 '+(edited?'수정했어요':'공유했어요')+': '+((r.data&&r.data.detail)||'').slice(0,26),
+      tag:alTaskTag(r.data), go:null});
   });
   out.sort((a,b)=> new Date(b.at||0) - new Date(a.at||0));
   alItems=out.slice(0,120);
@@ -6216,7 +6254,8 @@ function alRender(){
     const dt=new Date(it.at||Date.now());
     r.innerHTML='<span class="ic" data-ic="'+it.ic+'"></span>'
       +'<div class="cl-nm">'+escapeHtml(it.txt)
-      +'<small>'+(dt.getMonth()+1)+'/'+dt.getDate()+' '+pad2(dt.getHours())+':'+pad2(dt.getMinutes())+'</small></div>';
+      +'<small>'+(it.tag? '<span class="al-tag">'+escapeHtml(it.tag)+'</span>':'')
+      +(dt.getMonth()+1)+'/'+dt.getDate()+' '+pad2(dt.getHours())+':'+pad2(dt.getMinutes())+'</small></div>';
     r.addEventListener('click',()=>{
       const id=it.id||'';
       if(id.indexOf('msg:')===0){
@@ -9382,7 +9421,8 @@ function renderMcAlarm(){
     const dt=new Date(it.at||Date.now());
     r.innerHTML='<span class="ic" data-ic="'+it.ic+'"></span>'
       +'<div class="cl-nm">'+escapeHtml(it.txt)
-      +'<small>'+(dt.getMonth()+1)+'/'+dt.getDate()+' '+pad2(dt.getHours())+':'+pad2(dt.getMinutes())+'</small></div>';
+      +'<small>'+(it.tag? '<span class="al-tag">'+escapeHtml(it.tag)+'</span>':'')
+      +(dt.getMonth()+1)+'/'+dt.getDate()+' '+pad2(dt.getHours())+':'+pad2(dt.getMinutes())+'</small></div>';
     r.addEventListener('click',()=>mAlarmGo(it));
     box.appendChild(r);
   });
@@ -10283,7 +10323,8 @@ const ITEM_CATALOG=[
   {id:'i28',name:'반지',icon:'💍',price:28,slot:'wrist'},
   {id:'i29',name:'아이스크림',icon:'🍦',price:2,slot:'hand'},
   {id:'i30',name:'열쇠',icon:'🔑',price:3,slot:'hand'},
-  {id:'i31',name:'포르쉐 911',icon:'🏎️',price:120,slot:'ride'}
+  {id:'i31',name:'포르쉐 911',icon:'🏎️',price:120,slot:'ride'},
+  {id:'i32',name:'진주 목걸이',icon:'📿',price:30,slot:'neck'}
 ];
 const ITEM_SLOT_POS={
   head:{x:32,y:11,size:15}, face:{x:32,y:27,size:12}, neck:{x:32,y:35,size:12},
@@ -10309,6 +10350,23 @@ const ITEM_SVG={
   i6:()=>`<g fill="#17171a"><rect x="21" y="23.3" width="10" height="6.4" rx="3.1"/><rect x="33" y="23.3" width="10" height="6.4" rx="3.1"/>
     <rect x="30.6" y="25.4" width="2.8" height="1.6"/><rect x="19.4" y="25.3" width="2" height="1.1" rx=".5"/><rect x="42.6" y="25.3" width="2" height="1.1" rx=".5"/></g>`,
   /* 캡모자 — 정면에서 본 각도(챙이 앞으로) */
+  /* 손목시계 — 팔을 가로로 감는 방향으로, 검정 밴드 + 은색 케이스 */
+  i18:()=>`<g><rect x="11.3" y="55" width="9.4" height="7.4" rx="1.6" fill="#1E1E22"/>
+    <rect x="11.3" y="55" width="9.4" height="1.5" rx="0.7" fill="#34343A"/>
+    <rect x="12.9" y="55.6" width="6.2" height="6.2" rx="1.7" fill="#C7CBD1"/>
+    <rect x="13.7" y="56.4" width="4.6" height="4.6" rx="1.3" fill="#17171A"/>
+    <path d="M16 57.6 L16 58.9 L17.2 59.5" stroke="#E8EAEE" stroke-width="0.55" fill="none" stroke-linecap="round"/>
+    <circle cx="16" cy="58.7" r="0.45" fill="#E8EAEE"/>
+    <rect x="20.5" y="57.6" width="1.1" height="2.2" rx="0.5" fill="#9AA0AC"/></g>`,
+  /* 진주 목걸이 — 목선을 따라 흐르는 진주 한 줄 + 가운데 큰 알 */
+  i32:()=>`<g><path d="M23 36.5 Q32 46 41 36.5" fill="none" stroke="#C9C4B8" stroke-width="0.5"/>
+    <g fill="#F6F1E7" stroke="#DCD4C4" stroke-width="0.3">
+      <circle cx="23.6" cy="37.6" r="1.05"/><circle cx="25.7" cy="38.9" r="1.05"/><circle cx="28.4" cy="40.5" r="1.05"/>
+      <circle cx="31.1" cy="41.2" r="1.05"/><circle cx="32.9" cy="41.2" r="1.05"/><circle cx="35.6" cy="40.5" r="1.05"/>
+      <circle cx="38.3" cy="38.9" r="1.05"/><circle cx="40.4" cy="37.6" r="1.05"/></g>
+    <circle cx="32" cy="43.6" r="1.9" fill="#F6F1E7" stroke="#DCD4C4" stroke-width="0.3"/>
+    <circle cx="31.4" cy="43" r="0.6" fill="#FFFFFF" opacity=".9"/>
+    <circle cx="30.5" cy="40.7" r="0.35" fill="#FFFFFF" opacity=".8"/></g>`,
   i19:()=>`<g><path d="M17 16.5 Q17.5 1 32 1 Q46.5 1 47 16.5 Q32 20.5 17 16.5 Z" fill="#3B4B6B"/>
     <path d="M14.5 15.5 Q32 12.5 49.5 15.5 Q49.5 19.6 32 20.6 Q14.5 19.6 14.5 15.5 Z" fill="#2C3A54"/>
     <path d="M32 1.5 L32 17.5" stroke="#33425E" stroke-width="0.9" opacity=".55"/><circle cx="32" cy="2.2" r="1.8" fill="#2C3A54"/></g>`,
@@ -10406,14 +10464,25 @@ const ITEM_SVG={
     <g fill="#3A3A40"><circle cx="7" cy="86" r="1.4"/><circle cx="57" cy="86" r="1.4"/></g></g>`
 };
 /* 착용 중인 아이템을 캐릭터 위에 얹어 그림 */
+/* 얼굴에 고정되는 연출이라 팔을 따라 움직이면 안 되는 아이템 */
+const ITEM_NO_SWING=new Set(['i16']);
 function avaItemOverlay(pf){
   const ids=(pf&&pf.items)||[];
   if(!ids.length) return '';
+  const sk=CH_SKIN[((pf&&pf.sk)||0)%CH_SKIN.length];
   return ids.map(id=>{
     const it=getItem(id); if(!it) return '';
-    if(ITEM_SVG[id]) return ITEM_SVG[id](CH_SKIN[((pf&&pf.sk)||0)%CH_SKIN.length]);
-    const pos=ITEM_FIT[id]||ITEM_SLOT_POS[it.slot]||{x:32,y:70,size:13};
-    return '<text x="'+pos.x+'" y="'+pos.y+'" font-size="'+pos.size+'" text-anchor="middle" dominant-baseline="middle">'+it.icon+'</text>';
+    let g='';
+    if(ITEM_SVG[id]) g=ITEM_SVG[id](sk);
+    else{
+      const pos=ITEM_FIT[id]||ITEM_SLOT_POS[it.slot]||{x:32,y:70,size:13};
+      g='<text x="'+pos.x+'" y="'+pos.y+'" font-size="'+pos.size+'" text-anchor="middle" dominant-baseline="middle">'+it.icon+'</text>';
+    }
+    /* 손·손목 아이템은 팔과 똑같은 애니메이션 그룹으로 감싸서 동작 중에도 손에 붙어 있게 한다.
+       (SVG transform-box 기본값이 view-box 라 팔과 회전축이 정확히 일치한다) */
+    if(it.slot==='hand' && !ITEM_NO_SWING.has(id)) return '<g class="it-hand">'+g+'</g>';
+    if(it.slot==='wrist') return '<g class="it-hand-l">'+g+'</g>';
+    return g;
   }).join('');
 }
 /* 같은 부위(slot)에 이미 착용 중인 아이템이 있으면 자동으로 벗김 */
