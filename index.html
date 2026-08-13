@@ -83,8 +83,8 @@ body.mob .modal-actions button{padding:12px 16px;font-size:13.5px;}
 .tb-btn .ic{margin-right:1px;}
 .tb-btn.ic-only{padding-left:11px;padding-right:11px;}
 .tb-btn:hover .ic{color:var(--accent-deep);}
-#miniCalFab .ic,#noteFab .ic,#timeFab .ic,#loungeFab .ic,#commFab .ic{color:var(--text-dim);}
-#miniCalFab .ic svg,#noteFab .ic svg,#timeFab .ic svg,#loungeFab .ic svg,#commFab .ic svg{width:20px;height:20px;}
+#miniCalFab .ic,#noteFab .ic,#timeFab .ic,#loungeFab .ic,#commFab .ic,#homeFab .ic{color:var(--text-dim);}
+#miniCalFab .ic svg,#noteFab .ic svg,#timeFab .ic svg,#loungeFab .ic svg,#commFab .ic svg,#homeFab .ic svg{width:20px;height:20px;}
 #miniCalFab.on .ic,#noteFab.on .ic,#timeFab.on .ic,#loungeFab.on .ic{color:#fff;}
 .m-ic:active{background:var(--accent-soft);color:var(--accent-deep);}
 .m-ic.on{background:var(--accent-soft);color:var(--accent-deep);}
@@ -648,7 +648,7 @@ body.mob #mhVisit .mv2-body{padding:14px 14px calc(20px + env(safe-area-inset-bo
 #baClockMenu button{border:none;background:transparent;color:var(--text);font-family:inherit;font-size:calc(12.5px * var(--fs,1));padding:9px 12px;border-radius:8px;cursor:pointer;text-align:left;}
 #baClockMenu button:hover{background:var(--accent-soft);color:var(--accent-deep);}
 /* 플로팅 버튼은 아바타보다 위에 */
-#miniCalFab,#stickerFab,#noteFab,#timeFab,#loungeFab,#commFab{z-index:340;}
+#miniCalFab,#stickerFab,#noteFab,#timeFab,#loungeFab,#commFab,#homeFab{z-index:340;}
 #stickerPanel,#notePanel,#timePanel,#miniCal{z-index:345;}
 body.mob #buddyAvatar{display:none!important;}
 #newsText{position:absolute;left:0;top:50%;margin-top:-8px;display:inline-block;font-size:calc(11.5px * var(--fs,1));line-height:calc(16px * var(--fs,1));color:var(--text-dim);opacity:0;white-space:nowrap;cursor:pointer;letter-spacing:-0.1px;will-change:transform;}
@@ -718,7 +718,10 @@ body.theme-excel .save-btn .sv-sub{color:rgba(255,255,255,0.75);}
 /* ── 미니홈피 ── */
 .mh-top{display:flex;align-items:center;gap:10px;margin:2px 0 10px;font-size:calc(13px * var(--fs,1));}
 .mh-grid{display:grid;grid-template-columns:200px 1fr 260px;gap:10px;align-items:stretch;}
-.mh-col{display:flex;flex-direction:column;gap:10px;min-width:0;}
+.mh-col{display:flex;flex-direction:column;gap:10px;min-width:0;height:100%;}
+.mh-col>.mh-card:last-child{flex:1 1 auto;}
+.ms-q.q-ico{flex:0 0 auto;width:auto;padding-left:12px;padding-right:12px;}
+.ms-q.q-ico .ic svg{width:19px;height:19px;}
 .mh-mid{align-self:start;}
 .mh-card{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:10px;}
 .mh-card .field-label{margin-top:0;}
@@ -1213,20 +1216,25 @@ body.theme-dark #miniCal{box-shadow:0 10px 30px rgba(0,0,0,0.45);}
 .mc-cell.sun,.mc-cell.hol{color:#c0554f;}
 .mc-cell.today{background:var(--accent-soft);font-weight:700;}
 .mc-cell.hol{font-weight:600;}
-#miniCalFab,#stickerFab,#noteFab,#timeFab,#loungeFab,#commFab{position:fixed;bottom:16px;z-index:330;width:calc(46px * var(--fs));height:calc(46px * var(--fs));border-radius:50%;border:1px solid var(--line-strong);cursor:pointer;background:var(--panel);color:var(--text);font-size:calc(20px * var(--fs,1));box-shadow:0 6px 18px rgba(40,34,60,0.16);display:flex;align-items:center;justify-content:center;padding:0;line-height:1;}
+#miniCalFab,#stickerFab,#noteFab,#timeFab,#loungeFab,#commFab,#homeFab{position:fixed;bottom:16px;z-index:330;width:calc(46px * var(--fs));height:calc(46px * var(--fs));border-radius:50%;border:1px solid var(--line-strong);cursor:pointer;background:var(--panel);color:var(--text);font-size:calc(20px * var(--fs,1));box-shadow:0 6px 18px rgba(40,34,60,0.16);display:flex;align-items:center;justify-content:center;padding:0;line-height:1;}
 #miniCalFab{right:16px;}
 #noteFab{right:70px;}
 #timeFab{right:124px;}
 #loungeFab{right:178px;}
 #commFab{right:232px;}
-body.mob #commFab{display:none!important;}
+#homeFab{right:286px;}
+body.mob #commFab,body.mob #homeFab{display:none!important;}
+body:not(.mob) #collabModal .cl-tabs{display:none;}
+#bellDot{position:absolute;top:2px;right:2px;min-width:8px;height:8px;border-radius:5px;background:var(--imp-strong);}
+#bellDot.hidden{display:none;}
+#btnBell{position:relative;}
 #stickerFab{display:none!important;}
 #commDot{position:absolute;top:-2px;right:-2px;min-width:17px;height:17px;border-radius:9px;background:var(--imp-strong);color:#7A4B00;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;padding:0 4px;box-sizing:border-box;border:2px solid var(--panel);}
 #commDot.hidden{display:none;}
 #loungeFab .lgb{position:absolute;left:50%;transform:translateX(-50%);bottom:-3px;font-size:calc(7.5px * var(--fs,1));font-weight:700;letter-spacing:-0.2px;color:var(--text-dim);background:var(--panel);border-radius:7px;padding:0 4px;line-height:1.5;box-shadow:0 1px 3px rgba(0,0,0,0.12);white-space:nowrap;}
 #loungeFab .lgb.hidden{display:none;}
 #loungeFab.away{border-color:var(--accent);}
-#miniCalFab:hover,#stickerFab:hover,#noteFab:hover,#timeFab:hover,#loungeFab:hover,#commFab:hover{background:var(--accent-soft);}
+#miniCalFab:hover,#stickerFab:hover,#noteFab:hover,#timeFab:hover,#loungeFab:hover,#commFab:hover,#homeFab:hover{background:var(--accent-soft);}
 #miniCalFab.on,#stickerFab.on,#noteFab.on,#timeFab.on,#loungeFab.on{background:var(--accent);color:#fff;border-color:transparent;}
 body.theme-dark #miniCalFab,body.theme-dark #stickerFab,body.theme-dark #noteFab,body.theme-dark #timeFab,body.theme-dark #loungeFab{box-shadow:0 6px 18px rgba(0,0,0,0.45);}
 #timePanel{position:fixed;right:178px;bottom:72px;z-index:320;width:262px;background:var(--panel);border:1px solid var(--line-strong);border-radius:14px;box-shadow:0 10px 30px rgba(40,34,60,0.2);padding:11px;}
@@ -1488,6 +1496,7 @@ null
         <button class="tb-btn save-btn" id="btnSave"><span class="sv-main">💾 저장</span><span class="sv-sub" id="svSub">연결 필요</span></button>
         <span id="btnCollab" class="hidden"><span id="collabDot" class="hidden"></span></span>
         <button class="tb-btn" id="btnQr" title="휴대폰으로 접속할 수 있는 QR 코드"><span class="ic" data-ic="mobile"></span> 모바일</button>
+        <button class="tb-btn ic-only" id="btnBell" title="알림"><span class="ic" data-ic="bell"></span><span id="bellDot" class="hidden"></span></button>
         <button class="tb-btn ic-only" id="btnSettings" title="설정"><span class="ic" data-ic="gear"></span></button>
       </div>
     </div>
@@ -1694,9 +1703,9 @@ null
 
     <div class="ms-quick">
       <button class="ms-q" id="msDate"><span class="ic" data-ic="calendar"></span><span class="q-t">날짜 선택</span></button>
-      <button class="ms-q" id="msTimeBtn"><span class="ic" data-ic="clock"></span><span class="q-t">시간</span></button>
-      <button class="ms-q" id="msLinkBtn"><span class="ic" data-ic="link"></span><span class="q-t">링크</span></button>
-      <button class="ms-q ms-star" id="msImp" title="즐겨찾기"><span class="ic" data-ic="star"></span><span class="q-t">즐겨찾기</span></button>
+      <button class="ms-q q-ico" id="msTimeBtn" title="시간" aria-label="시간"><span class="ic" data-ic="clock"></span></button>
+      <button class="ms-q q-ico" id="msLinkBtn" title="링크" aria-label="링크"><span class="ic" data-ic="link"></span></button>
+      <button class="ms-q ms-star q-ico" id="msImp" title="즐겨찾기" aria-label="즐겨찾기"><span class="ic" data-ic="star"></span></button>
     </div>
 
     <div class="ms-lab">분류</div>
@@ -1728,7 +1737,8 @@ null
 </div>
 <button id="miniCalFab" title="달력"><span class="ic" data-ic="calendar"></span></button>
 <button id="loungeFab" title="사이버 탕비실 — 다른 사용자와 잡담"><span class="ic" data-ic="cup"></span><span class="lgb hidden" id="lgFabBadge">대기중</span></button>
-<button id="commFab" title="커뮤니케이션 — 동료 · 쪽지 · 미니홈피"><span class="ic" data-ic="homechat"></span><span id="commDot" class="hidden"></span></button>
+<button id="commFab" title="동료 · 쪽지"><span class="ic" data-ic="people"></span><span id="commDot" class="hidden"></span></button>
+<button id="homeFab" title="내 미니홈피 · 파도타기"><span class="ic" data-ic="house"></span></button>
 
 <div id="lounge" class="hidden">
   <div class="lg-shell">
@@ -2058,6 +2068,11 @@ null
     </div>
 
     <div class="cl-pane hidden" id="ctAva">
+      <div class="row" style="margin-bottom:8px;gap:6px;">
+        <button class="btn" id="mhSurfBtn" title="동료의 미니홈피를 무작위로 방문해요">🌊 파도타기</button>
+        <button class="btn" id="mhSurfPick" title="동료를 골라서 방문">👥 동료 골라 방문</button>
+      </div>
+      <div id="mhSurfList" class="cl-list hidden" style="max-height:220px;margin-bottom:8px;"></div>
       <div class="mh-top">
         <button class="btn" id="mhBack" style="display:none;">← 내 미니홈피</button>
         <b id="mhTitle">내 미니홈피</b>
@@ -2698,7 +2713,7 @@ function exportBackup(){
 
 function updateFileStatusHint(t){ const el=document.getElementById('fileStatusHint'); if(el) el.textContent=t; }
 /* ═══════════════ 클라우드 저장 (Supabase) ═══════════════ */
-const APP_VER='ver 12.1', APP_BUILD='2026-08-13 21:10';
+const APP_VER='ver 12.2', APP_BUILD='2026-08-14 00:40';
 const LOGO_SRC='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOAAAADgCAMAAAAt85rTAAAAYFBMVEX94cwnIh9nXFL84suunIz8qqrgyrXKtaL31rqGeGz/f3+UhXj//3/83shDPDZLQzz//wC0tLT/AAB/f3/94ssAAAABAQD+8dj///743sf848z94sv/v7/84sr//7H84stYzgMqAAAAIHRSTlMc//+s/wP//wv/Av8CWP//AQMBAv4A//4B/9CQBE4DceOdScMAAAtmSURBVHja3Z3pdqMgFICvu1matB0t4BLf/y0HUBM1cWELRM6ZnvnRGr/cFbhwITcyzvj20/4PAOqmDIKiKLLHKIogKJsaIG1/K7rhs5k3Af2P/IerDo2RDbFejKLgnPwPKnx0HhBHFeaPrTkaQtnq4L8TlDV/E1xF2F1AHPVwjC0TGvTXix7yhp0EjCqulo043AiSW2UVuQb4r+pFJwn3gOwEWR0dAoxu7EnqdA9G9lpR5AYgxtRkmGZqobszNtA92jIgDwlQ6qTrGQOuqdgqIBdeXejH68RYp+1nWAJk0qO6aYSuY+Sa+oOtAH5z08sM4rVi5Mb4/X5A6jhT43gdYso/7q2A1DDMKudEUSNpUwRZ31K/C69FrGW9jQwgDcAQZG8eLGjc3gJIfWdaZhYGTW8khAgSzuWt2jnR05thQCo+sCK+uxBFUxsxQGxNfENnYw7wJ48siq8TYppXhgDxLQeb4uuFKOZrQEQ9m8yJ0YioKWz3nvbV866m1XbCrYCVC+r5UNN0c7yAzXyZU+Nrq6uBje6lzhwbTb5tdXELID674l5GhpifsR7AY56XyD1AVB7zsw5AOvMLHOSjhMEWZwrrfKmbfIwQ8kgV0GG+NlxgNUDsUvibydtUAM9u822R4SLg+RsCp/laGZ5lAfHReT7madLFyQUs5S/YfT5GuLhjCkv5Z/kBfCziL+WlsDA/aj6Cj8lwYW4B8/L7yj5loK95Qphd3IXsgwbMEsJcgv1RfIzwLAKIIyg+C7CAGVcKH+1ANzgaeJ2BWnUwJCN8iDoavBUQWzZApjyoqwITAH09dwL3DDDxr77vH8IwiUlXyrYJsoBXdW5g1gCJBN/fY3ie75+SuBUqWTfDagtgpMsAidQfIf/vaXj+gVKiVUnWL5QUnrendRggexOUxUmYCIK+BOSQ10NCOOSSGT5PLJ4B1RWU05HkcPHYi8WCooy9v7nh+WEsqqTwlGLX6nRZHPr31/RiwSfE/jzi3981XFZSvAxIFbRQo0MjOjZ8YWuMw4PvzVIufWPFk5JOAXOFOe5Udt24SDyHBgcShyf/6okR0rnhImAk72G43YWvtCuU0QQudBYDuTQnTzwgsjncTwBlBchUM3lF511DBYVvMTOSnEbP9hcApzkpaPAwzPLikyfu9bZjMsjDZYsEqZ+5zQHKeRjCsyvvFR1BSDLez8TV1gSW/XIxXmWDUY4mtwoTPsdm75BsyDzErTyjZu4vawVqRsEQ1HIY+qHhZUp3OcXa6QaCXBXCKFQMASUEiGJ/hs7YZHH1e6MifAkolYSe3ku3dWY4OAQFSgL0x3bnBN0k2oOKAId8fuIG3dQKQdqFEnQaCs8durEjhXsNvXgMvPZ4J4LcoZuIEO4WKJrE9FNTs3hEKtgMRPgAFE9i2NTUtPSQXG5cTCV4+5WZRpAwMaycie/LJev1bzQClJ5GmLU9v50wSy10jwBl91qM0pEsXJ8dLcwLjwPAysnNTtJPUWIFNwNduZ17m0l3Aa7M/+bcTLfbBM7udhJ0uK+kSYXC1gpB/24Z0QV4zwQ9uYS06gG/87TQysd2E4hlwKyA/LsD1FzPG1LfcI11SvAi9YB2ERj0rNY/uQYv1uhkpOJEp6PAKyZ1aqgnu549HyYSuXSN1+mB3g1dgu5fu7oIezd6lXwAry0BvSVN5DEJDpG6O/VVtJ3q6K2ToM4o7ykZztOaj+f50o/hUwrQXfOjFxBlKge9WTkwSEx13whIlALqFwfUmsYMbPCEbK9i8EBBJXjUGSQeK1FJZn0wIwTdVT998LpmDgwqPtBsgvf8I3YBsM4ruGmvu2M7hV7iwjoii4QQ5dovNYjDkLixThpQFdU/13VpCZjimZjME+ISoHNnO3UaYU0BG7RjwIYClnsGDChgsGMVzYocUqsroqbdUZGCzRVRIrt5JOBGrQJm8emUmAa0GSUOsptHAtkoNPb0M9Q4M54bjc0LjB6rguYIS4uA9+Jsz6AEAwjsS9Ckkgb2DrkMtse0rKHOBEKrp3geRaaxKTO0C/g4xeMZ+wyricxASY2ZoeW966txM7QMGBs3Q7uAg902Fg3J/iQ4PGzmxWh/gKNY4Z0MLMnZBiSj43QX/WmpdQkOzZAfdCJ7U9FhNDQwtXCghmt8qtXbnZNhY0ioOeK7cWcFCr0/tbImN5PtgZYOjgjFegHdWPcl2cOZanWkAbiysE3uEf+AtAK6cq/tw5dqnTmVYP3m0G71/hEOfZ0q2kBtWzO7n4YkWIP1ZDQM47Zcy4gNgm1AHgCvjPFgxIuC5e2z5HFzjJE4WKSQFzYN8MXdKlpNsLC9hf3idgGd+2motF2E4JkVIC9CsBgnhqdkzWzE1GYKgSQnSn/6a9zAOmAWegb5GCC2XEeCsuTQxQjvoHtplBXj3SxXAvXXd4UGjsvyckps/6LU7locA4uiX1SCZzfODhIjJUGspDnH+MOuEhXIY37YsYLbbsvx+Nke7QdDXBo1Pzfxcdf5ipjgWf/hLJdMsDs/eNtp0e/9eN1trzoK9/ODsEsdLVJ2DFv3IWWnNPRxCnuXgeJxzPx7nzr6uCjgAy9G36ShlduXdagLMBpct7K/hHt03YqjF+Yoaej4wpwd5qPjK48ULq1yVICTS6vy6HdnIrxfuH2/OO64KzdTRNOr/6q8Rjt0MQMJ4l1lM4C/la/fdFuAWMsFqg4LEOu5AtfpidIU8LgfEb6+xJg1I0J7s8Ax4BF2Z4HTq+BdESG5/1CKgVPA77fEQrKy09Le258kstUkRXrGmtsxCH7D3b9XmO1d9qRtfiB5uHfS9gUmLW3Mb/cePM8/hMn9iDnpR8avLB70VJEiDJY7hpgPFX1vA+9CMdveX+2gqMmkpYpMycy08zBo77q0aH/jIwSsguvC+pwdDvTnc58e8fr05y59etsSrY+llkp/6oCrbYmMLwILAcaqHuZVa7DK5OLFbGez1wIUDYWvOvIaau42O+KtdJ4v4WKGSehCez6DSkqyxNtEF8pcE7ypPZ9hJaWDBoPrAqV3ObCSIHG8rQ0WzXvSvrHZxXvRZDCU7vhTwM+2FpnGtyrujc0IK+FiIdDnTT9Zz0+FgifIf7a2qX3HtKLPRNFjPODVJxErjYbfVxxEBkNxmaISaRV9Sz+tVTSORFpF5+edN/v+uNqSmT7RC4CU8IOWoJrZdvTzgGrtQN+9DjrLtwD4MaUJbJ33WwYQf8auKArmHOgaIM3ZUvcJUfFiCrERkAWLArnOl+Y4lwXkdXrIcfkt860Auk64zrcGyNuJIJf5olwNkM2dXPU0zP7W+NYBqQwrNwlRkK7p5yZA6kuPLkZ8VEZzCbYgYE7jTOkeIM1f/uV6AOn00P4Jruf8OsK5LkC+iOEWXz0zgZcFZPNDd8IFCw+3XC8gC4jOuJpyi/sUBWSPbFwxv+18AoDM1Tigplw9t/OJADJXY/9+Haqelcg7CwGypeM6QzbFV+fr2ZkCYM4aGVkUYslO5OYmAVm8yGs7lsjFdxN9X2FA9hWmpSXru+HcPCD/Ft9/W1kAEuKTBOR28FY95dqJcf4uQP5hUfMuRJQ1dGaE5d5UEpCrS9q8I2RQvFQkddEFmH+zI86laUTEQoOkdioC0o+lcR+MKioqGjU8NcD2o6EuzIgRZep4qoD043m34kA/IsqCmqW/WPEFVQG7b5hqqk7GTniq0tMDyNZOWf4LpSZGSlfCuXuqG4B5fuSaWqszMro6Zbp51PNmmgDz/DdijDcmR1lI+mdUduyNquhX13tpA+RTfm4yXJCikByuhsFjHATku8JVD8nS8S2tzfjvBD1cFWG9b6QZsD0E1R3whropi5WCoqIImhr6w+5n/W9jAJAZJK56PQOAr6YMgjEp5QpKRga9dlf418ir/AfTnmki8JgsHQAAAABJRU5ErkJggg==';
 function paintLogos(){ document.querySelectorAll('img.tdl-logo').forEach(i=>{ i.src=LOGO_SRC; }); }
 const IS_WEB = /^https?:$/i.test(location.protocol);
@@ -6882,6 +6897,42 @@ document.getElementById('commCoin').addEventListener('click', ()=>{
 document.getElementById('coinHistClose').addEventListener('click', ()=>{
   showModal('collabModal');
 });
+/* 커뮤니케이션을 알림 · 동료 · 미니홈피 세 갈래로 분리해서 여는 진입점 */
+function clOpenSolo(tab){
+  hideModals(); showModal('collabModal'); clSetTab(tab);
+  const h=document.querySelector('#collabModal .cl-head-row h2');
+  if(h) h.textContent=({alarm:'🔔 알림', buddy:'👥 동료 · 쪽지', ava:'🏠 내 미니홈피'})[tab]||'💬 커뮤니케이션';
+}
+(function(){
+  const bell=document.getElementById('btnBell');
+  if(bell) bell.addEventListener('click', ()=>clOpenSolo('alarm'));
+  const hf=document.getElementById('homeFab');
+  if(hf) hf.addEventListener('click', ()=>clOpenSolo('ava'));
+  const sb2=document.getElementById('mhSurfBtn');
+  if(sb2) sb2.addEventListener('click', ()=>{
+    const list=(clBuddies||[]).filter(b=>b && b.user_id);
+    if(!list.length){ flashHist('아직 동료가 없어요. 동료를 먼저 추가해 주세요.'); return; }
+    const pick=list[Math.floor(Math.random()*list.length)];
+    mhVisit(pick.user_id);
+  });
+  const sp=document.getElementById('mhSurfPick');
+  if(sp) sp.addEventListener('click', ()=>{
+    const box=document.getElementById('mhSurfList'); if(!box) return;
+    if(!box.classList.contains('hidden')){ box.classList.add('hidden'); return; }
+    box.innerHTML='';
+    const list=(clBuddies||[]).filter(b=>b && b.user_id);
+    if(!list.length){ box.innerHTML='<div class="hint">아직 동료가 없어요.</div>'; }
+    list.forEach(b=>{
+      const pr=(clProfiles||{})[b.user_id]||{};
+      const r=document.createElement('button'); r.className='mset-row';
+      r.innerHTML='<span class="mh-mini-ava">'+chSvg(pr.avatar||{}, avaItemOverlay(pr.avatar||{}))+'</span>'
+                 +'<span class="mset-tx"><b>'+escapeHtml(pr.nickname||b.email||'동료')+'</b></span>';
+      r.addEventListener('click',()=>mhVisit(b.user_id));
+      box.appendChild(r);
+    });
+    box.classList.remove('hidden');
+  });
+})();
 document.getElementById('closeCollabModal').addEventListener('click', ()=>{ document.getElementById('collabModal').classList.remove('mh-mobile'); hideModals(); });
 function clSetTab(k){
   clTab=k;
@@ -7069,6 +7120,8 @@ function filterRangeBounds(){
 (function(){ const b=document.getElementById('btnFilter'); if(b && typeof mIcon==='function') b.innerHTML=mIcon('filter'); })();
 document.getElementById('btnFilter').addEventListener('click', openFilterModal);
 (function(){
+  const bd=document.getElementById('bellDot');
+  if(bd) bd.classList.toggle('hidden', !(clUnread>0));
   const cf=document.getElementById('commFab');
   if(cf) cf.addEventListener('click',()=>{
     if(!clOn()){ alert('클라우드에 로그인하면 커뮤니케이션 기능을 쓸 수 있어요.'); return; }
@@ -9219,6 +9272,8 @@ function openMSet(){
 
   sec('내 캐릭터');
   row('🧑','캐릭터 꾸미기','옷·헤어·아이템을 바꿔요', ()=>{ avaGrandfatherCurrent(); showModal('avaEditModal'); clRenderAva(); });
+  row('🪙','돌리코인 '+coinFmt(coinBalance())+'개','눌러서 적립·사용 내역을 봐요',
+      ()=>{ showModal('coinHistModal'); renderCoinHist(); });
 
   sec('화면');
   row('🎨','테마 · 글자 크기','PC 설정 화면을 그대로 사용해요', ()=>{ showModal('settingsModal'); });
@@ -10200,6 +10255,7 @@ function mIcon(name){
     repeat:`<path d="M4 11 a8 8 0 0 1 8-7.4 a8 8 0 0 1 7 4.1" ${A}/><path d="M15.6 3.6 L19 7.8 L14.4 8.6" ${A}/><path d="M20 13 a8 8 0 0 1-8 7.4 a8 8 0 0 1-7-4.1" ${A}/><path d="M8.4 20.4 L5 16.2 L9.6 15.4" ${A}/>`,
     star:`<path d="M12 3.2 l2.7 5.7 6.1.7 -4.5 4.3 1.2 6.1 -5.5-3 -5.5 3 1.2-6.1 -4.5-4.3 6.1-.7Z" ${A}/>`,
     check:`<path d="M4.4 12.6 L9.4 17.6 L19.6 6.4" ${A}/>`,
+    house:`<path d="M3.6 10.8 L12 3.8 L20.4 10.8" ${A}/><path d="M5.8 12.4 V19.4 A1.7 1.7 0 0 0 7.5 21.1 H16.5 A1.7 1.7 0 0 0 18.2 19.4 V12.4" ${A}/><path d="M9.9 21.1 V14.6 h4.2 v6.5" ${A}/>`,
     pen:`<path d="M4 20 L4.9 16.1 L15.6 5.4 a1.9 1.9 0 0 1 2.7 0 l1.4 1.4 a1.9 1.9 0 0 1 0 2.7 L9 19.1 Z" ${A}/><path d="M14.4 6.6 L17.9 10.1" ${A}/><path d="M4.9 16.1 L8 19.2" ${A}/>`,
     sofa:`<path d="M4 12.4 V8.6 a2 2 0 0 1 2-2 h12 a2 2 0 0 1 2 2 v3.8" ${A}/><path d="M3 12.4 a1.9 1.9 0 0 1 1.9 1.9 v2.1 h14.2 v-2.1 A1.9 1.9 0 0 1 21 12.4" ${A}/><path d="M4.9 16.4 v2.2 M19.1 16.4 v2.2 M7.4 6.8 v5.6 M16.6 6.8 v5.6" ${A}/>`
   };
@@ -11301,7 +11357,8 @@ const ITEM_CATALOG=[
   {id:'i38',name:'러닝모자 · 포니테일',icon:'🧢',price:12,slot:'head'},
   {id:'i39',name:'무테 선글라스',icon:'🕶️',price:12,slot:'face'},
   {id:'i40',name:'클로버 목걸이',icon:'🍀',price:60,slot:'neck'},
-  {id:'i41',name:'고딕 크로스 목걸이',icon:'✝️',price:55,slot:'neck'}
+  {id:'i41',name:'고딕 크로스 목걸이',icon:'✝️',price:55,slot:'neck'},
+  {id:'i42',name:'무테 안경',icon:'👓',price:10,slot:'face'}
 ];
 /* 색을 고를 수 있는 아이템 — 아이템 탭에서 색 팔레트를 함께 보여 준다 */
 const ITEM_COLORABLE={ i21:['#3E4C63','#2B2B31','#8C4A3C','#5C6B4A','#7A4A6B','#C4C0B4','#B8863A','#3E6B63'] };
@@ -11321,6 +11378,13 @@ const ITEM_FIT={
   i19:{x:32,y:9,size:19},   /* 캡모자 — 머리 위를 넓게 덮도록 */
   i11:{x:50,y:58,size:25}   /* 우산 — 손에 든 것치고 너무 작지 않도록 */
 };
+/* 아이템 탭 분류 — 무료는 위에 따로 빼고, 유료만 성격별로 묶는다 */
+const ITEM_TAB_CATS=[
+  {label:'👓 얼굴 · 액세서리', ids:['i6','i39','i42','i5','i32','i40','i41','i18','i21']},
+  {label:'🎒 가방 · 소지품',   ids:['i3','i4','i15','i11','i30','i10','i29','i17','i2']},
+  {label:'🎸 취미 · 스포츠',   ids:['i12','i24','i25','i13','i14','i16']},
+  {label:'⚔️ 판타지 · 특별',   ids:['i1','i8','i22','i23','i31']}
+];
 function getItem(id){ return ITEM_CATALOG.find(x=>x.id===id); }
 /* 이모지 글리프는 폰트마다 색·형태가 달라 귀/눈 등에 핏하게 맞추기 어려운 아이템은
    직접 그린 SVG로 대체 — 위치·크기·색을 정확히 통제 */
@@ -11462,13 +11526,29 @@ const ITEM_SVG={
     <path d="M22.4 25 q3.2 -0.9 6 -0.2" fill="none" stroke="#FFFFFF" stroke-width="1.1" opacity=".35" stroke-linecap="round"/>
     <path d="M30.8 24.6 h2.4" stroke="#B9A15E" stroke-width="1" stroke-linecap="round"/>
     <path d="M20.4 24.4 L18.2 25.2 M43.6 24.4 L45.8 25.2" stroke="#B9A15E" stroke-width="1" stroke-linecap="round"/></g>`,
+  /* 무테 안경 — 아주 옅은 하늘색 렌즈, 가로로 넓은 직사각형 */
+  i42:()=>`<g>
+    <rect x="18.8" y="22.9" width="12.2" height="6.2" rx="1.4" fill="#BFE6F5" opacity=".42"/>
+    <rect x="33" y="22.9" width="12.2" height="6.2" rx="1.4" fill="#BFE6F5" opacity=".42"/>
+    <rect x="18.8" y="22.9" width="12.2" height="6.2" rx="1.4" fill="none" stroke="#9CC9DC" stroke-width="0.35" opacity=".7"/>
+    <rect x="33" y="22.9" width="12.2" height="6.2" rx="1.4" fill="none" stroke="#9CC9DC" stroke-width="0.35" opacity=".7"/>
+    <path d="M20.4 24.2 L23.8 24.2 L20.4 27.6 Z" fill="#FFFFFF" opacity=".5"/>
+    <path d="M34.6 24.2 L38 24.2 L34.6 27.6 Z" fill="#FFFFFF" opacity=".5"/>
+    <path d="M31 25.4 h2" stroke="#A8AEB4" stroke-width="0.85" stroke-linecap="round"/>
+    <path d="M18.8 24.4 L16.4 25.4 M45.2 24.4 L47.6 25.4" stroke="#A8AEB4" stroke-width="0.85" stroke-linecap="round"/></g>`,
   /* 클로버 목걸이 — 금체인 + 네잎클로버 모티프 */
-  i40:()=>{ const cl=(x,y,r)=>{
-      const p=[[0,-1],[1,0],[0,1],[-1,0]].map(v=>`<ellipse cx="${(x+v[0]*r*0.56).toFixed(2)}" cy="${(y+v[1]*r*0.56).toFixed(2)}" rx="${(v[0]?r*0.62:r*0.5).toFixed(2)}" ry="${(v[0]?r*0.5:r*0.62).toFixed(2)}"/>`).join('');
-      return `<g fill="#F7F4EE" stroke="#C9A227" stroke-width="0.42">${p}</g><circle cx="${x}" cy="${y}" r="${(r*0.24).toFixed(2)}" fill="#D8B84A"/>`; };
-    return `<g><path d="M22.6 36.4 Q32 46.4 41.4 36.4" fill="none" stroke="#D8B84A" stroke-width="0.8"/>
-    ${cl(24.6,38.8,2.3)}${cl(28.6,41.6,2.3)}${cl(35.4,41.6,2.3)}${cl(39.4,38.8,2.3)}
-    ${cl(32,45,3.1)}</g>`; },
+  i40:()=>{ const cl=(x,y,r,dl)=>{
+      const pet=[[0,-1],[1,0],[0,1],[-1,0]].map(v=>`<ellipse cx="${(x+v[0]*r*0.56).toFixed(2)}" cy="${(y+v[1]*r*0.56).toFixed(2)}" rx="${(v[0]?r*0.62:r*0.5).toFixed(2)}" ry="${(v[0]?r*0.5:r*0.62).toFixed(2)}"/>`).join('');
+      return `<g fill="#8E7A3E" opacity=".5" transform="translate(0.35 0.45)">${pet}</g>`
+           + `<g fill="#F7F3E6" stroke="#B8912F" stroke-width="0.5">${pet}</g>`
+           + `<ellipse cx="${(x-r*0.2).toFixed(2)}" cy="${(y-r*0.66).toFixed(2)}" rx="${(r*0.24).toFixed(2)}" ry="${(r*0.3).toFixed(2)}" fill="#FFFFFF" opacity=".85"/>`
+           + `<circle cx="${x}" cy="${y}" r="${(r*0.26).toFixed(2)}" fill="#D8B84A" stroke="#A8801C" stroke-width="0.3"/>`
+           + `<circle class="fx-twinkle" style="animation-delay:${dl}s" cx="${(x-r*0.34).toFixed(2)}" cy="${(y-r*0.4).toFixed(2)}" r="${(r*0.3).toFixed(2)}" fill="#FFFFFF"/>`; };
+    return `<g><path d="M22.6 36.4 Q32 46.6 41.4 36.4" fill="none" stroke="#8E7A3E" stroke-width="1.3" opacity=".45"/>
+    <path d="M22.6 36.4 Q32 46.4 41.4 36.4" fill="none" stroke="#D8B84A" stroke-width="0.8"/>
+    ${cl(24.6,38.8,2.3,0)}${cl(28.6,41.6,2.3,.45)}${cl(35.4,41.6,2.3,.9)}${cl(39.4,38.8,2.3,1.35)}
+    ${cl(32,45,3.2,.7)}</g>`; },
+
   /* 고딕 크로스 목걸이 — 실버 체인 + 장식 십자가 */
   i41:()=>`<g><path d="M23.4 36.4 Q32 45.2 40.6 36.4" fill="none" stroke="#9EA2A8" stroke-width="0.8"/>
     <g fill="#C8CCD2" stroke="#7C8088" stroke-width="0.4">
@@ -11488,7 +11568,7 @@ const ITEM_SVG={
     <ellipse cx="45" cy="58.4" rx="8.6" ry="7.6" fill="#A9531F" opacity=".25"/>
     <rect x="10" y="59" width="26" height="5" rx="1.2" fill="#6B4A34"/>
     <rect x="34" y="58.4" width="4" height="6.2" rx="1" fill="#5C3F2C"/>
-    <g transform="rotate(-80 10.6 61.5)">
+    <g transform="rotate(-104 10.6 61.5)">
       <rect x="3.6" y="57.6" width="7.2" height="7.8" rx="1.6" fill="#3E332A"/>
       <g fill="#C9C4B8"><circle cx="5.6" cy="59.6" r="0.7"/><circle cx="5.6" cy="63.4" r="0.7"/><circle cx="8.8" cy="59.6" r="0.7"/><circle cx="8.8" cy="63.4" r="0.7"/></g>
     </g>
@@ -11668,15 +11748,29 @@ function renderAvaItemTab(box){
     });
     wrap.appendChild(row); box.appendChild(wrap);
   });
-  const grid=document.createElement('div'); grid.className='ava-opt-grid';
-  ITEM_CATALOG.filter(it=>it.slot!=='head').forEach(it=>{
+  const mkTile=(it)=>{
     const owned=avaOwnsItem(it.id), on=lgDraft && (lgDraft.items||[]).includes(it.id);
     const b=document.createElement('button'); b.className='ava-opt shop-item'+(on?' on':'')+(owned?'':' locked');
     b.innerHTML='<div class="si-ic">'+it.icon+'</div><div class="si-nm">'+escapeHtml(it.name)+'</div><div class="si-pr">'+(owned?(on?'착용중':'보유중'):('🔒 🪙'+coinFmt(it.price)))+'</div>';
     b.addEventListener('click',()=>avaToggleItem(it.id));
-    grid.appendChild(b);
+    return b;
+  };
+  const mkSec=(label,list)=>{
+    if(!list.length) return;
+    const w=document.createElement('div'); w.className='ava-opt-group';
+    w.innerHTML='<div class="field-label ava-opt-group-h">'+label+'</div>';
+    const g=document.createElement('div'); g.className='ava-opt-grid';
+    list.forEach(it=>g.appendChild(mkTile(it)));
+    w.appendChild(g); box.appendChild(w);
+  };
+  const pool=ITEM_CATALOG.filter(it=>it.slot!=='head');
+  mkSec('🎁 무료', pool.filter(it=>!it.price));
+  const paid=pool.filter(it=>it.price>0);
+  ITEM_TAB_CATS.forEach(c=>{
+    mkSec(c.label, paid.filter(it=>c.ids.includes(it.id)));
   });
-  box.appendChild(grid);
+  const rest=paid.filter(it=>!ITEM_TAB_CATS.some(c=>c.ids.includes(it.id)));
+  mkSec('✨ 그 밖에', rest);
 }
 
 /* ── 머리 모양: [뒤 레이어, 앞 레이어] · 머리 중심 (32,24) r=15 ── */
@@ -11903,7 +11997,15 @@ function chPattern(pt, base, uid){
 }
 
 /* ── 상의 종류 ── */
+let chShdPre='';
 function chTop(tt, c, sk, pt, uid){
+  /* 어깨는 옷보다 먼저 깔려야 옷 색과 어긋난 조각이나 이음새 선이 생기지 않는다 */
+  chShdPre='';
+  const out=chTopBody(tt, c, sk, pt, uid);
+  const pre=chShdPre; chShdPre='';
+  return pre+out;
+}
+function chTopBody(tt, c, sk, pt, uid){
   const pat=chPattern(pt,c,uid);
   const dk=chShade(c,-22), lt=chShade(c,28);
   /* ── 공통 좌표 기준 ────────────────────────────────────────────────
@@ -11914,7 +12016,7 @@ function chTop(tt, c, sk, pt, uid){
   /* 팔 — 맨살을 먼저 깔고 그 위에 소매를 덮어서 소매 길이를 자유롭게 조절 */
   /* 어깨 — 목 아래에서 팔로 이어지는 경사면. 팔과 몸통 사이가 비어 보이지 않게 채워 준다.
      (팔 흔들기 애니메이션에 딸려 돌지 않도록 .ar-* 그룹 바깥에 그린다) */
-  const shd=(cl,ox)=>chShoulders(cl,ox);
+  const shd=(cl,ox)=>{ chShdPre+=chShoulders(cl,ox); return ''; };
   const arms=(cc,slv)=>{
     slv=(slv==null?24:slv);
     const sv=(x)=> slv>0? `<rect x="${x}" y="38" width="8" height="${slv}" rx="4" fill="${cc}"/>`:'';
@@ -12004,11 +12106,11 @@ function chTop(tt, c, sk, pt, uid){
     /* ═══ 데일리 스타일 (신규) ═══ */
 
     case 35: /* 현대 공주 — 티어드 화이트 드레스 + 퍼프 소매 (밑단 물결 · 가운데가 더 내려옴) */
-      return `${dressWaveClip(80,54,2.6,7,4.4)}<g clip-path="${CLIP}">${dress('#FBF8F3',84,54)}
-        <g fill="#FFFFFF"><path d="M6 60 Q32 66 58 60 L58 63.4 Q32 69.4 6 63.4 Z"/><path d="M4 70 Q32 76.4 60 70 L60 73.4 Q32 79.8 4 73.4 Z"/><path d="M2 80 Q32 86.4 62 80 L62 83.4 Q32 89.8 2 83.4 Z"/></g>
-        <g stroke="#E4DCD0" stroke-width="0.6" fill="none"><path d="M6 60 Q32 66 58 60 M4 70 Q32 76.4 60 70 M2 80 Q32 86.4 62 80"/></g>
+      return `${dressWaveClip(80,54,2.6,7,4.4)}<g clip-path="${CLIP}">${dressWave('#FBF8F3',80,54,2.6,7,4.4)}
+        <g fill="#FFFFFF"><path d="M6 58 Q32 64 58 58 L58 61.4 Q32 67.4 6 61.4 Z"/><path d="M5 67 Q32 73.4 59 67 L59 70.4 Q32 76.8 5 70.4 Z"/><path d="M4 76 Q32 82.4 60 76 L60 79.4 Q32 85.8 4 79.4 Z"/></g>
+        <g stroke="#E4DCD0" stroke-width="0.6" fill="none"><path d="M6 58 Q32 64 58 58 M5 67 Q32 73.4 59 67 M4 76 Q32 82.4 60 76"/></g>
         <rect x="19" y="50" width="26" height="3.4" fill="#E8DCE4"/></g>
-        <path d="M22 36 q10 7 20 0 l0 4 q-10 6 -20 0Z" fill="${sk}"/>
+        <path d="M22 36 h20 v3.6 q-10 6.4 -20 0 Z" fill="${sk}"/>
         <g class="ar-l"><rect x="12" y="38" width="8" height="24" rx="4" fill="${sk}"/><ellipse cx="16.4" cy="42" rx="6.4" ry="5.4" fill="#FBF8F3"/><circle cx="16" cy="63" r="4.6" fill="${sk}"/></g>
         <g class="ar-r"><rect x="44" y="38" width="8" height="24" rx="4" fill="${sk}"/><ellipse cx="47.6" cy="42" rx="6.4" ry="5.4" fill="#FBF8F3"/><circle cx="48" cy="63" r="4.6" fill="${sk}"/></g>`;
     case 36: /* 남성 미니멀 — 화이트 셔츠 + 베이지 슬랙스 */
@@ -12050,7 +12152,7 @@ function chTop(tt, c, sk, pt, uid){
         <rect x="19" y="36" width="26" height="22" fill="${sk}"/>
         <path d="M19 46.8 Q19.3 36.6 24.6 36.1 L39.4 36.1 Q44.7 36.6 45 46.8 L45 48.8 Q32 52.4 19 48.8 Z" fill="${c}"/>
         <path d="M19 47.4 L45 47.4 L45 49.8 Q32 53.2 19 49.8 Z" fill="${chShade(c,-10)}"/>
-        <path d="M23.4 36.3 Q32 44.8 40.6 36.3 L40.6 40.6 Q32 49.2 23.4 40.6 Z" fill="${sk}"/>
+        <path d="M23.4 36 H40.6 V39.4 Q32 48.6 23.4 39.4 Z" fill="${sk}"/>
         <ellipse cx="32" cy="55" rx="0.9" ry="1.2" fill="${chShade(sk,-16)}" opacity=".55"/>
         <path d="M19 57.6 L45 57.6 L45 61 L19 61 Z" fill="#2E323A"/>
         <path d="M19 57.6 L45 57.6 L45 58.6 L19 58.6 Z" fill="#4A4F59"/></g>${arms(c,0)}`;
@@ -12058,7 +12160,7 @@ function chTop(tt, c, sk, pt, uid){
       return `${suitClip(84,26,13)}<g clip-path="${CLIP}">${suit('#3A3E46',84,26,13)}
         <path d="M19 43.4 Q19.3 36.6 24.6 36.1 L39.4 36.1 Q44.7 36.6 45 43.4 L45 52 Q32 55.4 19 52 Z" fill="${c}"/>
         <rect x="19" y="52" width="26" height="3.4" fill="#2E323A"/>
-        <path d="M23.4 36.3 Q32 44.8 40.6 36.3 L40.6 40.6 Q32 49.2 23.4 40.6 Z" fill="${sk}"/></g>${arms(c,0)}`;
+        <path d="M23.4 36 H40.6 V39.4 Q32 48.6 23.4 39.4 Z" fill="${sk}"/></g>${arms(c,0)}`;
     case 42: /* 여성 시티보이 — 네이비 스트라이프 셔츠 원피스 */
       return `${dressClip(80,42)}<g clip-path="${CLIP}">${dress('#2C3E5C',80,42)}
         <g stroke="#E8EDF4" stroke-width="1.1" opacity=".9"><path d="M22 36 L19 80 M27 36 L26 80 M32 36 L32 80 M37 36 L38 80 M42 36 L45 80"/></g>
@@ -12068,7 +12170,7 @@ function chTop(tt, c, sk, pt, uid){
       return `${dressWaveClip(74,58,3,7,2.4)}<g clip-path="${CLIP}">${dressWave('#C9CBD2',74,58,3,7,2.4)}
         <g fill="#D9DBE1" opacity=".9"><path d="M6 60 Q32 66.4 58 60 L58 64 Q32 70.4 6 64 Z"/><path d="M4 68 Q32 74.4 60 68 L60 72 Q32 78.4 4 72 Z"/></g></g>
         <path d="M19 43.4 Q19.3 36.6 24.6 36.1 L39.4 36.1 Q44.7 36.6 45 43.4 L45 52 Q32 55.4 19 52 Z" fill="#E8A9B8"/>
-        <path d="M22.6 36.2 L32 50 L41.4 36.2 L44.4 37.4 L32 53.4 L19.6 37.4 Z" fill="${sk}"/>
+        <path d="M20.4 36 H43.6 L32 53.4 Z" fill="${sk}"/>
         <path d="M19.6 37.4 L32 53.4 L28.4 55 L18.4 39.4 Z" fill="#DE96A8"/>
         <rect x="19" y="51" width="26" height="2.6" fill="#DE96A8"/>${arms('#E8A9B8',0)}`;
     case 44: /* 여성 빈티지 — 베이비 티 + 베이지 카고 + 크로스백 */
@@ -12096,7 +12198,7 @@ function chTop(tt, c, sk, pt, uid){
     case 4: /* 라이더 자켓 — 앞이 벌어져 안에 흰 라운드티가 보이고, 아래는 청바지 */
       return `${suitClip(84)}<g clip-path="${CLIP}">${suit('#1C1C20',84)}<rect x="19" y="57" width="26" height="27" fill="#4A6285"/><g stroke="#3A506D" stroke-width="0.9" opacity=".8"><path d="M25 59 v25 M39 59 v25"/></g><rect x="19" y="55" width="26" height="4" fill="#2B2B30"/><path d="M26.5 36 L37.5 36 L36.5 57 L27.5 57 Z" fill="#F2EFE8"/><path d="M19 36 L27.5 36 L25.5 57 L19 57 Z" fill="#26262C"/><path d="M45 36 L36.5 36 L38.5 57 L45 57 Z" fill="#26262C"/><path d="M19 36 L28 36 L24.5 47 L19 43.5 Z" fill="#131318"/><path d="M45 36 L36 36 L39.5 47 L45 43.5 Z" fill="#131318"/><g fill="#B9BFC8"><rect x="25.6" y="40" width="1.4" height="17" rx="0.7"/><circle cx="22" cy="50" r="1"/><circle cx="42" cy="50" r="1"/></g><path d="M24 35.5 L40 35.5 L40 39.5 q-8 5.5 -16 0 Z" fill="${sk}"/><path d="M24.6 38.6 q7.4 4.6 14.8 0 l0 1.5 q-7.4 4.8 -14.8 0Z" fill="#F2EFE8"/></g><rect x="27" y="54" width="10" height="4" rx="1" fill="#C9A227"/>${arms('#1C1C20')}`;
     case 6: /* 민소매 */
-      return `${topClip}${topBody(c)}${pat}<path d="M22 36 q10 7 20 0 l0 4 q-10 6 -20 0Z" fill="${sk}"/>${arms(c,0)}`;
+      return `${topClip}${topBody(c)}${pat}<path d="M22 36 h20 v3.6 q-10 6.4 -20 0 Z" fill="${sk}"/>${arms(c,0)}`;
     case 7: /* 터틀넥 — 목을 감싸는 두툼한 롤넥 */
       return `${topClip}${topBody('#7C8B76')}${pat}<rect x="24.5" y="29.5" width="15" height="11" rx="5.5" fill="#7C8B76"/><path d="M25.5 33.5 h13 M25.5 37 h13" stroke="#63715D" stroke-width="1" opacity=".55"/>${arms('#7C8B76')}`;
 
@@ -12145,7 +12247,7 @@ function chTop(tt, c, sk, pt, uid){
     case 26: /* 사이클 저지 — 저지 + 짧은 빕숏 */
       return `${suitClip(70,25,10)}<g clip-path="${CLIP}">${suit(c,70,25,10)}<rect x="19" y="56" width="26" height="14" fill="#2B2E33"/><rect x="19" y="46" width="26" height="4" fill="${lt}"/><rect x="19" y="52" width="26" height="3" fill="${dk}"/></g>${arms(c,12)}`;
     case 27: /* 카우보이 — 셔츠 + 데님 + 프린지 조끼 + 버클 */
-      return `${suitClip(84)}<g clip-path="${CLIP}">${suit('#C9B393',84)}<rect x="19" y="56" width="26" height="28" fill="#4A6285"/><g stroke="#385071" stroke-width="0.9" opacity=".7"><path d="M25 58 v26 M39 58 v26"/></g></g><path d="M19 36 h9 l-1 20 q-4 1 -8 0Z" fill="#6B4A34"/><path d="M45 36 h-9 l1 20 q4 1 8 0Z" fill="#6B4A34"/><g stroke="#5A3E2B" stroke-width="0.9"><path d="M20 56 v4 M23 56 v4 M41 56 v4 M44 56 v4"/></g><rect x="28" y="54" width="8" height="5" rx="1" fill="#C9A227"/>${arms('#C9B393')}`;
+      return `${suitClip(84)}<g clip-path="${CLIP}">${suit('#C9B393',84)}<rect x="19" y="56" width="26" height="28" fill="#4A6285"/><g stroke="#385071" stroke-width="0.9" opacity=".7"><path d="M25 58 v26 M39 58 v26"/></g></g><path d="M19 36 h9 l-1 20 q-4 1 -8 0Z" fill="#6B4A34"/><path d="M45 36 h-9 l1 20 q4 1 8 0Z" fill="#6B4A34"/><g stroke="#5A3E2B" stroke-width="0.9"><path d="M20 56 v4 M23 56 v4 M41 56 v4 M44 56 v4"/></g><rect x="26.6" y="54.4" width="10.8" height="4.4" rx="1.2" fill="#7A5638"/><g class="fx-twinkle"><path d="M32 51.6 l1.75 3.55 3.92 .57 -2.84 2.76 .67 3.9 -3.5 -1.84 -3.5 1.84 .67 -3.9 -2.84 -2.76 3.92 -.57 Z" fill="#E8C24A" stroke="#A8801C" stroke-width="0.4"/></g><g class="fx-shine" style="animation-duration:3.2s"><path d="M27.4 50.8 L29.6 50.8 L25.4 62 L23.2 62 Z" fill="#FFF3B0" opacity=".55"/></g>${arms('#C9B393')}`;
     case 30: /* 근위병 — 레드코트 + 골드 버튼 (어깨 트림이 몸통 밖으로 나가지 않도록 클립 안에서 그림) */
       return `${suitClip(84)}<g clip-path="${CLIP}">${suit('#A6231F',84)}<rect x="19" y="58" width="26" height="26" fill="#1E1E22"/><rect x="19" y="36" width="26" height="5" fill="#1E1E22"/><rect x="19" y="54" width="26" height="4" fill="#1E1E22"/><g fill="#C9A227"><circle cx="27" cy="45" r="1.3"/><circle cx="37" cy="45" r="1.3"/><circle cx="27" cy="50" r="1.3"/><circle cx="37" cy="50" r="1.3"/></g><path d="M22 41 L28 58 L36 58 L42 41" fill="none" stroke="#C9A227" stroke-width="1.2" opacity=".8"/></g>${arms('#A6231F')}`;
     case 31: /* 작업복 — 회색 작업복 + 형광 안전조끼 */
@@ -12236,17 +12338,34 @@ function chFace(fc){
 let chUid=0;
 /* 어깨 — 목 아래에서 팔로 이어지는 경사면. 팔·몸통 사이가 비어 보이지 않게 채워 준다.
    살색 어깨는 chSvg에서 옷보다 먼저 깔고, 소매색 어깨는 팔과 함께 옷 위에 덮는다. */
+/* <g class="ar-*"> 안에 <g>가 중첩돼 있어도 정확히 짝을 찾아 통째로 제거한다 */
+function stripArmGroups(str){
+  let out=str, guard=0;
+  while(guard++<8){
+    const m=/<g class="ar-[lr]"[^>]*>/.exec(out);
+    if(!m) break;
+    let i=m.index+m[0].length, depth=1;
+    while(i<out.length && depth>0){
+      const o=out.indexOf('<g',i), c=out.indexOf('</g>',i);
+      if(c<0) break;
+      if(o>=0 && o<c){ depth++; i=o+2; } else { depth--; i=c+4; }
+    }
+    out=out.slice(0,m.index)+out.slice(i);
+  }
+  /* 팔이 사라지면 어깨 경사면도 함께 지운다 */
+  return out.replace(/<path d="M(?:1[0-2](?:\.\d+)?|5[0-4](?:\.\d+)?) 48 Q[^"]*" fill="[^"]*"\/>/g,'');
+}
 function chShoulders(cl,ox){
   ox=(ox||0);
-  return `<path d="M${12-ox} 48 Q${11.6-ox} 38.6 ${17.6-ox} 36 Q22 34 27 33.6 L27 48 Z" fill="${cl}"/>`
-       + `<path d="M${52+ox} 48 Q${52.4+ox} 38.6 ${46.4+ox} 36 Q42 34 37 33.6 L37 48 Z" fill="${cl}"/>`;
+  return `<path d="M${12-ox} 48 Q${11.6-ox} 38.6 ${17.6-ox} 35.8 Q21.6 34 25.6 33.8 L25.6 48 Z" fill="${cl}"/>`
+       + `<path d="M${52+ox} 48 Q${52.4+ox} 38.6 ${46.4+ox} 35.8 Q42.4 34 38.4 33.8 L38.4 48 Z" fill="${cl}"/>`;
 }
 /* ── 하의 종류: [왼다리, 오른다리] · 허리 y=58 · 발 y=84 ── */
 function chBottom(bp,c,sk){
   const dk=chShade(c,-24);
   /* 신발 윗면은 평평하게 — 다리와 맞닿는 면이 선대선으로 붙는다 */
-  const shoe=(x)=>`<path d="M${x} 84 H${x+13} V88.4 Q${x+13} 92 ${x+9.4} 92 H${x+3.6} Q${x} 92 ${x} 88.4 Z" fill="#5D564E"/>`;
-  const shoeL=shoe(20), shoeR=shoe(31);
+  const shoe=(x)=>`<path d="M${x} 84 H${x+12.4} V88.4 Q${x+12.4} 92 ${x+9} 92 H${x+3.4} Q${x} 92 ${x} 88.4 Z" fill="#5D564E"/>`;
+  const shoeL=shoe(19.3), shoeR=shoe(32.3);   /* 두 발 사이에 아주 얇은 틈 */
   switch(bp){
     case 1: /* 반바지 — 다리와 만나는 위쪽은 각지게, 발과 만나는 아래쪽만 둥글게 */
       return [
@@ -12307,7 +12426,7 @@ function chSvg(o,extra,showBg){
   const hideArms=its.some(function(id){ return ITEM_HIDE_ARMS.has(id); });
   const hideLegs=TT_HIDE_LEGS.has(ttIdx) || its.some(function(id){ return ITEM_HIDE_LEGS.has(id); });
   let top=chTop(ttIdx, tc, sk, (o.pt||0)%CH_PT.length, uid);
-  if(hideArms) top=top.replace(/<g class="ar-[lr]">[\s\S]*?<\/g>/g,'');
+  if(hideArms) top=stripArmGroups(top);
   const face=chFace((o.fc||0)%CH_FACE.length);
   const BOT=hideLegs? ['',''] : chBottom(bpIdx, bt, sk);
   const bgc=CH_AVBG[(o.bg||0)%CH_AVBG.length];
