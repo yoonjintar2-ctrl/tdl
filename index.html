@@ -1738,7 +1738,7 @@ null
 <button id="miniCalFab" title="달력"><span class="ic" data-ic="calendar"></span></button>
 <button id="loungeFab" title="사이버 탕비실 — 다른 사용자와 잡담"><span class="ic" data-ic="cup"></span><span class="lgb hidden" id="lgFabBadge">대기중</span></button>
 <button id="commFab" title="동료 · 쪽지"><span class="ic" data-ic="people"></span><span id="commDot" class="hidden"></span></button>
-<button id="homeFab" title="내 미니홈피 · 파도타기"><span class="ic" data-ic="house"></span></button>
+<button id="homeFab" title="미니홈피 — 내 홈 꾸미기 · 파도타기"><span class="ic" data-ic="house"></span></button>
 
 <div id="lounge" class="hidden">
   <div class="lg-shell">
@@ -2063,7 +2063,8 @@ null
       <div id="clReqList" class="cl-list"></div>
       <div class="field-label">보낸 요청</div>
       <div id="clSentList" class="cl-list"></div>
-      <div class="field-label">내 동료</div>
+      <div class="field-label">내 동료 · 쪽지</div>
+      <div class="hint">동료 줄의 <b>✉ 쪽지</b>로 메시지를 보내고, <b>📄</b>로 주고받은 쪽지를 볼 수 있어요.</div>
       <div id="clBuddyList" class="cl-list"></div>
     </div>
 
@@ -2713,7 +2714,7 @@ function exportBackup(){
 
 function updateFileStatusHint(t){ const el=document.getElementById('fileStatusHint'); if(el) el.textContent=t; }
 /* ═══════════════ 클라우드 저장 (Supabase) ═══════════════ */
-const APP_VER='ver 12.2', APP_BUILD='2026-08-14 00:40';
+const APP_VER='ver 12.4', APP_BUILD='2026-08-14 02:05';
 const LOGO_SRC='data:image/png;base64,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';
 function paintLogos(){ document.querySelectorAll('img.tdl-logo').forEach(i=>{ i.src=LOGO_SRC; }); }
 const IS_WEB = /^https?:$/i.test(location.protocol);
@@ -5573,7 +5574,7 @@ async function clSaveAva(){
     mhTarget=null; await mhRender();
   }else{
     hideModals();
-    if(!IS_MOBILE) showModal('collabModal');
+    if(!IS_MOBILE){ showModal('collabModal'); clSetTab('ava'); }
     mhTarget=null; await mhRender();
   }
   mhFlash('캐릭터 저장됨');
@@ -6869,7 +6870,7 @@ async function initCollab(){
 document.getElementById('btnCollab').addEventListener('click', async ()=>{
   if(!clOn()){ alert('클라우드에 로그인해야 동료 기능을 쓸 수 있어요.'); return; }
   showModal('collabModal');
-  clSetTab(clTab);
+  clSetTab('buddy');
   await clRefresh();
   clRenderBuddies(); clRenderMsgTargets(); clRenderMsgLog(); clRenderAva();
   coinRefreshUI();
@@ -6936,6 +6937,8 @@ function clOpenSolo(tab){
 document.getElementById('closeCollabModal').addEventListener('click', ()=>{ document.getElementById('collabModal').classList.remove('mh-mobile'); hideModals(); });
 function clSetTab(k){
   clTab=k;
+  const _h=document.querySelector('#collabModal .cl-head-row h2');
+  if(_h) _h.textContent=({alarm:'🔔 알림', buddy:'👥 동료 · 쪽지', ava:'🏠 내 미니홈피'})[k]||'💬 커뮤니케이션';
   document.querySelectorAll('.cl-tab').forEach(b=>b.classList.toggle('on', b.dataset.ct===k));
   document.getElementById('ctAlarm').classList.toggle('hidden', k!=='alarm');
   document.getElementById('ctBuddy').classList.toggle('hidden', k!=='buddy');
@@ -7034,9 +7037,9 @@ document.getElementById('mhEmo').addEventListener('click', ()=>{
   box.classList.toggle('hidden');
 });
 document.getElementById('cmpSend').addEventListener('click', sendCompose);
-document.getElementById('cmpCancel').addEventListener('click', ()=>{ showModal('collabModal'); });
+document.getElementById('cmpCancel').addEventListener('click', ()=>{ showModal('collabModal'); clSetTab('buddy'); });
 document.getElementById('cmpBody').addEventListener('keydown',(e)=>{ e.stopPropagation(); if(e.key==='Enter'&&(e.ctrlKey||e.metaKey)){ e.preventDefault(); sendCompose(); } });
-document.getElementById('hstClose').addEventListener('click', ()=>{ showModal('collabModal'); clRenderBuddies(); });
+document.getElementById('hstClose').addEventListener('click', ()=>{ showModal('collabModal'); clSetTab('buddy'); clRenderBuddies(); });
 document.getElementById('hstReply').addEventListener('click', ()=>openCompose(msgTargetId));
 document.getElementById('clAvaRnd').addEventListener('click',()=>{
   const nm=lgDraft?lgDraft.name:'';
@@ -7125,8 +7128,7 @@ document.getElementById('btnFilter').addEventListener('click', openFilterModal);
   const cf=document.getElementById('commFab');
   if(cf) cf.addEventListener('click',()=>{
     if(!clOn()){ alert('클라우드에 로그인하면 커뮤니케이션 기능을 쓸 수 있어요.'); return; }
-    showModal('collabModal');
-    clSetTab(clTab);
+    clOpenSolo('buddy');
     clRefresh().then(()=>{ clRenderBuddies(); });
   });
 })();
@@ -10190,7 +10192,7 @@ function baOpenCollab(){
   const el=document.getElementById('buddyAvatar'); if(el) el.classList.remove('talking');
   if(!clOn()){ alert('클라우드에 로그인하면 동료 기능을 쓸 수 있어요.'); return; }
   showModal('collabModal');
-  clSetTab(clTab);
+  clSetTab('buddy');
   clRefresh().then(()=>{ clRenderBuddies(); clRenderAva(); });
 }
 function baOpen(){ baSetAct('wave',1400); baOpenCollab(); }
@@ -12016,19 +12018,20 @@ function chTopBody(tt, c, sk, pt, uid){
   /* 팔 — 맨살을 먼저 깔고 그 위에 소매를 덮어서 소매 길이를 자유롭게 조절 */
   /* 어깨 — 목 아래에서 팔로 이어지는 경사면. 팔과 몸통 사이가 비어 보이지 않게 채워 준다.
      (팔 흔들기 애니메이션에 딸려 돌지 않도록 .ar-* 그룹 바깥에 그린다) */
-  const shd=(cl,ox)=>{ chShdPre+=chShoulders(cl,ox); return ''; };
+  const shd=(cl,ox,edge)=>{ chShdPre+=chShoulders(cl,ox,edge); return ''; };
   const arms=(cc,slv)=>{
     slv=(slv==null?24:slv);
-    const sv=(x)=> slv>0? `<rect x="${x}" y="38" width="8" height="${slv}" rx="4" fill="${cc}"/>`:'';
-    return (slv>0? shd(cc):'')+
+    /* 소매는 살색 팔보다 아주 조금 크게 그려서 가장자리에 살색이 비치지 않게 한다 */
+    const sv=(x)=> slv>0? `<rect x="${x-0.35}" y="37.65" width="8.7" height="${slv+0.7}" rx="4.35" fill="${cc}"/>`:'';
+    return (slv>0? shd(cc,0,true):'')+
            `<g class="ar-l"><rect x="12" y="38" width="8" height="24" rx="4" fill="${sk}"/>${sv(12)}<circle cx="16" cy="63" r="4.6" fill="${sk}"/></g>`+
            `<g class="ar-r"><rect x="44" y="38" width="8" height="24" rx="4" fill="${sk}"/>${sv(44)}<circle cx="48" cy="63" r="4.6" fill="${sk}"/></g>`;
   };
   /* 부피감 있는 팔 — 우주복 · 갑옷처럼 품이 큰 옷 */
-  const armsPuff=(cc,dl,dr)=>shd(cc,2)+`<g class="ar-l"><rect x="10" y="37" width="11" height="25" rx="5.5" fill="${cc}"/>${dl||''}<circle cx="15.5" cy="64" r="5.2" fill="${sk}"/></g>`+
+  const armsPuff=(cc,dl,dr)=>shd(cc,2,true)+`<g class="ar-l"><rect x="10" y="37" width="11" height="25" rx="5.5" fill="${cc}"/>${dl||''}<circle cx="15.5" cy="64" r="5.2" fill="${sk}"/></g>`+
                              `<g class="ar-r"><rect x="43" y="37" width="11" height="25" rx="5.5" fill="${cc}"/>${dr||''}<circle cx="48.5" cy="64" r="5.2" fill="${sk}"/></g>`;
   /* 아래로 넓게 퍼지는 소매 — 기모노 · 한복 · 로브 */
-  const armsFlare=(cc)=>shd(cc)+`<g class="ar-l"><rect x="12" y="38" width="8" height="24" rx="4" fill="${sk}"/><path d="M20 40.4 Q19.6 36.2 15.8 36.6 Q11.6 37.2 10.6 42.4 L8.8 54.4 Q8.3 57.6 11.4 56.9 L20 54.2 Z" fill="${cc}"/><circle cx="16" cy="63" r="4.6" fill="${sk}"/></g>`+
+  const armsFlare=(cc)=>shd(cc,0,true)+`<g class="ar-l"><rect x="12" y="38" width="8" height="24" rx="4" fill="${sk}"/><path d="M20 40.4 Q19.6 36.2 15.8 36.6 Q11.6 37.2 10.6 42.4 L8.8 54.4 Q8.3 57.6 11.4 56.9 L20 54.2 Z" fill="${cc}"/><circle cx="16" cy="63" r="4.6" fill="${sk}"/></g>`+
                         `<g class="ar-r"><rect x="44" y="38" width="8" height="24" rx="4" fill="${sk}"/><path d="M44 40.4 Q44.4 36.2 48.2 36.6 Q52.4 37.2 53.4 42.4 L55.2 54.4 Q55.7 57.6 52.6 56.9 L44 54.2 Z" fill="${cc}"/><circle cx="48" cy="63" r="4.6" fill="${sk}"/></g>`;
 
   /* ① 상의형 — 하의는 chBottom이 따로 그림 */
@@ -12099,7 +12102,7 @@ function chTopBody(tt, c, sk, pt, uid){
         + `<rect x="18.4" y="82.6" width="13.4" height="9.4" rx="3.6" fill="${B}"/>`
         + `<rect x="32.2" y="82.6" width="13.4" height="9.4" rx="3.6" fill="${B}"/>`
         + `<g stroke="${WB}" stroke-width="0.8" fill="none" opacity=".85"><path d="M19.4 86.4 h11.4 M33.2 86.4 h11.4"/></g>`
-        + shd(R)
+        + shd(R,0,true)
         + `<g class="ar-l"><rect x="12" y="38" width="8" height="24" rx="4" fill="${R}"/>${armWeb(12)}<circle cx="16" cy="63" r="4.6" fill="${R}"/></g>`
         + `<g class="ar-r"><rect x="44" y="38" width="8" height="24" rx="4" fill="${R}"/>${armWeb(44)}<circle cx="48" cy="63" r="4.6" fill="${R}"/></g>`;
     }
@@ -12355,10 +12358,12 @@ function stripArmGroups(str){
   /* 팔이 사라지면 어깨 경사면도 함께 지운다 */
   return out.replace(/<path d="M(?:1[0-2](?:\.\d+)?|5[0-4](?:\.\d+)?) 48 Q[^"]*" fill="[^"]*"\/>/g,'');
 }
-function chShoulders(cl,ox){
+function chShoulders(cl,ox,edge){
   ox=(ox||0);
-  return `<path d="M${12-ox} 48 Q${11.6-ox} 38.6 ${17.6-ox} 35.8 Q21.6 34 25.6 33.8 L25.6 48 Z" fill="${cl}"/>`
-       + `<path d="M${52+ox} 48 Q${52.4+ox} 38.6 ${46.4+ox} 35.8 Q42.4 34 38.4 33.8 L38.4 48 Z" fill="${cl}"/>`;
+  /* edge=true 면 같은 색 외곽선을 얹어 도형을 아주 살짝 키운다 (아래 레이어가 가장자리로 비치는 것 방지) */
+  const E=edge? ` stroke="${cl}" stroke-width="0.7" stroke-linejoin="round"` : '';
+  return `<path d="M${12-ox} 48 Q${11.6-ox} 38.6 ${17.6-ox} 35.8 Q21.6 34 25.6 33.8 L25.6 48 Z" fill="${cl}"${E}/>`
+       + `<path d="M${52+ox} 48 Q${52.4+ox} 38.6 ${46.4+ox} 35.8 Q42.4 34 38.4 33.8 L38.4 48 Z" fill="${cl}"${E}/>`;
 }
 /* ── 하의 종류: [왼다리, 오른다리] · 허리 y=58 · 발 y=84 ── */
 function chBottom(bp,c,sk){
