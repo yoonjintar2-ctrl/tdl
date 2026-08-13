@@ -722,8 +722,10 @@ body.theme-excel .save-btn .sv-sub{color:rgba(255,255,255,0.75);}
 .mh-mid{align-self:start;}
 .mh-card{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:10px;}
 .mh-card .field-label{margin-top:0;}
-.mh-pen{position:absolute;right:10px;top:9px;z-index:4;border:none;background:var(--bg);color:var(--text-dim);border-radius:9px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:12px;cursor:pointer;padding:0;}
-.mh-pen:hover{background:var(--line);color:var(--text);}
+.mh-pen{position:absolute;right:9px;top:8px;z-index:4;border:1px solid var(--line-strong);background:var(--panel);color:var(--text);border-radius:9px;width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-size:13px;cursor:pointer;padding:0;box-shadow:0 1px 4px rgba(40,34,60,0.14);transition:background .12s,color .12s,transform .1s;}
+.mh-pen:hover{background:var(--accent);border-color:transparent;color:#fff;transform:translateY(-1px);}
+.mh-pen:active{transform:none;}
+body.theme-dark .mh-pen{background:#3A3648;border-color:#544F63;color:#E6E2F0;box-shadow:0 1px 4px rgba(0,0,0,0.35);}
 .mh-card{position:relative;}
 body.mh-visitor .mh-pen{display:none;}
 .mh-prof{text-align:center;}
@@ -2681,7 +2683,7 @@ function exportBackup(){
 
 function updateFileStatusHint(t){ const el=document.getElementById('fileStatusHint'); if(el) el.textContent=t; }
 /* ═══════════════ 클라우드 저장 (Supabase) ═══════════════ */
-const APP_VER='ver 11.4', APP_BUILD='2026-08-13 02:10';
+const APP_VER='ver 11.6', APP_BUILD='2026-08-13 12:10';
 const LOGO_SRC='data:image/png;base64,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';
 function paintLogos(){ document.querySelectorAll('img.tdl-logo').forEach(i=>{ i.src=LOGO_SRC; }); }
 const IS_WEB = /^https?:$/i.test(location.protocol);
@@ -5268,7 +5270,7 @@ let avaCat='face';
 /* 헤어 스타일별 가격 (CH_HAIR 인덱스 기준, 0=무료).
    예전에는 인덱스 기반 공식이라 나중에 추가한 스타일일수록 무조건 비싸졌음 */
 const HS_PRICE=[0,0,0,0,0,0,8,8,10,12,12,14,16,14,10,0,18,14,12,0,10,16,18,0,26,10,20,20,16,18,24,22,14,12,22,24,22];
-const TT_PRICE=[0,0,0,0,14,0,0,0,16,18,18,30,22,18,24,28,22,34,34,22,30,30,24,32,24,20,0,20,28,30,28,16,24,26,30,34,0,16,28,18,24,0,22,26,20,24];  /* CH_TT 인덱스별 가격(0=무료) */
+const TT_PRICE=[0,0,0,0,14,0,0,0,16,18,18,30,22,18,24,28,22,34,34,22,30,30,24,32,24,20,0,20,28,30,28,16,24,26,30,34,0,16,28,18,24,0,22,26,20,24,40];  /* CH_TT 인덱스별 가격(0=무료) */
 function optPrice(key,i){
   i=i||0;
   if(key==='sk') return 0;                 /* 피부색은 항상 무료 */
@@ -5448,6 +5450,21 @@ function clRenderAva(){
       (groups[t.k]=groups[t.k]||{label:t.label,items:[]}).items.push(i);
     });
     Object.keys(groups).sort((a,b)=>a-b).forEach(k=>mkGroup(groups[k].label,'tt',CH_TT,groups[k].items));
+    /* 가면처럼 변형이 있는 의상은 옵션 버튼을 함께 보여줌 */
+    if(TT_MASKED.has(lgDraft.tt||0)){
+      const w=document.createElement('div'); w.className='ava-opt-group ava-color-opt';
+      w.innerHTML='<div class="field-label ava-opt-group-h">🎭 '+escapeHtml(CH_TT[lgDraft.tt||0])+' 가면</div>';
+      const row=document.createElement('div'); row.className='ava-opt-grid';
+      [['가면 벗음',0],['가면 씀',1]].forEach(([nm,v])=>{
+        const on=(((lgDraft.pt||0)>=1?1:0)===v);
+        const b=document.createElement('button'); b.className='ava-opt has-thumb'+(on?' on':'');
+        const o=Object.assign({},lgDraft,{pt:v,items:[]});
+        b.innerHTML='<span class="ava-thumb head">'+chSvg(o)+'</span><span class="opt-nm">'+nm+'</span>';
+        b.addEventListener('click',()=>{ lgDraft.pt=v; clRenderAva(); });
+        row.appendChild(b);
+      });
+      w.appendChild(row); box.appendChild(w);
+    }
     /* 선택한 옷이 색을 고를 수 있는 종류면 팔레트를 함께 보여줌 */
     if(ttColorable(lgDraft.tt||0)){
       const w=document.createElement('div'); w.className='ava-opt-group ava-color-opt';
@@ -11076,15 +11093,35 @@ const HAIR_CATS=[
   {label:'🎀 묶음·업스타일', ids:[2,9,10,17,27,28,30,36,21,16,13]},
   {label:'👒 모자·전통', ids:[6,24]}
 ];
-const CH_TT=['입지 않음','셔츠','후드','니트','자켓','A라인 원피스','민소매','터틀넥','슬립 원피스','니트 원피스','셔츠 원피스','파티 드레스','오프숄더 원피스','죄수복','삐에로 의상','소방관','요리사','우주비행사','기사 갑옷','경찰관','한복(남)','기모노','발레리나','로열로브','스코틀랜드 킬트','잠수복','사이클 저지','카우보이','해적','마법사 로브','근위병','작업복','의사 가운','턱시도','한복(여)','현대 공주','남성 미니멀','남성 시티보이','남성 고프코어','남성 빈티지','남성 스트릿','여성 미니멀','여성 시티보이','여성 발레코어','여성 빈티지','여성 스트릿'];
+const CH_TT=['입지 않음','셔츠','후드','니트','자켓','A라인 원피스','민소매','터틀넥','슬립 원피스','니트 원피스','셔츠 원피스','파티 드레스','오프숄더 원피스','죄수복','삐에로 의상','소방관','요리사','우주비행사','기사 갑옷','경찰관','한복(남)','기모노','발레리나','로열로브','스코틀랜드 킬트','잠수복','사이클 저지','카우보이','해적','마법사 로브','근위병','작업복','의사 가운','턱시도','한복(여)','현대 공주','남성 미니멀','남성 시티보이','남성 고프코어','남성 빈티지','남성 스트릿','여성 미니멀','여성 시티보이','여성 발레코어','여성 빈티지','여성 스트릿','거미 히어로'];
 const TOP_IDX=[0,1,2,3,4,6,7];                       /* (구)상의 탭 인덱스 — 탭은 제거되었지만 기존 유저 하위호환용으로 배열은 유지 */
 /* 랜덤 뽑기는 무료 의상 중에서만 — 뽑자마자 결제창이 뜨지 않도록 */
 const FREE_TT=[0,1,2,3,5,6,26];
 /* 의상 탭에 노출되는 전체 목록 — '입지 않음'을 맨 앞에 두고, 최근 추가한 코스튬이 먼저 보이도록 정렬(데이터 인덱스는 그대로 유지) */
-const ONEPIECE_IDX=[0,6,1,3,2,5,26,36,41,31,37,8,13,25,27,39,44,10,9,19,12,16,4,42,14,22,24,32,40,45,43,15,28,30,38,11,23,29,17,18,33,35];
+const ONEPIECE_IDX=[0,6,1,3,2,5,26,36,41,31,37,8,13,25,27,39,44,10,9,19,12,16,4,42,14,22,24,32,40,45,43,15,28,30,38,11,23,29,17,18,33,35,46];
 function isOnepiece(tt){ return ONEPIECE_IDX.includes(tt); }
 /* 디자인이 단순해서 색을 골라 입을 수 있는 의상 (고른 색이 그대로 원단 색이 됨) */
 const TT_COLORABLE=new Set([1,2,3,5,6,8,9,10,11,26,36,41]);
+/* 다리·신발까지 의상이 직접 그리는 경우 — 기본 하의를 숨긴다 */
+const TT_HIDE_LEGS=new Set([46]);
+/* 가면 옵션이 있는 의상 (pt 값을 변형 번호로 사용: 0=벗음, 1=씀) */
+const TT_MASKED=new Set([46]);
+function ttMaskOn(o){ return TT_MASKED.has((o&&o.tt)||0) && (((o&&o.pt)||0)>=1); }
+/* 거미 히어로 가면 — 얼굴을 덮어야 해서 머리보다 위 레이어에 그린다 */
+function chSpiderMask(uid){
+  const R='#C8322E', W='#8E1F1C';
+  const D='M17 24 Q17 5 32 5 Q47 5 47 24 Q47 36 32 39.8 Q17 36 17 24 Z';
+  const cid='spmk'+(uid||'');
+  return '<g>'
+   +'<clipPath id="'+cid+'"><path d="'+D+'"/></clipPath>'
+   +'<path d="'+D+'" fill="'+R+'"/>'
+   +'<g clip-path="url(#'+cid+')" stroke="'+W+'" stroke-width="0.75" fill="none" opacity=".95">'
+   +'<path d="M32 5.4 V39 M17.6 17 Q32 21 46.4 17 M17.2 24 Q32 29 46.8 24 M19.8 31.6 Q32 36 44.2 31.6"/>'
+   +'<path d="M20.4 10.6 Q32 6.6 43.6 10.6"/><path d="M22.2 6.8 L20.6 34 M41.8 6.8 L43.4 34"/></g>'
+   +'<path d="M20.8 22.6 Q25.2 15.8 30.4 20.5 Q29.6 27.6 22.8 27.4 Q20.6 26 20.8 22.6 Z" fill="#F4F4F7" stroke="#1A1A1E" stroke-width="1.1"/>'
+   +'<path d="M43.2 22.6 Q38.8 15.8 33.6 20.5 Q34.4 27.6 41.2 27.4 Q43.4 26 43.2 22.6 Z" fill="#F4F4F7" stroke="#1A1A1E" stroke-width="1.1"/>'
+   +'<path d="M23.6 21.6 Q26.2 18.5 28.7 20.9" stroke="#FFFFFF" stroke-width="1" fill="none" opacity=".7"/></g>';
+}
 /* 모자 아이템이 기본 헤어를 어떻게 다루는지
    hide  : 모자에 머리가 포함돼 있어 기본 헤어를 아예 감춤 (선캡·러닝모자)
    cutY  : 모자 아래로만 머리가 보이도록 위쪽을 잘라냄 (밀짚·숙녀·중절모 캡류) */
@@ -11212,13 +11249,22 @@ const longHair=(hc)=>`<g>
   <path d="M47.4 14 q5 16 3 32 q-0.8 6 -6.6 5 q4 -18 0.6 -35 Z" fill="${hc}"/>
   <path d="M17.6 16 q-3.6 15 -2 29" fill="none" stroke="#FFFFFF" stroke-width="0.8" opacity=".1"/>
   <path d="M46.4 16 q3.6 15 2 29" fill="none" stroke="#FFFFFF" stroke-width="0.8" opacity=".1"/></g>`;
-function visor(){ return `<g>
-  <path d="M6.5 18 Q32 4.6 57.5 18 Q57.5 25.6 32 27.6 Q6.5 25.6 6.5 18 Z" fill="#1B1B20" opacity=".78"/>
-  <path d="M6.5 18 Q32 4.6 57.5 18 Q32 22.6 6.5 18 Z" fill="#4A4A56" opacity=".45"/>
-  <path d="M9 20.4 Q32 27.4 55 20.4" fill="none" stroke="#0E0E12" stroke-width="1.5" opacity=".8"/>
-  <path d="M15.2 12.6 q16.8 7.4 33.6 0 l0 6.2 q-16.8 7.4 -33.6 0Z" fill="#141418"/>
-  <path d="M15.2 12.6 q16.8 7.4 33.6 0 l0 1.8 q-16.8 7.4 -33.6 0Z" fill="#3A3A44"/>
-  <rect x="29.2" y="15.6" width="5.6" height="1.6" rx="0.8" fill="#9A9AA6"/></g>`; }
+/* 선캡용 남자 짧은머리 — 정수리가 열려 있어 크라운이 그대로 보인다 */
+const visorHair=(hc)=>`<g>
+  <path d="M16.9 20.4 Q17.3 3.6 32 3.6 Q46.7 3.6 47.1 20.4 Q39.8 16 32 15.8 Q24.2 16 16.9 20.4 Z" fill="${hc}"/>
+  <path d="M16.9 19.4 Q16.5 25.6 18.6 29 Q19.6 24 19.2 19 Z" fill="${hc}"/>
+  <path d="M47.1 19.4 Q47.5 25.6 45.4 29 Q44.4 24 44.8 19 Z" fill="${hc}"/>
+  <path d="M21.4 9 Q27.4 5.2 34.6 6.2" fill="none" stroke="#FFFFFF" stroke-width="1.2" opacity=".12" stroke-linecap="round"/></g>`;
+/* 선캡 — 크라운 없이 밴드 + 앞챙 하나. 챙은 반투명 아크릴이라 얼굴이 비쳐 보인다 */
+function visor(hc){ return `${visorHair(hc||'#4F4946')}<g>
+  <path d="M11.4 21 C11.4 17 21 14.6 32 14.6 C43 14.6 52.6 17 52.6 21 C52.6 25.8 43 29.2 32 29.2 C21 29.2 11.4 25.8 11.4 21 Z" fill="#31313C" opacity=".33"/>
+  <path d="M11.4 21 C11.4 17 21 14.6 32 14.6 C43 14.6 52.6 17 52.6 21 C52.6 25.8 43 29.2 32 29.2 C21 29.2 11.4 25.8 11.4 21 Z" fill="none" stroke="#23232C" stroke-width="0.7" opacity=".5"/>
+  <path d="M38.8 21 L44.6 23.2 L42.4 27.4 L36.6 24.4 Z" fill="#FFFFFF" opacity=".2"/>
+  <path d="M13.6 22.6 Q32 28.6 50.4 22.6" fill="none" stroke="#15151C" stroke-width="0.6" opacity=".28"/>
+
+  <path d="M14 17.4 Q32 6.6 50 17.4 Q32 24.2 14 17.4 Z" fill="#15151A"/>
+  <path d="M14 17.4 Q32 6.6 50 17.4 Q32 20.4 14 17.4 Z" fill="#34343F" opacity=".55"/>
+  <rect x="29.4" y="12.4" width="5.2" height="1.5" rx="0.75" fill="#9A9AA6" opacity=".8"/></g>`; }
 function runCap(){ return `<g>
   <path d="M16.4 17.6 Q17 4.2 32 4.2 Q47 4.2 47.6 17.6 Q32 21.4 16.4 17.6 Z" fill="#1E1E24"/>
   <path d="M16.4 17.6 Q17 4.2 32 4.2 Q25 7.6 24.4 18.8 Q19.6 18.6 16.4 17.6 Z" fill="#33333C" opacity=".7"/>
@@ -11253,10 +11299,10 @@ const ITEM_SVG={
       <path d="M44.4 12.4 q5.6 1.7 7.7 5.2 q1.3 2.3 -1.9 2.1 q-3.6 -0.4 -5.8 -4.2 Z"/>
       <circle cx="44.8" cy="12.2" r="2"/></g></g>`,
 
-  /* ③ 선캡(짧은 머리) — 검정 밴드 + 스모크 챙 */
-  i35:(sk,hc)=>`${shortH(hc||'#4F4946')}${visor()}`,
+  /* ③ 선캡(짧은 머리) — 정수리 개방형 + 반투명 아크릴 챙 */
+  i35:(sk,hc)=>`${visor(hc)}`,
   /* ④ 선캡(포니테일) */
-  i36:(sk,hc)=>`${pony(hc||'#4F4946')}${visor()}`,
+  i36:(sk,hc)=>`${pony(hc||'#4F4946')}${visor(hc)}`,
   /* ⑤ 러닝모자(짧은 머리) — 검정/회색 캡 */
   i37:(sk,hc)=>`${shortH(hc||'#4F4946')}${runCap()}`,
   /* ⑥ 러닝모자(포니테일) */
@@ -11757,6 +11803,29 @@ function chTop(tt, c, sk, pt, uid){
   const bust=`<path d="M20.5 36 L43.5 36 Q45.5 43 44.5 50 Q32 54 19.5 50 Q18.5 43 20.5 36 Z" fill="${sk}"/><path d="M20.5 36 Q32 40 43.5 36 L43.5 38.5 Q32 42.5 20.5 38.5 Z" fill="${sk}"/>`;
 
   switch(tt){
+    case 46: { /* 거미 히어로 — 둥근 어깨 · 쫄바지 · 신발까지 한 벌 · 가면 옵션 */
+      const R='#C8322E', B='#2B3F86', W='#8E1F1C', WB='#1D2C5E';
+      /* 어깨는 둥글게, 가랑이는 조금 낮게(상체 길게 / 하체 짧게) */
+      const BODY='M19 44 Q19 36 26.5 36 L37.5 36 Q45 36 45 44 L45 62 L44 62 L44 84 L33.2 84 L33.2 62 L30.8 62 L30.8 84 L20 84 L20 62 L19 62 Z';
+      const web=`<g stroke="${W}" stroke-width="0.75" fill="none" opacity=".95">
+        <path d="M32 37 L32 60 M32 37 L21.5 45 M32 37 L42.5 45 M32 37 L23 56 M32 37 L41 56"/>
+        <path d="M25.8 43 Q32 46 38.2 43"/><path d="M23.2 48 Q32 52.5 40.8 48"/>
+        <path d="M21.6 53.5 Q32 59 42.4 53.5"/></g>`;
+      const legWeb=`<g stroke="${WB}" stroke-width="0.7" fill="none" opacity=".9">
+        <path d="M25.4 67 h-4.6 M25.4 73 h-4.6 M25.4 79 h-4.6 M38.6 67 h4.6 M38.6 73 h4.6 M38.6 79 h4.6"/></g>`;
+      const emblem=`<g><path d="M32 43.4 l2.7 1.6 v3.1 l-2.7 1.6 l-2.7 -1.6 v-3.1 Z" fill="#1A1A1E"/>
+        <g stroke="#1A1A1E" stroke-width="1" fill="none" stroke-linecap="round">
+        <path d="M29.3 45 l-3.5 -2.1 M34.7 45 l3.5 -2.1 M29.3 48.1 l-3.7 2.3 M34.7 48.1 l3.7 2.3 M32 42.3 v-2.7 M32 50.7 v2.5"/></g></g>`;
+      const armWeb=(x)=>`<g stroke="${W}" stroke-width="0.7" fill="none" opacity=".9"><path d="M${x} 43 h8 M${x} 48 h8 M${x} 53 h8 M${x+4} 38 v24"/></g>`;
+      return `<clipPath id="tcBody${uid}"><path d="${BODY}"/></clipPath>`
+        + `<path d="${BODY}" fill="${B}"/>`
+        + `<g clip-path="${CLIP}"><path d="M19 36 L45 36 L45 57 Q32 61 19 57 Z" fill="${R}"/>${web}${legWeb}${emblem}</g>`
+        + `<rect x="18.4" y="82.6" width="13.4" height="9.4" rx="3.6" fill="${B}"/>`
+        + `<rect x="32.2" y="82.6" width="13.4" height="9.4" rx="3.6" fill="${B}"/>`
+        + `<g stroke="${WB}" stroke-width="0.8" fill="none" opacity=".85"><path d="M19.4 86.4 h11.4 M33.2 86.4 h11.4"/></g>`
+        + `<g class="ar-l"><rect x="12" y="38" width="8" height="24" rx="4" fill="${R}"/>${armWeb(12)}<circle cx="16" cy="63" r="4.6" fill="${R}"/></g>`
+        + `<g class="ar-r"><rect x="44" y="38" width="8" height="24" rx="4" fill="${R}"/>${armWeb(44)}<circle cx="48" cy="63" r="4.6" fill="${R}"/></g>`;
+    }
     /* ═══ 데일리 스타일 (신규) ═══ */
 
     case 35: /* 현대 공주 — 티어드 화이트 드레스 + 퍼프 소매 */
@@ -12000,7 +12069,7 @@ function chSvg(o,extra,showBg){
   /* 모자 착용 시 헤어 처리 */
   const its=itemsOf(o);
   let hairClip='';
-  if(its.some(function(id){ return ITEM_HAIR_HIDE.has(id); })){
+  if(ttMaskOn(o) || its.some(function(id){ return ITEM_HAIR_HIDE.has(id); })){
     H=['',''];                                   /* 모자에 머리가 포함된 경우 기본 헤어는 감춤 */
   }else{
     let cut=null;
@@ -12013,7 +12082,7 @@ function chSvg(o,extra,showBg){
   }
   /* 자체 팔을 그리는 아이템이면 기본 팔 제거 */
   const hideArms=its.some(function(id){ return ITEM_HIDE_ARMS.has(id); });
-  const hideLegs=its.some(function(id){ return ITEM_HIDE_LEGS.has(id); });
+  const hideLegs=TT_HIDE_LEGS.has(ttIdx) || its.some(function(id){ return ITEM_HIDE_LEGS.has(id); });
   let top=chTop(ttIdx, tc, sk, (o.pt||0)%CH_PT.length, uid);
   if(hideArms) top=top.replace(/<g class="ar-[lr]">[\s\S]*?<\/g>/g,'');
   const face=chFace((o.fc||0)%CH_FACE.length);
@@ -12033,7 +12102,7 @@ function chSvg(o,extra,showBg){
         ${H[1]}
         ${face}
       </g>
-      ${extra||''}
+      ${extra||''}${ttMaskOn(o)? chSpiderMask(uid) : ''}
     </g>
   </svg>`;
 }
