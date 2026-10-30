@@ -1,4 +1,4 @@
-import {CANNONS,ENEMIES,SUPPLIES,WALL,WORLD_WIDTH,ACTOR_STYLE,WALL_SLOTS,COMMAND_X} from './config.js?v=f7282cc9a6';
+import {CANNONS,ENEMIES,SUPPLIES,WALL,WORLD_WIDTH,ACTOR_STYLE,WALL_SLOTS,COMMAND_X} from './config.js?v=99583a3ec2';
 export const ENEMY_ART=['enemy-small','enemy-tall','enemy-fat','enemy-giant'];
 // Kind 4 (초미니 음봉) reuses the small candle art at a much smaller size.
 const ENEMY_KIND_ART=[...ENEMY_ART,'enemy-small'];

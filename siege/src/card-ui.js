@@ -1,7 +1,7 @@
-import { CANNONS, cannonStats } from './config.js?v=f7282cc9a6';
-import { RARITIES, TOWER_RARITY, xpForNext, MAX_CARD_LEVEL, cardOdds, PACKS } from './cards.js?v=f7282cc9a6';
-import { renderShopIcon } from './renderer.js?v=f7282cc9a6';
-import { FX } from './fx.js?v=f7282cc9a6';
+import { CANNONS, cannonStats } from './config.js?v=99583a3ec2';
+import { RARITIES, TOWER_RARITY, xpForNext, MAX_CARD_LEVEL, cardOdds, PACKS } from './cards.js?v=99583a3ec2';
+import { renderShopIcon } from './renderer.js?v=99583a3ec2';
+import { FX } from './fx.js?v=99583a3ec2';
 
 const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
 const wait = ms => new Promise(r => setTimeout(r, ms));
@@ -119,7 +119,7 @@ export function renderCollection(container, game, { onPack, onCard, slotText }) 
 
 export function statLines(game, c) {
   const st = cannonStats(c.type, c.level), buff = game.attackBuff(c), power = game.power;
-  const lines = [['공격력', c.type === 'totem' ? '지원 전용' : (st.damage * power).toFixed(1)], ['공격 속도', c.type === 'totem' ? '지원 전용' : `${(st.rate * (1 + buff)).toFixed(2)} / 초`], ['사거리', Math.round(st.range)], ['성벽 화력', `피해 ×${power.toFixed(2)}`]];
+  const lines = [['공격력', c.type === 'totem' ? '지원 전용' : (st.damage * power).toFixed(1)], ['공격 속도', c.type === 'totem' ? '지원 전용' : `${(st.rate * (1 + buff)).toFixed(2)} / 초`], ['사거리', Math.round(st.range)], ['성벽 보너스', `공격력 ×${(power / .75).toFixed(2)}`]];
   if (buff > 0) lines.push(['토템 지원', `연사 +${Math.round(buff * 100)}%`]);
   if (c.type === 'totem') lines.push(['주변 지원', `연사 +${Math.round(st.buff * 100)}%`]);
   if (st.pierce) lines.push(['관통', `${st.pierce}마리`]); if (st.slow) lines.push(['감속', `${Math.round(st.slow * 100)}% · ${st.duration.toFixed(1)}초`]); if (c.type === 'poison') lines.push(['독', `${st.dot.toFixed(1)}/초`]); if (c.type === 'mortar') lines.push(['폭발 반경', Math.round(st.radius)]);
