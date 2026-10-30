@@ -1,4 +1,4 @@
-import {CANNONS,ENEMIES,SUPPLIES,WALL,WORLD_WIDTH,ACTOR_STYLE,WALL_SLOTS,COMMAND_X} from './config.js?v=9470d0d711';
+import {CANNONS,ENEMIES,SUPPLIES,WALL,WORLD_WIDTH,ACTOR_STYLE,WALL_SLOTS,COMMAND_X} from './config.js?v=f7282cc9a6';
 export const ENEMY_ART=['enemy-small','enemy-tall','enemy-fat','enemy-giant'];
 // Kind 4 (초미니 음봉) reuses the small candle art at a much smaller size.
 const ENEMY_KIND_ART=[...ENEMY_ART,'enemy-small'];
@@ -91,7 +91,7 @@ export function drawClayWall(c,g,point,mask=false){
  }
  for(let x=-24;x<WORLD_WIDTH+24;x+=step){const a=point(x,g.wallAt(x)+WALL.back,WALL.elevation),b=point(x+step,g.wallAt(x+step)+WALL.back,WALL.elevation),d=point(x,g.wallAt(x)+WALL.north,0),sx=f.x+((x%tile+tile)%tile)/tile*f.w,sw=step/tile*f.w;texture(c,image,a,b,d,sx,sw,f.y,f.h);}
  const bastion=info(BASTION_ART[g.stage]);if(bastion){const f=bastion.frame;// v26: bastions stand at the four fixed slots (empty or not) and a larger one carries the command post.
- for(const x of [...WALL_SLOTS,COMMAND_X]){const big=x===COMMAND_X,base=point(x,g.wallAt(x)+WALL.deck+WALL.mountOffset,WALL.elevation),height=big?92:76,width=height*f.w/f.h;c.drawImage(bastion.image,f.x,f.y,f.w,f.h,base.x-width/2,base.y-height*.26,width,height);}}
+ for(const x of [...WALL_SLOTS,COMMAND_X]){const big=x===COMMAND_X,base=point(x,g.wallAt(x)+WALL.deck+WALL.mountOffset,WALL.elevation),height=big?82:66,width=height*f.w/f.h;c.drawImage(bastion.image,f.x,f.y,f.w,f.h,base.x-width/2,base.y-height*.26,width,height);}}
  c.restore();return true;
 }
 // v26: the forward outpost north of the wall centre — a smaller bastion standing on the field.
