@@ -34,6 +34,7 @@ export const CANNONS = {
 export const SHOP_NAMES = { machine: 'MG GUN', mortar: 'MORTAR', sniper: 'SNIPER', laser: 'LASER', totem: 'TOTEM', sticky: 'SLIME', poison: 'POISON', drone: 'DRONE' };
 export const DRONE = Object.freeze({ altitude: 24, marginX: 29, marginTop: 62, marginBottom: 25 });
 export const WALL_STAGES = [
+  { name: '흙', color: '#7a5a3c', edge: '#b58a5c' }, { name: '목책', color: '#5e4430', edge: '#a07a52' },
   { name: '사암', color: '#705349', edge: '#af8670' }, { name: '이끼석', color: '#765540', edge: '#c49b6a' },
   { name: '풍화석', color: '#6c5846', edge: '#b5a088' }, { name: '목석', color: '#60645f', edge: '#abb9ae' },
   { name: '석회암', color: '#5b7081', edge: '#aec7d4' }, { name: '화강암', color: '#506d81', edge: '#b5d8e8' },

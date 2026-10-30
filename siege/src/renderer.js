@@ -1,10 +1,11 @@
-import { WORLD_WIDTH as W,CANNONS,ENEMIES,SUPPLIES,WALL_STAGES,DRONE,WALL,cannonStats,validPlacement,validDronePlacement,clamp } from './config.js?v=31df2bada5';
-import{WALL_MAX_LEVEL,WALL_MAX_XP}from'./progression.js?v=31df2bada5';
-import{isAIStock}from'./symbols.js?v=31df2bada5';
-import { QuarterCamera, DEPTH_SCALE, WALL_ELEVATION } from './camera.js?v=31df2bada5';
-import { drawClayMortar, drawClayMortarIcon, clayBattlefield } from './clay-assets.js?v=31df2bada5';
-import{drawProjectile,drawEffect}from'./combat-fx.js?v=31df2bada5';
-import { drawClayTower, drawClayUnit, drawClayWall, drawClayPreview, wallOutline } from './clay-runtime.js?v=31df2bada5';
+import { WORLD_WIDTH as W,CANNONS,ENEMIES,SUPPLIES,WALL_STAGES,DRONE,WALL,cannonStats,validPlacement,validDronePlacement,clamp } from './config.js?v=ba402395fc';
+import{WALL_MAX_LEVEL,WALL_MAX_XP}from'./progression.js?v=ba402395fc';
+import{isAIStock}from'./symbols.js?v=ba402395fc';
+import { QuarterCamera, DEPTH_SCALE, WALL_ELEVATION } from './camera.js?v=ba402395fc';
+import { drawClayMortar, drawClayMortarIcon, clayBattlefield } from './clay-assets.js?v=ba402395fc';
+import{drawProjectile,drawEffect}from'./combat-fx.js?v=ba402395fc';
+import{artCrop}from'./terrain.js?v=ba402395fc';
+import { drawClayTower, drawClayUnit, drawClayWall, drawClayPreview, wallOutline } from './clay-runtime.js?v=ba402395fc';
 const TAU=Math.PI*2;
 function box(c,x,y,w,h,r,fill,stroke){c.beginPath();c.roundRect(x,y,w,h,r);if(fill){c.fillStyle=fill;c.fill();}if(stroke){c.lineWidth=1;c.strokeStyle=stroke;c.stroke();}}
 function line(c,pts,col,w=1){c.beginPath();c.lineWidth=w;c.strokeStyle=col;pts.forEach(([x,y],i)=>i?c.lineTo(x,y):c.moveTo(x,y));c.stroke();}
@@ -106,7 +107,7 @@ export class Renderer{
  if(type===1){const g=c.createLinearGradient(-20,-45,20,-20);g.addColorStop(0,'#a4ced5');g.addColorStop(.5,'#d0b9d2');g.addColorStop(1,'#c2e3a5');c.fillStyle=g;c.beginPath();c.ellipse(0,-32,26,15,0,0,TAU);c.fill();c.strokeStyle='#84958b';c.stroke();for(let i=-2;i<3;i++)line(c,[[-20,-32+i*4],[20,-32+i*4]],'#7da8a960');}
  else{box(c,-24,-39,29,10,1,'#638c9c','#c9d6bf');for(let i=0;i<4;i++)line(c,[[-22+i*7,-38],[-22+i*7,-30]],'#afc8b966');box(c,13,-44,9,19,2,'#d4d4b5','#8b9b89');}
  if(type===2)text(c,'SOXL',0,3,14,'#315c69');else if(type===0)text(c,'FAB',0,3,12,'#315c69');c.restore();}
- background(c){const h=this.viewHeight,art=clayBattlefield();if(art){c.drawImage(art,0,0,art.naturalWidth,art.naturalHeight,0,0,W,h);return;}const grad=c.createLinearGradient(0,0,0,h);grad.addColorStop(0,'#c7b17b');grad.addColorStop(.45,'#e0c791');grad.addColorStop(.65,'#b6c078');grad.addColorStop(1,'#819d65');c.fillStyle=grad;c.fillRect(0,0,W,h);
+ background(c){const h=this.viewHeight,art=clayBattlefield();if(art){const crop=artCrop(h,art.naturalWidth/art.naturalHeight);c.drawImage(art,art.naturalWidth*crop.left,art.naturalHeight*crop.top,art.naturalWidth*crop.wfrac,art.naturalHeight*crop.frac,0,0,W,h);return;}const grad=c.createLinearGradient(0,0,0,h);grad.addColorStop(0,'#c7b17b');grad.addColorStop(.45,'#e0c791');grad.addColorStop(.65,'#b6c078');grad.addColorStop(1,'#819d65');c.fillStyle=grad;c.fillRect(0,0,W,h);
  // Deterministic terrain speckles do not consume market/game randomness.
  let seed=1207;const r=()=>{seed=(seed*16807)%2147483647;return(seed-1)/2147483646;};
  for(let i=0;i<700;i++){const x=r()*W,y=r()*h;dot(c,x,y,.5+r()*1.6,i%3?'#786a3e17':'#fff4c624');}
@@ -150,7 +151,7 @@ export class Renderer{
   if(this.clayWallCache?.key===key){const layer=this.clayWallCache;c.drawImage(layer.canvas,0,layer.top,W,142);return;}
   const layer=document.createElement('canvas'),top=Math.floor(this.point(216,current.wallY).y-90);layer.width=W*2;layer.height=284;const lc=layer.getContext('2d');lc.setTransform(2,0,0,2,0,-top*2);
   if(drawClayWall(lc,current,(x,y,z)=>this.point(x,y,z))){this.clayWallCache={key,canvas:layer,top};c.drawImage(layer,0,top,W,142);return;}
-  const g=this.game,k=g.stage,pal=[['#af9462','#d5bb82'],['#92754c','#c4a46a'],['#8d754f','#c6ab76'],['#96917b','#d8cba4'],['#a4aa96','#e2ddbf'],['#909e91','#dbe3c8'],['#7f918a','#d4e2d4'],['#bd9c53','#ffe9a4']][k];
+  const g=this.game,k=Math.max(0,g.stage-2),pal=[['#af9462','#d5bb82'],['#92754c','#c4a46a'],['#8d754f','#c6ab76'],['#96917b','#d8cba4'],['#a4aa96','#e2ddbf'],['#909e91','#dbe3c8'],['#7f918a','#d4e2d4'],['#bd9c53','#ffe9a4']][k];
   const north=(x,z=0)=>this.point(x,g.wallFaceAt(x),z),back=(x)=>this.point(x,g.wallAt(x)+WALL.south,WALL_ELEVATION);
   c.save();c.lineJoin='round';
   const ground=[];for(let x=-26;x<=W+26;x+=8)ground.push(this.point(x,g.wallAt(x)+6));

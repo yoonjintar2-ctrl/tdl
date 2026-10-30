@@ -1,8 +1,8 @@
-const SEARCH_NAMES={SOXL:'Direxion semiconductor bull 반도체 레버리지',SOXS:'Direxion semiconductor bear 인버스',NVDA:'Nvidia',AMD:'Advanced Micro Devices',AVGO:'Broadcom',TSM:'Taiwan Semiconductor TSMC',MU:'Micron',ARM:'Arm Holdings',ASML:'ASML',MSFT:'Microsoft',GOOGL:'Google Alphabet 구글',AMZN:'Amazon',META:'Meta Facebook 페이스북',PLTR:'Palantir',AAPL:'Apple',TSLA:'Tesla',SPY:'SPDR S&P500 에스앤피',QQQ:'Invesco Nasdaq 나스닥',IWM:'Russell 러셀',JPM:'JPMorgan Chase 제이피모건',KO:'Coca Cola',XOM:'Exxon Mobil',GLD:'Gold 금'};
+const SEARCH_NAMES={SOXL:'Direxion semiconductor bull 반도체 레버리지',SOXS:'Direxion semiconductor bear 인버스',NVDA:'Nvidia',AMD:'Advanced Micro Devices',AVGO:'Broadcom',TSM:'Taiwan Semiconductor TSMC',MU:'Micron',ARM:'Arm Holdings',ASML:'ASML',MSFT:'Microsoft',GOOGL:'Google Alphabet 구글',AMZN:'Amazon',META:'Meta Facebook 페이스북',PLTR:'Palantir',AAPL:'Apple',TSLA:'Tesla',SPY:'SPDR S&P500 에스앤피',QQQ:'Invesco Nasdaq 나스닥',TQQQ:'ProShares UltraPro QQQ 나스닥 레버리지 티큐큐큐',SNDK:'SanDisk 샌디스크 메모리',IONQ:'IonQ 아이온큐 양자',IWM:'Russell 러셀',JPM:'JPMorgan Chase 제이피모건',KO:'Coca Cola',XOM:'Exxon Mobil',GLD:'Gold 금'};
 // Supported data symbols are shared by client and server. No arbitrary URL paths.
 const US_STOCKS=[
  ['SOXL','반도체 3×',true],['SOXS','반도체 인버스 3×',true],['NVDA','엔비디아',true],['AMD','AMD',true],['AVGO','브로드컴',true],['TSM','TSMC',true],['MU','마이크론',true],['ARM','Arm',true],['ASML','ASML',true],['MSFT','마이크로소프트',true],['GOOGL','알파벳',true],['AMZN','아마존',true],['META','메타',true],['PLTR','팔란티어',true],
- ['AAPL','애플',true],['TSLA','테슬라',true],['SPY','S&P 500',false],['QQQ','나스닥 100',false],['IWM','러셀 2000',false],['JPM','JP모건',false],['KO','코카콜라',false],['XOM','엑슨모빌',false],['GLD','금 ETF',false]
+ ['AAPL','애플',true],['TSLA','테슬라',true],['SPY','S&P 500',false],['QQQ','나스닥 100',false],['TQQQ','나스닥 3×',false],['SNDK','샌디스크',true],['IONQ','아이온큐',true],['IWM','러셀 2000',false],['JPM','JP모건',false],['KO','코카콜라',false],['XOM','엑슨모빌',false],['GLD','금 ETF',false]
 ].map(([symbol,name,ai])=>Object.freeze({symbol,name,ai,market:'US',searchTerms:SEARCH_NAMES[symbol]||''}));
 const KR_STOCKS=[
  ['005930','삼성전자',true,'Samsung Electronics 삼성'],['000660','SK하이닉스',true,'SK Hynix 하이닉스'],

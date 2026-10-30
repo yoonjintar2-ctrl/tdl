@@ -1,7 +1,7 @@
-import { CANNONS, cannonStats } from './config.js?v=31df2bada5';
-import { RARITIES, TOWER_RARITY, copiesForNext, MAX_CARD_LEVEL, cardOdds, PACKS } from './cards.js?v=31df2bada5';
-import { renderShopIcon } from './renderer.js?v=31df2bada5';
-import { FX } from './fx.js?v=31df2bada5';
+import { CANNONS, cannonStats } from './config.js?v=ba402395fc';
+import { RARITIES, TOWER_RARITY, copiesForNext, MAX_CARD_LEVEL, cardOdds, PACKS } from './cards.js?v=ba402395fc';
+import { renderShopIcon } from './renderer.js?v=ba402395fc';
+import { FX } from './fx.js?v=ba402395fc';
 
 const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
 const wait = ms => new Promise(r => setTimeout(r, ms));
@@ -13,7 +13,7 @@ export function towerCard(type, item, { mini = false, faceDown = false } = {}) {
   const rarity = TOWER_RARITY[type], r = RARITIES[rarity];
   const card = el('div', `tcard r-${rarity}${mini ? ' mini' : ''}${faceDown ? ' hidden' : ''}${item ? '' : ' unowned'}`); card.dataset.type = type;
   const inner = el('div', 'tcard-inner'), front = el('div', 'tcard-face front'), back = el('div', 'tcard-face back');
-  const top = el('div', 'tc-top'); top.append(el('span', 'tc-rarity', r.name), el('span', 'tc-lv', item ? `Lv.${item.level}` : '미보유'));
+  const top = el('div', 'tc-top'); top.append(el('span', 'tc-rarity', r.name), el('span', 'tc-lv', item ? `Lv.${item.level}` : '?'));
   const art = el('canvas', 'tc-art'); art.width = 200; art.height = 180; art.setAttribute('aria-hidden', 'true');
   front.append(top, art, el('div', 'tc-name', CANNONS[type].short));
   if (!mini) {

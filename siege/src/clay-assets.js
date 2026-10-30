@@ -1,5 +1,5 @@
-import { loadClayCollection,CLAY_CATALOG } from './clay-runtime.js?v=31df2bada5';
-import { WALL } from './config.js?v=31df2bada5';
+import { loadClayCollection,CLAY_CATALOG } from './clay-runtime.js?v=ba402395fc';
+import { WALL } from './config.js?v=ba402395fc';
 const images = new Map();
 export const CLAY_ART = {
   mortar: new URL('../assets/clay/mortar-master-v1.webp', import.meta.url).href,
@@ -7,6 +7,8 @@ export const CLAY_ART = {
   battlefield: new URL('../assets/clay/battlefield-clay-v1.webp', import.meta.url).href,
 };
 export function clayBattlefield(){return images.get('battlefield');}
+// Swap the battlefield painting (per-stock themes). Resolves true once decoded.
+const fields=new Map();export async function useBattlefield(file){if(typeof Image==='undefined')return false;if(fields.has(file)){images.set('battlefield',fields.get(file));return true;}const img=new Image();img.decoding='async';img.src=new URL('../assets/clay/'+file,import.meta.url).href;try{await img.decode();fields.set(file,img);images.set('battlefield',img);return true;}catch{return false;}}
 export async function loadClayAssets({onProgress=()=>{}}={}) {
   if (typeof Image === 'undefined') return false;
   let baseDone=0,collectionDone=0;const total=CLAY_CATALOG.length+2;const report=()=>onProgress(baseDone+collectionDone,total);

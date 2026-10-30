@@ -1,21 +1,22 @@
-import{CampaignView}from'./campaign-view.js?v=31df2bada5';
-import{CampaignDataProvider,newCourseRun,readCourseRun,checkpointCourse,storeCourseRun,removeCourseRun,restoreCourseCombat,settleCourse}from'./campaign.js?v=31df2bada5';
-import{courseFor,courseTime,CAMPAIGN_REWARD_RATE,campaignProgress}from'./campaign-courses.js?v=31df2bada5';
-import{stockFor}from'./symbols.js?v=31df2bada5';
-import{StockPicker}from'./stock-picker.js?v=31df2bada5';
-import{drawSessionChart}from'./session-chart.js?v=31df2bada5';
-import{WALL_MAX_XP}from'./progression.js?v=31df2bada5';
-import { CANNONS,SCENARIOS,SETTINGS,ENEMIES,SUPPLIES,WORLD_WIDTH,DRONE,WALL,cannonStats,upgradeCost,validPlacement,clamp } from './config.js?v=31df2bada5';
-import { DemoMarketDataProvider, LiveMarketDataProvider, AlpacaMarketDataProvider, MARKET_ERRORS } from './market.js?v=31df2bada5';
-import { Game } from './game.js?v=31df2bada5';
-import { Renderer,renderShopIcon } from './renderer.js?v=31df2bada5';
-import { initialState,readSave,writeSave,snapshotGame,safeStorage,readRawSave,writeRawSave } from './storage.js?v=31df2bada5';
-import{cloudConfigured,currentUser,signUpId,signInId,signOut,pull,push,ID_RULE,idOf}from'./cloud.js?v=31df2bada5';
-import { loadClayAssets } from './clay-assets.js?v=31df2bada5';
-import { drawClayPreview } from './clay-runtime.js?v=31df2bada5';
-import{money,playerXPAt,SLOT_LEVELS}from'./progression.js?v=31df2bada5';
-import{openPack,applyCard,PACKS,MODES,MODE_ORDER,modeFor}from'./cards.js?v=31df2bada5';
-import{CardStage,renderCollection,towerCard,statLines}from'./card-ui.js?v=31df2bada5';
+import{CampaignView}from'./campaign-view.js?v=ba402395fc';
+import{CampaignDataProvider,newCourseRun,readCourseRun,checkpointCourse,storeCourseRun,removeCourseRun,restoreCourseCombat,settleCourse}from'./campaign.js?v=ba402395fc';
+import{courseFor,courseTime,CAMPAIGN_REWARD_RATE,campaignProgress}from'./campaign-courses.js?v=ba402395fc';
+import{stockFor}from'./symbols.js?v=ba402395fc';
+import{StockPicker}from'./stock-picker.js?v=ba402395fc';
+import{drawSessionChart}from'./session-chart.js?v=ba402395fc';
+import{WALL_MAX_XP}from'./progression.js?v=ba402395fc';
+import { CANNONS,SCENARIOS,SETTINGS,ENEMIES,SUPPLIES,WORLD_WIDTH,DRONE,WALL,cannonStats,upgradeCost,validPlacement,clamp } from './config.js?v=ba402395fc';
+import { DemoMarketDataProvider, LiveMarketDataProvider, AlpacaMarketDataProvider, MARKET_ERRORS } from './market.js?v=ba402395fc';
+import { Game } from './game.js?v=ba402395fc';
+import { Renderer,renderShopIcon } from './renderer.js?v=ba402395fc';
+import { initialState,readSave,writeSave,snapshotGame,safeStorage,readRawSave,writeRawSave } from './storage.js?v=ba402395fc';
+import{cloudConfigured,currentUser,signUpEmail,signInEmail,signOut,pull,push,EMAIL_RULE,idOf}from'./cloud.js?v=ba402395fc';
+import { loadClayAssets,useBattlefield } from './clay-assets.js?v=ba402395fc';
+import{THEMES,themeFor}from'./themes.js?v=ba402395fc';
+import { drawClayPreview } from './clay-runtime.js?v=ba402395fc';
+import{money,playerXPAt,SLOT_LEVELS}from'./progression.js?v=ba402395fc';
+import{openPack,applyCard,PACKS,MODES,MODE_ORDER,modeFor}from'./cards.js?v=ba402395fc';
+import{CardStage,renderCollection,towerCard,statLines}from'./card-ui.js?v=ba402395fc';
 const $=id=>document.getElementById(id),fmt=new Intl.NumberFormat('ko-KR'),nyTime=new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',hour12:false,hour:'2-digit',minute:'2-digit',second:'2-digit'});
 async function prepareArt(){const started=performance.now();
  $('asset-retry').hidden=true;$('asset-loading-message').textContent='클레이 전장을 준비하고 있어요.';
@@ -85,8 +86,10 @@ function marketUI(s){
  if(waiting){$('connection-notice').querySelector('strong').textContent=publicFeed?(ps==='connecting'?'가격·거래량 불러오는 중':'데이터 제공사 연결 확인'):priceReady?'거래량 연결을 확인해 주세요':volumeReady?'실시간 가격 연결을 확인해 주세요':'가격·거래량 계정을 연결해 주세요';$('connection-notice').querySelector('p').textContent=publicFeed&&ps==='connecting'?sourceName+' 시세는 키 없이 시작합니다.':MARKET_ERRORS[s.priceError||s.volumeError||s.error]||'데이터 수신 상태를 확인해 주세요.';}
  chart(s);
 }
+let themeKey='default';
+function applyTheme(symbol){const key=themeFor(symbol),th=THEMES[key];game.terrain.setArt(th.aspect,th.corridor);if(key===themeKey&&renderer.bg)return;themeKey=key;useBattlefield(th.file).then(ok=>{if(ok){themeKey=key;resize();}});}
 function bindProvider(){provider.subscribe(s=>{game.onMarket(s);marketUI(s);});game.onMarket(provider.last);marketUI(provider.last);if(marketChosen)provider.start?.();}
-picker=new StockPicker($('stock-picker'),{onCampaign:()=>openCampaignMap(),missions:()=>{const home=homeGame||game,mode=home.modeKey,view=campaignView_(snapshotGame(home),mode);return{progress:campaignProgress(view.campaign),pending:readCourseRun(view,courseStorage),mode};},onMission:id=>{const home=homeGame||game,pending=readCourseRun(campaignView_(snapshotGame(home),home.modeKey),courseStorage);if(pending&&pending.courseId!==id){openCampaignMap();return;}beginCourse(id,!!pending);},onChoose:async symbol=>{provider.destroy();game.settings.symbol=symbol;game.resetMarket();marketChosen=true;provider=makeProvider(symbol);$('stock-select').textContent=(stockFor(symbol)?.market==='KR'?stockFor(symbol).name:symbol)+' ⌄';$('stock-select').title=symbol;$('data-mode').value='live';$('simulation-controls').hidden=true;bindProvider();game.dirty=true;save();updateUI();},onClose:({selected})=>{$('stock-select').setAttribute('aria-expanded','false');$('stock-select').focus({preventScroll:true});if(!selected&&marketChosen)provider.refresh?.();}});
+picker=new StockPicker($('stock-picker'),{onCampaign:()=>openCampaignMap(),missions:()=>{const home=homeGame||game,mode=home.modeKey,view=campaignView_(snapshotGame(home),mode);return{progress:campaignProgress(view.campaign),pending:readCourseRun(view,courseStorage),mode};},onMission:id=>{const home=homeGame||game,pending=readCourseRun(campaignView_(snapshotGame(home),home.modeKey),courseStorage);if(pending&&pending.courseId!==id){openCampaignMap();return;}beginCourse(id,!!pending);},onChoose:async symbol=>{provider.destroy();game.settings.symbol=symbol;game.resetMarket();marketChosen=true;provider=makeProvider(symbol);applyTheme(symbol);$('stock-select').textContent=(stockFor(symbol)?.market==='KR'?stockFor(symbol).name:symbol)+' ⌄';$('stock-select').title=symbol;$('data-mode').value='live';$('simulation-controls').hidden=true;bindProvider();game.dirty=true;save();updateUI();},onClose:({selected})=>{$('stock-select').setAttribute('aria-expanded','false');$('stock-select').focus({preventScroll:true});if(!selected&&marketChosen)provider.refresh?.();}});
 $('stock-select').onclick=()=>{if(courseRun){openCampaignMap();return;}closePanel();$('stock-select').setAttribute('aria-expanded','true');picker.open({mandatory:!marketChosen});};
 $('market-provider').value=game.settings.marketProvider||'yahoo';$('market-provider').addEventListener('change',e=>{provider.destroy();game.settings.marketProvider=e.target.value==='alpaca'?'alpaca':'yahoo';game.resetMarket();provider=makeProvider();$('data-mode').value='live';$('simulation-controls').hidden=true;bindProvider();game.dirty=true;save();updateUI();});
 bindProvider();
@@ -168,7 +171,7 @@ function beginCourse(id,resume=false){try{
  if(courseRun&&resume&&courseRun.courseId===id){resumeCourse();return;}
  const home=homeGame||game,mode=home.modeKey,view=campaignView_(snapshotGame(home),mode),run=resume?readCourseRun(view,courseStorage):newCourseRun(view,id);if(!run||run.courseId!==id)throw Error('invalid_course');run.mode=run.mode||mode;if(resume){run.state.gold=home.gold+run.earnedGold;for(const it of home.inventory){const r=run.state.inventory.find(v=>v.type===it.type);if(!r)run.state.inventory.push({...it});else if(it.level>r.level){r.level=it.level;r.copies=it.copies||0;}}for(const c of run.state.cannons){const it=run.state.inventory.find(v=>v.type===c.type);if(it)c.level=it.level;}}
  provider.destroy();closePanel();picker.close(true);campaignView.hide();homeGame=home;courseRun=run;courseRun.paused=false;courseRun.ending=false;courseRun.baseXP=home.playerXP;run.state.playerXP=home.playerXP+run.earnedXP;
- game=new Game(run.state,{height:run.height||620,rewardMultiplier:CAMPAIGN_REWARD_RATE,mode:run.mode});provider=new CampaignDataProvider({courseId:id,elapsed:run.elapsed,resume});game.now=()=>provider.wallNow();renderer.game=game;renderer.clayWallCache=null;marketChosen=true;courseModeUI(true);$('stock-select').textContent='가상 코스 ⌄';$('stock-select').title='실제 시세가 아닌 정복 코스입니다.';bindProvider();if(resume)restoreCourseCombat(game,run);quality();last=performance.now();acc=0;saveTime=0;save();updateUI();game.notify(`${courseFor(id).minutes}분 완주 · 장벽 XP 0이 45초 지속되면 실패`);
+ game=new Game(run.state,{height:run.height||620,rewardMultiplier:CAMPAIGN_REWARD_RATE,mode:run.mode});provider=new CampaignDataProvider({courseId:id,elapsed:run.elapsed,resume});game.now=()=>provider.wallNow();renderer.game=game;renderer.clayWallCache=null;marketChosen=true;applyTheme('SOXL');courseModeUI(true);$('stock-select').textContent='가상 코스 ⌄';$('stock-select').title='실제 시세가 아닌 정복 코스입니다.';bindProvider();if(resume)restoreCourseCombat(game,run);quality();last=performance.now();acc=0;saveTime=0;save();updateUI();game.notify(`${courseFor(id).minutes}분 완주 · 장벽 XP 0이 45초 지속되면 실패`);
  }catch{toast('이전 단계를 정복한 뒤 시작할 수 있습니다.');openCampaignMap();}}
 function bankCourse(run,outcome){const base=homeGame||game,mode=run.mode||'normal',original=qaMode?snapshotGame(base):readSave(),settlement=settleCourse(campaignView_(original,mode),run,outcome),finalState=campaignUnview(settlement.state,mode,original);if(courseRun&&game!==base){const owned=new Set(finalState.inventory.map(v=>v.type));finalState.cannons=snapshotGame(game).cannons.filter(c=>owned.has(c.type)).map(c=>({...c,level:finalState.inventory.find(v=>v.type===c.type).level}));}const nextHome=new Game(finalState);if(!qaMode&&!writeSave(nextHome)){campaignView.saveError(()=>bankCourse(run,outcome));return;}
  removeCourseRun(courseStorage);provider.destroy();game=nextHome;homeGame=null;courseRun=null;renderer.game=game;renderer.clayWallCache=null;game.resetMarket();marketChosen=false;provider=makeProvider();courseModeUI(false);$('stock-select').textContent='종목 검색 ⌄';bindProvider();quality();updateUI();campaignView.result(settlement.result);}
@@ -195,26 +198,28 @@ async function startCloud(fromLogin=false){if(qaMode||!cloudConfigured())return;
  catch{cloudState='error';}renderAccount();}
 function renderAccount(){const box=document.getElementById('account-box');if(!box)return;box.replaceChildren();const t=document.createElement('strong');const p=document.createElement('p');const b=document.createElement('button');b.type='button';b.className='primary';
  if(!cloudConfigured()){t.textContent='계정 저장';p.textContent='준비 중입니다.';box.append(t,p);return;}
- if(cloudUser){t.textContent='☁ '+idOf(cloudUser);p.textContent=cloudState==='error'?'계정 저장에 실패했어요. 잠시 후 자동으로 다시 시도해요.':cloudState==='syncing'?'동기화 중…':'진행 상황이 계정에 자동 저장돼요. 아이패드·PC에서 같은 아이디로 로그인하면 이어서 할 수 있어요.';b.textContent='로그아웃';b.className='';b.onclick=async()=>{await pushNow();await signOut();cloudUser=null;cloudState='guest';renderAccount();toast('로그아웃했어요 · 이 기기에는 계속 저장돼요');};}
- else{t.textContent='진행 상황 저장하기';p.textContent='지금은 이 기기에만 저장돼요. 아이디와 비밀번호만으로 가입하면(이메일·개인정보 없음) 골드·타워 카드·미션 기록을 계정에 저장하고 다른 기기에서도 이어서 할 수 있어요.';b.textContent='가입 · 로그인';b.onclick=()=>openAccountForm('signup');}
+ if(cloudUser){t.textContent='☁ '+idOf(cloudUser);p.textContent=cloudState==='error'?'계정 저장에 실패했어요. 잠시 후 자동으로 다시 시도해요.':cloudState==='syncing'?'동기화 중…':'진행 상황이 계정에 자동 저장돼요. 아이패드·PC에서 같은 이메일로 로그인하면 이어서 할 수 있어요.';b.textContent='로그아웃';b.className='';b.onclick=async()=>{await pushNow();await signOut();cloudUser=null;cloudState='guest';renderAccount();toast('로그아웃했어요 · 이 기기에는 계속 저장돼요');};}
+ else{t.textContent='진행 상황 저장하기';p.textContent='지금은 이 기기에만 저장돼요. 이메일과 비밀번호로 가입하면 골드·타워 카드·미션 기록을 계정에 저장하고 다른 기기에서도 이어서 할 수 있어요.';b.textContent='가입 · 로그인';b.onclick=()=>openAccountForm('signup');}
  box.append(t,p,b);}
 function promptSignup(reason){if(promptShown||cloudUser||qaMode||!cloudConfigured()||document.getElementById('account-form'))return;try{if(Date.now()-Number(localStorage.getItem('siege-signup-later')||0)<864e5)return;}catch{}promptShown=true;openAccountForm('signup',reason);}
 function openAccountForm(mode='signup',reason=''){document.getElementById('account-form')?.remove();const w=document.createElement('div');w.id='account-form';w.className='exit-confirm';const card=document.createElement('form');card.className='exit-card account-form';card.noValidate=true;
- const render=()=>{const signup=mode==='signup';card.innerHTML=`<strong>${signup?'진행 상황 저장하기':'로그인'}</strong>${reason&&signup?'<p class="af-reason"></p>':''}<p>${signup?'아이디와 비밀번호만 있으면 돼요. 이메일·전화번호 같은 개인정보는 받지 않아요.':'가입한 아이디와 비밀번호를 입력하세요.'}</p><label>아이디<input id="af-id" autocomplete="username" autocapitalize="none" spellcheck="false" inputmode="latin" maxlength="16" placeholder="영문 소문자·숫자 4~16자"></label><label>비밀번호<input id="af-pw" type="password" autocomplete="${signup?'new-password':'current-password'}" maxlength="64" placeholder="6자 이상"></label>${signup?'<label>비밀번호 확인<input id="af-pw2" type="password" autocomplete="new-password" maxlength="64" placeholder="한 번 더 입력"></label>':''}<p class="af-error" role="alert"></p><div class="exit-actions"><button type="button" id="af-cancel">${signup?'나중에':'닫기'}</button><button type="submit" id="af-ok">${signup?'가입하기':'로그인'}</button></div><button type="button" class="af-switch">${signup?'이미 계정이 있어요 · 로그인':'처음이에요 · 가입하기'}</button><small class="af-note">${signup?'비밀번호를 잊으면 찾을 수 없으니 꼭 기억해 두세요.':''}</small>`;
+ const render=()=>{const signup=mode==='signup';card.innerHTML=`<strong>${signup?'진행 상황 저장하기':'로그인'}</strong>${reason&&signup?'<p class="af-reason"></p>':''}<p>${signup?'이메일과 비밀번호만 있으면 돼요. 구글 계정 연동이나 다른 개인정보는 받지 않아요.':'가입한 이메일과 비밀번호를 입력하세요.'}</p><label>이메일<input id="af-id" type="email" autocomplete="email" autocapitalize="none" spellcheck="false" inputmode="email" maxlength="120" placeholder="you@example.com"></label><label>비밀번호<input id="af-pw" type="password" autocomplete="${signup?'new-password':'current-password'}" maxlength="64" placeholder="6자 이상"></label>${signup?'<label>비밀번호 확인<input id="af-pw2" type="password" autocomplete="new-password" maxlength="64" placeholder="한 번 더 입력"></label>':''}<p class="af-error" role="alert"></p><div class="exit-actions"><button type="button" id="af-cancel">${signup?'나중에':'닫기'}</button><button type="submit" id="af-ok">${signup?'가입하기':'로그인'}</button></div><button type="button" class="af-switch">${signup?'이미 계정이 있어요 · 로그인':'처음이에요 · 가입하기'}</button><small class="af-note">${signup?'이메일은 로그인 아이디로만 써요.':''}</small>`;
   if(reason&&signup)card.querySelector('.af-reason').textContent=reason;
   card.querySelector('#af-cancel').onclick=()=>{if(mode==='signup'&&reason){try{localStorage.setItem('siege-signup-later',String(Date.now()));}catch{}}w.remove();};
   card.querySelector('.af-switch').onclick=()=>{mode=signup?'login':'signup';render();};
   setTimeout(()=>card.querySelector('#af-id')?.focus(),50);};
- card.onsubmit=async e=>{e.preventDefault();const id=card.querySelector('#af-id').value.trim().toLowerCase(),pw=card.querySelector('#af-pw').value,pw2=card.querySelector('#af-pw2')?.value,err=card.querySelector('.af-error'),ok=card.querySelector('#af-ok');
-  if(!ID_RULE.test(id)){err.textContent='아이디는 영문 소문자·숫자·밑줄(_) 4~16자로 입력해 주세요.';return;}if(pw.length<6){err.textContent='비밀번호는 6자 이상이어야 해요.';return;}if(mode==='signup'&&pw!==pw2){err.textContent='비밀번호 두 개가 서로 달라요. 다시 확인해 주세요.';return;}
+ card.onsubmit=async e=>{e.preventDefault();const id=card.querySelector('#af-id').value.trim(),pw=card.querySelector('#af-pw').value,pw2=card.querySelector('#af-pw2')?.value,err=card.querySelector('.af-error'),ok=card.querySelector('#af-ok');
+  if(!EMAIL_RULE.test(id)){err.textContent='이메일 주소를 정확히 입력해 주세요.';return;}if(pw.length<6){err.textContent='비밀번호는 6자 이상이어야 해요.';return;}if(mode==='signup'&&pw!==pw2){err.textContent='비밀번호 두 개가 서로 달라요. 다시 확인해 주세요.';return;}
   ok.disabled=true;err.textContent=mode==='signup'?'가입하는 중…':'로그인하는 중…';
-  try{save();cloudUser=mode==='signup'?await signUpId(id,pw):await signInId(id,pw);w.remove();await startCloud(true);}
-  catch(x){ok.disabled=false;err.textContent={taken:'이미 쓰고 있는 아이디예요. 다른 아이디를 써 주세요.',wrong:'아이디 또는 비밀번호가 맞지 않아요.',weak:'비밀번호가 너무 짧거나 쉬워요. 6자 이상으로 입력해 주세요.',confirm:'계정 서버 설정이 아직 끝나지 않았어요. 잠시 후 다시 시도해 주세요.'}[x.code]||'연결에 실패했어요. 잠시 후 다시 시도해 주세요.';}};
+  try{save();cloudUser=mode==='signup'?await signUpEmail(id,pw):await signInEmail(id,pw);w.remove();await startCloud(true);}
+  catch(x){ok.disabled=false;err.textContent={taken:'이미 가입된 이메일이에요. 로그인으로 들어가 주세요.',wrong:'이메일 또는 비밀번호가 맞지 않아요.',weak:'비밀번호가 너무 짧거나 쉬워요. 6자 이상으로 입력해 주세요.',confirm:'메일함의 인증 링크를 먼저 눌러 주세요.',check_email:'인증 메일을 보냈어요. 메일의 링크를 누른 뒤 로그인해 주세요.',rate:'요청이 많아요. 잠시 후 다시 시도해 주세요.',email:'이메일 주소를 다시 확인해 주세요.'}[x.code]||'연결에 실패했어요. 잠시 후 다시 시도해 주세요.';}};
  render();w.append(card);w.onclick=e=>{if(e.target===w)w.remove();};document.body.append(w);}
 {const sp=$('settings-panel'),acc=document.createElement('section');acc.id='account-box';acc.className='account-box';const anchor=sp.querySelector('h2');(anchor?.parentNode===sp?anchor.nextSibling:null)?sp.insertBefore(acc,anchor.nextSibling):sp.prepend(acc);renderAccount();}
 setInterval(()=>{if(marketChosen&&!document.hidden){playClock+=10;if(playClock>=300)promptSignup('5분 넘게 플레이했어요!');}},10000);
 window.addEventListener('pagehide',()=>{if(cloudUser)pushNow();});
 startCloud();
+// Current time (KST) at the top of the battlefield.
+{const f=new Intl.DateTimeFormat('ko-KR',{timeZone:'Asia/Seoul',hour:'2-digit',minute:'2-digit',hour12:false});const tick=()=>{$('clock-chip').textContent='🕘 '+f.format(new Date());};tick();setInterval(tick,5000);}
 // Fullscreen: real Fullscreen API where supported (iPad, Android, desktop); iPhone gets the home-screen app guide.
 const fsEl=()=>document.fullscreenElement||document.webkitFullscreenElement,standalone=()=>matchMedia('(display-mode: fullscreen), (display-mode: standalone)').matches||navigator.standalone===true;
 function toggleFullscreen(){const root=document.documentElement;if(fsEl()){(document.exitFullscreen||document.webkitExitFullscreen)?.call(document);return;}const req=root.requestFullscreen||root.webkitRequestFullscreen;if(req){Promise.resolve(req.call(root,{navigationUI:'hide'})).catch(()=>showInstallGuide());return;}showInstallGuide();}

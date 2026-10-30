@@ -2,9 +2,9 @@
 // Gold no longer buys or upgrades towers directly; it only buys card packs.
 export const MAX_CARD_LEVEL = 40;
 export const RARITIES = Object.freeze({
-  common: Object.freeze({ key: 'common', name: '일반', color: '#f3efe2', glow: '#ffffff', weight: 76 }),
-  rare: Object.freeze({ key: 'rare', name: '고급', color: '#4f9dff', glow: '#8cc4ff', weight: 19 }),
-  epic: Object.freeze({ key: 'epic', name: '희귀', color: '#ffd23f', glow: '#ffe680', weight: 4.8 }),
+  common: Object.freeze({ key: 'common', name: '일반', color: '#f3efe2', glow: '#ffffff', weight: 85.9 }),
+  rare: Object.freeze({ key: 'rare', name: '고급', color: '#4f9dff', glow: '#8cc4ff', weight: 12 }),
+  epic: Object.freeze({ key: 'epic', name: '희귀', color: '#ffd23f', glow: '#ffe680', weight: 2 }),
   legend: Object.freeze({ key: 'legend', name: '레전드', color: '#ff9f1a', glow: '#ffc35a', weight: 0.1 })
 });
 export const RARITY_ORDER = ['common', 'rare', 'epic', 'legend'];

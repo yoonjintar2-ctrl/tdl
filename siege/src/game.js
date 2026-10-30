@@ -1,18 +1,18 @@
-import{campaignProgress}from'./campaign-courses.js?v=31df2bada5';
-import { SETTINGS, CANNONS, ENEMIES, SUPPLIES, WORLD_WIDTH, DRONE, WALL, CAMERA_DEPTH, ACTOR_STYLE, cannonStats, upgradeCost, energyMultiplier, wallYFor, priceBand, validPlacement, validDronePlacement, clamp } from './config.js?v=31df2bada5';
-import { wallMountDepth } from './fortification.js?v=31df2bada5';
-import { marketArmy,estimatedArmy } from './market-army.js?v=31df2bada5';
-import {playerLevelFor,towerSlots,wallLevelFor,wallPower,money,WALL_MAX_XP} from './progression.js?v=31df2bada5';
-import{TerrainField}from'./terrain.js?v=31df2bada5';
-import{modeFor}from'./cards.js?v=31df2bada5';
-import{formatDamage}from'./combat-fx.js?v=31df2bada5';
-import{wallXPAt}from'./progression.js?v=31df2bada5';
+import{campaignProgress}from'./campaign-courses.js?v=ba402395fc';
+import { SETTINGS, CANNONS, ENEMIES, SUPPLIES, WORLD_WIDTH, DRONE, WALL, CAMERA_DEPTH, ACTOR_STYLE, cannonStats, upgradeCost, energyMultiplier, wallYFor, priceBand, validPlacement, validDronePlacement, clamp } from './config.js?v=ba402395fc';
+import { wallMountDepth } from './fortification.js?v=ba402395fc';
+import { marketArmy,estimatedArmy } from './market-army.js?v=ba402395fc';
+import {playerLevelFor,towerSlots,wallLevelFor,wallPower,money,WALL_MAX_XP} from './progression.js?v=ba402395fc';
+import{TerrainField}from'./terrain.js?v=ba402395fc';
+import{modeFor}from'./cards.js?v=ba402395fc';
+import{formatDamage}from'./combat-fx.js?v=ba402395fc';
+import{wallXPAt}from'./progression.js?v=ba402395fc';
 // Kill gold is scaled down and a steady per-minute battle stipend added, so income stays in a narrow band
 // between a starter and a maxed army (card packs are the only use of gold).
 export const KILL_GOLD=.3,STIPEND_PER_MIN=30;
 const WALL_SLOT=8;
-import{isAIStock}from'./symbols.js?v=31df2bada5';
-import {weaponMuzzle} from './weapon-geometry.js?v=31df2bada5';
+import{isAIStock}from'./symbols.js?v=ba402395fc';
+import {weaponMuzzle} from './weapon-geometry.js?v=ba402395fc';
 export class Game {
   constructor(state, { height = 620, random = Math.random,now=Date.now,rewardMultiplier=1,mode } = {}) {
     this.modeKey=modeFor(mode??state.settings?.mode).key;this.stipendClock=0;this.wallHold=0;
@@ -21,7 +21,7 @@ export class Game {
     this.playerXP=Math.max(0,state.playerXP||0);this.wallXP=clamp(state.wallXP??360,0,WALL_MAX_XP);this.wallLevel=wallLevelFor(this.wallXP);this.wallTransition=null;
     this.inventory=[];for(const item of [...(state.inventory||[]),...this.cannons]){if(!CANNONS[item.type])continue;const owned=this.inventory.find(v=>v.type===item.type);if(owned){if((item.level||1)>owned.level){owned.level=item.level||1;owned.copies=item.copies||0;}}else this.inventory.push({type:item.type,level:item.level||1,copies:Math.max(0,item.copies||0)});}
     this.enemies = []; this.supplies = []; this.effects = []; this.projectiles = []; this.zones = [];
-    this.dmgAcc={};this.time = 0; this.wallY = height / 2; this.band = 0; this.targetBand = 0; this.move = null; this.stage = Math.min(7,this.wallLevel-1);
+    this.dmgAcc={};this.time = 0; this.wallY = height / 2; this.band = 0; this.targetBand = 0; this.move = null; this.stage = Math.min(9,this.wallLevel-1);
     this.terrain=new TerrainField(height);this.pricePlaced=false;this.market = null; this.selected = null; this.placement = null; this.dirty = false; this.nextId = 1; this.autoTimer = 0; this.messages = []; this.marketWaves=[];
     this.marketGoldRemainder=0;
     this.metrics = { killsByType: {}, kills: 0, crushedEnemies: 0, crushedSupplies: 0, healed: 0, goldEarned: 0, shots: {}, wallSteps: 0, expired: 0 };
@@ -43,7 +43,7 @@ export class Game {
   gainPlayerXP(amount){const before=this.playerLevel,slots=this.slotLimit;this.playerXP+=amount;this.dirty=true;if(this.playerLevel>before){this.effect('player-level',216,this.wallY,'#ffe5a2',`${before} → ${this.playerLevel}`,2,{slots:this.slotLimit,unlocked:this.slotLimit>slots});}}
   wallXPLabel(amount,x){if(!amount)return;const lane=Math.floor(x/25),same=this.effects.find(f=>f.type==='wall-xp'&&f.lane===lane&&Math.sign(f.amount)===Math.sign(amount)&&f.life>.55);if(same){same.amount+=amount;same.life=.9;}else this.effect('wall-xp',x,this.wallBackAt(x),'',amount,.9,{sourceAltitude:WALL.elevation+8,lane});}
   addWallXP(amount,x=216){const before=this.wallXP;this.wallXP=clamp(this.wallXP+amount,0,WALL_MAX_XP);const delta=this.wallXP-before;this.wallXPLabel(delta,x);this.dirty=true;return delta;}
-  updateWallLevel(dt){this.wallHold=Math.max(0,this.wallHold-dt);const desired=this.desiredWallLevel();if(!this.wallTransition&&desired<this.wallLevel&&this.wallHold>0&&this.wallXP>0&&desired>=this.wallLevel-1)return;if(!this.wallTransition&&desired!==this.wallLevel)this.wallTransition={from:this.wallLevel,to:desired,elapsed:0,duration:desired>this.wallLevel?1.8:.75};const f=this.wallTransition;if(!f)return;f.elapsed+=dt;f.to=desired;if(f.elapsed>=f.duration){const before=this.wallLevel;this.wallLevel=desired;this.stage=Math.min(7,desired-1);this.wallTransition=null;if(desired!==before){this.wallHold=12;this.notify(`장벽 Lv.${before} → Lv.${desired}`);}}}
+  updateWallLevel(dt){this.wallHold=Math.max(0,this.wallHold-dt);const desired=this.desiredWallLevel();if(!this.wallTransition&&desired<this.wallLevel&&this.wallHold>0&&this.wallXP>0&&desired>=this.wallLevel-1)return;if(!this.wallTransition&&desired!==this.wallLevel)this.wallTransition={from:this.wallLevel,to:desired,elapsed:0,duration:desired>this.wallLevel?1.8:.75};const f=this.wallTransition;if(!f)return;f.elapsed+=dt;f.to=desired;if(f.elapsed>=f.duration){const before=this.wallLevel;this.wallLevel=desired;this.stage=Math.min(9,desired-1);this.wallTransition=null;if(desired!==before){this.wallHold=12;this.notify(`장벽 Lv.${before} → Lv.${desired}`);}}}
   // Hysteresis: level up at the threshold, but only fall back after dropping 35% into the band below,
   // and hold any change for 12s, so a contested market doesn't flicker the wall between levels.
   desiredWallLevel(){const raw=wallLevelFor(this.wallXP);if(raw>=this.wallLevel)return raw;const floor=wallXPAt(this.wallLevel)-.35*(wallXPAt(this.wallLevel)-wallXPAt(this.wallLevel-1));return this.wallXP>=floor?this.wallLevel:raw;}

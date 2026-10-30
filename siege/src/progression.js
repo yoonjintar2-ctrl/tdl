@@ -3,7 +3,7 @@ export const playerXPAt=level=>{const n=Math.max(0,level-1);return 20*n+5*n*n;};
 export function playerLevelFor(xp){return Math.min(99,1+Math.floor((-20+Math.sqrt(400+20*Math.max(0,xp)))/10));}
 export const towerSlots=level=>SLOT_LEVELS.filter(n=>n<=level).length;
 export const legacySlotXP=count=>playerXPAt(SLOT_LEVELS[Math.max(0,Math.min(7,count-1))]);
-export const WALL_MAX_LEVEL=8;
+export const WALL_MAX_LEVEL=10;
 export const wallXPAt=level=>{const n=Math.max(0,level-1);return 120*n+30*n*n;};
 export const wallLevelFor=xp=>Math.min(WALL_MAX_LEVEL,1+Math.floor((-120+Math.sqrt(14400+120*Math.max(0,xp)))/60));
 export const WALL_MAX_XP=wallXPAt(WALL_MAX_LEVEL);
