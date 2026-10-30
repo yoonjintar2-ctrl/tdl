@@ -1,0 +1,1382 @@
+{
+  "machine": {
+    "file": "machine-clay-v1.webp",
+    "width": 1024,
+    "height": 1024,
+    "cols": 2,
+    "rows": 2,
+    "frames": [
+      {
+        "x": 90,
+        "y": 25,
+        "w": 414,
+        "h": 487,
+        "anchorX": 299.26998535384445,
+        "anchorY": 509,
+        "cellW": 512,
+        "cellH": 512
+      },
+      {
+        "x": 555,
+        "y": 33,
+        "w": 425,
+        "h": 479,
+        "anchorX": 780.0795848639283,
+        "anchorY": 511,
+        "cellW": 512,
+        "cellH": 512
+      },
+      {
+        "x": 86,
+        "y": 517,
+        "w": 410,
+        "h": 484,
+        "anchorX": 287.54499734531663,
+        "anchorY": 998,
+        "cellW": 512,
+        "cellH": 512
+      },
+      {
+        "x": 552,
+        "y": 515,
+        "w": 412,
+        "h": 478,
+        "anchorX": 749.8437330678481,
+        "anchorY": 990,
+        "cellW": 512,
+        "cellH": 512
+      }
+    ],
+    "kind": "tower"
+  },
+  "sniper": {
+    "file": "sniper-clay-v1.webp",
+    "width": 1024,
+    "height": 1024,
+    "cols": 2,
+    "rows": 2,
+    "frames": [
+      {
+        "x": 114,
+        "y": 24,
+        "w": 328,
+        "h": 475,
+        "anchorX": 277.88404919958447,
+        "anchorY": 496,
+        "cellW": 512,
+        "cellH": 512
+      },
+      {
+        "x": 512,
+        "y": 135,
+        "w": 495,
+        "h": 357,
+        "anchorX": 660.2328078144803,
+        "anchorY": 489,
+        "cellW": 512,
+        "cellH": 512
+      },
+      {
+        "x": 98,
+        "y": 516,
+        "w": 339,
+        "h": 428,
+        "anchorX": 269.2493564087156,
+        "anchorY": 941,
+        "cellW": 512,
+        "cellH": 512
+      },
+      {
+        "x": 512,
+        "y": 604,
+        "w": 506,
+        "h": 362,
+        "anchorX": 862.140332690401,
+        "anchorY": 963,
+        "cellW": 512,
+        "cellH": 512
+      }
+    ],
+    "kind": "tower"
+  },
+  "laser": {
+    "file": "laser-clay-v1.webp",
+    "width": 1024,
+    "height": 1024,
+    "cols": 2,
+    "rows": 2,
+    "frames": [
+      {
+        "x": 65,
+        "y": 16,
+        "w": 407,
+        "h": 496,
+        "anchorX": 267.5527285108937,
+        "anchorY": 511,
+        "cellW": 512,
+        "cellH": 512
+      },
+      {
+        "x": 577,
+        "y": 84,
+        "w": 383,
+        "h": 428,
+        "anchorX": 770.1365644612578,
+        "anchorY": 511,
+        "cellW": 512,
+        "cellH": 512
+      },
+      {
+        "x": 66,
+        "y": 527,
+        "w": 421,
+        "h": 458,
+        "anchorX": 276.11901952498334,
+        "anchorY": 982,
+        "cellW": 512,
+        "cellH": 512
+      },
+      {
+        "x": 559,
+        "y": 561,
+        "w": 407,
+        "h": 429,
+        "anchorX": 758.8467583147375,
+        "anchorY": 987,
+        "cellW": 512,
+        "cellH": 512
+      }
+    ],
+    "kind": "tower"
+  },
+  "totem": {
+    "file": "totem-clay-v1.webp",
+    "width": 1024,
+    "height": 1024,
+    "cols": 2,
+    "rows": 2,
+    "frames": [
+      {
+        "x": 85,
+        "y": 35,
+        "w": 385,
+        "h": 467,
+        "anchorX": 275.7400670918273,
+        "anchorY": 499,
+        "cellW": 512,
+        "cellH": 512
+      },
+      {
+        "x": 621,
+        "y": 35,
+        "w": 308,
+        "h": 471,
+        "anchorX": 775.5598872325709,
+        "anchorY": 503,
+        "cellW": 512,
+        "cellH": 512
+      },
+      {
+        "x": 82,
+        "y": 528,
+        "w": 390,
+        "h": 466,
+        "anchorX": 273.65267488893824,
+        "anchorY": 991,
+        "cellW": 512,
+        "cellH": 512
+      },
+      {
+        "x": 607,
+        "y": 528,
+        "w": 317,
+        "h": 471,
+        "anchorX": 764.6388481732076,
+        "anchorY": 996,
+        "cellW": 512,
+        "cellH": 512
+      }
+    ],
+    "kind": "tower"
+  },
+  "sticky": {
+    "file": "sticky-clay-v1.webp",
+    "width": 1024,
+    "height": 1024,
+    "cols": 2,
+    "rows": 2,
+    "frames": [
+      {
+        "x": 50,
+        "y": 11,
+        "w": 412,
+        "h": 494,
+        "anchorX": 254.9832679632173,
+        "anchorY": 502,
+        "cellW": 512,
+        "cellH": 512
+      },
+      {
+        "x": 580,
+        "y": 54,
+        "w": 406,
+        "h": 450,
+        "anchorX": 777.9439156112671,
+        "anchorY": 501,
+        "cellW": 512,
+        "cellH": 512
+      },
+      {
+        "x": 45,
+        "y": 545,
+        "w": 422,
+        "h": 445,
+        "anchorX": 254.78559245021864,
+        "anchorY": 987,
+        "cellW": 512,
+        "cellH": 512
+      },
+      {
+        "x": 553,
+        "y": 531,
+        "w": 405,
+        "h": 456,
+        "anchorX": 756.8673725339613,
+        "anchorY": 984,
+        "cellW": 512,
+        "cellH": 512
+      }
+    ],
+    "kind": "tower"
+  },
+  "poison": {
+    "file": "poison-clay-v1.webp",
+    "width": 1024,
+    "height": 1024,
+    "cols": 2,
+    "rows": 2,
+    "frames": [
+      {
+        "x": 70,
+        "y": 14,
+        "w": 411,
+        "h": 483,
+        "anchorX": 274.0891893744716,
+        "anchorY": 494,
+        "cellW": 512,
+        "cellH": 512
+      },
+      {
+        "x": 569,
+        "y": 37,
+        "w": 388,
+        "h": 464,
+        "anchorX": 759.8867427870842,
+        "anchorY": 498,
+        "cellW": 512,
+        "cellH": 512
+      },
+      {
+        "x": 59,
+        "y": 531,
+        "w": 426,
+        "h": 457,
+        "anchorX": 270.7639068513668,
+        "anchorY": 985,
+        "cellW": 512,
+        "cellH": 512
+      },
+      {
+        "x": 557,
+        "y": 525,
+        "w": 415,
+        "h": 469,
+        "anchorX": 764.1252221059152,
+        "anchorY": 991,
+        "cellW": 512,
+        "cellH": 512
+      }
+    ],
+    "kind": "tower"
+  },
+  "drone": {
+    "file": "drone-clay-v1.webp",
+    "width": 1024,
+    "height": 1024,
+    "cols": 2,
+    "rows": 2,
+    "frames": [
+      {
+        "x": 19,
+        "y": 57,
+        "w": 493,
+        "h": 365,
+        "anchorX": 265.5,
+        "anchorY": 239.5,
+        "cellW": 512,
+        "cellH": 512
+      },
+      {
+        "x": 540,
+        "y": 80,
+        "w": 475,
+        "h": 400,
+        "anchorX": 777.5,
+        "anchorY": 280,
+        "cellW": 512,
+        "cellH": 512
+      },
+      {
+        "x": 12,
+        "y": 548,
+        "w": 500,
+        "h": 376,
+        "anchorX": 262,
+        "anchorY": 736,
+        "cellW": 512,
+        "cellH": 512
+      },
+      {
+        "x": 525,
+        "y": 539,
+        "w": 486,
+        "h": 415,
+        "anchorX": 768,
+        "anchorY": 746.5,
+        "cellW": 512,
+        "cellH": 512
+      }
+    ],
+    "kind": "tower"
+  },
+  "enemy-small": {
+    "file": "enemy-atlas-v8.webp",
+    "width": 1254,
+    "height": 1254,
+    "cols": 4,
+    "rows": 4,
+    "frames": [
+      {
+        "x": 57,
+        "y": 24,
+        "w": 240,
+        "h": 276,
+        "anchorX": 176.5,
+        "anchorY": 299,
+        "cellW": 313,
+        "cellH": 313
+      },
+      {
+        "x": 361,
+        "y": 22,
+        "w": 239,
+        "h": 280,
+        "anchorX": 480,
+        "anchorY": 301,
+        "cellW": 313,
+        "cellH": 313
+      },
+      {
+        "x": 651,
+        "y": 25,
+        "w": 259,
+        "h": 269,
+        "anchorX": 780,
+        "anchorY": 293,
+        "cellW": 313,
+        "cellH": 313
+      },
+      {
+        "x": 975,
+        "y": 24,
+        "w": 251,
+        "h": 264,
+        "anchorX": 1100,
+        "anchorY": 287,
+        "cellW": 313,
+        "cellH": 313
+      }
+    ],
+    "kind": "enemy"
+  },
+  "enemy-tall": {
+    "file": "enemy-atlas-v8.webp",
+    "width": 1254,
+    "height": 1254,
+    "cols": 4,
+    "rows": 4,
+    "frames": [
+      {
+        "x": 57,
+        "y": 319,
+        "w": 222,
+        "h": 318,
+        "anchorX": 167.5,
+        "anchorY": 636,
+        "cellW": 313,
+        "cellH": 313
+      },
+      {
+        "x": 376,
+        "y": 319,
+        "w": 222,
+        "h": 321,
+        "anchorX": 486.5,
+        "anchorY": 639,
+        "cellW": 313,
+        "cellH": 313
+      },
+      {
+        "x": 671,
+        "y": 318,
+        "w": 223,
+        "h": 304,
+        "anchorX": 782,
+        "anchorY": 621,
+        "cellW": 313,
+        "cellH": 313
+      },
+      {
+        "x": 987,
+        "y": 321,
+        "w": 232,
+        "h": 309,
+        "anchorX": 1102.5,
+        "anchorY": 629,
+        "cellW": 313,
+        "cellH": 313
+      }
+    ],
+    "kind": "enemy"
+  },
+  "enemy-fat": {
+    "file": "enemy-atlas-v8.webp",
+    "width": 1254,
+    "height": 1254,
+    "cols": 4,
+    "rows": 4,
+    "frames": [
+      {
+        "x": 19,
+        "y": 649,
+        "w": 294,
+        "h": 260,
+        "anchorX": 165.5,
+        "anchorY": 908,
+        "cellW": 313,
+        "cellH": 313
+      },
+      {
+        "x": 313,
+        "y": 647,
+        "w": 303,
+        "h": 265,
+        "anchorX": 464,
+        "anchorY": 911,
+        "cellW": 313,
+        "cellH": 313
+      },
+      {
+        "x": 632,
+        "y": 644,
+        "w": 301,
+        "h": 263,
+        "anchorX": 782,
+        "anchorY": 906,
+        "cellW": 313,
+        "cellH": 313
+      },
+      {
+        "x": 975,
+        "y": 652,
+        "w": 254,
+        "h": 246,
+        "anchorX": 1101.5,
+        "anchorY": 897,
+        "cellW": 313,
+        "cellH": 313
+      }
+    ],
+    "kind": "enemy"
+  },
+  "enemy-giant": {
+    "file": "enemy-atlas-v8.webp",
+    "width": 1254,
+    "height": 1254,
+    "cols": 4,
+    "rows": 4,
+    "frames": [
+      {
+        "x": 31,
+        "y": 920,
+        "w": 248,
+        "h": 296,
+        "anchorX": 154.5,
+        "anchorY": 1215,
+        "cellW": 313,
+        "cellH": 313
+      },
+      {
+        "x": 345,
+        "y": 920,
+        "w": 256,
+        "h": 308,
+        "anchorX": 472.5,
+        "anchorY": 1227,
+        "cellW": 313,
+        "cellH": 313
+      },
+      {
+        "x": 639,
+        "y": 920,
+        "w": 287,
+        "h": 294,
+        "anchorX": 782,
+        "anchorY": 1213,
+        "cellW": 313,
+        "cellH": 313
+      },
+      {
+        "x": 969,
+        "y": 921,
+        "w": 254,
+        "h": 303,
+        "anchorX": 1095.5,
+        "anchorY": 1223,
+        "cellW": 313,
+        "cellH": 313
+      }
+    ],
+    "kind": "enemy"
+  },
+  "supply-dram": {
+    "file": "supply-dram-clay-v1.webp",
+    "width": 1024,
+    "height": 1024,
+    "cols": 2,
+    "rows": 2,
+    "frames": [
+      {
+        "x": 65,
+        "y": 44,
+        "w": 427,
+        "h": 418,
+        "anchorX": 263.83717627749473,
+        "anchorY": 459,
+        "cellW": 512,
+        "cellH": 512
+      },
+      {
+        "x": 562,
+        "y": 43,
+        "w": 409,
+        "h": 427,
+        "anchorX": 803.2444119161037,
+        "anchorY": 467,
+        "cellW": 512,
+        "cellH": 512
+      },
+      {
+        "x": 69,
+        "y": 512,
+        "w": 437,
+        "h": 426,
+        "anchorX": 349.18422312575876,
+        "anchorY": 935,
+        "cellW": 512,
+        "cellH": 512
+      },
+      {
+        "x": 575,
+        "y": 522,
+        "w": 413,
+        "h": 433,
+        "anchorX": 791.5803621115026,
+        "anchorY": 952,
+        "cellW": 512,
+        "cellH": 512
+      }
+    ],
+    "kind": "supply"
+  },
+  "supply-processor": {
+    "file": "supply-processor-clay-v1.webp",
+    "width": 1024,
+    "height": 1024,
+    "cols": 2,
+    "rows": 2,
+    "frames": [
+      {
+        "x": 66,
+        "y": 31,
+        "w": 439,
+        "h": 451,
+        "anchorX": 233.04778874435817,
+        "anchorY": 479,
+        "cellW": 512,
+        "cellH": 512
+      },
+      {
+        "x": 537,
+        "y": 38,
+        "w": 431,
+        "h": 456,
+        "anchorX": 815.1232963653501,
+        "anchorY": 491,
+        "cellW": 512,
+        "cellH": 512
+      },
+      {
+        "x": 85,
+        "y": 523,
+        "w": 419,
+        "h": 418,
+        "anchorX": 337.0206712781597,
+        "anchorY": 938,
+        "cellW": 512,
+        "cellH": 512
+      },
+      {
+        "x": 534,
+        "y": 535,
+        "w": 462,
+        "h": 454,
+        "anchorX": 785.3694726660517,
+        "anchorY": 986,
+        "cellW": 512,
+        "cellH": 512
+      }
+    ],
+    "kind": "supply"
+  },
+  "supply-wafer": {
+    "file": "supply-wafer-clay-v1.webp",
+    "width": 1024,
+    "height": 1024,
+    "cols": 2,
+    "rows": 2,
+    "frames": [
+      {
+        "x": 54,
+        "y": 47,
+        "w": 435,
+        "h": 432,
+        "anchorX": 212.64370333417392,
+        "anchorY": 476,
+        "cellW": 512,
+        "cellH": 512
+      },
+      {
+        "x": 545,
+        "y": 56,
+        "w": 434,
+        "h": 432,
+        "anchorX": 828.2014824345149,
+        "anchorY": 485,
+        "cellW": 512,
+        "cellH": 512
+      },
+      {
+        "x": 62,
+        "y": 538,
+        "w": 429,
+        "h": 391,
+        "anchorX": 371.9977211298956,
+        "anchorY": 926,
+        "cellW": 512,
+        "cellH": 512
+      },
+      {
+        "x": 589,
+        "y": 557,
+        "w": 397,
+        "h": 409,
+        "anchorX": 806.3323556475092,
+        "anchorY": 963,
+        "cellW": 512,
+        "cellH": 512
+      }
+    ],
+    "kind": "supply"
+  },
+  "supply-optical": {
+    "file": "supply-optical-clay-v1.webp",
+    "width": 1024,
+    "height": 1024,
+    "cols": 2,
+    "rows": 2,
+    "frames": [
+      {
+        "x": 36,
+        "y": 61,
+        "w": 449,
+        "h": 406,
+        "anchorX": 196.35047742032782,
+        "anchorY": 464,
+        "cellW": 512,
+        "cellH": 512
+      },
+      {
+        "x": 579,
+        "y": 71,
+        "w": 427,
+        "h": 394,
+        "anchorX": 733.220687502473,
+        "anchorY": 462,
+        "cellW": 512,
+        "cellH": 512
+      },
+      {
+        "x": 60,
+        "y": 550,
+        "w": 433,
+        "h": 358,
+        "anchorX": 247.85273752484267,
+        "anchorY": 905,
+        "cellW": 512,
+        "cellH": 512
+      },
+      {
+        "x": 600,
+        "y": 552,
+        "w": 404,
+        "h": 407,
+        "anchorX": 824.8283030916923,
+        "anchorY": 956,
+        "cellW": 512,
+        "cellH": 512
+      }
+    ],
+    "kind": "supply"
+  },
+  "supply-connector": {
+    "file": "supply-connector-clay-v1.webp",
+    "width": 1024,
+    "height": 1024,
+    "cols": 2,
+    "rows": 2,
+    "frames": [
+      {
+        "x": 77,
+        "y": 50,
+        "w": 435,
+        "h": 411,
+        "anchorX": 208.69062692018443,
+        "anchorY": 458,
+        "cellW": 512,
+        "cellH": 512
+      },
+      {
+        "x": 585,
+        "y": 49,
+        "w": 425,
+        "h": 417,
+        "anchorX": 727.9938683628504,
+        "anchorY": 463,
+        "cellW": 512,
+        "cellH": 512
+      },
+      {
+        "x": 66,
+        "y": 525,
+        "w": 442,
+        "h": 378,
+        "anchorX": 261.3953524850301,
+        "anchorY": 900,
+        "cellW": 512,
+        "cellH": 512
+      },
+      {
+        "x": 562,
+        "y": 518,
+        "w": 425,
+        "h": 440,
+        "anchorX": 772.2714890655202,
+        "anchorY": 955,
+        "cellW": 512,
+        "cellH": 512
+      }
+    ],
+    "kind": "supply"
+  },
+  "supply-substrate": {
+    "file": "supply-substrate-clay-v1.webp",
+    "width": 1024,
+    "height": 1024,
+    "cols": 2,
+    "rows": 2,
+    "frames": [
+      {
+        "x": 57,
+        "y": 56,
+        "w": 448,
+        "h": 429,
+        "anchorX": 215.58005007377255,
+        "anchorY": 482,
+        "cellW": 512,
+        "cellH": 512
+      },
+      {
+        "x": 584,
+        "y": 58,
+        "w": 399,
+        "h": 426,
+        "anchorX": 841.4803529199535,
+        "anchorY": 481,
+        "cellW": 512,
+        "cellH": 512
+      },
+      {
+        "x": 53,
+        "y": 542,
+        "w": 459,
+        "h": 390,
+        "anchorX": 344.06002051120225,
+        "anchorY": 929,
+        "cellW": 512,
+        "cellH": 512
+      },
+      {
+        "x": 591,
+        "y": 544,
+        "w": 398,
+        "h": 433,
+        "anchorX": 805.7127846214389,
+        "anchorY": 974,
+        "cellW": 512,
+        "cellH": 512
+      }
+    ],
+    "kind": "supply"
+  },
+  "wall-soil": {
+    "file": "wall-soil-clay-v1.webp",
+    "width": 1024,
+    "height": 512,
+    "cols": 1,
+    "rows": 1,
+    "frames": [
+      {
+        "x": 0,
+        "y": 0,
+        "w": 1024,
+        "h": 512,
+        "anchorX": 511.5,
+        "anchorY": 511,
+        "cellW": 1024,
+        "cellH": 512
+      }
+    ],
+    "kind": "wall"
+  },
+  "wall-wood": {
+    "file": "wall-wood-clay-v1.webp",
+    "width": 1024,
+    "height": 512,
+    "cols": 1,
+    "rows": 1,
+    "frames": [
+      {
+        "x": 0,
+        "y": 0,
+        "w": 1024,
+        "h": 512,
+        "anchorX": 511.5,
+        "anchorY": 511,
+        "cellW": 1024,
+        "cellH": 512
+      }
+    ],
+    "kind": "wall"
+  },
+  "wall-reinforced-wood": {
+    "file": "wall-reinforced-wood-clay-v1.webp",
+    "width": 1024,
+    "height": 512,
+    "cols": 1,
+    "rows": 1,
+    "frames": [
+      {
+        "x": 0,
+        "y": 0,
+        "w": 1024,
+        "h": 512,
+        "anchorX": 511.5,
+        "anchorY": 511,
+        "cellW": 1024,
+        "cellH": 512
+      }
+    ],
+    "kind": "wall"
+  },
+  "wall-mixed": {
+    "file": "wall-mixed-clay-v1.webp",
+    "width": 1024,
+    "height": 512,
+    "cols": 1,
+    "rows": 1,
+    "frames": [
+      {
+        "x": 0,
+        "y": 0,
+        "w": 1024,
+        "h": 512,
+        "anchorX": 511.5,
+        "anchorY": 511,
+        "cellW": 1024,
+        "cellH": 512
+      }
+    ],
+    "kind": "wall"
+  },
+  "wall-stone": {
+    "file": "wall-stone-clay-v1.webp",
+    "width": 1024,
+    "height": 512,
+    "cols": 1,
+    "rows": 1,
+    "frames": [
+      {
+        "x": 0,
+        "y": 0,
+        "w": 1024,
+        "h": 512,
+        "anchorX": 511.5,
+        "anchorY": 511,
+        "cellW": 1024,
+        "cellH": 512
+      }
+    ],
+    "kind": "wall"
+  },
+  "wall-reinforced-stone": {
+    "file": "wall-reinforced-stone-clay-v1.webp",
+    "width": 1024,
+    "height": 512,
+    "cols": 1,
+    "rows": 1,
+    "frames": [
+      {
+        "x": 0,
+        "y": 0,
+        "w": 1024,
+        "h": 512,
+        "anchorX": 511.5,
+        "anchorY": 511,
+        "cellW": 1024,
+        "cellH": 512
+      }
+    ],
+    "kind": "wall"
+  },
+  "wall-iron": {
+    "file": "wall-iron-clay-v1.webp",
+    "width": 1024,
+    "height": 512,
+    "cols": 1,
+    "rows": 1,
+    "frames": [
+      {
+        "x": 0,
+        "y": 0,
+        "w": 1024,
+        "h": 512,
+        "anchorX": 511.5,
+        "anchorY": 511,
+        "cellW": 1024,
+        "cellH": 512
+      }
+    ],
+    "kind": "wall"
+  },
+  "wall-gold": {
+    "file": "wall-gold-clay-v1.webp",
+    "width": 1024,
+    "height": 512,
+    "cols": 1,
+    "rows": 1,
+    "frames": [
+      {
+        "x": 0,
+        "y": 0,
+        "w": 1024,
+        "h": 512,
+        "anchorX": 511.5,
+        "anchorY": 511,
+        "cellW": 1024,
+        "cellH": 512
+      }
+    ],
+    "kind": "wall"
+  },
+  "castle-wall-0": {
+    "file": "castle-atlas-v8.webp",
+    "width": 1254,
+    "height": 1254,
+    "cols": 4,
+    "rows": 4,
+    "frames": [
+      {
+        "x": 27,
+        "y": 60,
+        "w": 278,
+        "h": 209,
+        "anchorX": 165.5,
+        "anchorY": 268,
+        "cellW": 313,
+        "cellH": 313
+      }
+    ],
+    "kind": "wall"
+  },
+  "castle-bastion-0": {
+    "file": "castle-atlas-v8.webp",
+    "width": 1254,
+    "height": 1254,
+    "cols": 4,
+    "rows": 4,
+    "frames": [
+      {
+        "x": 38,
+        "y": 558,
+        "w": 255,
+        "h": 306,
+        "anchorX": 165,
+        "anchorY": 863,
+        "cellW": 313,
+        "cellH": 313
+      }
+    ],
+    "kind": "wall"
+  },
+  "castle-wall-1": {
+    "file": "castle-atlas-v8.webp",
+    "width": 1254,
+    "height": 1254,
+    "cols": 4,
+    "rows": 4,
+    "frames": [
+      {
+        "x": 332,
+        "y": 60,
+        "w": 283,
+        "h": 208,
+        "anchorX": 473,
+        "anchorY": 267,
+        "cellW": 313,
+        "cellH": 313
+      }
+    ],
+    "kind": "wall"
+  },
+  "castle-bastion-1": {
+    "file": "castle-atlas-v8.webp",
+    "width": 1254,
+    "height": 1254,
+    "cols": 4,
+    "rows": 4,
+    "frames": [
+      {
+        "x": 349,
+        "y": 559,
+        "w": 251,
+        "h": 303,
+        "anchorX": 474,
+        "anchorY": 861,
+        "cellW": 313,
+        "cellH": 313
+      }
+    ],
+    "kind": "wall"
+  },
+  "castle-wall-2": {
+    "file": "castle-atlas-v8.webp",
+    "width": 1254,
+    "height": 1254,
+    "cols": 4,
+    "rows": 4,
+    "frames": [
+      {
+        "x": 640,
+        "y": 60,
+        "w": 280,
+        "h": 208,
+        "anchorX": 779.5,
+        "anchorY": 267,
+        "cellW": 313,
+        "cellH": 313
+      }
+    ],
+    "kind": "wall"
+  },
+  "castle-bastion-2": {
+    "file": "castle-atlas-v8.webp",
+    "width": 1254,
+    "height": 1254,
+    "cols": 4,
+    "rows": 4,
+    "frames": [
+      {
+        "x": 654,
+        "y": 557,
+        "w": 250,
+        "h": 305,
+        "anchorX": 778.5,
+        "anchorY": 861,
+        "cellW": 313,
+        "cellH": 313
+      }
+    ],
+    "kind": "wall"
+  },
+  "castle-wall-3": {
+    "file": "castle-atlas-v8.webp",
+    "width": 1254,
+    "height": 1254,
+    "cols": 4,
+    "rows": 4,
+    "frames": [
+      {
+        "x": 941,
+        "y": 60,
+        "w": 290,
+        "h": 209,
+        "anchorX": 1085.5,
+        "anchorY": 268,
+        "cellW": 313,
+        "cellH": 313
+      }
+    ],
+    "kind": "wall"
+  },
+  "castle-bastion-3": {
+    "file": "castle-atlas-v8.webp",
+    "width": 1254,
+    "height": 1254,
+    "cols": 4,
+    "rows": 4,
+    "frames": [
+      {
+        "x": 956,
+        "y": 557,
+        "w": 258,
+        "h": 309,
+        "anchorX": 1084.5,
+        "anchorY": 865,
+        "cellW": 313,
+        "cellH": 313
+      }
+    ],
+    "kind": "wall"
+  },
+  "castle-wall-4": {
+    "file": "castle-atlas-v8.webp",
+    "width": 1254,
+    "height": 1254,
+    "cols": 4,
+    "rows": 4,
+    "frames": [
+      {
+        "x": 27,
+        "y": 313,
+        "w": 280,
+        "h": 216,
+        "anchorX": 166.5,
+        "anchorY": 528,
+        "cellW": 313,
+        "cellH": 313
+      }
+    ],
+    "kind": "wall"
+  },
+  "castle-bastion-4": {
+    "file": "castle-atlas-v8.webp",
+    "width": 1254,
+    "height": 1254,
+    "cols": 4,
+    "rows": 4,
+    "frames": [
+      {
+        "x": 37,
+        "y": 879,
+        "w": 260,
+        "h": 309,
+        "anchorX": 166.5,
+        "anchorY": 1187,
+        "cellW": 313,
+        "cellH": 313
+      }
+    ],
+    "kind": "wall"
+  },
+  "castle-wall-5": {
+    "file": "castle-atlas-v8.webp",
+    "width": 1254,
+    "height": 1254,
+    "cols": 4,
+    "rows": 4,
+    "frames": [
+      {
+        "x": 332,
+        "y": 312,
+        "w": 287,
+        "h": 217,
+        "anchorX": 475,
+        "anchorY": 528,
+        "cellW": 313,
+        "cellH": 313
+      }
+    ],
+    "kind": "wall"
+  },
+  "castle-bastion-5": {
+    "file": "castle-atlas-v8.webp",
+    "width": 1254,
+    "height": 1254,
+    "cols": 4,
+    "rows": 4,
+    "frames": [
+      {
+        "x": 346,
+        "y": 880,
+        "w": 255,
+        "h": 306,
+        "anchorX": 473,
+        "anchorY": 1185,
+        "cellW": 313,
+        "cellH": 313
+      }
+    ],
+    "kind": "wall"
+  },
+  "castle-wall-6": {
+    "file": "castle-atlas-v8.webp",
+    "width": 1254,
+    "height": 1254,
+    "cols": 4,
+    "rows": 4,
+    "frames": [
+      {
+        "x": 637,
+        "y": 312,
+        "w": 286,
+        "h": 218,
+        "anchorX": 779.5,
+        "anchorY": 529,
+        "cellW": 313,
+        "cellH": 313
+      }
+    ],
+    "kind": "wall"
+  },
+  "castle-bastion-6": {
+    "file": "castle-atlas-v8.webp",
+    "width": 1254,
+    "height": 1254,
+    "cols": 4,
+    "rows": 4,
+    "frames": [
+      {
+        "x": 651,
+        "y": 879,
+        "w": 255,
+        "h": 310,
+        "anchorX": 778,
+        "anchorY": 1188,
+        "cellW": 313,
+        "cellH": 313
+      }
+    ],
+    "kind": "wall"
+  },
+  "castle-wall-7": {
+    "file": "castle-atlas-v8.webp",
+    "width": 1254,
+    "height": 1254,
+    "cols": 4,
+    "rows": 4,
+    "frames": [
+      {
+        "x": 943,
+        "y": 313,
+        "w": 288,
+        "h": 219,
+        "anchorX": 1086.5,
+        "anchorY": 531,
+        "cellW": 313,
+        "cellH": 313
+      }
+    ],
+    "kind": "wall"
+  },
+  "castle-bastion-7": {
+    "file": "castle-atlas-v8.webp",
+    "width": 1254,
+    "height": 1254,
+    "cols": 4,
+    "rows": 4,
+    "frames": [
+      {
+        "x": 956,
+        "y": 880,
+        "w": 263,
+        "h": 309,
+        "anchorX": 1087,
+        "anchorY": 1188,
+        "cellW": 313,
+        "cellH": 313
+      }
+    ],
+    "kind": "wall"
+  },
+  "bull-candle": {
+    "file": "bull-candle-v8.webp",
+    "width": 1254,
+    "height": 1254,
+    "cols": 2,
+    "rows": 2,
+    "frames": [
+      {
+        "x": 122,
+        "y": 47,
+        "w": 458,
+        "h": 556,
+        "anchorX": 350.5,
+        "anchorY": 602,
+        "cellW": 627,
+        "cellH": 627
+      },
+      {
+        "x": 726,
+        "y": 49,
+        "w": 472,
+        "h": 558,
+        "anchorX": 961.5,
+        "anchorY": 606,
+        "cellW": 627,
+        "cellH": 627
+      },
+      {
+        "x": 79,
+        "y": 653,
+        "w": 535,
+        "h": 508,
+        "anchorX": 346,
+        "anchorY": 1160,
+        "cellW": 627,
+        "cellH": 627
+      },
+      {
+        "x": 714,
+        "y": 662,
+        "w": 481,
+        "h": 505,
+        "anchorX": 954,
+        "anchorY": 1166,
+        "cellW": 627,
+        "cellH": 627
+      }
+    ],
+    "kind": "supply"
+  }
+}
