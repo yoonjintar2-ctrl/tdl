@@ -1,4 +1,4 @@
-import {CANNONS,ENEMIES,SUPPLIES,WALL,WORLD_WIDTH,ACTOR_STYLE} from './config.js?v=7d70694912';
+import {CANNONS,ENEMIES,SUPPLIES,WALL,WORLD_WIDTH,ACTOR_STYLE} from './config.js?v=a6b9119688';
 export const ENEMY_ART=['enemy-small','enemy-tall','enemy-fat','enemy-giant'];
 export const SUPPLY_ART=['supply-dram','supply-processor','supply-wafer','supply-optical','supply-connector','supply-substrate'];
 // Wall levels 1–10: two new shabby tiers (earth, wooden palisade) below the original eight.

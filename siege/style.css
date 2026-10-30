@@ -299,3 +299,88 @@ body *{touch-action:manipulation}
 .coll-grid .tcard-face.front{padding:8px 6px 7px}
 .coll-grid .tc-name{font-size:10.5px;padding:2px}
 .coll-grid .tc-bar small{font-size:8px}
+/* v20: compact 10-pack reveal on phones — art first, small labels. */
+@media(max-width:620px){
+.gacha-cards{gap:14px 7px}
+.gacha-cards .tcard:not(.mini) .tcard-face.front{grid-template-rows:1fr auto auto;padding:4px 4px 5px;border-radius:12px;border-width:2px}
+.gacha-cards .tcard:not(.mini) .tc-top{display:none}
+.gacha-cards .tcard:not(.mini) .tc-art{margin:0;width:100%;border-radius:8px}
+.gacha-cards .tcard:not(.mini) .tc-name{font-size:9.5px;line-height:1.15;padding:2px 1px;margin:3px 0 0;border-radius:5px;white-space:nowrap;overflow:hidden;text-overflow:clip}
+.gacha-cards .tcard:not(.mini) .tc-bar{height:9px;margin-top:3px}
+.gacha-cards .tcard:not(.mini) .tc-bar small{font-size:6.5px;line-height:9px}
+.gacha-cards .tcard:not(.mini) .tcard-face.front::before{inset:2px;border-radius:9px}
+.gacha-cards .tc-badge{font-size:8px;padding:2px 5px;top:-7px;right:-5px}
+}
+/* ============ v20 GAME SKIN — chunky clay buttons, wooden frames, gold trims ============ */
+:root{--gk-font:'JuaGame','Jua',system-ui,sans-serif;--gk-ink:#2b1a0b;--gk-gloss:linear-gradient(180deg,#ffffff6b 0,#ffffff1f 46%,#ffffff00 47%)}
+/* Base 3D button */
+.primary,.secondary,.gacha-btn,.pack-btn,.shop-toggle,.exit-actions button,.ti-actions button,.account-box button,#cancel-placement,#connect-market-button{
+  position:relative;font-family:var(--gk-font)!important;font-weight:400!important;letter-spacing:.2px;border:2px solid var(--gk-edge,#5a3a10)!important;border-radius:16px!important;
+  background:var(--gk-gloss),linear-gradient(180deg,var(--gk-a,#fff3b8),var(--gk-b,#ffd45a) 55%,var(--gk-c,#e4a024))!important;color:var(--gk-text,#4a2a06)!important;
+  text-shadow:0 1px 0 var(--gk-shine,#fff6c899);box-shadow:inset 0 2px 0 #ffffffb0,inset 0 -4px 0 var(--gk-deep,#b8740f),0 4px 0 var(--gk-ledge,#4e2f08),0 8px 14px #0007!important;
+  transition:transform .08s,box-shadow .08s,filter .15s;-webkit-tap-highlight-color:transparent}
+.primary:active,.secondary:active,.gacha-btn:active,.pack-btn:active,.shop-toggle:active,.exit-actions button:active,.ti-actions button:active,.account-box button:active,#cancel-placement:active,#connect-market-button:active{
+  transform:translateY(3px);box-shadow:inset 0 2px 0 #ffffffb0,inset 0 -2px 0 var(--gk-deep,#b8740f),0 1px 0 var(--gk-ledge,#4e2f08),0 3px 6px #0006!important}
+.primary:disabled,.secondary:disabled,.gacha-btn:disabled,.pack-btn:disabled{filter:grayscale(.85) brightness(.75);transform:none}
+/* Variants */
+.primary,.gacha-btn.primary,.exit-actions #exit-ok{--gk-a:#fff4b5;--gk-b:#ffd34f;--gk-c:#e39a1c;--gk-edge:#6a3d07;--gk-deep:#b8700c;--gk-ledge:#4a2a04;--gk-text:#4a2804}
+.secondary,.gacha-btn,.exit-actions #exit-cancel{--gk-a:#fffaf0;--gk-b:#f0dfb2;--gk-c:#d4b67a;--gk-edge:#6b4e22;--gk-deep:#b39256;--gk-ledge:#4f3916;--gk-text:#4a3414}
+.shop-toggle,.pack-btn.free,.account-box .primary,#connect-market-button{--gk-a:#e6ffc2;--gk-b:#9be064;--gk-c:#5fa636;--gk-edge:#1f4518;--gk-deep:#3f7f22;--gk-ledge:#183812;--gk-text:#173a10;--gk-shine:#f2ffd899}
+.pack-btn.big{--gk-a:#ffe0b0;--gk-b:#ffa94a;--gk-c:#e86a12;--gk-edge:#6b2a04;--gk-deep:#b54c06;--gk-ledge:#4a1c02;--gk-text:#3a1600}
+.gacha-btn.ghost,#cancel-placement{--gk-a:#6c8a62;--gk-b:#456649;--gk-c:#2c4a33;--gk-edge:#0f2419;--gk-deep:#1e3727;--gk-ledge:#0b1b12;--gk-text:#fff3d0;--gk-shine:#00000066}
+.gacha-btn{min-height:48px;font-size:16px!important;padding:0 20px}
+.gacha-btn.primary{font-size:18px!important}
+.pack-btn{font-size:16px!important;padding:11px 8px 12px}
+.pack-btn b{font-family:var(--gk-font)!important;font-weight:400!important;font-size:13px;opacity:.9}
+.pack-btn.free::after{content:"FREE";position:absolute;top:-9px;right:-6px;padding:2px 7px;border-radius:99px;background:linear-gradient(#ff8a6a,#e0331c);border:2px solid #5a1206;color:#fff;font:400 10px var(--gk-font);text-shadow:none;box-shadow:0 2px 0 #3a0a02;transform:rotate(8deg)}
+.shop-toggle{border-radius:99px!important;font-size:15px!important;padding:10px 18px}
+.shop-toggle>span{filter:drop-shadow(0 1px 0 #fff8)}
+.primary,.secondary{font-size:15px!important}
+/* Close (×) gem */
+.close-panel,.picker-close{width:36px!important;height:36px!important;border-radius:50%!important;border:2px solid #5a1508!important;
+  background:var(--gk-gloss),radial-gradient(circle at 50% 35%,#ffb196,#e9563a 55%,#a92a14)!important;color:#fff!important;font:400 22px/1 var(--gk-font)!important;
+  text-shadow:0 2px 0 #7a1c0a;box-shadow:inset 0 2px 0 #ffd6c8,0 3px 0 #4a1006,0 6px 10px #0006!important;display:grid;place-items:center;padding:0!important}
+.close-panel:active,.picker-close:active{transform:translateY(2px);box-shadow:inset 0 2px 0 #ffd6c8,0 1px 0 #4a1006!important}
+.icon-button,#fullscreen-button,#back-button{border:2px solid #3a2a12!important;background:var(--gk-gloss),linear-gradient(180deg,#f8edcf,#d9c08a)!important;box-shadow:inset 0 -3px 0 #b39256,0 3px 0 #3d2c10,0 5px 8px #0005!important;color:#4a3414!important}
+/* Wooden framed sheets */
+.sheet{border:0!important;border-radius:24px 24px 0 0!important;
+  background:radial-gradient(120% 60% at 50% 0,#ffffff12,transparent 60%),repeating-linear-gradient(135deg,#ffffff05 0 6px,#00000005 6px 12px),linear-gradient(170deg,#3f5e47,#22392f 70%)!important;
+  box-shadow:0 0 0 3px #2b1a0b,inset 0 0 0 3px #b07a3a,inset 0 0 0 5px #e8c277,inset 0 0 0 7px #4a2e12,inset 0 18px 30px #ffffff10,0 -10px 30px #0008!important;padding-top:24px!important}
+.sheet h2,.sheet .detail-heading h2{font-family:var(--gk-font)!important;font-weight:400!important;font-size:26px!important;color:#ffe9a8!important;text-shadow:0 2px 0 #4a2e12,0 0 12px #ffcf6a55;letter-spacing:.5px}
+.sheet .eyebrow{font-family:var(--gk-font);color:#e8c277!important;letter-spacing:2px!important;opacity:.85}
+.sheet-handle{background:#e8c277!important;height:5px!important;box-shadow:0 1px 0 #4a2e12}
+/* Tab trays: markets & difficulty */
+.picker-markets,.mode-toggle{padding:4px!important;gap:4px!important;border-radius:99px!important;background:linear-gradient(180deg,#0e231a,#173327)!important;border:2px solid #2b1a0b;box-shadow:inset 0 3px 6px #000a,0 1px 0 #ffffff22!important;width:max-content}
+.picker-markets button,.mode-toggle button{font-family:var(--gk-font)!important;font-weight:400!important;font-size:14px!important;border:0!important;border-radius:99px!important;background:transparent!important;color:#cdd8b4!important;min-height:34px;padding:0 16px!important;box-shadow:none!important;text-shadow:0 1px 0 #000a}
+.picker-markets button[aria-pressed=true]{background:var(--gk-gloss),linear-gradient(180deg,#fff4b5,#ffd34f 55%,#e39a1c)!important;color:#4a2804!important;text-shadow:0 1px 0 #fff6c8;box-shadow:inset 0 -3px 0 #b8700c,0 2px 0 #4a2a04!important}
+.mode-toggle button[aria-pressed=true]{background-image:var(--gk-gloss)!important;box-shadow:inset 0 -3px 0 #0003,0 2px 0 #0008!important;text-shadow:0 1px 0 #fff8}
+.mode-toggle button[aria-pressed=true][data-mode=normal]{background-color:#8fd05a!important}
+.mode-toggle button[aria-pressed=true][data-mode=nightmare]{background-color:#b28cff!important}
+.mode-toggle button[aria-pressed=true][data-mode=hell]{background-color:#ff6a42!important}
+/* Search field: recessed stone */
+.picker-search-wrap,.account-form input,.sheet select,.sheet input[type=text],.sheet input[type=email],.sheet input[type=password]{border:2px solid #2b1a0b!important;border-radius:14px!important;background:linear-gradient(180deg,#0f261c,#1c3a2c)!important;box-shadow:inset 0 3px 6px #000a,0 1px 0 #ffffff22!important;color:#fff3d0!important}
+/* Campaign banner & stock tiles: framed plaques */
+.picker-campaign{border:2px solid #4a2e12!important;border-radius:16px!important;background:var(--gk-gloss),linear-gradient(120deg,#ffe9a8,#e7c46a 60%,#c9952f)!important;color:#4a2804!important;box-shadow:inset 0 0 0 2px #fff3c4aa,inset 0 -4px 0 #a8711c,0 4px 0 #3a2208,0 8px 14px #0006!important}
+.picker-campaign span{font-family:var(--gk-font)!important;font-weight:400!important;font-size:16px!important}
+.picker-campaign small{color:#6a4510!important}.picker-campaign b{color:#6a3d07!important}
+.picker-stock{border:2px solid #10261b!important;border-radius:16px!important;background:linear-gradient(180deg,#3d5e46,#29483a)!important;box-shadow:inset 0 2px 0 #ffffff22,inset 0 -3px 0 #0003,0 3px 0 #0b1a12!important}
+.picker-stock:active{transform:translateY(2px)}
+.picker-stock-name strong{font-family:var(--gk-font);font-weight:400}
+/* Exit / account dialogs */
+.exit-card{border:0!important;border-radius:22px!important;background:linear-gradient(180deg,#fff7e0,#f0dfb2)!important;color:#3a2a12!important;box-shadow:0 0 0 3px #2b1a0b,inset 0 0 0 3px #b07a3a,inset 0 0 0 5px #fff3c4,0 14px 40px #000a!important}
+.exit-card strong,.exit-card h3{font-family:var(--gk-font);font-weight:400;font-size:20px;color:#4a2804}
+/* Gacha summary: parchment with gold rim and ribbon */
+.gacha-summary{border-radius:18px!important;background:linear-gradient(180deg,#fff8e4,#f3e0b0)!important;box-shadow:0 0 0 3px #2b1a0b,inset 0 0 0 3px #c9952f,inset 0 0 0 5px #fff3c4,0 10px 26px #000a!important;padding:16px 14px 12px!important}
+.gacha-summary>strong{font-family:var(--gk-font);font-weight:400!important;font-size:15px!important;position:absolute;top:-15px;left:50%;transform:translateX(-50%);white-space:nowrap;padding:5px 18px;border-radius:8px;background:linear-gradient(#ff9a6a,#d84a26);color:#fff!important;border:2px solid #5a1508;text-shadow:0 1px 0 #7a1c0a;box-shadow:0 3px 0 #3a0a02}
+.gs-list{margin-top:6px}
+.gs-row{font-family:var(--gk-font)!important;font-weight:400!important;font-size:14px!important;border-left:0!important;border-radius:10px!important;background:#ffffffa0;box-shadow:inset 0 0 0 2px var(--rowc,#d8cfb8),0 2px 0 #0002;padding:5px 9px!important;align-items:center!important}
+.gs-row.r-rare{--rowc:#4f9dff}.gs-row.r-epic{--rowc:#ffd23f}.gs-row.r-legend{--rowc:#ff9f1a}
+.gs-row em{color:#2f7a2a!important}
+.gacha-ui{gap:10px}
+/* HUD gold & level chips */
+.battle-dock .gold{font-family:var(--gk-font)}
+.picker-search-wrap input{background:transparent!important;border:0!important;box-shadow:none!important;color:#fff3d0!important}
+.picker-refresh{font-family:var(--gk-font);color:#ffe9a8!important}
+.mode-toggle button[aria-pressed=true][data-mode=normal]{color:#173a10!important}
+.mode-toggle button[aria-pressed=true][data-mode=nightmare]{color:#22104a!important}
+.mode-toggle button[aria-pressed=true][data-mode=hell]{color:#3a0a00!important}
