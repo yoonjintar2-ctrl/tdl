@@ -1,11 +1,11 @@
-import { WORLD_WIDTH as W,CANNONS,ENEMIES,SUPPLIES,WALL_STAGES,DRONE,WALL,cannonStats,validPlacement,validDronePlacement,clamp } from './config.js?v=a6b9119688';
-import{WALL_MAX_LEVEL,WALL_MAX_XP}from'./progression.js?v=a6b9119688';
-import{isAIStock}from'./symbols.js?v=a6b9119688';
-import { QuarterCamera, DEPTH_SCALE, WALL_ELEVATION } from './camera.js?v=a6b9119688';
-import { drawClayMortar, drawClayMortarIcon, clayBattlefield } from './clay-assets.js?v=a6b9119688';
-import{drawProjectile,drawEffect}from'./combat-fx.js?v=a6b9119688';
-import{artCrop}from'./terrain.js?v=a6b9119688';
-import { drawClayTower, drawClayUnit, drawClayWall, drawClayPreview, wallOutline } from './clay-runtime.js?v=a6b9119688';
+import { WORLD_WIDTH as W,CANNONS,ENEMIES,SUPPLIES,WALL_STAGES,DRONE,WALL,cannonStats,validPlacement,validDronePlacement,clamp } from './config.js?v=7b6759f665';
+import{WALL_MAX_LEVEL,WALL_MAX_XP}from'./progression.js?v=7b6759f665';
+import{isAIStock}from'./symbols.js?v=7b6759f665';
+import { QuarterCamera, DEPTH_SCALE, WALL_ELEVATION } from './camera.js?v=7b6759f665';
+import { drawClayMortar, drawClayMortarIcon, clayBattlefield } from './clay-assets.js?v=7b6759f665';
+import{drawProjectile,drawEffect}from'./combat-fx.js?v=7b6759f665';
+import{artCrop}from'./terrain.js?v=7b6759f665';
+import { drawClayTower, drawClayUnit, drawClayWall, drawClayPreview, wallOutline } from './clay-runtime.js?v=7b6759f665';
 const TAU=Math.PI*2;
 function box(c,x,y,w,h,r,fill,stroke){c.beginPath();c.roundRect(x,y,w,h,r);if(fill){c.fillStyle=fill;c.fill();}if(stroke){c.lineWidth=1;c.strokeStyle=stroke;c.stroke();}}
 function line(c,pts,col,w=1){c.beginPath();c.lineWidth=w;c.strokeStyle=col;pts.forEach(([x,y],i)=>i?c.lineTo(x,y):c.moveTo(x,y));c.stroke();}
@@ -203,8 +203,6 @@ export class Renderer{
  wallHUD(c){
   const g=this.game,pct=Number.isFinite(g.market?.changePct)?g.market.changePct:null,center=this.point(W/2,g.wallAt(W/2)),y=center.y+43;
   box(c,12,y-5,119,42,9,'#2c4634ed','#d8d8a9');text(c,'WALL LEVEL',22,y+5,7,'#c8d5ae','left');text(c,`Lv.${g.wallLevel}`,22,y+23,18,'#f7e6b4','left');text(c,g.wallXP>=WALL_MAX_XP?'MAX · GOLD':`${Math.floor(g.wallXP)} XP`,121,y+24,8,'#d6e5c1','right');
-  box(c,center.x-43,y-4,86,31,7,'#dbd5af','#6e7855');box(c,center.x-37,y+1,74,21,5,pct===null?'#52614b':pct>=0?'#3a673f':'#874d40','#ebe3b9');text(c,pct===null?'시세 대기':`${pct>=0?'+':''}${pct.toFixed(2)}%`,center.x,y+12,14,'#eaf9d0');
-  text(c,`${WALL_STAGES[g.stage].name} 성벽`,center.x,y+39,8,'#3c5137');
  }
  projectile(c,p){if(p.elapsed<0)return;const u=clamp(p.elapsed/p.duration,0,1),arc=p.type==='mortar'?85:p.type==='slime'?20:p.type==='venom'?10:0,position=v=>this.point(p.x+(p.tx-p.x)*v,p.y+(p.ty-p.y)*v,(p.sourceAltitude||0)*(1-v)+(p.targetAltitude||0)*v+Math.sin(v*Math.PI)*arc),pt=position(u);if(this.quality>.6){drawProjectile(c,p,position,this.game.time);return;}
   if(p.type==='bullet'||p.type==='slug'){const tail=position(Math.max(0,u-(p.type==='slug'?.13:.08)));line(c,[[tail.x,tail.y],[pt.x,pt.y]],p.type==='slug'?'#fff7cb':'#eab957',p.type==='slug'?2:1.5);dot(c,pt.x,pt.y,p.type==='slug'?1.8:1.3,'#fff8d6');}

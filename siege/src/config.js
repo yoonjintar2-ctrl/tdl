@@ -11,7 +11,8 @@ export const ENEMIES = [
   { name: '작은 음봉', hp: 25, reward: 2, speed: 38, radius: 10, width: 16, height: 22, damage: 5, interval: 1.1 },
   { name: '키 큰 음봉', hp: 70, reward: 5, speed: 29, radius: 13, width: 15, height: 38, damage: 10, interval: 1.4 },
   { name: '돼지 음봉', hp: 130, reward: 12, speed: 20, radius: 19, width: 34, height: 26, damage: 18, interval: 1.7 },
-  { name: '거인 음봉', hp: 320, reward: 30, speed: 15, radius: 26, width: 40, height: 53, damage: 35, interval: 2 }
+  { name: '거인 음봉', hp: 320, reward: 30, speed: 15, radius: 26, width: 40, height: 53, damage: 35, interval: 2 },
+  { name: '초미니 음봉', hp: 9, reward: 1, speed: 50, radius: 7, width: 10, height: 9, damage: 2, interval: .8 }
 ];
 export const SUPPLIES = [
   { name: 'DRAM', heal: 23, radius: 12, speed: 37 },

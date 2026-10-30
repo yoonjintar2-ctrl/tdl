@@ -1,9 +1,9 @@
-// Optional account sync (Supabase, shared with the TDL project). Guests play on local storage;
-// signing in with Google keeps one save per account and syncs it across devices.
-const SUPABASE_URL = 'https://bigmdpmwkalrezxdkbwt.supabase.co';
-// Public anon key (row-level security limits every row to its owner).
-const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpZ21kcG13a2FscmV6eGRrYnd0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUzNjA4NzQsImV4cCI6MjEwMDkzNjg3NH0.V7xzifSsdoKBw7GYvNTOZ0o2llGe6Gx_Ap5v4snyDSg';
-const SDK = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js';
+// Optional account sync (Supabase project 'stock-siege'). Guests play on local storage;
+// signing in with email + password keeps one save per account and syncs it across devices.
+const SUPABASE_URL = 'https://lbfnbthwaapbldynnttm.supabase.co';
+// Public publishable key (row-level security limits every row to its owner).
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxiZm5idGh3YWFwYmxkeW5udHRtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMzNTk5MDQsImV4cCI6MjEwODkzNTkwNH0.jOmdh4pLz1xNYH0uEkWTe9HYhuqMjpK6jZRoGqz2c_Q';
+const SDK = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.58.0/dist/umd/supabase.min.js';
 const HINT = 'stock-siege-cloud-hint';
 let client = null, loading = null;
 const hint = v => { try { if (v === undefined) return localStorage.getItem(HINT) === '1'; localStorage.setItem(HINT, v ? '1' : '0'); } catch { return false; } };

@@ -1,7 +1,7 @@
-import { CANNONS, cannonStats } from './config.js?v=a6b9119688';
-import { RARITIES, TOWER_RARITY, copiesForNext, MAX_CARD_LEVEL, cardOdds, PACKS } from './cards.js?v=a6b9119688';
-import { renderShopIcon } from './renderer.js?v=a6b9119688';
-import { FX } from './fx.js?v=a6b9119688';
+import { CANNONS, cannonStats } from './config.js?v=7b6759f665';
+import { RARITIES, TOWER_RARITY, copiesForNext, MAX_CARD_LEVEL, cardOdds, PACKS } from './cards.js?v=7b6759f665';
+import { renderShopIcon } from './renderer.js?v=7b6759f665';
+import { FX } from './fx.js?v=7b6759f665';
 
 const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
 const wait = ms => new Promise(r => setTimeout(r, ms));
@@ -38,7 +38,7 @@ export class CardStage {
     const skip = el('button', 'gacha-btn ghost', '스킵 ⏭'), flipAll = el('button', 'gacha-btn', '모두 뒤집기'), done = el('button', 'gacha-btn primary', '확인'), again = el('button', 'gacha-btn', `한 번 더 (${count}장)`);
     done.hidden = again.hidden = true; [skip, flipAll, done, again].forEach(b => b.type = 'button');
     ui.append(skip, flipAll, again, done); summary.hidden = true;
-    root.append(canvas, grid, banner, summary, ui); document.body.append(root); this.root = root;
+    root.append(canvas, grid, banner, summary, ui); document.body.append(root); this.root = root; document.body.classList.add('gacha-open');
     const fx = new FX(canvas); fx.start(); this.fx = fx; window.addEventListener('resize', this.onResize = () => fx.resize());
     this.results = results; this.revealed = 0; this.skipping = false;
     const order = results.map((res, i) => ({ res, i }));
@@ -75,7 +75,7 @@ export class CardStage {
     const real = towerCard(res.type, { level: res.level, copies: res.copies ?? 0 }, { mini: hundred });
     card.querySelector('.tcard-face.front').replaceWith(real.querySelector('.tcard-face.front'));
     card.classList.remove('hidden', 'charging', 'short', 'unowned'); card.classList.add('revealed');
-    const badge = res.isNew ? 'NEW!' : res.levelUps ? `Lv.${res.level} ↑` : res.refund ? `+${res.refund}G` : '';
+    const badge = res.isNew ? 'NEW!' : res.levelUps ? '강화!' : res.refund ? `+${res.refund}G` : '';
     if (badge) { const b = el('span', 'tc-badge' + (res.isNew ? ' new' : ''), badge); card.append(b); }
     const r = card.getBoundingClientRect(), x = r.left + r.width / 2, y = r.top + r.height / 2, col = RARITIES[res.rarity].color;
     if (!fast) {
@@ -96,10 +96,10 @@ export class CardStage {
     const by = new Map(); for (const r of this.results) { const s = by.get(r.type) || { type: r.type, n: 0, isNew: false, level: 0, ups: 0, refund: 0 }; s.n++; s.isNew ||= r.isNew; s.level = Math.max(s.level, r.level); s.ups += r.levelUps; s.refund += r.refund; by.set(r.type, s); }
     const rows = [...by.values()].sort((a, b) => ['common', 'rare', 'epic', 'legend'].indexOf(TOWER_RARITY[b.type]) - ['common', 'rare', 'epic', 'legend'].indexOf(TOWER_RARITY[a.type]));
     box.replaceChildren(el('strong', '', `획득 결과 · ${this.results.length}장`));
-    const list = el('div', 'gs-list'); for (const s of rows) { const row = el('div', 'gs-row r-' + TOWER_RARITY[s.type]); row.append(el('b', '', CANNONS[s.type].short), el('span', '', `×${s.n}`), el('em', '', s.isNew ? 'NEW!' : s.ups ? `Lv.${s.level} (+${s.ups})` : s.refund ? `+${s.refund}G` : `Lv.${s.level}`)); list.append(row); }
+    const list = el('div', 'gs-list'); for (const s of rows) { const row = el('div', 'gs-row r-' + TOWER_RARITY[s.type]); row.append(el('b', '', CANNONS[s.type].short), el('span', '', `×${s.n}`), el('em', '', s.isNew ? 'NEW!' : s.ups ? '강화!' : s.refund ? `+${s.refund}G` : '')); list.append(row); }
     box.append(list); box.hidden = false;
   }
-  close(silent) { if (!this.root) return; this.fx?.stop(); window.removeEventListener('resize', this.onResize); this.root.remove(); this.root = null; this.cards = null; this.finish = null; }
+  close(silent) { if (!this.root) return; this.fx?.stop(); window.removeEventListener('resize', this.onResize); this.root.remove(); this.root = null; this.cards = null; this.finish = null; document.body.classList.remove('gacha-open'); }
 }
 
 // Collection sheet body: pack buttons + all eight tower cards.
@@ -108,7 +108,7 @@ export function renderCollection(container, game, { onPack, onCard, slotText }) 
   const packs = el('div', 'pack-row');
   for (const n of [10, 100]) { const b = el('button', 'pack-btn' + (n === 100 ? ' big' : ''), ''); b.type = 'button'; b.innerHTML = `<span>${n}장 뽑기</span><b>${game.cash(PACKS[n])}</b>`; b.disabled = game.gold < PACKS[n]; b.onclick = () => onPack(n); packs.append(b); }
   if (game.freePack) { const f = el('button', 'pack-btn free', ''); f.type = 'button'; f.innerHTML = '<span>첫 선물 · 10장</span><b>무료</b>'; f.onclick = () => onPack(10, true); packs.prepend(f); }
-  const odds = cardOdds(), oddsLine = el('p', 'odds-line', ['legend', 'epic', 'rare', 'common'].map(r => `${RARITIES[r].name} ${(Object.entries(odds).filter(([t]) => TOWER_RARITY[t] === r).reduce((n, [, p]) => n + p, 0) * 100).toFixed(1)}%`).join(' · ') + ' · 중복 카드는 레벨업 재료');
+  const odds = cardOdds(), oddsLine = el('p', 'odds-line', ['legend', 'epic', 'rare', 'common'].map(r => `${RARITIES[r].name} ${(Object.entries(odds).filter(([t]) => TOWER_RARITY[t] === r).reduce((n, [, p]) => n + p, 0) * 100).toFixed(r === 'common' ? 1 : 2).replace(/\.?0+$/, '')}%`).join(' · ') + ' · 중복 카드는 레벨업 재료');
   const head = el('div', 'coll-head'); head.append(el('strong', '', '내 타워 카드'), el('small', '', slotText));
   const grid = el('div', 'coll-grid');
   const order = Object.keys(TOWER_RARITY).sort((a, b) => ['common', 'rare', 'epic', 'legend'].indexOf(TOWER_RARITY[a]) - ['common', 'rare', 'epic', 'legend'].indexOf(TOWER_RARITY[b]));
@@ -118,7 +118,7 @@ export function renderCollection(container, game, { onPack, onCard, slotText }) 
 
 export function statLines(game, c) {
   const st = cannonStats(c.type, c.level), buff = game.attackBuff(c), power = game.power;
-  const lines = [['레벨', `Lv.${c.level} / ${MAX_CARD_LEVEL}`], ['공격력', c.type === 'totem' ? '지원 전용' : (st.damage * power).toFixed(1)], ['공격 속도', c.type === 'totem' ? '지원 전용' : `${(st.rate * (1 + buff)).toFixed(2)} / 초`], ['사거리', Math.round(st.range)], ['장벽 버프', `Lv.${game.wallLevel} · 피해 ×${power.toFixed(2)}`]];
+  const lines = [['공격력', c.type === 'totem' ? '지원 전용' : (st.damage * power).toFixed(1)], ['공격 속도', c.type === 'totem' ? '지원 전용' : `${(st.rate * (1 + buff)).toFixed(2)} / 초`], ['사거리', Math.round(st.range)], ['장벽 버프', `Lv.${game.wallLevel} · 피해 ×${power.toFixed(2)}`]];
   if (buff > 0) lines.push(['토템 지원', `연사 +${Math.round(buff * 100)}%`]);
   if (c.type === 'totem') lines.push(['주변 지원', `연사 +${Math.round(st.buff * 100)}%`]);
   if (st.pierce) lines.push(['관통', `${st.pierce}마리`]); if (st.slow) lines.push(['감속', `${Math.round(st.slow * 100)}% · ${st.duration.toFixed(1)}초`]); if (c.type === 'poison') lines.push(['독', `${st.dot.toFixed(1)}/초`]); if (c.type === 'mortar') lines.push(['폭발 반경', Math.round(st.radius)]);

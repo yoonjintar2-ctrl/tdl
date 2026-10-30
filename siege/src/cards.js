@@ -2,13 +2,13 @@
 // Gold no longer buys or upgrades towers directly; it only buys card packs.
 export const MAX_CARD_LEVEL = 40;
 export const RARITIES = Object.freeze({
-  common: Object.freeze({ key: 'common', name: '일반', color: '#f3efe2', glow: '#ffffff', weight: 85.9 }),
-  rare: Object.freeze({ key: 'rare', name: '고급', color: '#4f9dff', glow: '#8cc4ff', weight: 12 }),
-  epic: Object.freeze({ key: 'epic', name: '희귀', color: '#ffd23f', glow: '#ffe680', weight: 2 }),
-  legend: Object.freeze({ key: 'legend', name: '레전드', color: '#ff9f1a', glow: '#ffc35a', weight: 0.1 })
+  common: Object.freeze({ key: 'common', name: '일반', color: '#f3efe2', glow: '#ffffff', weight: 99 }),
+  rare: Object.freeze({ key: 'rare', name: '고급', color: '#4f9dff', glow: '#8cc4ff', weight: 0.85 }),
+  epic: Object.freeze({ key: 'epic', name: '희귀', color: '#ffd23f', glow: '#ffe680', weight: 0.13 }),
+  legend: Object.freeze({ key: 'legend', name: '레전드', color: '#ff9f1a', glow: '#ffc35a', weight: 0.02 })
 });
 export const RARITY_ORDER = ['common', 'rare', 'epic', 'legend'];
-export const TOWER_RARITY = Object.freeze({ machine: 'common', sticky: 'common', poison: 'rare', mortar: 'rare', sniper: 'epic', totem: 'epic', laser: 'legend', drone: 'legend' });
+export const TOWER_RARITY = Object.freeze({ machine: 'common', sticky: 'common', poison: 'common', mortar: 'rare', sniper: 'rare', totem: 'epic', laser: 'epic', drone: 'legend' });
 export const towersOf = rarity => Object.keys(TOWER_RARITY).filter(t => TOWER_RARITY[t] === rarity);
 export const rarityOf = type => RARITIES[TOWER_RARITY[type] || 'common'];
 // Copies needed to go from `level` to `level + 1`. Lv.1→2 needs 1, Lv.10→11 needs 10.
@@ -39,10 +39,12 @@ export function applyCard(inventory, type) {
   if (item.level >= MAX_CARD_LEVEL) item.copies = 0;
   return { type, rarity: TOWER_RARITY[type], isNew: false, level: item.level, levelUps, refund: 0, copies: item.copies, need: copiesForNext(item.level) };
 }
-export function openPack(inventory, count, random = Math.random) {
-  const results = [];
-  for (let i = 0; i < count; i++) results.push(applyCard(inventory, rollCard(random)));
-  return results;
+// `guarantee` (a rarity key) swaps one random card of the pack for a tower of that rarity — the free starter pack uses it.
+export function openPack(inventory, count, random = Math.random, { guarantee = null } = {}) {
+  const types = [];
+  for (let i = 0; i < count; i++) types.push(rollCard(random));
+  if (guarantee && !types.some(t => RARITY_ORDER.indexOf(TOWER_RARITY[t]) >= RARITY_ORDER.indexOf(guarantee))) { const pool = towersOf(guarantee); types[Math.min(count - 1, Math.floor(random() * count))] = pool[Math.min(pool.length - 1, Math.floor(random() * pool.length))]; }
+  return types.map(t => applyCard(inventory, t));
 }
 
 // Difficulty modes: stronger bears, richer rewards. Unlocked by clearing all 20 missions on the previous mode.

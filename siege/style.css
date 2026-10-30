@@ -384,3 +384,100 @@ body *{touch-action:manipulation}
 .mode-toggle button[aria-pressed=true][data-mode=normal]{color:#173a10!important}
 .mode-toggle button[aria-pressed=true][data-mode=nightmare]{color:#22104a!important}
 .mode-toggle button[aria-pressed=true][data-mode=hell]{color:#3a0a00!important}
+/* v21: tower level & copy progress are hidden — growth shows only through the art */
+.tc-lv,.tc-bar{display:none!important}
+.tcard-face.front{grid-template-rows:auto 1fr auto!important}
+.gacha-cards .tcard:not(.mini) .tcard-face.front{grid-template-rows:1fr auto!important}
+/* v21 HUD cleanup */
+#market-button,.daily-spark,#connection-notice,.field-status>span:first-child,.battle-dock .player-badge{display:none!important}
+.header-right{justify-content:flex-end}
+.header-actions{display:flex;align-items:center;gap:8px}
+.user-level-chip{display:inline-flex;align-items:center;height:34px;padding:0 13px;border-radius:99px;font:400 16px var(--gk-font);color:#4a2804;border:2px solid #5a3a10;background:var(--gk-gloss),linear-gradient(180deg,#fff4b5,#ffd34f 55%,#e39a1c);box-shadow:inset 0 -3px 0 #b8700c,0 3px 0 #4a2a04,0 5px 8px #0005;text-shadow:0 1px 0 #fff6c8}
+.user-level-chip::before{content:"★";margin-right:4px;font-size:13px;color:#a8620a}
+#settings-button,#back-button,#fullscreen-button,#float-pause{display:grid!important;place-items:center!important;padding:0!important;line-height:0!important;font-size:0!important;width:38px!important;height:38px!important;border-radius:50%!important}
+#back-button[hidden],#fullscreen-button[hidden],#float-pause[hidden]{display:none!important}
+#settings-button svg,#back-button svg,#fullscreen-button svg,#float-pause svg{display:block;margin:0;flex:none}
+#back-button svg{transform:translateX(-1px)}
+#float-pause{border:2px solid #3a2a12!important;background:var(--gk-gloss),linear-gradient(180deg,#f8edcf,#d9c08a)!important;box-shadow:inset 0 -3px 0 #b39256,0 3px 0 #3d2c10!important;color:#4a3414!important}
+#stock-select{pointer-events:none}
+.course-mode #stock-select{pointer-events:auto}
+/* ============ v21 START SCREEN & POPUP DRESSING ============ */
+:root{--tile-pattern:
+  linear-gradient(90deg,#00000022 1px,transparent 1px) 0 0/34px 34px,
+  linear-gradient(#00000022 1px,transparent 1px) 0 0/34px 34px,
+  linear-gradient(90deg,#ffffff0d 1px,transparent 1px) 1px 1px/34px 34px,
+  linear-gradient(#ffffff0d 1px,transparent 1px) 1px 1px/34px 34px;
+  --frame-wood:0 0 0 3px #2b1a0b,inset 0 0 0 3px #a8733a,inset 0 0 0 5px #e8c277,inset 0 0 0 7px #3d250f}
+/* Start screen: battlefield art under a stone-tile overlay, framed like the in-game panels */
+.stock-picker{background:
+  radial-gradient(ellipse at 50% 0,#ffe7a033,transparent 55%),
+  radial-gradient(ellipse at 50% 120%,#0009,transparent 60%),
+  var(--tile-pattern),
+  linear-gradient(180deg,#183528e6,#10261ef2 60%,#0b1d16f7),
+  url('assets/clay/battlefield-clay-v1.webp') center/cover!important}
+.stock-picker::before{content:"";position:absolute;inset:max(6px,env(safe-area-inset-top)) 6px max(6px,env(safe-area-inset-bottom));border-radius:22px;pointer-events:none;z-index:0;box-shadow:inset 0 0 0 3px #a8733a,inset 0 0 0 5px #e8c27799,inset 0 0 0 7px #3d250f,inset 0 0 40px #000a}
+.stock-picker::after{content:"";position:absolute;left:50%;top:max(4px,env(safe-area-inset-top));transform:translateX(-50%);width:90px;height:12px;border-radius:0 0 10px 10px;background:linear-gradient(#e8c277,#a8733a);box-shadow:0 2px 0 #3d250f;pointer-events:none;z-index:1}
+.picker-content{position:relative;z-index:2}
+/* Logo plaque */
+.picker-brand{justify-content:center;margin:6px auto 2px;padding:10px 22px 12px;width:max-content;border-radius:18px;background:linear-gradient(180deg,#fff6d6,#ecd39a 60%,#c99a4a);box-shadow:var(--frame-wood),inset 0 -6px 10px #8a5a2244,0 8px 18px #0008}
+.picker-brand small{color:#7a5420!important;letter-spacing:3px}
+.picker-brand h1{font-family:var(--gk-font)!important;font-weight:400!important;color:#5a2e06!important;text-shadow:0 2px 0 #fff3c4,0 3px 0 #a8733a!important;font-size:32px!important}
+#picker-title{font-family:var(--gk-font)!important;font-weight:400!important;text-align:center;color:#ffe9a8!important;text-shadow:0 2px 0 #3d250f,0 0 14px #ffcf6a44;font-size:22px!important;margin:12px 0 2px!important}
+.picker-intro{text-align:center;color:#d8e2c0!important}
+/* Market tiles */
+.stock-picker .picker-markets{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px!important;width:100%!important;padding:0!important;background:none!important;border:0!important;box-shadow:none!important;margin:10px 0 8px!important}
+.stock-picker .picker-markets button{position:relative;display:grid!important;align-content:end;justify-items:center;gap:1px;height:auto!important;aspect-ratio:1/1.08;min-height:0;padding:0 4px 9px!important;border-radius:18px!important;overflow:hidden;
+  border:3px solid #2b1a0b!important;background:#1d3a2c!important;color:#fff3d0!important;box-shadow:inset 0 0 0 2px #a8733a,0 4px 0 #170e05,0 8px 14px #0007!important;filter:saturate(.75) brightness(.8);transition:transform .12s,filter .12s}
+.stock-picker .picker-markets button .tile-art{position:absolute;inset:0;background:center 35%/cover no-repeat;z-index:0}
+.stock-picker .picker-markets button[data-market=US] .tile-art{background-image:url('assets/clay/battlefield-nasdaq-v1.webp')}
+.stock-picker .picker-markets button[data-market=KR] .tile-art{background-image:url('assets/clay/battlefield-korea-v1.webp')}
+.stock-picker .picker-markets button[data-market=mission] .tile-art{background-image:url('assets/clay/battlefield-clay-v1.webp')}
+.stock-picker .picker-markets button::after{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,transparent 30%,#0b1a12e6 78%)}
+.stock-picker .picker-markets button b,.stock-picker .picker-markets button small{position:relative;z-index:2}
+.stock-picker .picker-markets button b{font:400 17px/1.1 var(--gk-font);text-shadow:0 2px 0 #000,0 0 8px #000}
+.stock-picker .picker-markets button small{font:400 10px var(--gk-font);color:#e8c277;text-shadow:0 1px 0 #000}
+.stock-picker .picker-markets button[aria-pressed=true]{filter:none;transform:translateY(-3px);box-shadow:inset 0 0 0 2px #fff3c4,0 0 0 3px #ffd34f,0 7px 0 #170e05,0 0 22px #ffcf6a88!important}
+.stock-picker .picker-markets button[aria-pressed=true]::before{content:"✔";position:absolute;top:6px;right:7px;z-index:3;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font:400 12px var(--gk-font);color:#4a2804;background:linear-gradient(#fff4b5,#e39a1c);border:2px solid #4a2804}
+/* Filter row: search toggle as a chunky button */
+.picker-filter-row{align-items:center;gap:8px}
+.picker-filter-row .picker-filter{flex:1}
+.picker-search-toggle{height:32px;padding:0 13px;border-radius:99px;font:400 13px var(--gk-font);color:#4a3414;border:2px solid #4f3916;background:var(--gk-gloss),linear-gradient(180deg,#fffaf0,#e8d29e);box-shadow:inset 0 -3px 0 #b39256,0 3px 0 #3d2c10}
+.picker-search-toggle:active{transform:translateY(2px);box-shadow:inset 0 -2px 0 #b39256,0 1px 0 #3d2c10}
+.picker-search-wrap[hidden]{display:none!important}
+/* Campaign button lives only on the mission tab */
+.stock-picker .picker-campaign{display:none!important}
+.stock-picker.mission-mode .picker-campaign{display:grid!important;margin:4px 0 10px}
+/* Stock & mission rows as framed plaques */
+.picker-section-title strong{font-family:var(--gk-font);font-weight:400;color:#ffe9a8;text-shadow:0 1px 0 #000}
+.picker-empty{border-radius:20px;padding:20px 14px;background:linear-gradient(180deg,#1d3a2cdd,#122a20ee);box-shadow:var(--frame-wood)}
+.picker-empty strong{font-family:var(--gk-font);font-weight:400;color:#ffe9a8}
+.picker-footer{opacity:.7}
+/* Popups & sheets: tile texture + corner rivets */
+.sheet{background:
+  radial-gradient(circle at 18px 18px,#e8c277 0 3px,#3d250f 3.5px 4.5px,transparent 5px),
+  radial-gradient(circle at calc(100% - 18px) 18px,#e8c277 0 3px,#3d250f 3.5px 4.5px,transparent 5px),
+  radial-gradient(120% 60% at 50% 0,#ffffff14,transparent 60%),
+  var(--tile-pattern),
+  linear-gradient(170deg,#3f5e47,#22392f 70%)!important}
+.campaign-panel{background:
+  radial-gradient(ellipse at 50% 0,#ffe7a02a,transparent 55%),var(--tile-pattern),
+  linear-gradient(180deg,#183528e6,#10261ef2),url('assets/clay/battlefield-clay-v1.webp') center/cover!important}
+.campaign-panel::before{content:"";position:fixed;inset:max(6px,env(safe-area-inset-top)) 6px max(6px,env(safe-area-inset-bottom));border-radius:22px;pointer-events:none;box-shadow:inset 0 0 0 3px #a8733a,inset 0 0 0 5px #e8c27799,inset 0 0 0 7px #3d250f,inset 0 0 40px #000a;z-index:5}
+.exit-confirm{background:radial-gradient(ellipse at 50% 40%,#0006,#000c)!important}
+.exit-card{background:
+  radial-gradient(circle at 16px 16px,#c9952f 0 3px,#5a3a10 3.5px 4.5px,transparent 5px),
+  radial-gradient(circle at calc(100% - 16px) 16px,#c9952f 0 3px,#5a3a10 3.5px 4.5px,transparent 5px),
+  radial-gradient(circle at 16px calc(100% - 16px),#c9952f 0 3px,#5a3a10 3.5px 4.5px,transparent 5px),
+  radial-gradient(circle at calc(100% - 16px) calc(100% - 16px),#c9952f 0 3px,#5a3a10 3.5px 4.5px,transparent 5px),
+  repeating-linear-gradient(0deg,#00000008 0 2px,transparent 2px 5px),
+  linear-gradient(180deg,#fff7e0,#f0dfb2)!important}
+.gacha-stage{background:radial-gradient(ellipse at 50% 40%,#2d5a3f,#0d2018 75%)!important}
+.gacha-stage::before{content:"";position:absolute;inset:0;background:var(--tile-pattern);opacity:.8;pointer-events:none}
+.gacha-stage::after{content:"";position:absolute;inset:max(6px,env(safe-area-inset-top)) 6px max(6px,env(safe-area-inset-bottom));border-radius:22px;pointer-events:none;box-shadow:inset 0 0 0 3px #a8733a,inset 0 0 0 5px #e8c27799,inset 0 0 0 7px #3d250f,inset 0 0 50px #000b}
+.asset-loading{background:radial-gradient(ellipse at 50% 38%,#566544cc,#1a352df2 66%),var(--tile-pattern),url('assets/clay/battlefield-clay-v1.webp') center/cover!important}
+/* v21: steadier card reveal on iOS — hide the busy battlefield layers and pin card layers to the GPU */
+body.gacha-open #app .battle,body.gacha-open #app .hud,body.gacha-open .sheet,body.gacha-open .scrim{visibility:hidden!important}
+.gacha-stage{isolation:isolate;transform:translateZ(0);-webkit-transform:translateZ(0)}
+.gacha-stage .tcard-inner{transform-style:preserve-3d;-webkit-transform-style:preserve-3d;will-change:transform}
+.gacha-stage .tcard-face{transform:translateZ(0);-webkit-transform:translateZ(0)}
+.gacha-stage .tcard-face.back{transform:rotateY(180deg) translateZ(0)}

@@ -1,18 +1,18 @@
-import{campaignProgress}from'./campaign-courses.js?v=a6b9119688';
-import { SETTINGS, CANNONS, ENEMIES, SUPPLIES, WORLD_WIDTH, DRONE, WALL, CAMERA_DEPTH, ACTOR_STYLE, cannonStats, upgradeCost, energyMultiplier, wallYFor, priceBand, validPlacement, validDronePlacement, clamp } from './config.js?v=a6b9119688';
-import { wallMountDepth } from './fortification.js?v=a6b9119688';
-import { marketArmy,estimatedArmy } from './market-army.js?v=a6b9119688';
-import {playerLevelFor,towerSlots,wallLevelFor,wallPower,money,WALL_MAX_XP} from './progression.js?v=a6b9119688';
-import{TerrainField}from'./terrain.js?v=a6b9119688';
-import{modeFor}from'./cards.js?v=a6b9119688';
-import{formatDamage}from'./combat-fx.js?v=a6b9119688';
-import{wallXPAt}from'./progression.js?v=a6b9119688';
+import{campaignProgress}from'./campaign-courses.js?v=7b6759f665';
+import { SETTINGS, CANNONS, ENEMIES, SUPPLIES, WORLD_WIDTH, DRONE, WALL, CAMERA_DEPTH, ACTOR_STYLE, cannonStats, upgradeCost, energyMultiplier, wallYFor, priceBand, validPlacement, validDronePlacement, clamp } from './config.js?v=7b6759f665';
+import { wallMountDepth } from './fortification.js?v=7b6759f665';
+import { marketArmy,estimatedArmy } from './market-army.js?v=7b6759f665';
+import {playerLevelFor,towerSlots,wallLevelFor,wallPower,money,WALL_MAX_XP} from './progression.js?v=7b6759f665';
+import{TerrainField}from'./terrain.js?v=7b6759f665';
+import{modeFor}from'./cards.js?v=7b6759f665';
+import{formatDamage}from'./combat-fx.js?v=7b6759f665';
+import{wallXPAt}from'./progression.js?v=7b6759f665';
 // Kill gold is scaled down and a steady per-minute battle stipend added, so income stays in a narrow band
 // between a starter and a maxed army (card packs are the only use of gold).
 export const KILL_GOLD=.3,STIPEND_PER_MIN=30;
 const WALL_SLOT=8;
-import{isAIStock}from'./symbols.js?v=a6b9119688';
-import {weaponMuzzle} from './weapon-geometry.js?v=a6b9119688';
+import{isAIStock}from'./symbols.js?v=7b6759f665';
+import {weaponMuzzle} from './weapon-geometry.js?v=7b6759f665';
 export class Game {
   constructor(state, { height = 620, random = Math.random,now=Date.now,rewardMultiplier=1,mode } = {}) {
     this.modeKey=modeFor(mode??state.settings?.mode).key;this.stipendClock=0;this.wallHold=0;
@@ -33,7 +33,8 @@ export class Game {
   get hp(){return this.wallXP;}set hp(value){this.wallXP=Math.max(0,value);}
   get maxHP(){return SETTINGS.maxHP;}
   get playerLevel(){return playerLevelFor(this.playerXP);}
-  get slotLimit(){return towerSlots(this.playerLevel);}
+  // v21: no install cap — every owned tower type can stand on the wall.
+  get slotLimit(){return 99;}
   get power(){return wallPower(this.wallLevel);}
   get mode(){return modeFor(this.modeKey);}
   setMode(key){this.modeKey=modeFor(key).key;this.settings.mode=this.modeKey;this.dirty=true;}
@@ -84,7 +85,7 @@ export class Game {
       if (!Number.isFinite(value) || value <= 0) continue;
       const strength = clamp(value / avg, 0, 12), count = Math.min(5, Math.floor(strength * .8) + (this.random() < Math.min(.95, strength * .65) ? 1 : 0));
       for (let i = 0; i < count; i++) {
-        if (side === 'sell') { const r = this.random(); this.spawnEnemy(strength > 4 && r < .16 ? 3 : strength > 2.5 && r < .46 ? 2 : strength > 1.1 && r < .65 ? 1 : 0); }
+        if (side === 'sell') { const r = this.random(); this.spawnEnemy(strength > 4 && r < .16 || strength > 1.5 && r < .05 ? 3 : strength > 2.5 && r < .46 || strength > 1 && r < .14 ? 2 : strength > 1.1 && r < .65 ? 1 : r > .86 ? 4 : 0); }
         else this.spawnSupply(strength > 3 ? Math.floor(this.random() * 6) : [0, 1, 3, 4][Math.floor(this.random() * 4)]);
       }
     }
@@ -109,7 +110,7 @@ export class Game {
   remove(entity, reason) {
     if (!entity.alive) return; entity.alive = false;
     const enemy = entity.maxHP !== undefined;
-    if (reason === 'cannon' && enemy) { const weight=entity.marketWeight??1,reward=this.creditMarketGold(ENEMIES[entity.kind].reward*weight*KILL_GOLD);if(entity.lastHit){this.metrics.killsByType[entity.lastHit]=(this.metrics.killsByType[entity.lastHit]||0)+1;};this.metrics.kills++;this.gainPlayerXP([1,2,3,5][entity.kind]*weight*this.rewardMultiplier);this.dirty=true;if(reward)this.effect('text',entity.x,entity.y-15,'#ffdc8c',`+${this.cash(reward)}`,.65); }
+    if (reason === 'cannon' && enemy) { const weight=entity.marketWeight??1,reward=this.creditMarketGold(ENEMIES[entity.kind].reward*weight*KILL_GOLD);if(entity.lastHit){this.metrics.killsByType[entity.lastHit]=(this.metrics.killsByType[entity.lastHit]||0)+1;};this.metrics.kills++;this.gainPlayerXP(([1,2,3,5,.5][entity.kind]??1)*weight*this.rewardMultiplier);this.dirty=true;if(reward)this.effect('text',entity.x,entity.y-15,'#ffdc8c',`+${this.cash(reward)}`,.65); }
     if (reason === 'crush') { this.metrics[enemy ? 'crushedEnemies' : 'crushedSupplies']++; this.effect('crush', entity.x, entity.y, enemy ? '#ff6876' : '#54efbc', '', .5); }
     if (reason === 'expire') { this.metrics.expired++; this.effect('ghost', entity.x, entity.y, enemy ? '#ff6876' : '#54efbc', '', .6, { radius: entity.radius }); }
     else this.burst(entity.x, entity.y, enemy ? '#ff6876' : '#54efbc', reason === 'cannon' ? 5 : 3);
