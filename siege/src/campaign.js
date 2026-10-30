@@ -1,9 +1,9 @@
-import{MarketDataProvider}from'./market.js?v=87308430e0';
-import{courseFor,courseChange,courseUnlocked,campaignProgress,CAMPAIGN_REWARD_RATE}from'./campaign-courses.js?v=87308430e0';
-import{estimateCandleFlow}from'./candle-flow.js?v=87308430e0';
-import{snapshotGame,readSave,safeStorage}from'./storage.js?v=87308430e0';
-import{SETTINGS,ENEMIES,SUPPLIES,validPlacement}from'./config.js?v=87308430e0';
-import{playerLevelFor,towerSlots}from'./progression.js?v=87308430e0';
+import{MarketDataProvider}from'./market.js?v=551d2f9a49';
+import{courseFor,courseChange,courseUnlocked,campaignProgress,CAMPAIGN_REWARD_RATE}from'./campaign-courses.js?v=551d2f9a49';
+import{estimateCandleFlow}from'./candle-flow.js?v=551d2f9a49';
+import{snapshotGame,readSave,safeStorage}from'./storage.js?v=551d2f9a49';
+import{SETTINGS,ENEMIES,SUPPLIES,validPlacement}from'./config.js?v=551d2f9a49';
+import{playerLevelFor,towerSlots}from'./progression.js?v=551d2f9a49';
 export const CAMPAIGN_SAVE_KEY=SETTINGS.saveKey+':course-v1';
 const EPOCH=Date.UTC(2026,0,5,14,30),BASE_VOLUME=40000;
 export class CampaignDataProvider extends MarketDataProvider{
@@ -19,7 +19,8 @@ export class CampaignDataProvider extends MarketDataProvider{
  update(dt){if(this.destroyed||!(dt>0))return;this.elapsed=Math.min(this.course.duration,this.elapsed+dt);if(Math.floor(this.elapsed)!==this.emittedSecond)this.publish();}
  destroy(){this.destroyed=true;super.destroy();}
 }
-export function courseState(home,course){const state=structuredClone(home);state.gold=1800+course.id*60;state.wallXP=720;state.settings={...state.settings,autoUpgrade:false};state.inventory=state.inventory.map(c=>({...c}));state.cannons=state.cannons.map(c=>({...c}));for(const[type,min]of[['machine',3],['mortar',2]]){let owned=state.inventory.find(c=>c.type===type);if(!owned){owned={type,level:min};state.inventory.push(owned);}owned.level=Math.max(min,owned.level);const placed=state.cannons.find(c=>c.type===type);if(placed)placed.level=owned.level;else if(state.cannons.length<towerSlots(playerLevelFor(state.playerXP))){const x=[80,216,350,28,403].find(x=>validPlacement(x,state.cannons));if(x!=null)state.cannons.push({type,x,level:owned.level});}}return state;}
+// Missions use the player's real towers and gold (card packs bought mid-mission persist); only wall XP starts fresh.
+export function courseState(home,course){const state=structuredClone(home);state.wallXP=720;state.settings={...state.settings,autoUpgrade:false};state.inventory=state.inventory.map(c=>({...c}));state.cannons=state.cannons.map(c=>({...c}));return state;}
 export function newCourseRun(home,courseId){const course=courseFor(courseId);if(!course||!courseUnlocked(home.campaign,courseId))throw Error('course_locked');return{version:1,token:globalThis.crypto?.randomUUID?.()||'course-'+Date.now()+'-'+Math.random().toString(36).slice(2),courseId:course.id,elapsed:0,zeroSeconds:0,baseXP:home.playerXP,earnedXP:0,earnedGold:0,kills:0,gameTime:0,state:courseState(home,course),waves:[],enemies:[],supplies:[]};}
 const actor=e=>({kind:e.kind,x:e.x,y:e.y,hp:e.hp,age:e.age,contact:e.contact,attack:e.attack,weight:e.marketWeight??1,terrainLane:e.terrainLane});
 export function checkpointCourse(run,game,provider){return{...run,elapsed:provider.elapsed,height:game.height,state:snapshotGame(game),earnedXP:Math.max(0,game.playerXP-run.baseXP),earnedGold:game.metrics.goldEarned,kills:game.metrics.kills,gameTime:game.time,remainder:game.marketGoldRemainder,waves:game.marketWaves.map(w=>({...w})),enemies:game.enemies.filter(e=>e.alive).map(actor),supplies:game.supplies.filter(e=>e.alive).map(actor)};}

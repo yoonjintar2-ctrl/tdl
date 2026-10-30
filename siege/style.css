@@ -101,3 +101,145 @@ body *{touch-action:manipulation}
 .shop-install{display:block;width:calc(100% - 4px);min-height:31px;margin:5px 2px 0;border-radius:7px;border:1px solid #e9d796;background:linear-gradient(#ffe7a4,#e6bd5e);color:#4a3412;font:850 11px system-ui;box-shadow:0 2px #8a6a2c}
 .shop-card.reserve{outline:2px solid #f2cf6f;outline-offset:1px}
 .placement-banner{left:calc(54px + env(safe-area-inset-left))!important}
+/* ===== v18 · tower cards & gacha ===== */
+.tcard{--rc:#f3efe2;--rg:#fff;position:relative;aspect-ratio:5/7;perspective:900px;border-radius:12px;user-select:none;-webkit-user-select:none;cursor:pointer}
+.tcard.r-rare{--rc:#4f9dff;--rg:#9cccff}.tcard.r-epic{--rc:#ffd23f;--rg:#fff0a0}.tcard.r-legend{--rc:#ff9f1a;--rg:#ffd36a}
+.tcard-inner{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .62s cubic-bezier(.3,1.35,.45,1)}
+.tcard.hidden .tcard-inner{transform:rotateY(180deg)}
+.tcard-face{position:absolute;inset:0;border-radius:inherit;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden}
+.tcard-face.front{display:grid;grid-template-rows:auto 1fr auto auto;padding:6px 6px 7px;background:linear-gradient(160deg,#fffaf0 0%,#efe4c8 55%,#d9c9a4 100%);border:3px solid var(--rc);box-shadow:inset 0 0 0 1.5px #ffffffa0,inset 0 -6px 14px #8a6b3a33,0 0 12px color-mix(in srgb,var(--rc) 55%,transparent),0 4px 10px #0006}
+.tcard.r-rare .tcard-face.front{background:linear-gradient(160deg,#f2f8ff,#cfe3ff 55%,#9cc3f5)}
+.tcard.r-epic .tcard-face.front{background:linear-gradient(160deg,#fffbe6,#ffe9a6 50%,#e9bf4f)}
+.tcard.r-legend .tcard-face.front{background:linear-gradient(160deg,#fff4dc,#ffd28a 45%,#f0912a);box-shadow:inset 0 0 0 1.5px #fff3c8,0 0 18px #ff9f1aaa,0 0 34px #ff7a0055,0 4px 10px #0006}
+.tc-top{display:flex;justify-content:space-between;align-items:center;gap:4px;font:800 9px/1 system-ui;color:#3a3020}
+.tc-rarity{padding:2px 6px;border-radius:99px;background:var(--rc);color:#2a2414;box-shadow:inset 0 1px 0 #ffffffa0}
+.tcard.r-rare .tc-rarity{color:#fff}
+.tc-lv{font-variant-numeric:tabular-nums}
+.tc-art{width:100%;height:100%;min-height:0;object-fit:contain;filter:drop-shadow(0 4px 4px #0004)}
+.tc-name{text-align:center;font:900 13px/1.2 system-ui;color:#2b2416;letter-spacing:-.3px}
+.tc-bar{position:relative;height:13px;margin-top:4px;border-radius:99px;background:#00000026;overflow:hidden}
+.tc-bar i{position:absolute;inset:0 auto 0 0;background:linear-gradient(90deg,var(--rc),var(--rg));border-radius:inherit}
+.tc-bar small{position:relative;display:block;text-align:center;font:800 9px/13px system-ui;color:#2b2416}
+.tc-sheen{position:absolute;inset:-20%;background:linear-gradient(115deg,transparent 38%,#ffffffb3 50%,transparent 62%);transform:translateX(-120%);pointer-events:none}
+.tcard.revealed .tc-sheen,.coll-grid .tcard:not(.unowned) .tc-sheen{animation:tcSheen 3.6s ease-in-out .3s infinite}
+@keyframes tcSheen{0%{transform:translateX(-120%)}35%,100%{transform:translateX(120%)}}
+.tc-pearl{position:absolute;inset:0;pointer-events:none;opacity:0;mix-blend-mode:overlay;background:conic-gradient(from var(--pa,0deg) at 50% 50%,#ff9ad5,#9ad5ff,#b6ff9a,#ffe39a,#ff9ad5)}
+.tcard.r-epic .tc-pearl,.tcard.r-legend .tc-pearl{opacity:.45;animation:tcPearl 6s linear infinite}
+@property --pa{syntax:'<angle>';inherits:false;initial-value:0deg}
+@keyframes tcPearl{to{--pa:360deg}}
+.tcard-face.back{transform:rotateY(180deg);background:radial-gradient(120% 90% at 50% 30%,#3d6b4a,#1f3d2c 70%);border:3px solid #c9a55a;box-shadow:inset 0 0 0 2px #f6dd9a55,inset 0 0 20px #0008;display:grid;place-items:center}
+.tc-emblem{display:flex;gap:4px;align-items:flex-end}
+.tc-emblem i{width:9px;border-radius:4px;background:linear-gradient(#ffeab0,#d29a3c);box-shadow:0 0 6px #ffd27a88}
+.tc-emblem i:nth-child(1){height:20px}.tc-emblem i:nth-child(2){height:32px;background:linear-gradient(#ffb0a0,#c8553c)}.tc-emblem i:nth-child(3){height:26px}
+.tc-backshine{position:absolute;inset:0;background:repeating-linear-gradient(45deg,#ffffff08 0 6px,transparent 6px 12px)}
+.tcard.unowned .tcard-face.front{filter:grayscale(.85) brightness(.7)}
+.tc-badge{position:absolute;top:-8px;right:-6px;z-index:5;padding:3px 7px;border-radius:99px;background:#2f6b3d;color:#fff7d8;font:900 10px system-ui;box-shadow:0 2px 6px #0007;animation:badgePop .5s cubic-bezier(.3,1.8,.5,1) both}
+.tc-badge.new{background:linear-gradient(#ff6a5a,#d8352a)}
+@keyframes badgePop{from{transform:scale(0) rotate(-20deg)}to{transform:scale(1) rotate(-6deg)}}
+.tc-state{position:absolute;left:50%;bottom:-9px;transform:translateX(-50%);z-index:4;padding:2px 8px;border-radius:99px;font:800 9px system-ui;white-space:nowrap;box-shadow:0 2px 4px #0005}
+.tc-state.on{background:#3f6a46;color:#fff7d8}.tc-state.off{background:#f6e6bb;color:#4a3a1a}.tc-state.none{background:#00000066;color:#d8d0bc}
+/* idle sway like the reference cards */
+.coll-grid .tcard:not(.unowned) .tcard-inner,.tcard.revealed .tcard-inner{animation:tcSway 7s ease-in-out infinite}
+@keyframes tcSway{0%,100%{transform:rotateZ(-.8deg) translateY(0)}50%{transform:rotateZ(.8deg) translateY(-3px)}}
+/* collection sheet */
+.pack-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;margin:6px 0 6px}
+.pack-btn{display:grid;gap:2px;justify-items:center;padding:10px 8px;border-radius:14px;border:0;background:linear-gradient(#ffe7a4,#e6b84f);color:#3e2c0c;box-shadow:inset 0 2px 0 #fff6d0,inset 0 -3px 0 #a87a2a,0 4px 10px #0005;font:900 14px system-ui}
+.pack-btn b{font:900 12px ui-monospace,monospace}
+.pack-btn.big{background:linear-gradient(#ffc06a,#ff8a1a);color:#3a1d00}
+.pack-btn.free{background:linear-gradient(#bff59a,#6fbf4c);color:#173a12;animation:freePulse 1.6s ease-in-out infinite}
+@keyframes freePulse{50%{box-shadow:inset 0 2px 0 #fff6d0,inset 0 -3px 0 #3d7a2a,0 0 18px #b8ff8a}}
+.pack-btn:disabled{filter:grayscale(.8) brightness(.8)}
+.odds-line{margin:2px 0 10px;font:700 10px/1.5 system-ui;color:#c9d3b3}
+.coll-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin:4px 0 8px;color:#f3ead0}
+.coll-head small{font:700 10px system-ui;color:#b9c6a2}
+.coll-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px 8px;padding-bottom:14px}
+.coll-grid .tc-name{font-size:11px}.coll-grid .tc-top{font-size:8px}.coll-grid .tc-rarity{padding:2px 4px}
+/* gacha stage */
+.gacha-stage{position:fixed;inset:0;z-index:100;background:radial-gradient(120% 80% at 50% 40%,#203a2c 0%,#0d1712 70%,#070c09 100%);display:grid;grid-template-rows:1fr auto;overflow:hidden;animation:stageIn .35s ease both;padding:max(14px,env(safe-area-inset-top)) max(14px,env(safe-area-inset-right)) max(14px,env(safe-area-inset-bottom)) max(14px,env(safe-area-inset-left))}
+@keyframes stageIn{from{opacity:0}}
+.gacha-fx{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:3}
+.gacha-cards{position:relative;z-index:2;align-self:center;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px 9px;width:min(100%,560px);margin:0 auto}
+.gacha-stage.hundred .gacha-cards{grid-template-columns:repeat(10,minmax(0,1fr));gap:4px;width:min(100%,520px)}
+.tcard.mini .tcard-face.front{padding:2px;grid-template-rows:0 1fr 0;border-width:2px}
+.tcard.mini .tc-top,.tcard.mini .tc-name{display:none}
+.tcard.mini .tcard-face.back{border-width:2px}.tcard.mini .tc-emblem i{width:3px}.tcard.mini .tc-emblem i:nth-child(1){height:7px}.tcard.mini .tc-emblem i:nth-child(2){height:11px}.tcard.mini .tc-emblem i:nth-child(3){height:9px}
+.tcard.mini .tc-badge{font-size:7px;padding:1px 3px;top:-5px;right:-4px}
+.tcard.deal{opacity:0}
+.tcard.dealing{animation:deal .7s cubic-bezier(.2,.9,.25,1.15) both}
+@keyframes deal{from{opacity:0;transform:translate(var(--fromX),var(--fromY)) scale(.3) rotate(-25deg)}60%{opacity:1}to{opacity:1;transform:none}}
+.tcard.hidden .tcard-inner{animation:backFloat 3.2s ease-in-out infinite}
+@keyframes backFloat{0%,100%{transform:rotateY(180deg) translateY(0) rotateZ(-.6deg)}50%{transform:rotateY(180deg) translateY(-4px) rotateZ(.6deg)}}
+.tcard.glow-rare.hidden .tcard-face.back{box-shadow:inset 0 0 0 2px #9cccff66,0 0 14px #4f9dff99}
+.tcard.glow-epic.hidden .tcard-face.back{box-shadow:inset 0 0 0 2px #fff0a066,0 0 18px #ffd23fbb}
+.tcard.glow-legend.hidden .tcard-face.back{box-shadow:inset 0 0 0 2px #ffd36a88,0 0 26px #ff9f1add,0 0 50px #ff7a0066}
+.tcard.charging .tcard-inner{animation:charge .75s ease-in both}
+.tcard.r-legend.charging .tcard-inner,.tcard.glow-legend.charging .tcard-inner{animation:charge 1.1s ease-in both}
+.tcard.charging.short .tcard-inner{animation:chargeShort .26s ease-in both}
+@keyframes charge{0%{transform:rotateY(180deg)}20%{transform:rotateY(180deg) translateY(-14px) scale(1.08)}30%,50%,70%,90%{transform:rotateY(180deg) translateY(-14px) scale(1.1) rotateZ(-4deg)}40%,60%,80%,100%{transform:rotateY(180deg) translateY(-16px) scale(1.12) rotateZ(4deg)}}
+@keyframes chargeShort{to{transform:rotateY(180deg) translateY(-8px) scale(1.05)}}
+.tcard.revealed{z-index:2}
+.tcard.revealed.r-legend{z-index:3}
+.gacha-ui{position:relative;z-index:4;display:flex;flex-wrap:wrap;justify-content:center;gap:8px;padding-top:10px}
+.gacha-btn{min-height:44px;padding:0 18px;border-radius:14px;border:0;background:#f6e6bb;color:#29452d;font:900 14px system-ui;box-shadow:inset 0 2px 0 #fffdf0,inset 0 -3px 0 #cfae6e,0 4px 10px #0006}
+.gacha-btn.primary{background:linear-gradient(#ffe7a4,#e6b84f);color:#3e2c0c}
+.gacha-btn.ghost{background:#ffffff1f;color:#f6ecd0;box-shadow:inset 0 0 0 1px #ffffff44}
+.gacha-btn:disabled{opacity:.5}
+.gacha-pack{position:absolute;z-index:2;left:50%;top:42%;width:150px;aspect-ratio:5/7;transform:translate(-50%,-50%);animation:packIn .6s cubic-bezier(.3,1.5,.5,1) both}
+.pack-face{position:absolute;inset:0;border-radius:16px;background:radial-gradient(120% 90% at 50% 25%,#ffd27a,#c8732a 55%,#6a3410);border:3px solid #ffe8a8;display:grid;place-content:center;justify-items:center;gap:4px;color:#fff5d6;text-shadow:0 2px 0 #6a3410;box-shadow:0 0 30px #ffb34a88,inset 0 0 20px #0005}
+.pack-face span{font:800 10px ui-monospace,monospace;letter-spacing:3px}.pack-face b{font:900 56px/1 system-ui}.pack-face small{font:800 10px system-ui;letter-spacing:2px}
+.gacha-pack.charge{animation:packShake .65s ease-in both}
+@keyframes packIn{from{transform:translate(-50%,-50%) scale(0) rotate(-30deg)}}
+@keyframes packShake{0%{transform:translate(-50%,-50%) scale(1)}25%{transform:translate(-52%,-50%) scale(1.06) rotate(-3deg)}50%{transform:translate(-48%,-50%) scale(1.1) rotate(3deg)}75%{transform:translate(-52%,-51%) scale(1.14) rotate(-4deg)}100%{transform:translate(-50%,-50%) scale(1.25);filter:brightness(2)}}
+.gacha-banner{position:absolute;z-index:5;left:50%;top:14%;transform:translate(-50%,-10px) scale(.8);opacity:0;padding:10px 22px;border-radius:99px;font:900 22px system-ui;letter-spacing:-.5px;white-space:nowrap;color:#3a1d00;background:linear-gradient(#fff2c0,#ffb84a);box-shadow:0 0 30px #ffb84aaa,0 6px 16px #0008;pointer-events:none;transition:all .35s cubic-bezier(.3,1.6,.5,1)}
+.gacha-banner.show{opacity:1;transform:translate(-50%,0) scale(1)}
+.gacha-banner.r-rare{background:linear-gradient(#e2f0ff,#6fb0ff);color:#0c2a52;box-shadow:0 0 24px #4f9dffaa}
+.gacha-banner.r-epic{background:linear-gradient(#fffbe0,#ffd23f);color:#3a2a00}
+.gacha-banner.r-common{background:#f6efe0;color:#2b2416}
+.gacha-stage.quake{animation:quake .55s linear}
+@keyframes quake{10%,50%,90%{transform:translate(-6px,3px)}30%,70%{transform:translate(6px,-3px)}}
+.gacha-summary{position:relative;z-index:4;justify-self:center;width:min(100%,420px);margin-top:8px;padding:12px 14px;border-radius:16px;background:#f6e6bbee;color:#29452d;box-shadow:inset 0 2px 0 #fffdf0,inset 0 -3px 0 #cfae6e,0 6px 18px #0008;animation:stageIn .4s ease both}
+.gacha-summary>strong{display:block;font:900 14px system-ui;margin-bottom:6px}
+.gs-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 10px;max-height:28vh;overflow:auto}
+.gs-row{display:flex;gap:6px;align-items:baseline;font:700 12px system-ui;padding:3px 6px;border-radius:8px;border-left:4px solid #d8cfb8}
+.gs-row.r-rare{border-color:#4f9dff}.gs-row.r-epic{border-color:#ffd23f}.gs-row.r-legend{border-color:#ff9f1a;background:#ffe2b4}
+.gs-row b{flex:1;min-width:0}.gs-row em{font-style:normal;font-weight:900;color:#3f6a46}
+.gacha-stage:not(.hundred) .gacha-summary{position:absolute;left:14px;right:14px;bottom:76px;width:auto;margin:0 auto;max-width:420px}
+/* tower info sheet */
+.tower-info{position:fixed;inset:0;z-index:60;display:grid;place-items:end center;background:#0b150f88;animation:stageIn .2s ease both}
+.ti-card{width:min(100%,460px);display:grid;grid-template-columns:118px minmax(0,1fr);gap:14px;padding:18px 16px max(16px,env(safe-area-inset-bottom));border-radius:22px 22px 0 0;background:radial-gradient(120% 90% at 20% 0%,#fff8dc,#efd9a2);color:#24402a;box-shadow:0 -8px 30px #0008;animation:sheetUp .32s cubic-bezier(.2,1,.3,1) both}
+@keyframes sheetUp{from{transform:translateY(100%)}}
+.ti-card .tcard{width:118px;align-self:start}
+.ti-stats{display:grid;gap:4px;min-width:0}
+.ti-stats h3{margin:0 0 4px;font:900 18px system-ui;letter-spacing:-.4px}
+.ti-row{display:flex;justify-content:space-between;gap:8px;font:700 12px system-ui;border-bottom:1px dashed #c9b27a88;padding:3px 0}
+.ti-row b{font-variant-numeric:tabular-nums;text-align:right}
+.ti-actions{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.ti-actions button{min-height:42px;border-radius:12px;border:0;font:850 13px system-ui;background:#fffbe9;color:#2c472e;box-shadow:inset 0 -2px 0 #d9c38f}
+.ti-actions button.primary{background:#3f6a46;color:#fff7d8;box-shadow:inset 0 -2px 0 #26432c}
+.ti-actions button:disabled{opacity:.45}
+/* difficulty mode toggle */
+.mode-toggle{display:inline-flex;gap:3px;padding:3px;border-radius:99px;background:#0000004d;box-shadow:inset 0 1px 3px #0006}
+.mode-toggle button{min-height:28px;padding:0 11px;border-radius:99px;border:0;background:transparent;color:#d8d2bc;font:850 11px system-ui}
+.mode-toggle button[aria-pressed=true][data-mode=normal]{background:linear-gradient(#cfeeb4,#7fbf6a);color:#173a12}
+.mode-toggle button[aria-pressed=true][data-mode=nightmare]{background:linear-gradient(#e1cfff,#a97cff);color:#24104a}
+.mode-toggle button[aria-pressed=true][data-mode=hell]{background:linear-gradient(#ffc9a8,#ff5a3c);color:#3a0a00}
+.mode-toggle button:disabled{opacity:.45}
+.battle .mode-toggle{position:absolute;z-index:5;left:50%;transform:translateX(-50%) scale(.9);top:calc(122px + env(safe-area-inset-top))}
+.picker-content .mode-toggle{margin:0 0 10px}
+@media (prefers-reduced-motion:reduce){.tcard-inner,.tcard.dealing,.tc-sheen,.tc-pearl,.gacha-pack{animation:none!important;transition:none!important}}
+.picker-content .mode-toggle{justify-self:start;align-self:start;width:max-content}
+#shop.shop{display:block!important;grid-template-columns:none!important;max-height:none}
+.tcard.mini .tcard-face.front{display:block;padding:2px}
+.tcard.mini .tc-art{position:absolute;inset:2px;width:calc(100% - 4px);height:calc(100% - 4px)}
+.gacha-stage:not(.hundred) .gacha-summary{bottom:124px}
+.float-controls #fullscreen-button{width:30px;height:30px;font-size:15px}
+#install-guide .exit-card p b{color:#24402a}
+/* v18 · tablets & desktop: widen the column but keep a phone-like aspect so the battlefield
+   keeps enough depth (march distance) on every device */
+@media(min-width:501px){#app{width:min(100vw,max(500px,calc(100dvh * .56)))}}
+@media(min-width:501px) and (min-height:1000px){.compact-hud .compact-quote{transform:scale(1.12);transform-origin:left top}.float-controls{transform:scale(1.15);transform-origin:left top}}
+.account-box{display:grid;gap:6px;margin:6px 0 14px;padding:12px 14px;border-radius:14px;background:#f6e6bb;color:#29452d;box-shadow:inset 0 2px 0 #fffdf0,inset 0 -3px 0 #cfae6e}
+.account-box strong{font:900 14px system-ui}.account-box p{margin:0;font:600 11px/1.5 system-ui;color:#4f6342}
+.account-box button{min-height:40px;border-radius:12px;border:0;font:850 13px system-ui;background:#fffbe9;color:#2c472e;box-shadow:inset 0 -2px 0 #d9c38f}
+.account-box button.primary{background:#3f6a46;color:#fff7d8;box-shadow:inset 0 -2px 0 #26432c}
+.course-active .battle .mode-toggle{display:none}

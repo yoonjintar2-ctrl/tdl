@@ -1,23 +1,30 @@
-import{campaignProgress}from'./campaign-courses.js?v=87308430e0';
-import { SETTINGS, CANNONS, ENEMIES, SUPPLIES, WORLD_WIDTH, DRONE, WALL, CAMERA_DEPTH, ACTOR_STYLE, cannonStats, upgradeCost, energyMultiplier, wallYFor, priceBand, validPlacement, validDronePlacement, clamp } from './config.js?v=87308430e0';
-import { wallMountDepth } from './fortification.js?v=87308430e0';
-import { marketArmy,estimatedArmy } from './market-army.js?v=87308430e0';
-import {playerLevelFor,towerSlots,wallLevelFor,wallPower,money,WALL_MAX_XP} from './progression.js?v=87308430e0';
-import{TerrainField}from'./terrain.js?v=87308430e0';
+import{campaignProgress}from'./campaign-courses.js?v=551d2f9a49';
+import { SETTINGS, CANNONS, ENEMIES, SUPPLIES, WORLD_WIDTH, DRONE, WALL, CAMERA_DEPTH, ACTOR_STYLE, cannonStats, upgradeCost, energyMultiplier, wallYFor, priceBand, validPlacement, validDronePlacement, clamp } from './config.js?v=551d2f9a49';
+import { wallMountDepth } from './fortification.js?v=551d2f9a49';
+import { marketArmy,estimatedArmy } from './market-army.js?v=551d2f9a49';
+import {playerLevelFor,towerSlots,wallLevelFor,wallPower,money,WALL_MAX_XP} from './progression.js?v=551d2f9a49';
+import{TerrainField}from'./terrain.js?v=551d2f9a49';
+import{modeFor}from'./cards.js?v=551d2f9a49';
+import{formatDamage}from'./combat-fx.js?v=551d2f9a49';
+import{wallXPAt}from'./progression.js?v=551d2f9a49';
+// Kill gold is scaled down and a steady per-minute battle stipend added, so income stays in a narrow band
+// between a starter and a maxed army (card packs are the only use of gold).
+export const KILL_GOLD=.3,STIPEND_PER_MIN=30;
 const WALL_SLOT=8;
-import{isAIStock}from'./symbols.js?v=87308430e0';
-import {weaponMuzzle} from './weapon-geometry.js?v=87308430e0';
+import{isAIStock}from'./symbols.js?v=551d2f9a49';
+import {weaponMuzzle} from './weapon-geometry.js?v=551d2f9a49';
 export class Game {
-  constructor(state, { height = 620, random = Math.random,now=Date.now,rewardMultiplier=1 } = {}) {
-    this.campaign=campaignProgress(state.campaign);this.rewardMultiplier=clamp(rewardMultiplier,0,1);this.now=now;this.random = random; this.height = height; this.gold = state.gold; this.settings = { ...state.settings };
+  constructor(state, { height = 620, random = Math.random,now=Date.now,rewardMultiplier=1,mode } = {}) {
+    this.modeKey=modeFor(mode??state.settings?.mode).key;this.stipendClock=0;this.wallHold=0;
+    this.campaign=campaignProgress(state.campaign);this.campaignModes=state.campaignModes||{};this.freePack=state.freePack===true;this.rewardMultiplier=clamp(rewardMultiplier,0,1);this.now=now;this.random = random; this.height = height; this.gold = state.gold; this.settings = { ...state.settings };
     this.cannons = state.cannons.map(c => ({ ...c, ...(c.type === 'drone' ? { y: clamp(Number.isFinite(c.yRatio) ? c.yRatio * height : c.y ?? height * .35, DRONE.marginTop, height - DRONE.marginBottom) } : {}), cooldown: .2, recoil: 0, angle: -Math.PI / 2, targetId: null, targetLock: 0 }));
     this.playerXP=Math.max(0,state.playerXP||0);this.wallXP=clamp(state.wallXP??360,0,WALL_MAX_XP);this.wallLevel=wallLevelFor(this.wallXP);this.wallTransition=null;
-    this.inventory=[];for(const item of [...(state.inventory||[]),...this.cannons]){if(!CANNONS[item.type])continue;const owned=this.inventory.find(v=>v.type===item.type);if(owned)owned.level=Math.max(owned.level,item.level||1);else this.inventory.push({type:item.type,level:item.level||1});}
+    this.inventory=[];for(const item of [...(state.inventory||[]),...this.cannons]){if(!CANNONS[item.type])continue;const owned=this.inventory.find(v=>v.type===item.type);if(owned){if((item.level||1)>owned.level){owned.level=item.level||1;owned.copies=item.copies||0;}}else this.inventory.push({type:item.type,level:item.level||1,copies:Math.max(0,item.copies||0)});}
     this.enemies = []; this.supplies = []; this.effects = []; this.projectiles = []; this.zones = [];
-    this.time = 0; this.wallY = height / 2; this.band = 0; this.targetBand = 0; this.move = null; this.stage = Math.min(7,this.wallLevel-1);
+    this.dmgAcc={};this.time = 0; this.wallY = height / 2; this.band = 0; this.targetBand = 0; this.move = null; this.stage = Math.min(7,this.wallLevel-1);
     this.terrain=new TerrainField(height);this.pricePlaced=false;this.market = null; this.selected = null; this.placement = null; this.dirty = false; this.nextId = 1; this.autoTimer = 0; this.messages = []; this.marketWaves=[];
     this.marketGoldRemainder=0;
-    this.metrics = { kills: 0, crushedEnemies: 0, crushedSupplies: 0, healed: 0, goldEarned: 0, shots: {}, wallSteps: 0, expired: 0 };
+    this.metrics = { killsByType: {}, kills: 0, crushedEnemies: 0, crushedSupplies: 0, healed: 0, goldEarned: 0, shots: {}, wallSteps: 0, expired: 0 };
   }
   wallAt(x, y = this.wallY) { return y + Math.sin(x / WORLD_WIDTH * Math.PI * 2 - .4) * 5 + Math.sin(x / WORLD_WIDTH * Math.PI * 4) * 1.5; }
   wallFaceAt(x) { return this.wallAt(x) + WALL.north + wallMountDepth(this.cannons,x)/2; }
@@ -28,13 +35,21 @@ export class Game {
   get playerLevel(){return playerLevelFor(this.playerXP);}
   get slotLimit(){return towerSlots(this.playerLevel);}
   get power(){return wallPower(this.wallLevel);}
+  get mode(){return modeFor(this.modeKey);}
+  setMode(key){this.modeKey=modeFor(key).key;this.settings.mode=this.modeKey;this.dirty=true;}
   get marketCode(){return this.market?.market||this.settings.market||'US';}
   cash(value){return money(value,this.marketCode);}
   owned(type){return this.inventory.find(c=>c.type===type)||this.cannons.find(c=>c.type===type);}
   gainPlayerXP(amount){const before=this.playerLevel,slots=this.slotLimit;this.playerXP+=amount;this.dirty=true;if(this.playerLevel>before){this.effect('player-level',216,this.wallY,'#ffe5a2',`${before} → ${this.playerLevel}`,2,{slots:this.slotLimit,unlocked:this.slotLimit>slots});}}
   wallXPLabel(amount,x){if(!amount)return;const lane=Math.floor(x/25),same=this.effects.find(f=>f.type==='wall-xp'&&f.lane===lane&&Math.sign(f.amount)===Math.sign(amount)&&f.life>.55);if(same){same.amount+=amount;same.life=.9;}else this.effect('wall-xp',x,this.wallBackAt(x),'',amount,.9,{sourceAltitude:WALL.elevation+8,lane});}
   addWallXP(amount,x=216){const before=this.wallXP;this.wallXP=clamp(this.wallXP+amount,0,WALL_MAX_XP);const delta=this.wallXP-before;this.wallXPLabel(delta,x);this.dirty=true;return delta;}
-  updateWallLevel(dt){const desired=wallLevelFor(this.wallXP);if(!this.wallTransition&&desired!==this.wallLevel)this.wallTransition={from:this.wallLevel,to:desired,elapsed:0,duration:desired>this.wallLevel?1.8:.75};const f=this.wallTransition;if(!f)return;f.elapsed+=dt;f.to=desired;if(f.elapsed>=f.duration){const before=this.wallLevel;this.wallLevel=desired;this.stage=Math.min(7,desired-1);this.wallTransition=null;if(desired!==before)this.notify(`장벽 Lv.${before} → Lv.${desired}`);}}
+  updateWallLevel(dt){this.wallHold=Math.max(0,this.wallHold-dt);const desired=this.desiredWallLevel();if(!this.wallTransition&&desired<this.wallLevel&&this.wallHold>0&&this.wallXP>0&&desired>=this.wallLevel-1)return;if(!this.wallTransition&&desired!==this.wallLevel)this.wallTransition={from:this.wallLevel,to:desired,elapsed:0,duration:desired>this.wallLevel?1.8:.75};const f=this.wallTransition;if(!f)return;f.elapsed+=dt;f.to=desired;if(f.elapsed>=f.duration){const before=this.wallLevel;this.wallLevel=desired;this.stage=Math.min(7,desired-1);this.wallTransition=null;if(desired!==before){this.wallHold=12;this.notify(`장벽 Lv.${before} → Lv.${desired}`);}}}
+  // Hysteresis: level up at the threshold, but only fall back after dropping 35% into the band below,
+  // and hold any change for 12s, so a contested market doesn't flicker the wall between levels.
+  desiredWallLevel(){const raw=wallLevelFor(this.wallXP);if(raw>=this.wallLevel)return raw;const floor=wallXPAt(this.wallLevel)-.35*(wallXPAt(this.wallLevel)-wallXPAt(this.wallLevel-1));return this.wallXP>=floor?this.wallLevel:raw;}
+  // Aggregate per-weapon damage into stacked floating numbers (~4 per second per weapon) instead of one per pellet.
+  flushDamage(dt){for(const [type,a] of Object.entries(this.dmgAcc)){a.t+=dt;if(a.t<.24||a.sum<=0)continue;a.t=0;const crit=type==='sniper'||a.sum>=60;this.effect('dmg',a.x+(this.random()-.5)*18,a.y-8,crit?'#ffd447':type==='poison'?'#d8a8ff':type==='laser'?'#a8fff0':type==='drone'?'#bfe6ff':'#fff1c4',formatDamage(a.sum),.8,{crit});a.sum=0;}}
+  stipend(dt,active){if(!active)return;this.stipendClock+=dt;while(this.stipendClock>=60){this.stipendClock-=60;const g=this.creditMarketGold(STIPEND_PER_MIN);if(g)this.effect('text',WORLD_WIDTH/2,this.wallY-80,'#ffe08a',`참전 수당 +${this.cash(g)}`,1.4);}}
   // Billboards must stop at the VISIBLE north silhouette, not the facade's
   // ground baseline. Otherwise small enemies appear inside/below the wall.
   wallAttackAt(x) { return this.wallBackAt(x) - WALL.elevation / CAMERA_DEPTH; }
@@ -76,7 +91,7 @@ export class Game {
   }
   spawnEnemy(kind = 0, x = 24 + this.random() * (WORLD_WIDTH - 48), y = -30,{marketWeight=1}={}) {
     if (this.enemies.length >= SETTINGS.enemyCap) return null;
-    const c = ENEMIES[kind],radius=c.radius*ACTOR_STYLE.footprintScale,e = { id: this.nextId++, kind, x: clamp(x, radius, WORLD_WIDTH - radius), y, hp: c.hp*marketWeight, maxHP: c.hp*marketWeight,marketWeight, radius, alive: true, age: 0, contact: 0, attack: .6, attackPulse: 0, hit: 0, slowUntil: 0, slow: 0, poisons: [], phase: this.random() * 6, attacking: false };
+    const c = ENEMIES[kind],radius=c.radius*ACTOR_STYLE.footprintScale,e = { id: this.nextId++, kind, x: clamp(x, radius, WORLD_WIDTH - radius), y, hp: c.hp*marketWeight*this.mode.hp, maxHP: c.hp*marketWeight*this.mode.hp,marketWeight, radius, alive: true, age: 0, contact: 0, attack: .6, attackPulse: 0, hit: 0, slowUntil: 0, slow: 0, poisons: [], phase: this.random() * 6, attacking: false };
     this.terrain.projectSpawn(e);this.enemies.push(e); return e;
   }
   spawnSupply(kind = 0, x = 24 + this.random() * (WORLD_WIDTH - 48), y = this.height + 25,{marketWeight=1}={}) {
@@ -94,7 +109,7 @@ export class Game {
   remove(entity, reason) {
     if (!entity.alive) return; entity.alive = false;
     const enemy = entity.maxHP !== undefined;
-    if (reason === 'cannon' && enemy) { const weight=entity.marketWeight??1,reward=this.creditMarketGold(ENEMIES[entity.kind].reward*weight);this.metrics.kills++;this.gainPlayerXP([1,2,3,5][entity.kind]*weight*this.rewardMultiplier);this.dirty=true;if(reward)this.effect('text',entity.x,entity.y-15,'#ffdc8c',`+${this.cash(reward)}`,.65); }
+    if (reason === 'cannon' && enemy) { const weight=entity.marketWeight??1,reward=this.creditMarketGold(ENEMIES[entity.kind].reward*weight*KILL_GOLD);if(entity.lastHit){this.metrics.killsByType[entity.lastHit]=(this.metrics.killsByType[entity.lastHit]||0)+1;};this.metrics.kills++;this.gainPlayerXP([1,2,3,5][entity.kind]*weight*this.rewardMultiplier);this.dirty=true;if(reward)this.effect('text',entity.x,entity.y-15,'#ffdc8c',`+${this.cash(reward)}`,.65); }
     if (reason === 'crush') { this.metrics[enemy ? 'crushedEnemies' : 'crushedSupplies']++; this.effect('crush', entity.x, entity.y, enemy ? '#ff6876' : '#54efbc', '', .5); }
     if (reason === 'expire') { this.metrics.expired++; this.effect('ghost', entity.x, entity.y, enemy ? '#ff6876' : '#54efbc', '', .6, { radius: entity.radius }); }
     else this.burst(entity.x, entity.y, enemy ? '#ff6876' : '#54efbc', reason === 'cannon' ? 5 : 3);
@@ -104,13 +119,13 @@ export class Game {
     if (!(base >= 0)) return 0;
     if (target === 'wall') return -this.addWallXP(-base);
     if (!target?.alive) return 0;
-    const value = base * (scaled ? 1 : this.power);
+    const value = base * (scaled ? 1 : this.power);if(cannonType){target.lastHit=cannonType;const acc=this.dmgAcc[cannonType]||(this.dmgAcc[cannonType]={sum:0,x:0,y:0,t:0});acc.sum+=Math.min(value,Math.max(0,target.hp));acc.x=target.x;acc.y=target.y;}
     target.hp -= value; target.hit = .14;
     if (target.hp <= 0) this.remove(target, source);
     return value;
   }
   heal(amount,x=216) { this.metrics.healed += this.addWallXP(amount,x); }
-  creditMarketGold(amount){const total=this.marketGoldRemainder+amount*this.rewardMultiplier,whole=Math.floor(total+1e-9);this.marketGoldRemainder=Math.max(0,total-whole);this.gold+=whole;this.metrics.goldEarned+=whole;if(whole)this.dirty=true;return whole;}
+  creditMarketGold(amount){const total=this.marketGoldRemainder+amount*this.rewardMultiplier*this.mode.gold,whole=Math.floor(total+1e-9);this.marketGoldRemainder=Math.max(0,total-whole);this.gold+=whole;this.metrics.goldEarned+=whole;if(whole)this.dirty=true;return whole;}
   deliverSupply(s){const weight=s.marketWeight??1,amount=SUPPLIES[s.kind].heal*weight;if(this.wallXP>=WALL_MAX_XP){const reward=this.creditMarketGold(Math.max(4,Math.round(SUPPLIES[s.kind].heal*.35))*weight);if(!reward)return;const lane=Math.floor(s.x/30),f=this.effects.find(v=>v.type==='wall-gold'&&v.lane===lane&&v.life>.5);if(f){f.amount+=reward;f.life=.9;}else this.effect('wall-gold',s.x,this.wallAt(s.x),'#ffe5a2',reward,.9,{lane,sourceAltitude:WALL.elevation+10});}else this.heal(amount,s.x);}
   buyTower(type){if(!CANNONS[type]||this.owned(type)||this.gold<CANNONS[type].cost)return false;this.gold-=CANNONS[type].cost;this.inventory.push({type,level:1});this.dirty=true;return true;}
   beginPlacement(type){if(!this.owned(type)||this.cannons.some(c=>c.type===type)||this.cannons.length>=this.slotLimit)return false;this.placement=type;return true;}
@@ -173,7 +188,7 @@ export class Game {
   resolveProjectile(p){
     const target=this.enemies.find(e=>e.id===p.targetId&&e.alive),st=p.stats;
     if(p.type==='mortar'||p.type==='slime'){
-      this.effect('explosion',p.tx,p.ty,p.color,'',p.type==='mortar'?.45:.32,{radius:p.radius});this.burst(p.tx,p.ty,p.color,p.type==='mortar'?7:3);
+      this.effect('explosion',p.tx,p.ty,p.color,'',p.type==='mortar'?.6:.36,{radius:p.radius});if(p.type==='mortar')for(let i=0;i<3;i++)this.effect('smoke',p.tx+(this.random()-.5)*p.radius*.6,p.ty+(this.random()-.5)*p.radius*.3,'#5a4a3e','',1+this.random()*.6,{vx:(this.random()-.5)*16});this.burst(p.tx,p.ty,p.color,p.type==='mortar'?7:3);
       if(p.type==='slime'){this.zones.push({x:p.tx,y:p.ty,radius:p.radius,life:st.duration,slow:st.slow});if(this.zones.length>22)this.zones.shift();}
       this.enemies.forEach(e=>{if(e.alive&&Math.hypot(e.x-p.tx,e.y-p.ty)<=p.radius+e.radius){if(p.type==='slime'){e.slowUntil=this.time+st.duration;e.slow=st.slow;// Slime is a control tool: one splash never removes more than splashCap of an actor's max HP,
 // so fractional-weight swarm actors survive long enough for the slow to matter.
@@ -183,7 +198,7 @@ this.damage(e,Math.min(p.damage*this.power,e.maxHP*(st.splashCap||1)),{cannonTyp
     if(p.type==='venom'&&target.alive){if(target.poisons.length>=4)target.poisons.shift();target.poisons.push({until:this.time+st.duration,dps:st.dot});}
   }
   update(dt) {
-    dt = Math.min(dt, .05); this.time += dt; this.wallUpdate(dt);
+    dt = Math.min(dt, .05); this.time += dt; this.wallUpdate(dt);this.flushDamage(dt);this.stipend(dt,!!this.market&&['minute','live','last_trade','last_bar','course'].includes(this.market.priceStatus));
     const epoch=this.now();this.marketWaves=this.marketWaves.filter(w=>{if(w.expiresAt&&epoch>=w.expiresAt)return false;if(w.spawnAt!=null){if(w.spawnAt>epoch)return true;if(epoch-w.spawnAt>2000)return false;}else if(w.at>this.time)return true;if(w.side==='sell')this.spawnEnemy(w.kind,w.x,w.y,{marketWeight:w.weight??1});else this.spawnSupply(w.kind,w.x,w.y,{marketWeight:w.weight??1});return false;});
     this.zones.forEach(z => z.life -= dt); this.zones = this.zones.filter(z => z.life > 0);
     // Spatial crowd lanes avoid quadratic separation and stop dense armies stacking.
@@ -203,7 +218,7 @@ this.damage(e,Math.min(p.damage*this.power,e.maxHP*(st.splashCap||1)),{cannonTyp
         const sb = this.terrain.bounds(stop + e.radius, e.x, e.radius), step = def.speed * (e.slowUntil > this.time ? 1 - e.slow : 1) * dt, nx = clamp(e.x + clamp(e.wallSlot - e.x, -step, step), Math.min(e.x, sb.left), Math.max(e.x, sb.right));
         if (Math.abs(nx - e.x) < 1e-4) e.wallSlot = e.x; e.x = nx; e.y = this.enemyStopAt(e);
       }
-      else if (e.attacking) { e.y = stop; e.contact += dt; e.attack -= dt; if (e.attack <= 0) { e.attack += def.interval; e.attackPulse = 1; this.addWallXP(-def.damage*(e.marketWeight??1),e.x); this.effect('impact', e.x, this.wallBackAt(e.x), '#ffb582', '', .25, { sourceAltitude: WALL.hitHeight }); } }
+      else if (e.attacking) { e.y = stop; e.contact += dt; e.attack -= dt; if (e.attack <= 0) { e.attack += def.interval; e.attackPulse = 1; this.addWallXP(-def.damage*(e.marketWeight??1)*this.mode.damage,e.x); this.effect('impact', e.x, this.wallBackAt(e.x), '#ffb582', '', .25, { sourceAltitude: WALL.hitHeight }); } }
       else {
         let factor = e.slowUntil > this.time ? 1 - e.slow : 1;
         for (const z of this.zones) {

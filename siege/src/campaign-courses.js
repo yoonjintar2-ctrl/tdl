@@ -21,7 +21,7 @@ const rows=[
  ['폭풍의 전야',28,'복합 장세','조용한 출발 뒤에 강한 변동이 연이어 찾아옵니다.',[0,1,-3,12,-19,-8,7],'drone'],
  ['마지막 종이 울릴 때',30,'최종 전장','폭락·반등·조정이 이어지는 마지막 코스입니다.',[0,8,-13,5,-24,-6,15,-8,9],'mortar']
 ];
-export const COURSES=rows.map(([title,minutes,concept,description,anchors,art],index)=>Object.freeze({id:index+1,title,minutes,duration:minutes*60,concept,description,anchors:Object.freeze(anchors),art,symbol:'SOXL',activity:.3+index*.065,bonusGold:minutes*4,bonusXP:minutes*3}));
+export const COURSES=rows.map(([title,minutes,concept,description,anchors,art],index)=>Object.freeze({id:index+1,title,minutes,duration:minutes*60,concept,description,anchors:Object.freeze(anchors),art,symbol:'SOXL',activity:.3+index*.065,bonusGold:minutes*30,bonusXP:minutes*3}));
 export const courseFor=id=>COURSES.find(c=>c.id===Number(id));
 export function campaignProgress(raw){const cleared=Math.max(0,Math.min(20,Math.floor(Number(raw?.cleared)||0))),settled=Array.isArray(raw?.settled)?raw.settled.filter(v=>typeof v==='string'&&/^[a-zA-Z0-9_-]{8,100}$/.test(v)).slice(-64):[];return{cleared,settled};}
 export const courseUnlocked=(progress,id)=>!!courseFor(id)&&Number(id)<=campaignProgress(progress).cleared+1;

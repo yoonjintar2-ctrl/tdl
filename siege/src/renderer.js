@@ -1,9 +1,10 @@
-import { WORLD_WIDTH as W,CANNONS,ENEMIES,SUPPLIES,WALL_STAGES,DRONE,WALL,cannonStats,validPlacement,validDronePlacement,clamp } from './config.js?v=87308430e0';
-import{WALL_MAX_LEVEL,WALL_MAX_XP}from'./progression.js?v=87308430e0';
-import{isAIStock}from'./symbols.js?v=87308430e0';
-import { QuarterCamera, DEPTH_SCALE, WALL_ELEVATION } from './camera.js?v=87308430e0';
-import { drawClayMortar, drawClayMortarIcon, clayBattlefield } from './clay-assets.js?v=87308430e0';
-import { drawClayTower, drawClayUnit, drawClayWall, drawClayPreview, wallOutline } from './clay-runtime.js?v=87308430e0';
+import { WORLD_WIDTH as W,CANNONS,ENEMIES,SUPPLIES,WALL_STAGES,DRONE,WALL,cannonStats,validPlacement,validDronePlacement,clamp } from './config.js?v=551d2f9a49';
+import{WALL_MAX_LEVEL,WALL_MAX_XP}from'./progression.js?v=551d2f9a49';
+import{isAIStock}from'./symbols.js?v=551d2f9a49';
+import { QuarterCamera, DEPTH_SCALE, WALL_ELEVATION } from './camera.js?v=551d2f9a49';
+import { drawClayMortar, drawClayMortarIcon, clayBattlefield } from './clay-assets.js?v=551d2f9a49';
+import{drawProjectile,drawEffect}from'./combat-fx.js?v=551d2f9a49';
+import { drawClayTower, drawClayUnit, drawClayWall, drawClayPreview, wallOutline } from './clay-runtime.js?v=551d2f9a49';
 const TAU=Math.PI*2;
 function box(c,x,y,w,h,r,fill,stroke){c.beginPath();c.roundRect(x,y,w,h,r);if(fill){c.fillStyle=fill;c.fill();}if(stroke){c.lineWidth=1;c.strokeStyle=stroke;c.stroke();}}
 function line(c,pts,col,w=1){c.beginPath();c.lineWidth=w;c.strokeStyle=col;pts.forEach(([x,y],i)=>i?c.lineTo(x,y):c.moveTo(x,y));c.stroke();}
@@ -38,6 +39,17 @@ export function drawDrone(c,u,x,y,t=0,power=1,selected=false,icon=false) {
  if(u.recoil>0&&!icon)dot(c,0,-23-(tier>=5?4:0),3+u.recoil*3,'#e7ffff');
  c.restore();if(!icon){box(c,-16,21,32,12,3,'#28434a','#bbded5');text(c,`L${u.level}`,0,27,8,'#e5fff1');if(power<.4)text(c,'↓',29,3,14,'#a54b33');}c.restore();
 }
+
+// Wall-level buff aura: nothing at Lv.1, then a pulsing ring, more rings, rising motes and finally golden flames.
+export function buffAura(c,x,y,t,lv,front=false){if(lv<2)return;const k=(lv-1)/7,col=lv>=7?'255,204,90':lv>=5?'140,220,255':'170,240,150';c.save();c.globalCompositeOperation='lighter';
+ if(!front){const pulse=.5+.5*Math.sin(t*3.2);const g=c.createRadialGradient(x,y-14,2,x,y-14,26+k*16);g.addColorStop(0,`rgba(${col},${.12+.22*k})`);g.addColorStop(1,`rgba(${col},0)`);c.fillStyle=g;c.beginPath();c.arc(x,y-14,26+k*16,0,Math.PI*2);c.fill();
+  const rings=lv>=7?3:lv>=4?2:1;for(let i=0;i<rings;i++){const ph=(t*.7+i/rings)%1;c.beginPath();c.ellipse(x,y-3,15+ph*(10+k*8),5+ph*(3+k*2),0,0,Math.PI*2);c.strokeStyle=`rgba(${col},${(1-ph)*(.35+.4*k)})`;c.lineWidth=1.2+k;c.stroke();}
+  c.beginPath();c.ellipse(x,y-3,15+pulse*2,5+pulse*.6,0,0,Math.PI*2);c.strokeStyle=`rgba(${col},${.3+.3*k})`;c.lineWidth=1;c.stroke();}
+ else if(lv>=4){const n=Math.round(3+lv*1.6);for(let i=0;i<n;i++){const ph=(t*(.35+.05*(i%3))+i/n)%1,mx=x+Math.sin(i*2.39+t*1.3)*(10+k*6),my=y-6-ph*(34+k*16),a=Math.sin(ph*Math.PI)*(.5+.4*k),r=1+k*1.4*(i%2?1:.6);
+  if(lv>=7&&i%2===0){const g=c.createRadialGradient(mx,my,0,mx,my,r*4);g.addColorStop(0,`rgba(255,240,200,${a})`);g.addColorStop(.4,`rgba(255,170,60,${a*.6})`);g.addColorStop(1,'rgba(255,120,30,0)');c.fillStyle=g;c.beginPath();c.arc(mx,my,r*4,0,Math.PI*2);c.fill();}
+  else{c.fillStyle=`rgba(${col},${a})`;c.beginPath();c.arc(mx,my,r,0,Math.PI*2);c.fill();}
+  if(lv>=8&&ph>.45&&ph<.5){c.strokeStyle=`rgba(255,250,230,${a})`;c.lineWidth=.8;c.beginPath();c.moveTo(mx-5,my);c.lineTo(mx+5,my);c.moveTo(mx,my-5);c.lineTo(mx,my+5);c.stroke();}}}
+ c.restore();}
 export function drawCannon(c,u,x,y,t=0,power=1,selected=false,icon=false){
  if(u.type==='mortar'&&drawClayMortar(c,u,x,y,power,selected,icon))return;
  if(drawClayTower(c,u,x,y,t,power,selected,icon))return;
@@ -162,7 +174,8 @@ export class Renderer{
  range(c,x,y,r,color='#a3f2ea',altitude=0){
   c.save();c.beginPath();for(let i=0;i<=80;i++){const a=i/80*TAU,p=this.point(x+Math.cos(a)*r,y+Math.sin(a)*r,altitude);i?c.lineTo(p.x,p.y):c.moveTo(p.x,p.y);}c.closePath();c.fillStyle=color+'12';c.fill();c.setLineDash([5,4]);c.strokeStyle=color+'b0';c.lineWidth=1.2;c.stroke();c.restore();
  }
- effects(c,front){for(const f of this.game.effects){const isFront=['text','wall-xp','wall-gold','player-level','impact','bullet-hit','beam','muzzle','supply-deliver'].includes(f.type);if(isFront!==front)continue;const p=1-f.life/f.maxLife,pos=this.point(f.x,f.y,f.sourceAltitude||0);c.save();c.globalAlpha=Math.min(1,f.life/f.maxLife*1.8);
+ effects(c,front){for(const f of this.game.effects){const isFront=['text','wall-xp','wall-gold','player-level','impact','bullet-hit','beam','muzzle','supply-deliver','dmg'].includes(f.type);if(isFront!==front)continue;const p=1-f.life/f.maxLife,pos=this.point(f.x,f.y,f.sourceAltitude||0);c.save();c.globalAlpha=Math.min(1,f.life/f.maxLife*1.8);
+  if(drawEffect(c,f,pos,p,(x,y,z)=>this.point(x,y,z))){c.restore();continue;}
   if(f.type==='supply-deliver')drawClayUnit(c,{kind:f.kind,radius:f.radius,age:1,art:f.art},pos.x,pos.y-p*4,this.game.time,false,3);
   if(f.type==='particle'){if(this.quality>.6||f.life>.3)dot(c,pos.x,pos.y,2,f.color);}
   if(f.type==='wall-gold')text(c,'+'+this.game.cash(f.amount),pos.x,pos.y-p*26,11,'#ffe6a0');
@@ -192,7 +205,7 @@ export class Renderer{
   box(c,center.x-43,y-4,86,31,7,'#dbd5af','#6e7855');box(c,center.x-37,y+1,74,21,5,pct===null?'#52614b':pct>=0?'#3a673f':'#874d40','#ebe3b9');text(c,pct===null?'시세 대기':`${pct>=0?'+':''}${pct.toFixed(2)}%`,center.x,y+12,14,'#eaf9d0');
   text(c,`${WALL_STAGES[g.stage].name} 성벽`,center.x,y+39,8,'#3c5137');
  }
- projectile(c,p){if(p.elapsed<0)return;const u=clamp(p.elapsed/p.duration,0,1),arc=p.type==='mortar'?85:p.type==='slime'?20:p.type==='venom'?10:0,position=v=>this.point(p.x+(p.tx-p.x)*v,p.y+(p.ty-p.y)*v,(p.sourceAltitude||0)*(1-v)+(p.targetAltitude||0)*v+Math.sin(v*Math.PI)*arc),pt=position(u);
+ projectile(c,p){if(p.elapsed<0)return;const u=clamp(p.elapsed/p.duration,0,1),arc=p.type==='mortar'?85:p.type==='slime'?20:p.type==='venom'?10:0,position=v=>this.point(p.x+(p.tx-p.x)*v,p.y+(p.ty-p.y)*v,(p.sourceAltitude||0)*(1-v)+(p.targetAltitude||0)*v+Math.sin(v*Math.PI)*arc),pt=position(u);if(this.quality>.6){drawProjectile(c,p,position,this.game.time);return;}
   if(p.type==='bullet'||p.type==='slug'){const tail=position(Math.max(0,u-(p.type==='slug'?.13:.08)));line(c,[[tail.x,tail.y],[pt.x,pt.y]],p.type==='slug'?'#fff7cb':'#eab957',p.type==='slug'?2:1.5);dot(c,pt.x,pt.y,p.type==='slug'?1.8:1.3,'#fff8d6');}
   else{dot(c,pt.x,pt.y,p.type==='mortar'?3.4:p.type==='slime'?3:2.5,p.color,'#f5f1bb');if(p.type!=='mortar'){const tail=position(Math.max(0,u-.09));dot(c,tail.x,tail.y,1.6,p.color+'80');}}
  }
@@ -204,7 +217,7 @@ export class Renderer{
   this.effects(c,false);
   for(const e of g.enemies.filter(e=>e.alive).sort((a,b)=>this.point(a.x,a.y+a.radius).y-this.point(b.x,b.y+b.radius).y))this.enemy(c,e);
   this.wall(c);this.wallLevelFX(c);
-  for(const u of g.cannons.filter(u=>u.type!=='drone')){const p=this.cannonAnchor(u);c.save();if(this.ghost?.cannon===u)c.globalAlpha=.2;drawCannon(c,{...u,angle:this.screenAngle(u)},p.x,p.y,t,g.power,u===g.selected);c.restore();}
+  for(const u of g.cannons.filter(u=>u.type!=='drone')){const p=this.cannonAnchor(u);c.save();if(this.ghost?.cannon===u)c.globalAlpha=.2;buffAura(c,p.x,p.y,t,g.wallLevel);drawCannon(c,{...u,angle:this.screenAngle(u)},p.x,p.y,t,g.power,u===g.selected);buffAura(c,p.x,p.y,t,g.wallLevel,true);c.restore();}
   // Attackers stop at the north upper silhouette; masonry covers only their
   // south-facing contact edge. Supply units approach from the foreground.
   for(const s of g.supplies.filter(s=>s.alive).sort((a,b)=>this.point(a.x,a.y+a.radius).y-this.point(b.x,b.y+b.radius).y))this.supply(c,s);
