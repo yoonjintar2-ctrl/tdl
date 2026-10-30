@@ -1,7 +1,7 @@
-import { CANNONS, cannonStats } from './config.js?v=99583a3ec2';
-import { RARITIES, TOWER_RARITY, xpForNext, MAX_CARD_LEVEL, cardOdds, PACKS } from './cards.js?v=99583a3ec2';
-import { renderShopIcon } from './renderer.js?v=99583a3ec2';
-import { FX } from './fx.js?v=99583a3ec2';
+import { CANNONS, cannonStats } from './config.js?v=81fbdd042d';
+import { RARITIES, TOWER_RARITY, xpForNext, MAX_CARD_LEVEL, cardOdds, PACKS } from './cards.js?v=81fbdd042d';
+import { renderShopIcon } from './renderer.js?v=81fbdd042d';
+import { FX } from './fx.js?v=81fbdd042d';
 
 const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
 const wait = ms => new Promise(r => setTimeout(r, ms));
@@ -19,7 +19,7 @@ export function towerCard(type, item, { mini = false, faceDown = false } = {}) {
   if (!mini) {
     const bar = el('div', 'tc-bar'), fill = el('i'), need = item ? xpForNext(item.level) : 1;
     fill.style.width = item ? (item.level >= MAX_CARD_LEVEL ? 100 : Math.min(100, (item.xp || 0) / need * 100)) + '%' : '0%';
-    bar.append(fill, el('small', '', item ? (item.level >= MAX_CARD_LEVEL ? 'MAX' : `XP ${item.xp || 0} / ${need}`) : '뽑기로 획득'));
+    bar.append(fill, el('b', 'tc-exp', item ? (item.level >= MAX_CARD_LEVEL ? 'MAX' : 'EXP') : ''), el('small', '', item ? (item.level >= MAX_CARD_LEVEL ? 'MAX' : `EXP ${item.xp || 0} / ${need}`) : '뽑기로 획득'));
     bar.title = '눌러서 경험치 보기'; bar.addEventListener('click', e => { if (!item) return; e.stopPropagation(); card.classList.toggle('show-xp'); clearTimeout(card._xpT); card._xpT = setTimeout(() => card.classList.remove('show-xp'), 2500); });
     front.append(bar);
   }
@@ -119,13 +119,15 @@ export function renderCollection(container, game, { onPack, onCard, slotText }) 
 
 export function statLines(game, c) {
   const st = cannonStats(c.type, c.level), buff = game.attackBuff(c), power = game.power;
-  const lines = [['공격력', c.type === 'totem' ? '지원 전용' : (st.damage * power).toFixed(1)], ['공격 속도', c.type === 'totem' ? '지원 전용' : `${(st.rate * (1 + buff)).toFixed(2)} / 초`], ['사거리', Math.round(st.range)], ['성벽 보너스', `공격력 ×${(power / .75).toFixed(2)}`]];
+  const lines = [['공격력', c.type === 'totem' ? '지원 전용' : (st.damage * power).toFixed(1)], ['공격 간격', c.type === 'totem' || c.type === 'blackhole' ? '지속 효과' : `${(1 / (st.rate * (1 + buff))).toFixed(2)}초마다`], ['사거리', Math.round(st.range)], ['성벽 보너스', `공격력 ×${(power / .75).toFixed(2)}`]];
   if (buff > 0) lines.push(['토템 지원', `연사 +${Math.round(buff * 100)}%`]);
   if (c.type === 'totem') lines.push(['주변 지원', `연사 +${Math.round(st.buff * 100)}%`]);
   if (st.pierce) lines.push(['관통', `${st.pierce}마리`]); if (st.slow) lines.push(['감속', `${Math.round(st.slow * 100)}% · ${st.duration.toFixed(1)}초`]); if (c.type === 'poison') lines.push(['독', `${st.dot.toFixed(1)}/초`]); if (c.type === 'mortar') lines.push(['폭발 반경', Math.round(st.radius)]);
   if (st.minRange) lines.push(['최소 사거리', `${Math.round(st.minRange)} (안쪽은 못 맞힘)`]);
   if (c.type === 'siege') lines.push(['포격 반경', Math.round(st.radius)]);
   if (c.type === 'summoner') lines.push(['소환', `기사 ${st.knights}명 · ${Math.round(1 / st.rate)}초마다`], ['기사 공격', `${st.damage.toFixed(1)} × ${st.hits}회`]);
+  if (c.type === 'sonic') lines.push(['음파 반경', Math.round(st.range)]);
+  if (c.type === 'blackhole') lines.push(['끌어당김', `반경 ${Math.round(st.range)} · 감속 ${Math.round(st.drag * 100)}%`], ['지속 피해', `${st.damage.toFixed(1)}/초`]);
   if (c.type === 'musk') lines.push(['사이버트럭', `관통 · 폭 ${Math.round(st.width)}`], ['로켓 확률', `${Math.round(st.rocketChance * 100)}% · 초광역`]);
   lines.push(['이번 판 처치', `${game.metrics.killsByType?.[c.type] || 0}마리`]);
   return lines;
@@ -135,8 +137,8 @@ export function nextLevelLines(c) {
   if (c.level >= MAX_CARD_LEVEL) return [['다음 레벨', '최고 레벨이에요']];
   const a = cannonStats(c.type, c.level), b = cannonStats(c.type, c.level + 1), out = [];
   const pct = (x, y) => `+${((y / x - 1) * 100).toFixed(1)}%`;
-  if (a.damage) out.push(['공격력', pct(a.damage, b.damage)]);
-  if (a.rate && b.rate > a.rate + 1e-9) out.push(['공격 속도', pct(a.rate, b.rate)]);
+  if (a.damage) out.push(['공격력', `${a.damage.toFixed(1)} → ${b.damage.toFixed(1)}`]);
+  if (a.rate && b.rate > a.rate + 1e-9) out.push(['공격 간격', `${(1 / a.rate).toFixed(2)}초 → ${(1 / b.rate).toFixed(2)}초`]);
   if (b.range > a.range + .01) out.push(['사거리', `+${(b.range - a.range).toFixed(1)}`]);
   if (b.radius > a.radius + .01) out.push(['폭발 반경', `+${(b.radius - a.radius).toFixed(1)}`]);
   if (b.buff > a.buff + 1e-9) out.push(['토템 지원', `+${((b.buff - a.buff) * 100).toFixed(1)}%p`]);
@@ -144,6 +146,7 @@ export function nextLevelLines(c) {
   if (b.slow > a.slow + 1e-9) out.push(['감속', `+${((b.slow - a.slow) * 100).toFixed(1)}%p`]);
   if (b.knights > a.knights) out.push(['기사 수', `+${b.knights - a.knights}명`]);
   if (b.hits > a.hits) out.push(['기사 공격 횟수', `+${b.hits - a.hits}회`]);
+  if (b.drag > a.drag + 1e-9) out.push(['끌어당김 감속', `+${((b.drag - a.drag) * 100).toFixed(1)}%p`]);
   if (b.pierce > a.pierce) out.push(['관통', `+${b.pierce - a.pierce}`]);
   if ((c.level + 1) % 10 === 0) out.push(['외형', '다음 레벨에 디자인이 바뀌어요 ✨']);
   return out;

@@ -1,4 +1,4 @@
-import {CANNONS,ENEMIES,SUPPLIES,WALL,WORLD_WIDTH,ACTOR_STYLE,WALL_SLOTS,COMMAND_X} from './config.js?v=99583a3ec2';
+import {CANNONS,ENEMIES,SUPPLIES,WALL,WORLD_WIDTH,ACTOR_STYLE,WALL_SLOTS,COMMAND_X} from './config.js?v=81fbdd042d';
 export const ENEMY_ART=['enemy-small','enemy-tall','enemy-fat','enemy-giant'];
 // Kind 4 (초미니 음봉) reuses the small candle art at a much smaller size.
 const ENEMY_KIND_ART=[...ENEMY_ART,'enemy-small'];
@@ -9,11 +9,13 @@ export const BASTION_ART=['castle-bastion-low-0','castle-bastion-low-1',...Array
 export const TOWER_ART=['machine','sniper','laser','totem','sticky','poison','drone','siege','summoner','musk','command'];
 const pictures=new Map(),unitSprites=new Map();let metadata={},pending=null;
 const NAMES={'command':'성벽 지휘본부','siege':'공성 전차','summoner':'소환사','musk':'삼론 머스크','machine':'기관총','mortar':'박격포','sniper':'저격포','laser':'레이저','totem':'토템','sticky':'끈적이포','poison':'독 캐논','drone':'드론','enemy-small':'작은 음봉','enemy-tall':'키 큰 음봉','enemy-fat':'돼지 음봉','enemy-giant':'거인 음봉','supply-dram':'DRAM','supply-processor':'프로세서','supply-wafer':'실리콘 웨이퍼','supply-optical':'광통신 모듈','supply-connector':'광섬유 커넥터','supply-substrate':'반도체 기판','wall-soil':'흙 성벽','wall-wood':'나무 성벽','wall-reinforced-wood':'강화 나무 성벽','wall-mixed':'나무·돌 성벽','wall-stone':'돌 성벽','wall-reinforced-stone':'강화 돌 성벽','wall-iron':'철·돌 성벽','wall-gold':'황금 성벽'};
-export const CLAY_CATALOG=[...TOWER_ART.map(key=>({key,name:NAMES[key],group:'tower'})),...ENEMY_ART.map(key=>({key,name:NAMES[key],group:'enemy'})),...SUPPLY_ART.map(key=>({key,name:NAMES[key],group:'supply'})),...WALL_ART.map((key,i)=>({key,name:['흙 토성','나무 목책','사암 성벽','이끼 낀 성벽','풍화석 성벽','목석 성벽','석회암 성벽','강화 화강암 성벽','철띠 성벽','황금 성벽'][i],group:'wall'})),...BASTION_ART.map((key,i)=>({key,name:'원형 보루 '+(i+1),group:'wall'})),{key:'bull-candle',name:'녹색 양봉',group:'supply'}];
+export const KEEP_ART=Array.from({length:10},(_,i)=>i<2?'castle-keep-low-'+i:'castle-keep-'+(i-2));
+export const hasKeep=g=>clayReady(KEEP_ART[g.stage]);
+export const CLAY_CATALOG=[...TOWER_ART.map(key=>({key,name:NAMES[key],group:'tower'})),...ENEMY_ART.map(key=>({key,name:NAMES[key],group:'enemy'})),...SUPPLY_ART.map(key=>({key,name:NAMES[key],group:'supply'})),...WALL_ART.map((key,i)=>({key,name:['흙 토성','나무 목책','사암 성벽','이끼 낀 성벽','풍화석 성벽','목석 성벽','석회암 성벽','강화 화강암 성벽','철띠 성벽','황금 성벽'][i],group:'wall'})),...BASTION_ART.map((key,i)=>({key,name:'원형 보루 '+(i+1),group:'wall'})),{key:'bull-candle',name:'녹색 양봉',group:'supply'},...KEEP_ART.map((key,i)=>({key,name:'지휘본부 '+(i+1),group:'keep',optional:true}))];
 export async function loadClayCollection(onProgress=()=>{}){
  if(typeof Image==='undefined')return false;if(pending)return pending;
  pending=(async()=>{try{const response=await fetch(new URL('../assets/clay/frames-v3.json',import.meta.url),{cache:'no-cache'});if(!response.ok)throw Error('Missing sprite metadata');metadata=await response.json();}catch{onProgress(0,CLAY_CATALOG.length,'metadata');return false;}
- let next=0,done=0,ok=true;const worker=async()=>{while(next<CLAY_CATALOG.length){const item=CLAY_CATALOG[next++];if(!pictures.has(item.key)){const image=new Image();image.decoding='async';image.src=new URL(`../assets/clay/${metadata[item.key]?.file||item.key+'-clay-v1.webp'}`,import.meta.url).href;try{await image.decode();if(!metadata[item.key]?.frames?.length)throw Error('Missing frames');pictures.set(item.key,image);}catch{ok=false;}}done++;onProgress(done,CLAY_CATALOG.length,ok?null:item.key);}};
+ let next=0,done=0,ok=true;const worker=async()=>{while(next<CLAY_CATALOG.length){const item=CLAY_CATALOG[next++];if(!pictures.has(item.key)){const image=new Image();image.decoding='async';image.src=new URL(`../assets/clay/${metadata[item.key]?.file||item.key+'-clay-v1.webp'}`,import.meta.url).href;try{await image.decode();if(!metadata[item.key]?.frames?.length)throw Error('Missing frames');pictures.set(item.key,image);}catch{if(!item.optional)ok=false;}}done++;onProgress(done,CLAY_CATALOG.length,ok?null:item.key);}};
  await Promise.all(Array.from({length:4},worker));return ok;})();const ok=await pending;if(!ok)pending=null;return ok;
 }
 export function clayReady(key){return pictures.has(key)&&!!metadata[key];}
@@ -91,7 +93,8 @@ export function drawClayWall(c,g,point,mask=false){
  }
  for(let x=-24;x<WORLD_WIDTH+24;x+=step){const a=point(x,g.wallAt(x)+WALL.back,WALL.elevation),b=point(x+step,g.wallAt(x+step)+WALL.back,WALL.elevation),d=point(x,g.wallAt(x)+WALL.north,0),sx=f.x+((x%tile+tile)%tile)/tile*f.w,sw=step/tile*f.w;texture(c,image,a,b,d,sx,sw,f.y,f.h);}
  const bastion=info(BASTION_ART[g.stage]);if(bastion){const f=bastion.frame;// v26: bastions stand at the four fixed slots (empty or not) and a larger one carries the command post.
- for(const x of [...WALL_SLOTS,COMMAND_X]){const big=x===COMMAND_X,base=point(x,g.wallAt(x)+WALL.deck+WALL.mountOffset,WALL.elevation),height=big?82:66,width=height*f.w/f.h;c.drawImage(bastion.image,f.x,f.y,f.w,f.h,base.x-width/2,base.y-height*.26,width,height);}}
+ const keep=info(KEEP_ART[g.stage]);if(keep){const f=keep.frame,base=point(COMMAND_X,g.wallAt(COMMAND_X)+WALL.deck+WALL.mountOffset,WALL.elevation),height=124,width=height*f.w/f.h;c.drawImage(keep.image,f.x,f.y,f.w,f.h,base.x-width/2,base.y-height*.72,width,height);}
+ for(const x of [...WALL_SLOTS,...(keep?[]:[COMMAND_X])]){const big=x===COMMAND_X,base=point(x,g.wallAt(x)+WALL.deck+WALL.mountOffset,WALL.elevation),height=big?82:66,width=height*f.w/f.h;c.drawImage(bastion.image,f.x,f.y,f.w,f.h,base.x-width/2,base.y-height*.26,width,height);}}
  c.restore();return true;
 }
 // v26: the forward outpost north of the wall centre — a smaller bastion standing on the field.

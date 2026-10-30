@@ -1,12 +1,12 @@
-import{campaignProgress}from'./campaign-courses.js?v=99583a3ec2';
-import { SETTINGS, CANNONS, ENEMIES, SUPPLIES, WORLD_WIDTH, DRONE, WALL, CAMERA_DEPTH, ACTOR_STYLE, cannonStats, upgradeCost, energyMultiplier, wallYFor, priceBand, validPlacement, snapSlot, FORWARD_X, FORWARD_DY, validDronePlacement, clamp } from './config.js?v=99583a3ec2';
-import { wallMountDepth } from './fortification.js?v=99583a3ec2';
-import { marketArmy,estimatedArmy } from './market-army.js?v=99583a3ec2';
-import {playerLevelFor,towerSlots,wallLevelFor,wallPower,money,WALL_MAX_XP} from './progression.js?v=99583a3ec2';
-import{TerrainField}from'./terrain.js?v=99583a3ec2';
-import{modeFor}from'./cards.js?v=99583a3ec2';
-import{formatDamage}from'./combat-fx.js?v=99583a3ec2';
-import{wallXPAt}from'./progression.js?v=99583a3ec2';
+import{campaignProgress}from'./campaign-courses.js?v=81fbdd042d';
+import { SETTINGS, CANNONS, ENEMIES, SUPPLIES, WORLD_WIDTH, DRONE, WALL, CAMERA_DEPTH, ACTOR_STYLE, cannonStats, upgradeCost, energyMultiplier, wallYFor, priceBand, validPlacement, snapSlot, FORWARD_X, FORWARD_DY, validDronePlacement, clamp } from './config.js?v=81fbdd042d';
+import { wallMountDepth } from './fortification.js?v=81fbdd042d';
+import { marketArmy,estimatedArmy } from './market-army.js?v=81fbdd042d';
+import {playerLevelFor,towerSlots,wallLevelFor,wallPower,money,WALL_MAX_XP} from './progression.js?v=81fbdd042d';
+import{TerrainField}from'./terrain.js?v=81fbdd042d';
+import{modeFor}from'./cards.js?v=81fbdd042d';
+import{formatDamage}from'./combat-fx.js?v=81fbdd042d';
+import{wallXPAt}from'./progression.js?v=81fbdd042d';
 // Kill gold is scaled down and a steady per-minute battle stipend added, so income stays in a narrow band
 // between a starter and a maxed army (card packs are the only use of gold).
 export const KILL_GOLD=.3,STIPEND_PER_MIN=30;
@@ -17,8 +17,8 @@ export const HP_WEIGHT_FLOOR=.2;
 // v24: the giant is a rare boss — about one per five minutes at most, only on a heavy sell-off minute.
 export const BOSS=Object.freeze({cooldownMs:5*60*1000,minIntensity:1.6,minSellShare:.6,chance:.55,hp:4,scale:3.8,radius:44,speed:.6,damage:3});
 const BOSS_DEF=Object.freeze({...ENEMIES[3],speed:ENEMIES[3].speed*BOSS.speed,damage:ENEMIES[3].damage*BOSS.damage});
-import{isAIStock}from'./symbols.js?v=99583a3ec2';
-import {weaponMuzzle} from './weapon-geometry.js?v=99583a3ec2';
+import{isAIStock}from'./symbols.js?v=81fbdd042d';
+import {weaponMuzzle} from './weapon-geometry.js?v=81fbdd042d';
 export class Game {
   constructor(state, { height = 620, random = Math.random,now=Date.now,rewardMultiplier=1,mode } = {}) {
     this.modeKey=modeFor(mode??state.settings?.mode).key;this.stipendClock=0;this.wallHold=0;
@@ -99,7 +99,7 @@ export class Game {
   }
   spawnEnemy(kind = 0, x = 24 + this.random() * (WORLD_WIDTH - 48), y = -30,{marketWeight=1}={}) {
     if (this.enemies.length >= SETTINGS.enemyCap) return null;
-    const c = ENEMIES[kind],radius=c.radius*ACTOR_STYLE.footprintScale,e = { id: this.nextId++, kind, x: clamp(x, radius, WORLD_WIDTH - radius), y, hp: c.hp*Math.max(HP_WEIGHT_FLOOR,marketWeight)*this.mode.hp, maxHP: c.hp*Math.max(HP_WEIGHT_FLOOR,marketWeight)*this.mode.hp,marketWeight, radius, alive: true, age: 0, contact: 0, attack: .6, attackPulse: 0, hit: 0, slowUntil: 0, slow: 0, poisons: [], phase: this.random() * 6, attacking: false };
+    const c = ENEMIES[kind],radius=c.radius*ACTOR_STYLE.footprintScale,e = { id: this.nextId++, kind, x: clamp(x, radius, WORLD_WIDTH - radius), y, hp: c.hp*(kind===3?Math.max(1,marketWeight):Math.max(HP_WEIGHT_FLOOR,marketWeight))*this.mode.hp, maxHP: c.hp*(kind===3?Math.max(1,marketWeight):Math.max(HP_WEIGHT_FLOOR,marketWeight))*this.mode.hp,marketWeight, radius, alive: true, age: 0, contact: 0, attack: .6, attackPulse: 0, hit: 0, slowUntil: 0, slow: 0, poisons: [], phase: this.random() * 6, attacking: false };
     this.terrain.projectSpawn(e);this.enemies.push(e); return e;
   }
   // v26: the wall's command post always sits in the centre of the wall.
@@ -200,7 +200,7 @@ export class Game {
     if(type){const burst=type==='bullet'?3:1;for(let i=0;i<burst;i++)this.projectiles.push({...base,type,weapon:c.type,elapsed:-i*.032,damage:stats.damage/burst,duration:type==='mortar'?.62:type==='shell'?.95:type==='slime'?.38:type==='venom'?.30:Math.max(.055,Math.min(.24,len/(type==='slug'?2000:1200))),radius:stats.radius});if(this.projectiles.length>450)this.projectiles.splice(0,this.projectiles.length-450);}
   }
   // Summoner: knights spawn on the wall's north face and march north, cutting the nearest candle in reach.
-  summonKnights(c,stats){const y=this.wallAt(c.x)-14;for(let i=0;i<stats.knights;i++){this.knights.push({x:clamp(c.x+(i-(stats.knights-1)/2)*16,12,WORLD_WIDTH-12),y:y-this.random()*6,hits:stats.hits,damage:stats.damage,cool:.2+i*.15,phase:this.random()*6,age:0,level:c.level});}this.effect('explosion',c.x,y,'#9be064','',.35,{radius:20});if(this.knights.length>60)this.knights.splice(0,this.knights.length-60);}
+  summonKnights(c,stats){const y=this.wallAt(c.x)-14;for(let i=0;i<stats.knights;i++){this.knights.push({x:clamp(c.x+(i-(stats.knights-1)/2)*16,12,WORLD_WIDTH-12),y:y-this.random()*6,hits:stats.hits,damage:stats.damage,cool:.2+i*.15,phase:this.random()*6,age:0,level:c.level});}this.effect('summon',c.x,this.cannonPosition(c).y,'#9be064','',1.1,{radius:30,sourceAltitude:30});for(const k of this.knights.slice(-stats.knights))this.effect('summon-gate',k.x,k.y,'#c8ff9a','',.9,{radius:14});if(this.knights.length>60)this.knights.splice(0,this.knights.length-60);}
   updateKnights(dt){for(const k of this.knights){k.age+=dt;k.cool-=dt;let best=null,bd=1e9;for(const e of this.enemies){if(!e.alive)continue;const d=Math.hypot(e.x-k.x,e.y-k.y);if(d<bd){bd=d;best=e;}}
     if(best&&bd<=18+best.radius){k.attacking=true;if(k.cool<=0){k.cool=.55;this.damage(best,k.damage,{cannonType:'summoner'});this.effect('bullet-hit',best.x,best.y,'#d8ffb0','',.14,{sourceAltitude:6});k.hits--;}}
     else{k.attacking=false;const tx=best&&bd<120?best.x:k.x,ty=best&&bd<120?best.y:k.y-50,len=Math.hypot(tx-k.x,ty-k.y)||1;k.x+=(tx-k.x)/len*58*dt;k.y+=(ty-k.y)/len*58*dt;}}
@@ -253,6 +253,10 @@ return;/* v26: slime only slows (movement and attack speed) — no damage */}thi
             if (possible >= e.radius && possible <= WORLD_WIDTH-e.radius) e.x = clamp(e.x + dir*def.speed*dt*.8, e.radius, WORLD_WIDTH-e.radius);
           }
         }
+        // v30: the forward outpost is solid — candles approaching it slide around its sides.
+        {const ox=FORWARD_X,oy=this.wallAt(ox)+WALL.deck+WALL.mountOffset-FORWARD_DY,R=26+e.radius,dx=e.x-ox,dy=e.y-oy;if(dy>-R-30&&dy<R&&Math.abs(dx)<R){const dir=dx===0?(e.id%2?1:-1):Math.sign(dx);e.x=clamp(e.x+dir*def.speed*dt*1.6,e.radius,WORLD_WIDTH-e.radius);if(Math.abs(dx)<R*.85&&dy>-R*.6)factor*=.15;}}
+        // v30: black-hole towers drag nearby candles toward themselves (they still get through eventually).
+        for(const bh of this.cannons){if(bh.type!=='blackhole')continue;const st=cannonStats('blackhole',bh.level),p=this.cannonPosition(bh),dx=p.x-e.x,dy=p.y-e.y,d=Math.hypot(dx,dy);if(d<st.range&&d>8){const pull=st.pull*(1-d/st.range)*dt;e.x=clamp(e.x+dx/d*pull,e.radius,WORLD_WIDTH-e.radius);e.y-=Math.max(0,-dy/d)*pull*.0;factor*=1-st.drag*(1-d/st.range);this.damage(e,st.damage*dt,{cannonType:'blackhole'});}}
         const lane = Math.floor(e.x / 12), prev = lanes.get(lane);
         if (prev && Math.abs(prev.y - e.y) < prev.radius + e.radius + 3) { const dir = e.x <= prev.x ? -1 : 1; e.x = clamp(e.x + dir*13*dt,e.radius,WORLD_WIDTH-e.radius); factor *= .8; }
         lanes.set(lane,e);{const cb=this.terrain.bounds(e.y+e.radius,e.x,e.radius);if(cb.right>cb.left)e.x=clamp(e.x,cb.left,cb.right);}this.terrain.move(e,def.speed*factor*dt,def.speed,dt);e.y=Math.min(this.enemyStopAt(e),e.y);
@@ -269,6 +273,8 @@ return;/* v26: slime only slows (movement and attack speed) — no damage */}thi
       if (c.type === 'drone') { this.updateDrone(c, dt); continue; }
       c.cooldown -= dt; if (c.cooldown > 0) continue;
       const stats = cannonStats(c.type,c.level), y = this.cannonPosition(c).y;
+      if (c.type === 'blackhole') { c.cooldown = 1; continue; }
+      if (c.type === 'sonic') { const p=this.cannonPosition(c); let hit=0; for (const e of this.enemies) { if (e.alive && Math.hypot(e.x-p.x,e.y-p.y) <= stats.range + e.radius) { this.damage(e, stats.damage, { cannonType: 'sonic' }); hit++; } } this.effect('sonic', p.x, p.y, '#9fe8ff', '', .7, { radius: stats.range }); c.recoil = 1; if (hit) this.metrics.shots.sonic=(this.metrics.shots.sonic||0)+1; c.cooldown = 1/(stats.rate*(1+this.attackBuff(c))); continue; }
       if (c.type === 'summoner') { this.summonKnights(c, stats); c.cooldown = 1/(stats.rate*(1+this.attackBuff(c))); continue; }
       const targets = this.enemies.filter(e => { if (!e.alive || e.y >= this.wallAt(e.x)) return false; const d = Math.hypot(e.x-c.x,e.y-y); return d <= stats.range && d >= stats.minRange; });
       targets.sort(c.type === 'sniper' ? (a,b) => b.hp-a.hp : (a,b) => Math.hypot(a.x-c.x,a.y-y)-Math.hypot(b.x-c.x,b.y-y));

@@ -11,7 +11,7 @@ export const ENEMIES = [
   { name: '작은 음봉', hp: 25, reward: 2, speed: 38, radius: 10, width: 16, height: 22, damage: 5, interval: 1.1 },
   { name: '키 큰 음봉', hp: 120, reward: 5, speed: 29, radius: 13, width: 15, height: 38, damage: 10, interval: 1.4 },
   { name: '돼지 음봉', hp: 280, reward: 12, speed: 20, radius: 19, width: 34, height: 26, damage: 18, interval: 1.7 },
-  { name: '거인 음봉', hp: 750, reward: 30, speed: 15, radius: 26, width: 40, height: 53, damage: 35, interval: 2 },
+  { name: '거인 음봉', hp: 1600, reward: 30, speed: 15, radius: 26, width: 40, height: 53, damage: 35, interval: 2 },
   { name: '초미니 음봉', hp: 9, reward: 1, speed: 50, radius: 7, width: 10, height: 9, damage: 2, interval: .8 }
 ];
 export const SUPPLIES = [
@@ -32,10 +32,12 @@ export const CANNONS = {
   poison: { name: '독 캐논', short: '독', icon: 'TX', cost: 240, damage: 0, rate: .9, range: 750, minRange: 170, radius: 46, dot: 1.4, duration: 6, color: '#c093ff', role: '먼 곳에 독 웅덩이 · 범위 안 음봉의 체력을 서서히 깎음 · 최대 3중첩 · 가까운 적은 못 맞힘' },
   siege: { name: '공성 전차', short: '공성전차', icon: 'ST', cost: 260, damage: 4.5, rate: .32, range: 820, minRange: 230, radius: 72, color: '#ffb35a', role: '아주 먼 적에게 광역 포격 · 가까운 적은 못 맞힘' },
   summoner: { name: '소환사', short: '소환사', icon: 'SM', cost: 240, damage: 7, rate: .16, range: 70, knights: 3, hits: 6, color: '#9be064', role: '양봉 기사 3명을 주기적으로 소환 · 기사는 가까운 음봉부터 베며 북진' },
+  sonic: { name: '소닉 타워', short: '소닉', icon: 'SO', cost: 260, damage: 2.2, rate: .8, range: 105, color: '#9fe8ff', role: '주변으로 둥글게 퍼지는 음파 · 약하지만 넓은 범위를 한꺼번에 · 전진 자리에 딱' },
+  blackhole: { name: '블랙홀', short: '블랙홀', icon: 'BH', cost: 300, damage: 1.2, rate: 0, range: 150, pull: 38, drag: .45, color: '#b28cff', role: '주변 음봉을 끌어당기고 느리게 함 · 약한 지속 피해' },
   musk: { name: '삼론 머스크', short: '삼론머스크', icon: 'EM', cost: 320, damage: 3.5, rate: .24, range: 900, width: 30, rocketChance: .12, color: '#d9e3ec', role: '사이버트럭 발사 · 관통 광역 피해 · 가끔 초광역 로켓' },
   drone: { name: 'DRONE', short: 'DRONE', icon: 'DR', cost: 350, damage: 14, rate: 3.2, range: 230, targetSwitch: .24, color: '#97e9ff', role: '자유 공중 배치 · 단일 타깃 레이저' }
 };
-export const SHOP_NAMES = { siege: 'SIEGE', summoner: 'SUMMON', musk: 'MUSK', machine: 'MG GUN', mortar: 'MORTAR', sniper: 'SNIPER', laser: 'LASER', totem: 'TOTEM', sticky: 'SLIME', poison: 'POISON', drone: 'DRONE' };
+export const SHOP_NAMES = { sonic: 'SONIC', blackhole: 'BLACKHOLE', siege: 'SIEGE', summoner: 'SUMMON', musk: 'MUSK', machine: 'MG GUN', mortar: 'MORTAR', sniper: 'SNIPER', laser: 'LASER', totem: 'TOTEM', sticky: 'SLIME', poison: 'POISON', drone: 'DRONE' };
 export const DRONE = Object.freeze({ altitude: 24, marginX: 29, marginTop: 62, marginBottom: 25 });
 export const WALL_STAGES = [
   { name: '흙', color: '#7a5a3c', edge: '#b58a5c' }, { name: '목책', color: '#5e4430', edge: '#a07a52' },
@@ -47,7 +49,7 @@ export const WALL_STAGES = [
 export const SCENARIOS = [ ['rise', '완만한 상승'], ['fall', '완만한 하락'], ['flat', '횡보'], ['sell', '매도세 폭발'], ['buy', '매수세 폭발'], ['pump', '급등 후 급락'], ['rebound', '급락 후 급반등'] ];
 export function cannonStats(type, level = 1) {
   const c = CANNONS[type], n = clamp(level, 1, 40) - 1;
-  return { ...c, damage: c.damage * (1 + n * .09), rate: c.rate * (1 + n * (type === 'machine' ? .012 : type === 'drone' ? .008 : .004)),
+  return { ...c, damage: c.damage * (1 + n * .12), rate: c.rate * (1 + n * (type === 'machine' ? .016 : .012)), pull: (c.pull || 0) * (1 + n * .03), drag: c.drag ? Math.min(.75, c.drag + n * .006) : 0,
     targetSwitch: c.targetSwitch ? c.targetSwitch / (1 + n * .045) : 0,
     range: c.range + n * (type === 'sniper' ? 4 : type === 'totem' || type === 'drone' ? 2 : .45), radius: (c.radius || 0) + n * (type === 'mortar' ? .65 : type === 'poison' ? .5 : .35),
     pierce: c.pierce ? Math.min(12, c.pierce + Math.floor(n / 6)) : 0, buff: c.buff ? Math.min(.5, c.buff + n * .008) : 0,

@@ -673,3 +673,7 @@ html,body{overflow:hidden;overscroll-behavior:none}
 .slot-picker .sp-item strong{font:400 13px var(--gk-font);color:#3a2a12;font-weight:400}
 .slot-picker .sp-item small{font:400 10px var(--gk-font);color:#7a5420}
 .slot-picker .sp-empty{grid-column:1/-1;font:400 13px var(--gk-font);color:#7a5420}
+.tcard .tc-bar{height:12px!important;position:relative}
+.tcard .tc-bar .tc-exp{position:absolute;inset:0;display:grid;place-items:center;font:400 8px/1 var(--gk-font);letter-spacing:1px;color:#fff;text-shadow:0 1px 0 #000,0 0 3px #000;pointer-events:none}
+.tcard.show-xp .tc-bar .tc-exp{display:none}
+.tcard.unowned .tc-exp{display:none}
