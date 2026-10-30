@@ -11,8 +11,11 @@ export const RARITY_ORDER = ['common', 'rare', 'epic', 'legend'];
 export const TOWER_RARITY = Object.freeze({ machine: 'common', sticky: 'common', poison: 'common', mortar: 'rare', sniper: 'rare', totem: 'epic', laser: 'epic', drone: 'legend' });
 export const towersOf = rarity => Object.keys(TOWER_RARITY).filter(t => TOWER_RARITY[t] === rarity);
 export const rarityOf = type => RARITIES[TOWER_RARITY[type] || 'common'];
-// Copies needed to go from `level` to `level + 1`. Lv.1→2 needs 1, Lv.10→11 needs 10.
-export const copiesForNext = level => level >= MAX_CARD_LEVEL ? Infinity : Math.max(1, Math.floor(level));
+// v22: duplicates grant card XP (rarer towers give more); XP fills up to the next level.
+export const XP_PER_CARD = Object.freeze({ common: 10, rare: 40, epic: 120, legend: 400 });
+export const xpForNext = level => level >= MAX_CARD_LEVEL ? Infinity : 20 + 10 * Math.max(1, Math.floor(level));
+// Design tier: the tower's look changes every 10 levels (1–9, 10–19, 20–29, 30–39, 40).
+export const towerTier = level => Math.min(4, Math.floor(Math.max(1, level || 1) / 10));
 // Pack prices are in the game's gold units. Duplicates past MAX refund gold.
 export const PACKS = Object.freeze({ 10: 1200, 100: 10800 });
 export const MAX_REFUND = Object.freeze({ common: 6, rare: 20, epic: 80, legend: 400 });
@@ -28,16 +31,16 @@ export function rollCard(random = Math.random) {
   const pool = towersOf(rarity);
   return pool[Math.min(pool.length - 1, Math.floor(random() * pool.length))];
 }
-// Applies one card to an inventory array of {type, level, copies}; mutates and returns the outcome.
+// Applies one card to an inventory array of {type, level, xp}; mutates and returns the outcome.
 export function applyCard(inventory, type) {
-  let item = inventory.find(c => c.type === type);
-  if (!item) { item = { type, level: 1, copies: 0 }; inventory.push(item); return { type, rarity: TOWER_RARITY[type], isNew: true, level: 1, levelUps: 0, refund: 0 }; }
-  item.copies = Math.max(0, item.copies || 0);
-  if (item.level >= MAX_CARD_LEVEL) { const refund = MAX_REFUND[TOWER_RARITY[type]]; return { type, rarity: TOWER_RARITY[type], isNew: false, level: item.level, levelUps: 0, refund }; }
-  item.copies += 1; let levelUps = 0;
-  while (item.level < MAX_CARD_LEVEL && item.copies >= copiesForNext(item.level)) { item.copies -= copiesForNext(item.level); item.level++; levelUps++; }
-  if (item.level >= MAX_CARD_LEVEL) item.copies = 0;
-  return { type, rarity: TOWER_RARITY[type], isNew: false, level: item.level, levelUps, refund: 0, copies: item.copies, need: copiesForNext(item.level) };
+  let item = inventory.find(c => c.type === type); const rarity = TOWER_RARITY[type];
+  if (!item) { item = { type, level: 1, xp: 0 }; inventory.push(item); return { type, rarity, isNew: true, level: 1, levelUps: 0, refund: 0, xp: 0, gained: 0, need: xpForNext(1) }; }
+  item.xp = Math.max(0, item.xp || 0);
+  if (item.level >= MAX_CARD_LEVEL) { item.xp = 0; return { type, rarity, isNew: false, level: item.level, levelUps: 0, refund: MAX_REFUND[rarity], xp: 0, gained: 0, need: Infinity }; }
+  const gained = XP_PER_CARD[rarity]; item.xp += gained; let levelUps = 0;
+  while (item.level < MAX_CARD_LEVEL && item.xp >= xpForNext(item.level)) { item.xp -= xpForNext(item.level); item.level++; levelUps++; }
+  if (item.level >= MAX_CARD_LEVEL) item.xp = 0;
+  return { type, rarity, isNew: false, level: item.level, levelUps, refund: 0, xp: item.xp, gained, need: xpForNext(item.level) };
 }
 // `guarantee` (a rarity key) swaps one random card of the pack for a tower of that rarity — the free starter pack uses it.
 export function openPack(inventory, count, random = Math.random, { guarantee = null } = {}) {

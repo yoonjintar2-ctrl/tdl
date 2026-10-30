@@ -1,14 +1,14 @@
-import { CANNONS, cannonStats } from './config.js?v=7b6759f665';
-import { RARITIES, TOWER_RARITY, copiesForNext, MAX_CARD_LEVEL, cardOdds, PACKS } from './cards.js?v=7b6759f665';
-import { renderShopIcon } from './renderer.js?v=7b6759f665';
-import { FX } from './fx.js?v=7b6759f665';
+import { CANNONS, cannonStats } from './config.js?v=1139b52f05';
+import { RARITIES, TOWER_RARITY, xpForNext, MAX_CARD_LEVEL, cardOdds, PACKS } from './cards.js?v=1139b52f05';
+import { renderShopIcon } from './renderer.js?v=1139b52f05';
+import { FX } from './fx.js?v=1139b52f05';
 
 const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
 const wait = ms => new Promise(r => setTimeout(r, ms));
 const reduced = () => window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 const FLAME = { common: ['#ffe2b0', .4], rare: ['#5aa8ff', .8], epic: ['#ffcc33', 1.05], legend: ['#ff8a1a', 1.5] };
 
-// A tower card. item = {level, copies} or null (not owned yet).
+// A tower card. item = {level, xp} or null (not owned yet). Level is not shown; the art changes by tier.
 export function towerCard(type, item, { mini = false, faceDown = false } = {}) {
   const rarity = TOWER_RARITY[type], r = RARITIES[rarity];
   const card = el('div', `tcard r-${rarity}${mini ? ' mini' : ''}${faceDown ? ' hidden' : ''}${item ? '' : ' unowned'}`); card.dataset.type = type;
@@ -17,9 +17,9 @@ export function towerCard(type, item, { mini = false, faceDown = false } = {}) {
   const art = el('canvas', 'tc-art'); art.width = 200; art.height = 180; art.setAttribute('aria-hidden', 'true');
   front.append(top, art, el('div', 'tc-name', CANNONS[type].short));
   if (!mini) {
-    const bar = el('div', 'tc-bar'), fill = el('i'), need = item ? copiesForNext(item.level) : 1;
-    fill.style.width = item ? (item.level >= MAX_CARD_LEVEL ? 100 : Math.min(100, (item.copies || 0) / need * 100)) + '%' : '0%';
-    bar.append(fill, el('small', '', item ? (item.level >= MAX_CARD_LEVEL ? 'MAX' : `${item.copies || 0} / ${need}`) : '뽑기로 획득'));
+    const bar = el('div', 'tc-bar'), fill = el('i'), need = item ? xpForNext(item.level) : 1;
+    fill.style.width = item ? (item.level >= MAX_CARD_LEVEL ? 100 : Math.min(100, (item.xp || 0) / need * 100)) + '%' : '0%';
+    bar.append(fill, el('small', '', item ? (item.level >= MAX_CARD_LEVEL ? 'MAX' : `XP ${item.xp || 0} / ${need}`) : '뽑기로 획득'));
     front.append(bar);
   }
   front.append(el('i', 'tc-sheen'), el('i', 'tc-pearl'));
@@ -72,10 +72,10 @@ export class CardStage {
     if (!this.root) return;
     if (this.auras[i]) { fx.remove(this.auras[i]); this.auras[i] = null; }
     // Swap the face content to the real card.
-    const real = towerCard(res.type, { level: res.level, copies: res.copies ?? 0 }, { mini: hundred });
+    const real = towerCard(res.type, { level: res.level, xp: res.xp ?? 0 }, { mini: hundred });
     card.querySelector('.tcard-face.front').replaceWith(real.querySelector('.tcard-face.front'));
     card.classList.remove('hidden', 'charging', 'short', 'unowned'); card.classList.add('revealed');
-    const badge = res.isNew ? 'NEW!' : res.levelUps ? '강화!' : res.refund ? `+${res.refund}G` : '';
+    const badge = res.isNew ? 'NEW!' : res.levelUps ? '레벨 업!' : res.refund ? `+${res.refund}G` : res.gained ? `+${res.gained} XP` : '';
     if (badge) { const b = el('span', 'tc-badge' + (res.isNew ? ' new' : ''), badge); card.append(b); }
     const r = card.getBoundingClientRect(), x = r.left + r.width / 2, y = r.top + r.height / 2, col = RARITIES[res.rarity].color;
     if (!fast) {
@@ -93,10 +93,10 @@ export class CardStage {
   skip() { if (!this.cards) return; this.skipping = true; for (let i = 0; i < this.cards.length; i++) this.flip(i, true); }
   banner(text, rarity = 'legend') { const b = this.root?.querySelector('.gacha-banner'); if (!b) return; b.textContent = text; b.className = 'gacha-banner show r-' + rarity; clearTimeout(this.bannerT); this.bannerT = setTimeout(() => { if (b) b.className = 'gacha-banner'; }, 1800); }
   showSummary(box) {
-    const by = new Map(); for (const r of this.results) { const s = by.get(r.type) || { type: r.type, n: 0, isNew: false, level: 0, ups: 0, refund: 0 }; s.n++; s.isNew ||= r.isNew; s.level = Math.max(s.level, r.level); s.ups += r.levelUps; s.refund += r.refund; by.set(r.type, s); }
+    const by = new Map(); for (const r of this.results) { const s = by.get(r.type) || { type: r.type, n: 0, isNew: false, level: 0, ups: 0, refund: 0, gained: 0 }; s.n++; s.gained += r.gained || 0; s.isNew ||= r.isNew; s.level = Math.max(s.level, r.level); s.ups += r.levelUps; s.refund += r.refund; by.set(r.type, s); }
     const rows = [...by.values()].sort((a, b) => ['common', 'rare', 'epic', 'legend'].indexOf(TOWER_RARITY[b.type]) - ['common', 'rare', 'epic', 'legend'].indexOf(TOWER_RARITY[a.type]));
     box.replaceChildren(el('strong', '', `획득 결과 · ${this.results.length}장`));
-    const list = el('div', 'gs-list'); for (const s of rows) { const row = el('div', 'gs-row r-' + TOWER_RARITY[s.type]); row.append(el('b', '', CANNONS[s.type].short), el('span', '', `×${s.n}`), el('em', '', s.isNew ? 'NEW!' : s.ups ? '강화!' : s.refund ? `+${s.refund}G` : '')); list.append(row); }
+    const list = el('div', 'gs-list'); for (const s of rows) { const row = el('div', 'gs-row r-' + TOWER_RARITY[s.type]); row.append(el('b', '', CANNONS[s.type].short), el('span', '', `×${s.n}`), el('em', '', s.isNew ? 'NEW!' : s.ups ? '레벨 업!' : s.refund ? `+${s.refund}G` : s.gained ? `+${s.gained} XP` : '')); list.append(row); }
     box.append(list); box.hidden = false;
   }
   close(silent) { if (!this.root) return; this.fx?.stop(); window.removeEventListener('resize', this.onResize); this.root.remove(); this.root = null; this.cards = null; this.finish = null; document.body.classList.remove('gacha-open'); }

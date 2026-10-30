@@ -1,4 +1,4 @@
-import {CANNONS,ENEMIES,SUPPLIES,WALL,WORLD_WIDTH,ACTOR_STYLE} from './config.js?v=7b6759f665';
+import {CANNONS,ENEMIES,SUPPLIES,WALL,WORLD_WIDTH,ACTOR_STYLE} from './config.js?v=1139b52f05';
 export const ENEMY_ART=['enemy-small','enemy-tall','enemy-fat','enemy-giant'];
 // Kind 4 (초미니 음봉) reuses the small candle art at a much smaller size.
 const ENEMY_KIND_ART=[...ENEMY_ART,'enemy-small'];
@@ -25,15 +25,32 @@ function sprite(c,key,frame,x,y,size){const data=info(key,frame);if(!data)return
 function unitSprite(c,key,frame,x,y,size){const data=info(key,frame);if(!data)return false;const f=data.frame,k=size/f.cellW,id=key+':'+frame+':'+size;let cached=unitSprites.get(id);if(!cached){const bitmap=document.createElement('canvas'),w=f.w*k,h=f.h*k;bitmap.width=Math.ceil(w*3);bitmap.height=Math.ceil(h*3);const ctx=bitmap.getContext('2d');ctx.imageSmoothingQuality='high';ctx.drawImage(data.image,f.x,f.y,f.w,f.h,0,0,bitmap.width,bitmap.height);cached={bitmap,w,h};unitSprites.set(id,cached);}c.drawImage(cached.bitmap,x+(f.x-f.anchorX)*k,y+(f.y-f.anchorY)*k,cached.w,cached.h);return true;}
 function halo(c,x,y,r,color){c.save();c.strokeStyle=color;c.lineWidth=1.2;c.beginPath();c.ellipse(x,y,r,r*.3,0,0,Math.PI*2);c.stroke();c.restore();}
 function levelLabel(c,u,x,y){const tier=Math.min(8,Math.floor(u.level/5));c.fillStyle='#203c33ed';c.beginPath();c.roundRect(x-13,y+6,26,11,4);c.fill();c.strokeStyle=u.level>=40?'#f4d38b':'#adbf94';c.lineWidth=1;c.stroke();c.fillStyle='#f4edcc';c.textAlign='center';c.textBaseline='middle';c.font='700 7px system-ui';c.fillText(`Lv.${u.level}`,x,y+12);if(tier){for(let i=0;i<tier;i++){c.beginPath();c.arc(x-(tier-1)*2+i*4,y+4,1.1,0,Math.PI*2);c.fillStyle='#f0ce83';c.fill();}}}
+// v22: towers change look every 10 levels — plinth, trims, banners, crest and tint by design tier.
+export const tierOf=level=>Math.min(4,Math.floor(Math.max(1,level||1)/10));
+const TIER_TINT=['none','saturate(1.12) contrast(1.04)','saturate(1.2) brightness(1.05)','sepia(.3) saturate(1.5) brightness(1.07)','sepia(.2) saturate(1.7) brightness(1.1) hue-rotate(-8deg)'];
+const TIER_METAL=[null,['#7a4a20','#c98a4e','#f3c08a'],['#5d6873','#c9d3dc','#ffffff'],['#8a5a08','#f0b93a','#fff2b0'],['#4a1d6b','#c78bff','#fff0ff']];
+export function tierTint(level){return TIER_TINT[tierOf(level)];}
+export function drawTierBack(c,x,y,level,scale=1){const t=tierOf(level);if(!t)return;const [d,m,l]=TIER_METAL[t],rx=19*scale,ry=5.2*scale;c.save();
+ c.fillStyle=d;c.beginPath();c.ellipse(x,y+2*scale,rx,ry+2*scale,0,0,Math.PI*2);c.fill();
+ const g=c.createLinearGradient(x-rx,0,x+rx,0);g.addColorStop(0,d);g.addColorStop(.35,l);g.addColorStop(.6,m);g.addColorStop(1,d);c.fillStyle=g;c.beginPath();c.ellipse(x,y,rx,ry,0,0,Math.PI*2);c.fill();
+ if(t>=2){c.fillStyle=l;for(let i=0;i<6;i++){const a=i/6*Math.PI*2+.3;c.beginPath();c.arc(x+Math.cos(a)*rx*.82,y+Math.sin(a)*ry*.75,1.1*scale,0,Math.PI*2);c.fill();}}
+ c.restore();}
+export function drawTierFront(c,x,top,base,level,time=0,scale=1){const t=tierOf(level);if(!t)return;const [d,m,l]=TIER_METAL[t];c.save();
+ if(t>=2){for(const side of [-1,1]){const px=x+side*15*scale,py=base-4*scale;c.strokeStyle=d;c.lineWidth=1.4*scale;c.beginPath();c.moveTo(px,py);c.lineTo(px,py-20*scale);c.stroke();const wave=Math.sin(time*4+side)*1.5*scale;c.fillStyle=t>=4?'#8a3cc8':t>=3?'#c8402a':'#3f7f3a';c.beginPath();c.moveTo(px,py-20*scale);c.lineTo(px+side*9*scale,py-17*scale+wave);c.lineTo(px,py-13*scale);c.closePath();c.fill();c.fillStyle=l;c.beginPath();c.arc(px,py-20.5*scale,1.3*scale,0,Math.PI*2);c.fill();}}
+ if(t>=3){const cy=top-5*scale;if(t>=4){c.fillStyle=m;c.strokeStyle=d;c.lineWidth=1*scale;c.beginPath();const w=8*scale;c.moveTo(x-w,cy+3*scale);c.lineTo(x-w,cy-3*scale);c.lineTo(x-w/2,cy);c.lineTo(x,cy-5*scale);c.lineTo(x+w/2,cy);c.lineTo(x+w,cy-3*scale);c.lineTo(x+w,cy+3*scale);c.closePath();c.fill();c.stroke();c.fillStyle='#ff5a7a';c.beginPath();c.arc(x,cy+.5*scale,1.4*scale,0,Math.PI*2);c.fill();}
+  else{c.fillStyle=m;c.strokeStyle=d;c.lineWidth=1*scale;c.beginPath();for(let i=0;i<10;i++){const r=(i%2?2.6:6)*scale,a=-Math.PI/2+i*Math.PI/5;c.lineTo(x+Math.cos(a)*r,cy+Math.sin(a)*r);}c.closePath();c.fill();c.stroke();}}
+ if(t>=4){c.globalCompositeOperation='lighter';for(let i=0;i<4;i++){const a=time*1.6+i*Math.PI/2,sx=x+Math.cos(a)*20*scale,sy=(top+base)/2+Math.sin(a)*8*scale,r=(1.6+Math.sin(time*5+i)*.6)*scale;c.fillStyle='#fff0ffcc';c.beginPath();c.arc(sx,sy,r,0,Math.PI*2);c.fill();c.fillStyle='#c78bff55';c.beginPath();c.arc(sx,sy,r*3,0,Math.PI*2);c.fill();}}
+ c.restore();}
 export function drawClayTower(c,u,x,y,t=0,power=1,selected=false,icon=false){
  if(!clayReady(u.type))return false;const air=u.type==='drone',size=air?(icon?70:70*ACTOR_STYLE.droneScale):icon?78:78*WALL.cannonScale;
  c.save();if(selected&&!icon)halo(c,x,y+(air?36:-4),air?22:18,'#dcf6a0');
  if(!air&&!icon){c.fillStyle='#142f2b38';c.beginPath();c.ellipse(x,y-4,16,3,0,0,Math.PI*2);c.fill();}
  if(!icon&&air){c.save();c.globalAlpha=.2;c.fillStyle='#173b32';c.beginPath();c.ellipse(x+2,y+40,16,4,0,0,Math.PI*2);c.fill();c.restore();y+=Math.sin(t*3.1)*2;}
- if(power<.4&&!icon)c.filter='saturate(.6) brightness(.78)';
+ if(!air)drawTierBack(c,x,y-4,u.level,icon?1.1:1);
+ if(power<.4&&!icon)c.filter='saturate(.6) brightness(.78)';else if(tierOf(u.level))c.filter=tierTint(u.level);
  sprite(c,u.type,frameForAngle(u.angle??-Math.PI/2),x,y+(u.recoil||0)*2.3,size);c.filter='none';
+ drawTierFront(c,x,y-size*(air?.35:.78),y,u.level,t,icon?1.1:1);
  if(u.type==='totem'&&!icon){c.save();c.globalAlpha=.1+Math.sin(t*3)*.04;halo(c,x,y-30,21,'#c5f4b9');c.restore();}
- if(u.level>=30&&!icon)halo(c,x,y+1,28+(u.level>=40?3:0),u.level>=40?'#f4dc8c88':'#9edfd944');
  c.restore();return true;
 }
 export function drawClayUnit(c,e,x,y,t=0,enemy=true,forcedFrame){

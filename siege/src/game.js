@@ -1,25 +1,26 @@
-import{campaignProgress}from'./campaign-courses.js?v=7b6759f665';
-import { SETTINGS, CANNONS, ENEMIES, SUPPLIES, WORLD_WIDTH, DRONE, WALL, CAMERA_DEPTH, ACTOR_STYLE, cannonStats, upgradeCost, energyMultiplier, wallYFor, priceBand, validPlacement, validDronePlacement, clamp } from './config.js?v=7b6759f665';
-import { wallMountDepth } from './fortification.js?v=7b6759f665';
-import { marketArmy,estimatedArmy } from './market-army.js?v=7b6759f665';
-import {playerLevelFor,towerSlots,wallLevelFor,wallPower,money,WALL_MAX_XP} from './progression.js?v=7b6759f665';
-import{TerrainField}from'./terrain.js?v=7b6759f665';
-import{modeFor}from'./cards.js?v=7b6759f665';
-import{formatDamage}from'./combat-fx.js?v=7b6759f665';
-import{wallXPAt}from'./progression.js?v=7b6759f665';
+import{campaignProgress}from'./campaign-courses.js?v=1139b52f05';
+import { SETTINGS, CANNONS, ENEMIES, SUPPLIES, WORLD_WIDTH, DRONE, WALL, CAMERA_DEPTH, ACTOR_STYLE, cannonStats, upgradeCost, energyMultiplier, wallYFor, priceBand, validPlacement, validDronePlacement, clamp } from './config.js?v=1139b52f05';
+import { wallMountDepth } from './fortification.js?v=1139b52f05';
+import { marketArmy,estimatedArmy } from './market-army.js?v=1139b52f05';
+import {playerLevelFor,towerSlots,wallLevelFor,wallPower,money,WALL_MAX_XP} from './progression.js?v=1139b52f05';
+import{TerrainField}from'./terrain.js?v=1139b52f05';
+import{modeFor}from'./cards.js?v=1139b52f05';
+import{formatDamage}from'./combat-fx.js?v=1139b52f05';
+import{wallXPAt}from'./progression.js?v=1139b52f05';
 // Kill gold is scaled down and a steady per-minute battle stipend added, so income stays in a narrow band
 // between a starter and a maxed army (card packs are the only use of gold).
 export const KILL_GOLD=.3,STIPEND_PER_MIN=30;
 const WALL_SLOT=8;
-import{isAIStock}from'./symbols.js?v=7b6759f665';
-import {weaponMuzzle} from './weapon-geometry.js?v=7b6759f665';
+export const MAX_TOWERS=5;
+import{isAIStock}from'./symbols.js?v=1139b52f05';
+import {weaponMuzzle} from './weapon-geometry.js?v=1139b52f05';
 export class Game {
   constructor(state, { height = 620, random = Math.random,now=Date.now,rewardMultiplier=1,mode } = {}) {
     this.modeKey=modeFor(mode??state.settings?.mode).key;this.stipendClock=0;this.wallHold=0;
     this.campaign=campaignProgress(state.campaign);this.campaignModes=state.campaignModes||{};this.freePack=state.freePack===true;this.rewardMultiplier=clamp(rewardMultiplier,0,1);this.now=now;this.random = random; this.height = height; this.gold = state.gold; this.settings = { ...state.settings };
     this.cannons = state.cannons.map(c => ({ ...c, ...(c.type === 'drone' ? { y: clamp(Number.isFinite(c.yRatio) ? c.yRatio * height : c.y ?? height * .35, DRONE.marginTop, height - DRONE.marginBottom) } : {}), cooldown: .2, recoil: 0, angle: -Math.PI / 2, targetId: null, targetLock: 0 }));
     this.playerXP=Math.max(0,state.playerXP||0);this.wallXP=clamp(state.wallXP??360,0,WALL_MAX_XP);this.wallLevel=wallLevelFor(this.wallXP);this.wallTransition=null;
-    this.inventory=[];for(const item of [...(state.inventory||[]),...this.cannons]){if(!CANNONS[item.type])continue;const owned=this.inventory.find(v=>v.type===item.type);if(owned){if((item.level||1)>owned.level){owned.level=item.level||1;owned.copies=item.copies||0;}}else this.inventory.push({type:item.type,level:item.level||1,copies:Math.max(0,item.copies||0)});}
+    this.inventory=[];for(const item of [...(state.inventory||[]),...this.cannons]){if(!CANNONS[item.type])continue;const owned=this.inventory.find(v=>v.type===item.type);if(owned){if((item.level||1)>owned.level){owned.level=item.level||1;owned.xp=item.xp||0;}}else this.inventory.push({type:item.type,level:item.level||1,xp:Math.max(0,item.xp||0)});}
     this.enemies = []; this.supplies = []; this.effects = []; this.projectiles = []; this.zones = [];
     this.dmgAcc={};this.time = 0; this.wallY = height / 2; this.band = 0; this.targetBand = 0; this.move = null; this.stage = Math.min(9,this.wallLevel-1);
     this.terrain=new TerrainField(height);this.pricePlaced=false;this.market = null; this.selected = null; this.placement = null; this.dirty = false; this.nextId = 1; this.autoTimer = 0; this.messages = []; this.marketWaves=[];
@@ -33,8 +34,8 @@ export class Game {
   get hp(){return this.wallXP;}set hp(value){this.wallXP=Math.max(0,value);}
   get maxHP(){return SETTINGS.maxHP;}
   get playerLevel(){return playerLevelFor(this.playerXP);}
-  // v21: no install cap — every owned tower type can stand on the wall.
-  get slotLimit(){return 99;}
+  // v22: at most 5 towers on the wall at once, regardless of player level (pick your combo).
+  get slotLimit(){return MAX_TOWERS;}
   get power(){return wallPower(this.wallLevel);}
   get mode(){return modeFor(this.modeKey);}
   setMode(key){this.modeKey=modeFor(key).key;this.settings.mode=this.modeKey;this.dirty=true;}
@@ -132,7 +133,7 @@ export class Game {
   beginPlacement(type){if(!this.owned(type)||this.cannons.some(c=>c.type===type)||this.cannons.length>=this.slotLimit)return false;this.placement=type;return true;}
   beginPurchase(type) {
     if (!CANNONS[type] || this.owned(type)) return false;
-    if(this.cannons.length>=this.slotLimit){this.notify(`유저 Lv.${this.playerLevel} · 설치 ${this.slotLimit}기 제한`);return false;}
+    if(this.cannons.length>=this.slotLimit){this.notify(`타워는 최대 ${this.slotLimit}기까지 · 다른 타워와 교체해 조합을 바꿔 보세요`);return false;}
     if (this.gold < CANNONS[type].cost) { this.notify('자금이 부족합니다'); return false; }
     this.placement = type; return true;
   }

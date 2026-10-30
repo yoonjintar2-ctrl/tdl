@@ -1,11 +1,11 @@
-import { WORLD_WIDTH as W,CANNONS,ENEMIES,SUPPLIES,WALL_STAGES,DRONE,WALL,cannonStats,validPlacement,validDronePlacement,clamp } from './config.js?v=7b6759f665';
-import{WALL_MAX_LEVEL,WALL_MAX_XP}from'./progression.js?v=7b6759f665';
-import{isAIStock}from'./symbols.js?v=7b6759f665';
-import { QuarterCamera, DEPTH_SCALE, WALL_ELEVATION } from './camera.js?v=7b6759f665';
-import { drawClayMortar, drawClayMortarIcon, clayBattlefield } from './clay-assets.js?v=7b6759f665';
-import{drawProjectile,drawEffect}from'./combat-fx.js?v=7b6759f665';
-import{artCrop}from'./terrain.js?v=7b6759f665';
-import { drawClayTower, drawClayUnit, drawClayWall, drawClayPreview, wallOutline } from './clay-runtime.js?v=7b6759f665';
+import { WORLD_WIDTH as W,CANNONS,ENEMIES,SUPPLIES,WALL_STAGES,DRONE,WALL,cannonStats,validPlacement,validDronePlacement,clamp } from './config.js?v=1139b52f05';
+import{WALL_MAX_LEVEL,WALL_MAX_XP}from'./progression.js?v=1139b52f05';
+import{isAIStock}from'./symbols.js?v=1139b52f05';
+import { QuarterCamera, DEPTH_SCALE, WALL_ELEVATION } from './camera.js?v=1139b52f05';
+import { drawClayMortar, drawClayMortarIcon, clayBattlefield } from './clay-assets.js?v=1139b52f05';
+import{drawProjectile,drawEffect}from'./combat-fx.js?v=1139b52f05';
+import{artCrop}from'./terrain.js?v=1139b52f05';
+import { drawClayTower, drawClayUnit, drawClayWall, drawClayPreview, wallOutline, tierOf, tierTint, drawTierBack, drawTierFront } from './clay-runtime.js?v=1139b52f05';
 const TAU=Math.PI*2;
 function box(c,x,y,w,h,r,fill,stroke){c.beginPath();c.roundRect(x,y,w,h,r);if(fill){c.fillStyle=fill;c.fill();}if(stroke){c.lineWidth=1;c.strokeStyle=stroke;c.stroke();}}
 function line(c,pts,col,w=1){c.beginPath();c.lineWidth=w;c.strokeStyle=col;pts.forEach(([x,y],i)=>i?c.lineTo(x,y):c.moveTo(x,y));c.stroke();}
@@ -234,6 +234,7 @@ export class Renderer{
  }
 }
 
-export function renderShopIcon(canvas,type,level=1){if(type==='mortar'&&drawClayMortarIcon(canvas))return;if(drawClayPreview(canvas,type))return;const c=canvas.getContext('2d');c.clearRect(0,0,canvas.width,canvas.height);c.save();c.translate(canvas.width/2,canvas.height*.75);c.scale(.72,.72);drawCannon(c,{type,level,angle:-Math.PI/2},0,0,0,1,false,true);c.restore();}
+function tierize(canvas,level){if(!tierOf(level)||typeof document==='undefined')return;const w=canvas.width,h=canvas.height,copy=document.createElement('canvas');copy.width=w;copy.height=h;copy.getContext('2d').drawImage(canvas,0,0);const c=canvas.getContext('2d'),k=w/88;c.clearRect(0,0,w,h);drawTierBack(c,w/2,h*.88,level,k);c.filter=tierTint(level);c.drawImage(copy,0,0);c.filter='none';drawTierFront(c,w/2,h*.16,h*.88,level,0,k);}
+export function renderShopIcon(canvas,type,level=1){if(type==='mortar'&&drawClayMortarIcon(canvas)){tierize(canvas,level);return;}if(drawClayPreview(canvas,type)){tierize(canvas,level);return;}const c=canvas.getContext('2d');c.clearRect(0,0,canvas.width,canvas.height);c.save();c.translate(canvas.width/2,canvas.height*.75);c.scale(.72,.72);drawCannon(c,{type,level,angle:-Math.PI/2},0,0,0,1,false,true);c.restore();}
 
 
