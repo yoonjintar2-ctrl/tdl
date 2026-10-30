@@ -1,12 +1,12 @@
-import{campaignProgress}from'./campaign-courses.js?v=182b83ac01';
-import { SETTINGS, CANNONS, ENEMIES, SUPPLIES, WORLD_WIDTH, DRONE, WALL, CAMERA_DEPTH, ACTOR_STYLE, cannonStats, upgradeCost, energyMultiplier, wallYFor, priceBand, validPlacement, snapSlot, FORWARD_X, FORWARD_DY, validDronePlacement, clamp } from './config.js?v=182b83ac01';
-import { wallMountDepth } from './fortification.js?v=182b83ac01';
-import { marketArmy,estimatedArmy } from './market-army.js?v=182b83ac01';
-import {playerLevelFor,towerSlots,wallLevelFor,wallPower,money,WALL_MAX_XP} from './progression.js?v=182b83ac01';
-import{TerrainField}from'./terrain.js?v=182b83ac01';
-import{modeFor}from'./cards.js?v=182b83ac01';
-import{formatDamage}from'./combat-fx.js?v=182b83ac01';
-import{wallXPAt}from'./progression.js?v=182b83ac01';
+import{campaignProgress}from'./campaign-courses.js?v=d6b9d75204';
+import { SETTINGS, CANNONS, ENEMIES, SUPPLIES, WORLD_WIDTH, DRONE, WALL, CAMERA_DEPTH, ACTOR_STYLE, cannonStats, upgradeCost, energyMultiplier, wallYFor, priceBand, validPlacement, snapSlot, FORWARD_X, FORWARD_DY, validDronePlacement, clamp } from './config.js?v=d6b9d75204';
+import { wallMountDepth } from './fortification.js?v=d6b9d75204';
+import { marketArmy,estimatedArmy } from './market-army.js?v=d6b9d75204';
+import {playerLevelFor,towerSlots,wallLevelFor,wallPower,money,WALL_MAX_XP} from './progression.js?v=d6b9d75204';
+import{TerrainField}from'./terrain.js?v=d6b9d75204';
+import{modeFor}from'./cards.js?v=d6b9d75204';
+import{formatDamage}from'./combat-fx.js?v=d6b9d75204';
+import{wallXPAt}from'./progression.js?v=d6b9d75204';
 // Kill gold is scaled down and a steady per-minute battle stipend added, so income stays in a narrow band
 // between a starter and a maxed army (card packs are the only use of gold).
 export const KILL_GOLD=.3,STIPEND_PER_MIN=30;
@@ -15,13 +15,13 @@ export const MAX_TOWERS=5;
 // v24: crowd actors carry a fraction of a 'unit' of volume, but never drop below half a unit of HP — towers no longer one-shot everything.
 export const HP_WEIGHT_FLOOR=.2;
 // v24: the giant is a rare boss — about one per five minutes at most, only on a heavy sell-off minute.
-export const BOSS=Object.freeze({cooldownMs:5*60*1000,minIntensity:1.2,minSellShare:.55,chance:.8,hp:4,scale:6.5,radius:56,speed:.6,damage:3});
+export const BOSS=Object.freeze({cooldownMs:3*60*1000,minIntensity:.8,minSellShare:.5,chance:.85,hp:4,scale:6.5,radius:56,speed:.6,damage:3});
 // v32: special attackers — a six-candle siege ram (shared HP, slow, heavy) and fast kamikaze bombers. Both aim at the wall centre.
-export const SPECIALS=Object.freeze({ram:Object.freeze({hp:2600,speed:8.5,radius:30,damage:110,interval:2.4,cooldownMs:4*60*1000,minIntensity:1.3,chance:.5,goldMul:6}),bomber:Object.freeze({hp:12,speed:92,radius:9,damage:150,cooldownMs:75*1000,minIntensity:1,chance:.6,goldMul:1.5})});
+export const SPECIALS=Object.freeze({ram:Object.freeze({hp:2600,speed:8.5,radius:30,damage:110,interval:2.4,cooldownMs:2*60*1000,minIntensity:.7,chance:.75,goldMul:6}),bomber:Object.freeze({hp:12,speed:92,radius:9,damage:150,cooldownMs:40*1000,minIntensity:.5,chance:.85,goldMul:1.5})});
 const SPECIAL_DEF={ram:{...ENEMIES[3],speed:SPECIALS.ram.speed,damage:SPECIALS.ram.damage,interval:SPECIALS.ram.interval},bomber:{...ENEMIES[4],speed:SPECIALS.bomber.speed,damage:SPECIALS.bomber.damage,interval:9}};
 const BOSS_DEF=Object.freeze({...ENEMIES[3],speed:ENEMIES[3].speed*BOSS.speed,damage:ENEMIES[3].damage*BOSS.damage});
-import{isAIStock}from'./symbols.js?v=182b83ac01';
-import {weaponMuzzle} from './weapon-geometry.js?v=182b83ac01';
+import{isAIStock}from'./symbols.js?v=d6b9d75204';
+import {weaponMuzzle} from './weapon-geometry.js?v=d6b9d75204';
 export class Game {
   constructor(state, { height = 620, random = Math.random,now=Date.now,rewardMultiplier=1,mode } = {}) {
     this.modeKey=modeFor(mode??state.settings?.mode).key;this.stipendClock=0;this.wallHold=0;
@@ -109,8 +109,8 @@ export class Game {
   get commandX(){return 216;}
   maybeBoss(intensity,sellShare,epoch){if(!(intensity>=BOSS.minIntensity&&sellShare>=BOSS.minSellShare))return false;if(this.lastBossAt!=null&&epoch-this.lastBossAt<BOSS.cooldownMs)return false;if(this.random()>BOSS.chance)return false;this.lastBossAt=epoch;return !!this.spawnBoss();}
   spawnSpecial(type,x=WORLD_WIDTH/2+(this.random()-.5)*140,y=-50){const d=SPECIALS[type];const e=this.spawnEnemy(type==='ram'?3:4,x,y,{marketWeight:1});if(!e)return null;e.special=type;e.hp=e.maxHP=d.hp*this.mode.hp;e.radius=d.radius;e.wallSlot=WORLD_WIDTH/2+(this.random()-.5)*24;e.boss=false;return e;}
-  maybeSpecials(intensity,sellShare,epoch){if(sellShare<.5)return;const S=SPECIALS;this.lastSpecial=this.lastSpecial||{};
-   if(intensity>=S.ram.minIntensity&&sellShare>=.55&&(this.lastSpecial.ram==null||epoch-this.lastSpecial.ram>=S.ram.cooldownMs)&&this.random()<S.ram.chance){this.lastSpecial.ram=epoch;if(this.spawnSpecial('ram'))this.notify('⚠ 공성 음봉 부대가 성문으로 향해요!');}
+  maybeSpecials(intensity,sellShare,epoch){if(sellShare<.4)return;const S=SPECIALS;this.lastSpecial=this.lastSpecial||{};
+   if(intensity>=S.ram.minIntensity&&sellShare>=.45&&(this.lastSpecial.ram==null||epoch-this.lastSpecial.ram>=S.ram.cooldownMs)&&this.random()<S.ram.chance){this.lastSpecial.ram=epoch;if(this.spawnSpecial('ram'))this.notify('⚠ 공성 음봉 부대가 성문으로 향해요!');}
    if(intensity>=S.bomber.minIntensity&&(this.lastSpecial.bomber==null||epoch-this.lastSpecial.bomber>=S.bomber.cooldownMs)&&this.random()<S.bomber.chance){this.lastSpecial.bomber=epoch;const n=3+Math.floor(this.random()*3);for(let i=0;i<n;i++)this.spawnSpecial('bomber',40+this.random()*(WORLD_WIDTH-80),-40-i*55);this.notify('💣 공습 음봉 접근 중!');}}
   // v32: attack point — towers that can reach it focus enemies around it for a few seconds.
   setFocus(x,y){this.focus={x,y,until:this.time+30,at:this.time};this.effect('attack-marker',x,y,'#7fff6a','',.7,{radius:26});}
