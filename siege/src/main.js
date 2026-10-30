@@ -1,22 +1,23 @@
-import{CampaignView}from'./campaign-view.js?v=1139b52f05';
-import{CampaignDataProvider,newCourseRun,readCourseRun,checkpointCourse,storeCourseRun,removeCourseRun,restoreCourseCombat,settleCourse}from'./campaign.js?v=1139b52f05';
-import{courseFor,courseTime,CAMPAIGN_REWARD_RATE,campaignProgress}from'./campaign-courses.js?v=1139b52f05';
-import{stockFor}from'./symbols.js?v=1139b52f05';
-import{StockPicker}from'./stock-picker.js?v=1139b52f05';
-import{drawSessionChart}from'./session-chart.js?v=1139b52f05';
-import{WALL_MAX_XP}from'./progression.js?v=1139b52f05';
-import { CANNONS,SCENARIOS,SETTINGS,ENEMIES,SUPPLIES,WORLD_WIDTH,DRONE,WALL,cannonStats,upgradeCost,validPlacement,clamp } from './config.js?v=1139b52f05';
-import { DemoMarketDataProvider, LiveMarketDataProvider, AlpacaMarketDataProvider, MARKET_ERRORS } from './market.js?v=1139b52f05';
-import { Game } from './game.js?v=1139b52f05';
-import { Renderer,renderShopIcon } from './renderer.js?v=1139b52f05';
-import { initialState,readSave,writeSave,snapshotGame,safeStorage,readRawSave,writeRawSave } from './storage.js?v=1139b52f05';
-import{cloudConfigured,currentUser,signUpEmail,signInEmail,signOut,pull,push,EMAIL_RULE,idOf}from'./cloud.js?v=1139b52f05';
-import { loadClayAssets,useBattlefield } from './clay-assets.js?v=1139b52f05';
-import{THEMES,themeFor}from'./themes.js?v=1139b52f05';
-import { drawClayPreview } from './clay-runtime.js?v=1139b52f05';
-import{money,playerXPAt,SLOT_LEVELS}from'./progression.js?v=1139b52f05';
-import{openPack,applyCard,PACKS,MODES,MODE_ORDER,modeFor,RARITIES,TOWER_RARITY}from'./cards.js?v=1139b52f05';
-import{CardStage,renderCollection,towerCard,statLines}from'./card-ui.js?v=1139b52f05';
+import{CampaignView}from'./campaign-view.js?v=5b27a7d5b9';
+import{CampaignDataProvider,newCourseRun,readCourseRun,checkpointCourse,storeCourseRun,removeCourseRun,restoreCourseCombat,settleCourse}from'./campaign.js?v=5b27a7d5b9';
+import{courseFor,courseTime,CAMPAIGN_REWARD_RATE,campaignProgress}from'./campaign-courses.js?v=5b27a7d5b9';
+import{stockFor}from'./symbols.js?v=5b27a7d5b9';
+import{StockPicker}from'./stock-picker.js?v=5b27a7d5b9';
+import{drawSessionChart}from'./session-chart.js?v=5b27a7d5b9';
+import{WALL_MAX_XP}from'./progression.js?v=5b27a7d5b9';
+import { CANNONS,SCENARIOS,SETTINGS,ENEMIES,SUPPLIES,WORLD_WIDTH,DRONE,WALL,cannonStats,upgradeCost,validPlacement,clamp } from './config.js?v=5b27a7d5b9';
+import { DemoMarketDataProvider, LiveMarketDataProvider, AlpacaMarketDataProvider, MARKET_ERRORS } from './market.js?v=5b27a7d5b9';
+import { Game } from './game.js?v=5b27a7d5b9';
+import { Renderer,renderShopIcon } from './renderer.js?v=5b27a7d5b9';
+import { initialState,readSave,writeSave,snapshotGame,safeStorage,readRawSave,writeRawSave } from './storage.js?v=5b27a7d5b9';
+import{cloudConfigured,currentUser,signUpEmail,signInEmail,signOut,pull,push,EMAIL_RULE,idOf,claimSession,sessionState,SESSION_ID}from'./cloud.js?v=5b27a7d5b9';
+import{recentSymbols}from'./stock-picker.js?v=5b27a7d5b9';
+import { loadClayAssets,useBattlefield } from './clay-assets.js?v=5b27a7d5b9';
+import{THEMES,themeFor}from'./themes.js?v=5b27a7d5b9';
+import { drawClayPreview } from './clay-runtime.js?v=5b27a7d5b9';
+import{money,playerXPAt,SLOT_LEVELS}from'./progression.js?v=5b27a7d5b9';
+import{openPack,applyCard,PACKS,MODES,MODE_ORDER,modeFor,RARITIES,TOWER_RARITY}from'./cards.js?v=5b27a7d5b9';
+import{CardStage,renderCollection,towerCard,statLines,nextLevelLines}from'./card-ui.js?v=5b27a7d5b9';
 const $=id=>document.getElementById(id),fmt=new Intl.NumberFormat('ko-KR'),nyTime=new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',hour12:false,hour:'2-digit',minute:'2-digit',second:'2-digit'});
 async function prepareArt(){const started=performance.now();
  $('asset-retry').hidden=true;$('asset-loading-message').textContent='클레이 전장을 준비하고 있어요.';
@@ -52,14 +53,14 @@ let infoTower=null;
 function openTowerInfo(c){closeTowerInfo();infoTower=c;game.selected=c;const wrap=document.createElement('div');wrap.className='tower-info';wrap.id='tower-info';const card=document.createElement('div');card.className='ti-card';const item=game.inventory.find(v=>v.type===c.type)||{level:c.level,xp:0};card.append(towerCard(c.type,item));const stats=document.createElement('div');stats.className='ti-stats';const h=document.createElement('h3');h.textContent=CANNONS[c.type].name;stats.append(h);const rows=document.createElement('div');rows.className='ti-rows';stats.append(rows);card.append(stats);
  const actions=document.createElement('div');actions.className='ti-actions';const mk=(t,f,cls='')=>{const b=document.createElement('button');b.type='button';b.textContent=t;b.className=cls;b.onclick=f;actions.append(b);return b;};
  mk('보관',()=>{if(game.storeTower(c)){save();closeTowerInfo();updateUI();toast('타워를 보관했습니다');}});mk('교체',()=>{closeTowerInfo();replaceTarget=c;openShop();toast('바꿀 카드를 고르세요');}).disabled=!game.inventory.some(v=>!game.cannons.some(x=>x.type===v.type));mk('닫기',closeTowerInfo,'primary');card.append(actions);wrap.append(card);const openedAt=performance.now();wrap.onclick=e=>{if(e.target===wrap&&performance.now()-openedAt>450)closeTowerInfo();};document.body.append(wrap);refreshTowerInfo();}
-function refreshTowerInfo(){const box=document.querySelector('#tower-info .ti-rows');if(!box||!infoTower)return;if(!game.cannons.includes(infoTower)){closeTowerInfo();return;}box.replaceChildren(...statLines(game,infoTower).map(([k,v])=>{const r=document.createElement('div');r.className='ti-row';const a=document.createElement('span');a.textContent=k;const b=document.createElement('b');b.textContent=v;r.append(a,b);return r;}));}
+function refreshTowerInfo(){const box=document.querySelector('#tower-info .ti-rows');if(!box||!infoTower)return;if(!game.cannons.includes(infoTower)){closeTowerInfo();return;}const row=([k,v],cls='ti-row')=>{const r=document.createElement('div');r.className=cls;const a=document.createElement('span');a.textContent=k;const b=document.createElement('b');b.textContent=v;r.append(a,b);return r;};const head=document.createElement('div');head.className='ti-next-head';head.textContent='다음 레벨이 되면';box.replaceChildren(...statLines(game,infoTower).map(l=>row(l)),head,...nextLevelLines(infoTower).map(l=>row(l,'ti-row ti-next')));}
 function closeTowerInfo(){document.getElementById('tower-info')?.remove();infoTower=null;}
 // ---- difficulty modes ----
 const homeOf=()=>homeGame||game;
 function modeUnlocked(key,g=homeOf()){if(qaMode||key==='normal')return true;if(key==='nightmare')return (g.campaign?.cleared||0)>=20;return (g.campaignModes?.nightmare?.cleared||0)>=20;}
 function campaignView_(state,mode){return mode==='normal'?state:{...state,campaign:campaignProgress(state.campaignModes?.[mode])};}
 function campaignUnview(state,mode,original){if(mode==='normal')return state;return{...state,campaign:original.campaign,campaignModes:{...(original.campaignModes||{}),[mode]:state.campaign}};}
-function renderModeToggles(){for(const box of document.querySelectorAll('.mode-toggle')){box.replaceChildren();for(const key of MODE_ORDER){const b=document.createElement('button');b.type='button';b.dataset.mode=key;const open=modeUnlocked(key);b.textContent=(open?'':'🔒 ')+MODES[key].name;b.setAttribute('aria-pressed',String(homeOf().modeKey===key));b.disabled=!!courseRun&&!!box.closest('.battle');b.classList.toggle('locked',!open);b.title=open?MODES[key].name+' · 몹 체력 ×'+MODES[key].hp+' · 골드 ×'+MODES[key].gold:(key==='nightmare'?'노말 20단계 정복 시 개방':'악몽 20단계 정복 시 개방');b.onclick=()=>setMode(key);box.append(b);}}}
+function renderModeToggles(){for(const box of document.querySelectorAll('.mode-toggle')){box.replaceChildren();for(const key of MODE_ORDER){const b=document.createElement('button');b.type='button';b.dataset.mode=key;const open=modeUnlocked(key);b.textContent=(open?'':'🔒 ')+MODES[key].name;b.setAttribute('aria-pressed',String(homeOf().modeKey===key));b.disabled=!!courseRun;b.classList.toggle('locked',!open);b.title=open?MODES[key].name+' · 몹 체력 ×'+MODES[key].hp+' · 골드 ×'+MODES[key].gold:(key==='nightmare'?'노말 20단계 정복 시 개방':'악몽 20단계 정복 시 개방');b.onclick=()=>setMode(key);box.append(b);}}}
 function modeLockHint(key){const h=homeOf();if(key==='nightmare')return `🔒 악몽은 노말 미션 20단계를 모두 정복하면 열려요 (지금 ${h.campaign?.cleared||0}/20)`;return `🔒 지옥은 악몽 미션 20단계를 모두 정복하면 열려요 (지금 ${h.campaignModes?.nightmare?.cleared||0}/20)`;}
 function setMode(key){if(courseRun)return;if(!modeUnlocked(key)){toast(modeLockHint(key));return;}homeOf().setMode(key);if(game!==homeOf())game.setMode(key);if(marketChosen)applyTheme(game.settings.symbol);save();renderModeToggles();picker.render?.();toast(MODES[key].name+' 모드 · 몹 체력 ×'+MODES[key].hp+' · 골드 ×'+MODES[key].gold);}
 function shopAction(type){const owned=game.owned(type);if(owned){if(game.upgrade(owned)){save();updateUI();toast(CANNONS[type].name+' 강화 완료');}}else if(game.cannons.length>=game.slotLimit){if(game.buyTower(type)){save();updateUI();toast('보관함에 추가했습니다 · 설치 타워를 눌러 교체하세요');}}else if(game.beginPurchase(type)){closePanel();updatePlacement();toast(CANNONS[type].name+' · 성벽을 터치해 설치');}}
@@ -98,6 +99,20 @@ bindProvider();
 if(!clayLoaded)game.notify('클레이 이미지를 불러오지 못했습니다. 새로고침해 주세요.');
 function save(){const ok=courseRun?storeCourseRun(checkpointCourse(courseRun,game,provider),courseStorage):qaMode||writeSave(game);if(ok&&!courseRun)scheduleCloudPush();$('save-status').textContent=ok?'저장 완료':'저장 불가';$('save-status').title=ok?'자금·배치·강화·설정이 이 브라우저에 저장되었습니다.':'브라우저 저장소가 차단되었거나 가득 찼습니다.';if(ok)game.dirty=false;return ok;}
 function toast(s){game.notify(s);}
+$('user-portrait').onclick=()=>{if($('profile-pop'))closeProfile();else openProfile();};
+// v23: tap the portrait for a profile summary. Player level only changes the frame, never balance.
+const FRAME_NAMES=['견습 수비대의 무쇠 테두리','청동 테두리','은빛 테두리','황금 테두리','루비 왕관 테두리','전설의 무지개 테두리'],FRAME_AT=[1,5,10,20,35,50];
+function openProfile(){closeProfile();const h=homeOf(),L=h.playerLevel,t=L>=50?5:L>=35?4:L>=20?3:L>=10?2:L>=5?1:0,cur=playerXPAt(L),next=playerXPAt(L+1),pct=Math.max(0,Math.min(100,(h.playerXP-cur)/Math.max(1,next-cur)*100));
+ const box=document.createElement('div');box.className='profile-pop';box.id='profile-pop';box.setAttribute('role','dialog');box.setAttribute('aria-label','내 정보');
+ const owned=h.inventory.length,total=Object.keys(CANNONS).length,cleared=h.campaign?.cleared||0,kills=Math.floor(h.lifetimeKills||0),nextT=FRAME_AT[t+1];
+ box.innerHTML=`<button class="pp-close" type="button" aria-label="닫기">×</button><div class="pp-head"><span class="user-portrait pf-t${t}"><span class="pf-wings"></span><span class="pf-face"></span><b>${L}</b></span><div><h3>수비대장 Lv.${L}</h3><small>${FRAME_NAMES[t]}</small></div></div>
+ <div class="pp-bar"><i style="width:${pct.toFixed(1)}%"></i><span>${Math.floor(h.playerXP-cur).toLocaleString()} / ${(next-cur).toLocaleString()} XP</span></div>
+ <dl><dt>누적 토벌</dt><dd>${kills.toLocaleString()} 음봉</dd><dt>이번 전투 토벌</dt><dd>${Math.floor(Object.values(h.metrics?.killsByType||{}).reduce((a,b)=>a+b,0)).toLocaleString()} 음봉</dd><dt>정복한 미션</dt><dd>${cleared} / 20</dd><dt>보유 타워</dt><dd>${owned} / ${total}종</dd><dt>보유 자금</dt><dd>${money(h.gold,'US')}</dd><dt>난이도</dt><dd>${MODES[h.modeKey]?.name||'노말'}</dd></dl>
+ <div class="pp-next">${nextT?`Lv.${nextT}이 되면 테두리가 한 단계 더 화려해져요`:'최고 등급 테두리를 달성했어요!'}</div>`;
+ box.querySelector('.pp-close').onclick=closeProfile;$('app').append(box);setTimeout(()=>document.addEventListener('pointerdown',profileOutside,true),0);}
+function profileOutside(e){const b=$('profile-pop');if(b&&!b.contains(e.target)&&!e.target.closest('#user-portrait'))closeProfile();}
+function closeProfile(){$('profile-pop')?.remove();document.removeEventListener('pointerdown',profileOutside,true);}
+
 function panelState(){for(const [button,panel]of [['shop-button','shop-panel'],['market-button','market-panel']])$(button).setAttribute('aria-expanded',String(modal===panel));}
 function showPanel(id){if(modal)$(modal).hidden=true;else previousFocus=document.activeElement;modal=id;$(id).hidden=false;$('scrim').hidden=false;panelState();$(id).querySelector('.close-panel').focus({preventScroll:true});}
 function closePanel(){if(modal)$(modal).hidden=true;modal=null;$('scrim').hidden=true;panelState();previousFocus?.focus?.({preventScroll:true});}
@@ -158,7 +173,7 @@ function updateUI(){
 
  $('gold').textContent=cash(game.gold);$('shop-gold').textContent=$('gold').textContent;$('power').textContent='장벽 화력 ×'+game.power.toFixed(2);$('population').textContent=`음봉 ${game.enemies.filter(e=>e.alive).length}`;$('fps').textContent=`${fps} FPS`;
  $('scenario-label').textContent=provider instanceof CampaignDataProvider?'정복 코스 · 가상 장세':provider instanceof LiveMarketDataProvider?(game.marketCode==='KR'?'확정 1분봉 · 양방향 추정':'직전 1분봉 · 양방향 추정'):provider instanceof AlpacaMarketDataProvider?'거래량 SIP · 약 16분 지연':(provider.manual!==null?'성벽 이동 실험':SCENARIOS.find(s=>s[0]===provider.scenario)?.[1])+` · ${provider.speed}×`;
- $('player-status').textContent='Lv.'+game.playerLevel;$('user-level').textContent='Lv.'+game.playerLevel;{const L=game.playerLevel,t=L>=50?5:L>=35?4:L>=20?3:L>=10?2:L>=5?1:0,pf=$('user-portrait');if(pf&&pf.dataset.tier!==String(t)){pf.dataset.tier=t;pf.className='user-portrait pf-t'+t;}}$('player-status').title='유저 XP '+Math.floor(game.playerXP)+' / 다음 '+playerXPAt(game.playerLevel+1);$('slot-status').textContent=game.cannons.length+' / '+game.slotLimit+' 기';const nextSlot=SLOT_LEVELS.find(level=>level>game.playerLevel);const reserveCount=game.inventory.filter(v=>!game.cannons.some(c=>c.type===v.type)).length;$('slot-guide').textContent='설치 '+game.cannons.length+'/'+game.slotLimit+(reserveCount?' · 보관 '+reserveCount+'기는 카드의 설치 버튼으로':'')+' · '+(nextSlot?'유저 Lv.'+nextSlot+'에 슬롯 +1':'모든 슬롯 개방');
+ $('player-status').textContent='Lv.'+game.playerLevel;$('user-level').textContent=String(game.playerLevel);{const L=game.playerLevel,t=L>=50?5:L>=35?4:L>=20?3:L>=10?2:L>=5?1:0,pf=$('user-portrait');if(pf&&pf.dataset.tier!==String(t)){pf.dataset.tier=t;pf.className='user-portrait pf-t'+t;pf.dataset.tierClass='pf-t'+t;}}$('player-status').title='유저 XP '+Math.floor(game.playerXP)+' / 다음 '+playerXPAt(game.playerLevel+1);$('slot-status').textContent=game.cannons.length+' / '+game.slotLimit+' 기';const nextSlot=SLOT_LEVELS.find(level=>level>game.playerLevel);const reserveCount=game.inventory.filter(v=>!game.cannons.some(c=>c.type===v.type)).length;$('slot-guide').textContent='성벽 타워 '+game.cannons.length+' / '+game.slotLimit+'기 · 다섯 자리를 어떤 조합으로 채울지가 전략이에요';
  const signature=game.inventory.map(c=>c.type+c.level+':'+(c.xp||0)).join('|')+'|'+game.cannons.map(c=>c.type).join('|')+'|'+Math.floor(game.gold)+'|'+game.freePack+'|'+game.marketCode;
  if(modal==='shop-panel'&&signature!==lastShop){lastShop=signature;renderCollection($('shop'),game,{onPack:buyPack,onCard:onCollectionCard,slotText:'설치 '+game.cannons.length+' / '+game.slotLimit+'기 · 카드를 눌러 배치·교체'});}
  refreshTowerInfo();
@@ -191,12 +206,30 @@ $('back-button').onclick=askExit;$('exit-cancel').onclick=closeExit;$('exit-ok')
 $('float-pause').onclick=pauseCourse;
 // ---- account & cloud save (guest first; Google sign-in syncs across devices) ----
 let cloudUser=null,cloudTimer=null,cloudState='guest',playClock=0,promptShown=false;
-function scheduleCloudPush(delay=15000){if(!cloudUser||qaMode)return;clearTimeout(cloudTimer);cloudTimer=setTimeout(pushNow,delay);}
-async function pushNow(){clearTimeout(cloudTimer);const raw=readRawSave();if(!cloudUser||!raw)return;try{await push(cloudUser,raw);cloudState='synced';}catch{cloudState='error';}renderAccount();}
+// Throttle (not debounce): frequent local saves must not keep postponing the cloud push.
+function scheduleCloudPush(delay=12000){if(!cloudUser||qaMode||cloudKicked||cloudTimer)return;cloudTimer=setTimeout(()=>{cloudTimer=null;pushNow();},delay);}
+// v23 account sync: the account is the source of truth. One active device per account —
+// a newer login claims the session; the old device flushes its progress once and stops.
+const OWNER_KEY='stock-siege-cloud-owner';let cloudKicked=false,handoffUntil=0,sessionWatch=null;
+const ownerOf=()=>{try{return localStorage.getItem(OWNER_KEY)||'';}catch{return'';}},setOwner=id=>{try{localStorage.setItem(OWNER_KEY,id);}catch{}};
+function cloudPayload(){const raw=readRawSave();return raw?{...raw,by:SESSION_ID,recent:recentSymbols()}:null;}
+function applyRemote(remote,note){writeRawSave({...remote.data,savedAt:remote.updatedAt});try{if(Array.isArray(remote.data?.recent))localStorage.setItem('stock-siege-recent',JSON.stringify(remote.data.recent.slice(0,5)));sessionStorage.setItem('siege-cloud-applied',String(remote.updatedAt));if(note)sessionStorage.setItem('siege-cloud-note',note);}catch{}setOwner(cloudUser.id);location.reload();}
+async function pushNow(force=false){clearTimeout(cloudTimer);cloudTimer=null;if(!cloudUser||cloudKicked)return;if(!force&&Date.now()<handoffUntil){scheduleCloudPush(handoffUntil-Date.now()+500);return;}const raw=cloudPayload();if(!raw)return;
+ try{const st=await sessionState(cloudUser);if(st&&st.sessionId&&st.sessionId!==SESSION_ID){await kicked(st);return;}await push(cloudUser,raw);cloudState='synced';}catch{cloudState='error';}renderAccount();}
+async function kicked(st){if(cloudKicked)return;cloudKicked=true;clearTimeout(cloudTimer);save();
+ // flush this device's progress once, but only right after the takeover (so a long-asleep tab can't overwrite newer play)
+ let flushed=false;if(Date.now()-(st?.sessionAt||0)<30000){const raw=cloudPayload();if(raw){try{await push(cloudUser,raw);flushed=true;}catch{}}}
+ closePanel?.();const w=document.createElement('div');w.id='kicked-overlay';w.className='exit-confirm';w.innerHTML=`<div class="exit-card"><strong>다른 기기에서 접속했어요</strong><p>같은 계정으로 다른 기기에서 게임을 시작해서 이 기기의 연결을 끊었어요.${flushed?' 여기까지의 진행 상황은 계정에 저장했어요.':''}</p><div class="exit-actions"><button type="button" id="kick-resume">이 기기에서 계속하기</button></div></div>`;document.body.append(w);
+ w.querySelector('#kick-resume').onclick=async()=>{w.querySelector('#kick-resume').disabled=true;try{await claimSession(cloudUser);const remote=await pull(cloudUser);if(remote&&remote.data&&Object.keys(remote.data).length){applyRemote(remote,'이 기기로 이어서 플레이해요');return;}}catch{}location.reload();};}
+function watchSession(){clearInterval(sessionWatch);sessionWatch=setInterval(async()=>{if(!cloudUser||cloudKicked||document.hidden)return;try{const st=await sessionState(cloudUser);if(st&&st.sessionId&&st.sessionId!==SESSION_ID)await kicked(st);}catch{}},9000);}
 async function startCloud(fromLogin=false){if(qaMode||!cloudConfigured())return;if(!fromLogin)cloudUser=await currentUser();if(!cloudUser){renderAccount();return;}cloudState='syncing';renderAccount();
- try{const remote=await pull(cloudUser),local=readRawSave();
-  if(remote&&(!local||remote.updatedAt>(local.savedAt||0)+3000)){let applied=false;try{applied=sessionStorage.getItem('siege-cloud-applied')===String(remote.updatedAt);}catch{}if(!applied&&!courseRun){writeRawSave({...remote.data,savedAt:remote.updatedAt});try{sessionStorage.setItem('siege-cloud-applied',String(remote.updatedAt));}catch{}location.reload();return;}}
-  else if(local)await push(cloudUser,local);cloudState='synced';toast('☁ '+idOf(cloudUser)+' · 계정 저장 연결됨');}
+ try{const remote=await pull(cloudUser),local=readRawSave(),hasRemote=!!(remote&&remote.data&&Object.keys(remote.data).length),boundHere=ownerOf()===cloudUser.id;let applied=false;try{applied=sessionStorage.getItem('siege-cloud-applied')===String(remote?.updatedAt);}catch{}
+  // A device that has never synced this account always takes the account's save (never pushes its blank local game over it).
+  if(hasRemote&&!applied&&!courseRun&&(!boundHere||!local||remote.updatedAt>(local.savedAt||0)+3000)){await claimSession(cloudUser);applyRemote(remote,'계정의 진행 상황을 이어받았어요');return;}
+  const takeover=!!(remote?.sessionId&&remote.sessionId!==SESSION_ID);await claimSession(cloudUser,cloudPayload());setOwner(cloudUser.id);
+  if(takeover){handoffUntil=Date.now()+20000;const claimAt=Date.now();setTimeout(async()=>{try{const r=await pull(cloudUser);if(r&&r.data?.by&&r.data.by!==SESSION_ID&&r.updatedAt>claimAt-2000){applyRemote(r,'다른 기기의 마지막 진행 상황까지 이어받았어요');return;}}catch{}handoffUntil=0;pushNow(true);},18000);}
+  else if(local)await pushNow(true);
+  cloudState='synced';let note='';try{note=sessionStorage.getItem('siege-cloud-note')||'';sessionStorage.removeItem('siege-cloud-note');}catch{}toast(note?'☁ '+note:'☁ '+idOf(cloudUser)+' · 계정 저장 연결됨');watchSession();}
  catch{cloudState='error';}renderAccount();}
 function renderAccount(){const box=document.getElementById('account-box');if(!box)return;box.replaceChildren();const t=document.createElement('strong');const p=document.createElement('p');const b=document.createElement('button');b.type='button';b.className='primary';
  if(!cloudConfigured()){t.textContent='계정 저장';p.textContent='준비 중입니다.';box.append(t,p);return;}
@@ -227,13 +260,13 @@ const fsEl=()=>document.fullscreenElement||document.webkitFullscreenElement,stan
 function toggleFullscreen(){const root=document.documentElement;if(fsEl()){(document.exitFullscreen||document.webkitExitFullscreen)?.call(document);return;}const req=root.requestFullscreen||root.webkitRequestFullscreen;if(req){Promise.resolve(req.call(root,{navigationUI:'hide'})).catch(()=>showInstallGuide());return;}showInstallGuide();}
 function showInstallGuide(){if(document.getElementById('install-guide'))return;const w=document.createElement('div');w.id='install-guide';w.className='exit-confirm';w.innerHTML='<div class="exit-card"><strong>아이폰은 홈 화면 앱으로 전체화면</strong><p>사파리 아래쪽 <b>공유 버튼(□↑)</b> → <b>홈 화면에 추가</b>를 누르면, 홈 화면의 주식전쟁 아이콘으로 주소창 없이 전체화면 실행돼요.</p><div class="exit-actions" style="grid-template-columns:1fr"><button type="button" id="install-ok">알겠어요</button></div></div>';w.querySelector('#install-ok').onclick=()=>w.remove();w.onclick=e=>{if(e.target===w)w.remove();};document.body.append(w);}
 $('fullscreen-button').onclick=toggleFullscreen;$('fullscreen-button').hidden=standalone();
-for(const ev of['fullscreenchange','webkitfullscreenchange'])document.addEventListener(ev,()=>{$('fullscreen-button').classList.toggle('on',!!fsEl());setTimeout(resize,120);});$('course-pause-button').onclick=pauseCourse;
+for(const ev of['fullscreenchange','webkitfullscreenchange'])document.addEventListener(ev,()=>{$('fullscreen-button').classList.toggle('on',!!fsEl());document.body.classList.toggle('is-fullscreen',!!fsEl());setTimeout(resize,120);});$('course-pause-button').onclick=pauseCourse;
 if(!qaMode){$('data-mode').querySelector('[value="preview"]').remove();}
 if(qaMode){const b=document.createElement('button');b.className='secondary';b.textContent='검수: 코스 완주';b.onclick=()=>{if(!courseRun)return;closePanel();provider.update(courseFor(courseRun.courseId).duration-provider.elapsed);updateCourse(0);};$('settings-panel').append(b);}
 game.settings.autoUpgrade=false;renderModeToggles();picker.open({mandatory:true});$('stock-select').setAttribute('aria-expanded','true');setInterval(()=>{if(picker.active&&!document.hidden)picker.refresh();},30000);
 new ResizeObserver(resize).observe(document.querySelector('.battle'));quality();updateUI();save();
 window.addEventListener('clay-ready',()=>{lastShop='';quality();if(activeType)detail();});
-function frame(now){const raw=(now-last)/1000;last=now;if(document.hidden){requestAnimationFrame(frame);return;}if(!marketChosen||picker.active||campaignView?.active||courseRun?.paused||courseRun?.ending){last=now;acc=0;if(!campaignView?.active)renderer.render();requestAnimationFrame(frame);return;}const dt=Math.min(raw,courseRun?1:.1),maxSteps=courseRun?60:7;provider.update(dt);acc+=dt;
+function frame(now){const raw=(now-last)/1000;last=now;if(document.hidden||cloudKicked){requestAnimationFrame(frame);return;}if(!marketChosen||picker.active||campaignView?.active||courseRun?.paused||courseRun?.ending){last=now;acc=0;if(!campaignView?.active)renderer.render();requestAnimationFrame(frame);return;}const dt=Math.min(raw,courseRun?1:.1),maxSteps=courseRun?60:7;provider.update(dt);acc+=dt;
  for(let i=0;acc>=1/60&&i<maxSteps;i++){game.update(1/60);acc-=1/60;}if(courseRun)updateCourse(dt);if(!cardStage.root)renderer.render();frames++;fpsTime+=dt;uiTime+=dt;saveTime+=dt;
  if(fpsTime>=1){fps=Math.round(frames/fpsTime);frames=0;fpsTime=0;if(game.settings.quality==='auto'){slowSamples=fps<43?slowSamples+1:Math.max(0,slowSamples-1);if(slowSamples>=3&&renderer.quality>.6){renderer.quality=.55;resize();}}}
  if(uiTime>=.15){uiTime=0;updateUI();}if(saveTime>=(courseRun?8:2)){saveTime=0;if(courseRun||game.dirty)save();}requestAnimationFrame(frame);

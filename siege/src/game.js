@@ -1,19 +1,19 @@
-import{campaignProgress}from'./campaign-courses.js?v=1139b52f05';
-import { SETTINGS, CANNONS, ENEMIES, SUPPLIES, WORLD_WIDTH, DRONE, WALL, CAMERA_DEPTH, ACTOR_STYLE, cannonStats, upgradeCost, energyMultiplier, wallYFor, priceBand, validPlacement, validDronePlacement, clamp } from './config.js?v=1139b52f05';
-import { wallMountDepth } from './fortification.js?v=1139b52f05';
-import { marketArmy,estimatedArmy } from './market-army.js?v=1139b52f05';
-import {playerLevelFor,towerSlots,wallLevelFor,wallPower,money,WALL_MAX_XP} from './progression.js?v=1139b52f05';
-import{TerrainField}from'./terrain.js?v=1139b52f05';
-import{modeFor}from'./cards.js?v=1139b52f05';
-import{formatDamage}from'./combat-fx.js?v=1139b52f05';
-import{wallXPAt}from'./progression.js?v=1139b52f05';
+import{campaignProgress}from'./campaign-courses.js?v=5b27a7d5b9';
+import { SETTINGS, CANNONS, ENEMIES, SUPPLIES, WORLD_WIDTH, DRONE, WALL, CAMERA_DEPTH, ACTOR_STYLE, cannonStats, upgradeCost, energyMultiplier, wallYFor, priceBand, validPlacement, validDronePlacement, clamp } from './config.js?v=5b27a7d5b9';
+import { wallMountDepth } from './fortification.js?v=5b27a7d5b9';
+import { marketArmy,estimatedArmy } from './market-army.js?v=5b27a7d5b9';
+import {playerLevelFor,towerSlots,wallLevelFor,wallPower,money,WALL_MAX_XP} from './progression.js?v=5b27a7d5b9';
+import{TerrainField}from'./terrain.js?v=5b27a7d5b9';
+import{modeFor}from'./cards.js?v=5b27a7d5b9';
+import{formatDamage}from'./combat-fx.js?v=5b27a7d5b9';
+import{wallXPAt}from'./progression.js?v=5b27a7d5b9';
 // Kill gold is scaled down and a steady per-minute battle stipend added, so income stays in a narrow band
 // between a starter and a maxed army (card packs are the only use of gold).
 export const KILL_GOLD=.3,STIPEND_PER_MIN=30;
 const WALL_SLOT=8;
 export const MAX_TOWERS=5;
-import{isAIStock}from'./symbols.js?v=1139b52f05';
-import {weaponMuzzle} from './weapon-geometry.js?v=1139b52f05';
+import{isAIStock}from'./symbols.js?v=5b27a7d5b9';
+import {weaponMuzzle} from './weapon-geometry.js?v=5b27a7d5b9';
 export class Game {
   constructor(state, { height = 620, random = Math.random,now=Date.now,rewardMultiplier=1,mode } = {}) {
     this.modeKey=modeFor(mode??state.settings?.mode).key;this.stipendClock=0;this.wallHold=0;
@@ -21,10 +21,11 @@ export class Game {
     this.cannons = state.cannons.map(c => ({ ...c, ...(c.type === 'drone' ? { y: clamp(Number.isFinite(c.yRatio) ? c.yRatio * height : c.y ?? height * .35, DRONE.marginTop, height - DRONE.marginBottom) } : {}), cooldown: .2, recoil: 0, angle: -Math.PI / 2, targetId: null, targetLock: 0 }));
     this.playerXP=Math.max(0,state.playerXP||0);this.wallXP=clamp(state.wallXP??360,0,WALL_MAX_XP);this.wallLevel=wallLevelFor(this.wallXP);this.wallTransition=null;
     this.inventory=[];for(const item of [...(state.inventory||[]),...this.cannons]){if(!CANNONS[item.type])continue;const owned=this.inventory.find(v=>v.type===item.type);if(owned){if((item.level||1)>owned.level){owned.level=item.level||1;owned.xp=item.xp||0;}}else this.inventory.push({type:item.type,level:item.level||1,xp:Math.max(0,item.xp||0)});}
-    this.enemies = []; this.supplies = []; this.effects = []; this.projectiles = []; this.zones = [];
+    this.enemies = []; this.supplies = []; this.effects = []; this.projectiles = []; this.zones = []; this.knights = []; this.sweeps = [];
     this.dmgAcc={};this.time = 0; this.wallY = height / 2; this.band = 0; this.targetBand = 0; this.move = null; this.stage = Math.min(9,this.wallLevel-1);
     this.terrain=new TerrainField(height);this.pricePlaced=false;this.market = null; this.selected = null; this.placement = null; this.dirty = false; this.nextId = 1; this.autoTimer = 0; this.messages = []; this.marketWaves=[];
     this.marketGoldRemainder=0;
+    this.lifetimeKills = Math.max(0, state.lifetimeKills || 0);
     this.metrics = { killsByType: {}, kills: 0, crushedEnemies: 0, crushedSupplies: 0, healed: 0, goldEarned: 0, shots: {}, wallSteps: 0, expired: 0 };
   }
   wallAt(x, y = this.wallY) { return y + Math.sin(x / WORLD_WIDTH * Math.PI * 2 - .4) * 5 + Math.sin(x / WORLD_WIDTH * Math.PI * 4) * 1.5; }
@@ -67,10 +68,10 @@ export class Game {
     for (let i = lo; i <= hi; i++) { const v = load[i] + Math.abs(i - cur) * 1.2 + this.random() * .5; if (v < score) { score = v; best = i; } }
     e.wallSlot = clamp((best + .2 + this.random() * .6) * WALL_SLOT, b.left, b.right); load[best] += e.radius * 2;
   }
-  resize(height) { const ratio = height / this.height; this.wallY *= ratio; if (this.move) { this.move.from *= ratio; this.move.to *= ratio; } this.enemies.forEach(e => e.y *= ratio); this.supplies.forEach(e => e.y *= ratio); this.zones.forEach(e => e.y *= ratio); this.cannons.filter(c => c.type === 'drone').forEach(c => c.y = clamp(c.y * ratio, DRONE.marginTop, height - DRONE.marginBottom)); this.height = height;this.terrain=new TerrainField(height); }
+  resize(height) { const ratio = height / this.height; this.wallY *= ratio; if (this.move) { this.move.from *= ratio; this.move.to *= ratio; } this.enemies.forEach(e => e.y *= ratio); this.supplies.forEach(e => e.y *= ratio); this.zones.forEach(e => e.y *= ratio); this.cannons.filter(c => c.type === 'drone').forEach(c => c.y = clamp(c.y * ratio, DRONE.marginTop, height - DRONE.marginBottom)); this.height = height;const art=this.terrain;this.terrain=new TerrainField(height);if(art?.corridor||art?.aspect)this.terrain.setArt(art.aspect,art.corridor); }
   cannonPosition(c) { return { x: c.x, y: c.type === 'drone' ? c.y : this.wallAt(c.x) + WALL.deck + WALL.mountOffset }; }
   notify(text) { this.messages.push({ text, until: this.time + 3 }); }
-  resetMarket(){this.market=null;this.marketWaves=[];this.enemies=[];this.supplies=[];this.effects=[];this.projectiles=[];this.zones=[];this.pricePlaced=false;this.move=null;this.band=0;this.targetBand=0;this.wallY=this.height/2;}
+  resetMarket(){this.market=null;this.marketWaves=[];this.enemies=[];this.supplies=[];this.effects=[];this.projectiles=[];this.zones=[];this.knights=[];this.sweeps=[];this.pricePlaced=false;this.move=null;this.band=0;this.targetBand=0;this.wallY=this.height/2;}
   onMarket(snapshot) {
     // Keep already received finite waves through a temporary provider failure.
     if(snapshot.priceStatus==='connection_required'&&snapshot.volumeStatus==='connection_required')this.marketWaves=[];
@@ -111,7 +112,7 @@ export class Game {
   remove(entity, reason) {
     if (!entity.alive) return; entity.alive = false;
     const enemy = entity.maxHP !== undefined;
-    if (reason === 'cannon' && enemy) { const weight=entity.marketWeight??1,reward=this.creditMarketGold(ENEMIES[entity.kind].reward*weight*KILL_GOLD);if(entity.lastHit){this.metrics.killsByType[entity.lastHit]=(this.metrics.killsByType[entity.lastHit]||0)+1;};this.metrics.kills++;this.gainPlayerXP(([1,2,3,5,.5][entity.kind]??1)*weight*this.rewardMultiplier);this.dirty=true;if(reward)this.effect('text',entity.x,entity.y-15,'#ffdc8c',`+${this.cash(reward)}`,.65); }
+    if (reason === 'cannon' && enemy) { this.lifetimeKills++;const weight=entity.marketWeight??1,reward=this.creditMarketGold(ENEMIES[entity.kind].reward*weight*KILL_GOLD);if(entity.lastHit){this.metrics.killsByType[entity.lastHit]=(this.metrics.killsByType[entity.lastHit]||0)+1;};this.metrics.kills++;this.gainPlayerXP(([1,2,3,5,.5][entity.kind]??1)*weight*this.rewardMultiplier);this.dirty=true;if(reward)this.effect('text',entity.x,entity.y-15,'#ffdc8c',`+${this.cash(reward)}`,.65); }
     if (reason === 'crush') { this.metrics[enemy ? 'crushedEnemies' : 'crushedSupplies']++; this.effect('crush', entity.x, entity.y, enemy ? '#ff6876' : '#54efbc', '', .5); }
     if (reason === 'expire') { this.metrics.expired++; this.effect('ghost', entity.x, entity.y, enemy ? '#ff6876' : '#54efbc', '', .6, { radius: entity.radius }); }
     else this.burst(entity.x, entity.y, enemy ? '#ff6876' : '#54efbc', reason === 'cannon' ? 5 : 3);
@@ -184,13 +185,23 @@ export class Game {
       const ex=pos.x+dx/len*stats.range,ey=pos.y+dy/len*stats.range;this.effect('beam',muzzle.x,muzzle.y,stats.color,'',.20,{tx:ex,ty:ey,width:2.2,sourceAltitude:muzzle.z,targetAltitude:8});
       this.enemies.filter(e=>{const vx=e.x-pos.x,vy=e.y-pos.y,dot=(vx*dx+vy*dy)/len;return e.alive&&dot>=0&&dot<=stats.range&&Math.abs(vx*dy-vy*dx)/len<=e.radius+4;}).sort((a,b)=>Math.hypot(a.x-pos.x,a.y-pos.y)-Math.hypot(b.x-pos.x,b.y-pos.y)).slice(0,stats.pierce).forEach(e=>this.damage(e,stats.damage,{cannonType:'laser'}));return;
     }
-    const type={machine:'bullet',sniper:'slug',mortar:'mortar',sticky:'slime',poison:'venom'}[c.type];
-    if(type){const burst=type==='bullet'?3:1;for(let i=0;i<burst;i++)this.projectiles.push({...base,type,weapon:c.type,elapsed:-i*.032,damage:stats.damage/burst,duration:type==='mortar'?.62:type==='slime'?.38:type==='venom'?.30:Math.max(.055,Math.min(.24,len/(type==='slug'?2000:1200))),radius:stats.radius});if(this.projectiles.length>450)this.projectiles.splice(0,this.projectiles.length-450);}
+    if(c.type==='musk'){c.shots=(c.shots||0)+1;const rocket=this.random()<(stats.rocketChance||0);this.sweeps.push({kind:rocket?'rocket':'truck',x:pos.x,y:pos.y-6,dx:dx/len,dy:dy/len,speed:rocket?520:300,width:rocket?stats.width*2.6:stats.width,damage:rocket?stats.damage*.6:stats.damage,traveled:0,max:rocket?1400:stats.range,hit:new Set(),weapon:'musk'});if(rocket)this.notify('🚀 삼론 머스크의 로켓 발사!');return;}
+    const type={machine:'bullet',sniper:'slug',mortar:'mortar',siege:'shell',sticky:'slime',poison:'venom'}[c.type];
+    if(type){const burst=type==='bullet'?3:1;for(let i=0;i<burst;i++)this.projectiles.push({...base,type,weapon:c.type,elapsed:-i*.032,damage:stats.damage/burst,duration:type==='mortar'?.62:type==='shell'?.95:type==='slime'?.38:type==='venom'?.30:Math.max(.055,Math.min(.24,len/(type==='slug'?2000:1200))),radius:stats.radius});if(this.projectiles.length>450)this.projectiles.splice(0,this.projectiles.length-450);}
   }
+  // Summoner: knights spawn on the wall's north face and march north, cutting the nearest candle in reach.
+  summonKnights(c,stats){const y=this.wallAt(c.x)-14;for(let i=0;i<stats.knights;i++){this.knights.push({x:clamp(c.x+(i-(stats.knights-1)/2)*16,12,WORLD_WIDTH-12),y:y-this.random()*6,hits:stats.hits,damage:stats.damage,cool:.2+i*.15,phase:this.random()*6,age:0,level:c.level});}this.effect('explosion',c.x,y,'#9be064','',.35,{radius:20});if(this.knights.length>60)this.knights.splice(0,this.knights.length-60);}
+  updateKnights(dt){for(const k of this.knights){k.age+=dt;k.cool-=dt;let best=null,bd=1e9;for(const e of this.enemies){if(!e.alive)continue;const d=Math.hypot(e.x-k.x,e.y-k.y);if(d<bd){bd=d;best=e;}}
+    if(best&&bd<=18+best.radius){k.attacking=true;if(k.cool<=0){k.cool=.55;this.damage(best,k.damage,{cannonType:'summoner'});this.effect('bullet-hit',best.x,best.y,'#d8ffb0','',.14,{sourceAltitude:6});k.hits--;}}
+    else{k.attacking=false;const tx=best&&bd<120?best.x:k.x,ty=best&&bd<120?best.y:k.y-50,len=Math.hypot(tx-k.x,ty-k.y)||1;k.x+=(tx-k.x)/len*58*dt;k.y+=(ty-k.y)/len*58*dt;}}
+    this.knights=this.knights.filter(k=>k.hits>0&&k.y>-20&&k.age<25);}
+  // Piercing sweeps (Cybertruck / rocket): every candle the body passes over takes one hit.
+  updateSweeps(dt){for(const s of this.sweeps){const step=s.speed*dt;s.x+=s.dx*step;s.y+=s.dy*step;s.traveled+=step;for(const e of this.enemies){if(!e.alive||s.hit.has(e.id))continue;const vx=e.x-s.x,vy=e.y-s.y,along=vx*s.dx+vy*s.dy,side=Math.abs(vx*s.dy-vy*s.dx);if(side<=s.width/2+e.radius&&along>-26&&along<10){s.hit.add(e.id);this.damage(e,s.damage,{cannonType:'musk'});}}}
+    this.sweeps=this.sweeps.filter(s=>s.traveled<s.max&&s.y>-60);}
   resolveProjectile(p){
     const target=this.enemies.find(e=>e.id===p.targetId&&e.alive),st=p.stats;
-    if(p.type==='mortar'||p.type==='slime'){
-      this.effect('explosion',p.tx,p.ty,p.color,'',p.type==='mortar'?.6:.36,{radius:p.radius});if(p.type==='mortar')for(let i=0;i<3;i++)this.effect('smoke',p.tx+(this.random()-.5)*p.radius*.6,p.ty+(this.random()-.5)*p.radius*.3,'#5a4a3e','',1+this.random()*.6,{vx:(this.random()-.5)*16});this.burst(p.tx,p.ty,p.color,p.type==='mortar'?7:3);
+    if(p.type==='mortar'||p.type==='slime'||p.type==='shell'){
+      this.effect('explosion',p.tx,p.ty,p.color,'',p.type==='slime'?.36:p.type==='shell'?.75:.6,{radius:p.radius});if(p.type!=='slime')for(let i=0;i<3;i++)this.effect('smoke',p.tx+(this.random()-.5)*p.radius*.6,p.ty+(this.random()-.5)*p.radius*.3,'#5a4a3e','',1+this.random()*.6,{vx:(this.random()-.5)*16});this.burst(p.tx,p.ty,p.color,p.type==='slime'?3:p.type==='shell'?10:7);
       if(p.type==='slime'){this.zones.push({x:p.tx,y:p.ty,radius:p.radius,life:st.duration,slow:st.slow});if(this.zones.length>22)this.zones.shift();}
       this.enemies.forEach(e=>{if(e.alive&&Math.hypot(e.x-p.tx,e.y-p.ty)<=p.radius+e.radius){if(p.type==='slime'){e.slowUntil=this.time+st.duration;e.slow=st.slow;// Slime is a control tool: one splash never removes more than splashCap of an actor's max HP,
 // so fractional-weight swarm actors survive long enough for the slow to matter.
@@ -248,12 +259,14 @@ this.damage(e,Math.min(p.damage*this.power,e.maxHP*(st.splashCap||1)),{cannonTyp
       if (c.type === 'drone') { this.updateDrone(c, dt); continue; }
       c.cooldown -= dt; if (c.cooldown > 0) continue;
       const stats = cannonStats(c.type,c.level), y = this.cannonPosition(c).y;
-      const targets = this.enemies.filter(e => e.alive && Math.hypot(e.x-c.x,e.y-y) <= stats.range && e.y < this.wallAt(e.x));
+      if (c.type === 'summoner') { this.summonKnights(c, stats); c.cooldown = 1/(stats.rate*(1+this.attackBuff(c))); continue; }
+      const targets = this.enemies.filter(e => { if (!e.alive || e.y >= this.wallAt(e.x)) return false; const d = Math.hypot(e.x-c.x,e.y-y); return d <= stats.range && d >= stats.minRange; });
       targets.sort(c.type === 'sniper' ? (a,b) => b.hp-a.hp : (a,b) => Math.hypot(a.x-c.x,a.y-y)-Math.hypot(b.x-c.x,b.y-y));
       if (!targets.length) { c.cooldown = .06; continue; }
       this.fire(c,stats,targets[0]); c.cooldown = 1/(stats.rate*(1+this.attackBuff(c)));
     }
     for(const p of this.projectiles){p.elapsed+=dt;if(p.elapsed>=p.duration)this.resolveProjectile(p);}
+    this.updateKnights(dt);this.updateSweeps(dt);
     this.projectiles=this.projectiles.filter(p=>p.elapsed<p.duration);
     for (const f of this.effects) { f.life -= dt; if (f.type === 'particle') { f.x += f.vx*dt; f.y += f.vy*dt; f.vy += 90*dt; } }
     this.effects = this.effects.filter(f => f.life>0); this.messages = this.messages.filter(m=>m.until>this.time);

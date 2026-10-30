@@ -8,7 +8,7 @@ export const RARITIES = Object.freeze({
   legend: Object.freeze({ key: 'legend', name: '레전드', color: '#ff9f1a', glow: '#ffc35a', weight: 0.02 })
 });
 export const RARITY_ORDER = ['common', 'rare', 'epic', 'legend'];
-export const TOWER_RARITY = Object.freeze({ machine: 'common', sticky: 'common', poison: 'common', mortar: 'rare', sniper: 'rare', totem: 'epic', laser: 'epic', drone: 'legend' });
+export const TOWER_RARITY = Object.freeze({ machine: 'common', sticky: 'common', poison: 'common', siege: 'common', summoner: 'common', mortar: 'rare', sniper: 'rare', totem: 'epic', laser: 'epic', musk: 'epic', drone: 'legend' });
 export const towersOf = rarity => Object.keys(TOWER_RARITY).filter(t => TOWER_RARITY[t] === rarity);
 export const rarityOf = type => RARITIES[TOWER_RARITY[type] || 'common'];
 // v22: duplicates grant card XP (rarer towers give more); XP fills up to the next level.

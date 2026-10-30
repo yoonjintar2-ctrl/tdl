@@ -20,7 +20,7 @@ export function drawProjectile(c, p, position, t) {
     const tail = position(Math.max(0, u - .16)); stroke(c, [[tail.x, tail.y], [pt.x, pt.y]], 'rgba(255,170,60,.55)', 3.2); stroke(c, [[tail.x, tail.y], [pt.x, pt.y]], 'rgba(255,245,210,.95)', 1.2); blob(c, pt.x, pt.y, 5, 'gold');
   } else if (p.type === 'slug') { // sniper round: long white-hot streak
     const tail = position(Math.max(0, u - .35)); stroke(c, [[tail.x, tail.y], [pt.x, pt.y]], 'rgba(140,200,255,.45)', 5); stroke(c, [[tail.x, tail.y], [pt.x, pt.y]], 'rgba(255,255,255,1)', 1.8); blob(c, pt.x, pt.y, 9, 'blue');
-  } else if (p.type === 'mortar') { // missile with smoke trail and flame
+  } else if (p.type === 'mortar' || p.type === 'shell') { // missile / siege shell with smoke trail and flame
     for (let i = 1; i <= 7; i++) { const q = position(Math.max(0, u - i * .035)); c.globalCompositeOperation = 'source-over'; c.globalAlpha = .22 * (1 - i / 8); c.fillStyle = '#d9d2c4'; c.beginPath(); c.arc(q.x + Math.sin(i * 2.1 + t * 5) * 1.2, q.y, 2 + i * .7, 0, TAU); c.fill(); }
     c.globalAlpha = 1; c.globalCompositeOperation = 'lighter'; const back = position(Math.max(0, u - .04)); blob(c, back.x, back.y, 7 + Math.sin(t * 40) * 1.5, 'fire'); blob(c, pt.x, pt.y, 5, 'gold');
     c.globalCompositeOperation = 'source-over'; c.fillStyle = '#5b4a3a'; c.beginPath(); c.arc(pt.x, pt.y, 2.4, 0, TAU); c.fill();

@@ -1,4 +1,4 @@
-import{QuarterCamera}from'./camera.js?v=1139b52f05';import{WORLD_WIDTH,CAMERA_DEPTH,clamp}from'./config.js?v=1139b52f05';
+import{QuarterCamera}from'./camera.js?v=5b27a7d5b9';import{WORLD_WIDTH,CAMERA_DEPTH,clamp}from'./config.js?v=5b27a7d5b9';
 // Ground footprints traced against battlefield-clay-v1. Coordinates are fractions
 // of the painted image, so the factory / mountain boundaries survive resizing.
 export const TERRAIN_CORRIDOR=[
@@ -14,7 +14,7 @@ export function corridorFrom(table,t){t=clamp(t,0,1);const i=table.findIndex(p=>
 export function corridorAt(t){t=clamp(t,0,1);const i=TERRAIN_CORRIDOR.findIndex(p=>p[0]>=t);if(i<=0)return TERRAIN_CORRIDOR[0].slice(1);const a=TERRAIN_CORRIDOR[i-1],b=TERRAIN_CORRIDOR[i],u=(t-a[0])/(b[0]-a[0]);return[a[1]+(b[1]-a[1])*u,a[2]+(b[2]-a[2])*u];}
 export class TerrainField{
  constructor(height){this.camera=new QuarterCamera(height);this.height=height;this.viewHeight=height*CAMERA_DEPTH;}
- bounds(y,x=216,radius=0){const c=this.camera,p=c.project(x,y),crop=artCrop(this.viewHeight,this.aspect),[l0,r0]=(this.corridor?corridorFrom(this.corridor,crop.top+p.y/this.viewHeight*crop.frac):corridorAt(crop.top+p.y/this.viewHeight*crop.frac)),l=(l0-crop.left)/crop.wfrac,r=(r0-crop.left)/crop.wfrac,margin=radius+4;return{left:(l*WORLD_WIDTH+margin-c.b*y-c.tx)/c.a,right:(r*WORLD_WIDTH-margin-c.b*y-c.tx)/c.a};}
+ bounds(y,x=216,radius=0){const c=this.camera,p=c.project(x,y),crop=artCrop(this.viewHeight,this.aspect),[l0,r0]=(this.corridor?corridorFrom(this.corridor,crop.top+p.y/this.viewHeight*crop.frac):corridorAt(crop.top+p.y/this.viewHeight*crop.frac)),l=(l0+.015-crop.left)/crop.wfrac,r=(r0-.015-crop.left)/crop.wfrac,margin=radius+4;return{left:(l*WORLD_WIDTH+margin-c.b*y-c.tx)/c.a,right:(r*WORLD_WIDTH-margin-c.b*y-c.tx)/c.a};}
  setArt(aspect,corridor){this.aspect=aspect;this.corridor=corridor;}
  // Lanes are a global fraction of the spawn line, so actors that spawn outside the narrow
  // northern corridor do not double up with actors already occupying those lane fractions.

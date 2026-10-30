@@ -29,10 +29,13 @@ export const CANNONS = {
   laser: { name: '레이저', short: '레이저', icon: 'LS', cost: 280, damage: 34, rate: 1.1, range: 360, pierce: 9, color: '#58efd9', role: '직선 관통 · 다중 타격' },
   totem: { name: '토템', short: '토템', icon: 'TT', cost: 300, damage: 0, rate: 0, range: 120, buff: .2, color: '#ffda7a', role: '주변 캐논 연사력 지원 · 자신 제외' },
   sticky: { name: '끈적이', short: '끈적이', icon: 'GL', cost: 210, damage: 7, rate: 1, range: 235, radius: 31, slow: .35, duration: 2.4, splashCap: .28, color: '#a3ed75', role: '끈적한 감속 지대 · 한 방 처치 없이 체력 일부만 깎음' },
-  poison: { name: '독 캐논', short: '독', icon: 'TX', cost: 240, damage: 6, rate: 1.2, range: 250, dot: 10, duration: 4, color: '#c093ff', role: '초당 독 피해 · 최대 4중첩' },
+  poison: { name: '독 캐논', short: '독', icon: 'TX', cost: 240, damage: 6, rate: 1.2, range: 750, minRange: 170, dot: 10, duration: 4, color: '#c093ff', role: '먼 적에게 독 피해 · 최대 4중첩 · 가까운 적은 못 맞힘' },
+  siege: { name: '공성 전차', short: '공성전차', icon: 'ST', cost: 260, damage: 48, rate: .32, range: 820, minRange: 230, radius: 72, color: '#ffb35a', role: '아주 먼 적에게 광역 포격 · 가까운 적은 못 맞힘' },
+  summoner: { name: '소환사', short: '소환사', icon: 'SM', cost: 240, damage: 16, rate: .16, range: 70, knights: 3, hits: 6, color: '#9be064', role: '양봉 기사 3명을 주기적으로 소환 · 기사는 가까운 음봉부터 베며 북진' },
+  musk: { name: '삼론 머스크', short: '삼론머스크', icon: 'EM', cost: 320, damage: 20, rate: .24, range: 900, width: 30, rocketChance: .12, color: '#d9e3ec', role: '사이버트럭 발사 · 관통 광역 피해 · 가끔 초광역 로켓' },
   drone: { name: 'DRONE', short: 'DRONE', icon: 'DR', cost: 350, damage: 22, rate: 3.2, range: 230, targetSwitch: .24, color: '#97e9ff', role: '자유 공중 배치 · 단일 타깃 레이저' }
 };
-export const SHOP_NAMES = { machine: 'MG GUN', mortar: 'MORTAR', sniper: 'SNIPER', laser: 'LASER', totem: 'TOTEM', sticky: 'SLIME', poison: 'POISON', drone: 'DRONE' };
+export const SHOP_NAMES = { siege: 'SIEGE', summoner: 'SUMMON', musk: 'MUSK', machine: 'MG GUN', mortar: 'MORTAR', sniper: 'SNIPER', laser: 'LASER', totem: 'TOTEM', sticky: 'SLIME', poison: 'POISON', drone: 'DRONE' };
 export const DRONE = Object.freeze({ altitude: 24, marginX: 29, marginTop: 62, marginBottom: 25 });
 export const WALL_STAGES = [
   { name: '흙', color: '#7a5a3c', edge: '#b58a5c' }, { name: '목책', color: '#5e4430', edge: '#a07a52' },
@@ -48,7 +51,7 @@ export function cannonStats(type, level = 1) {
     targetSwitch: c.targetSwitch ? c.targetSwitch / (1 + n * .045) : 0,
     range: c.range + n * (type === 'sniper' ? 4 : type === 'totem' || type === 'drone' ? 2 : .45), radius: (c.radius || 0) + n * (type === 'mortar' ? .65 : .35),
     pierce: c.pierce ? Math.min(12, c.pierce + Math.floor(n / 6)) : 0, buff: c.buff ? Math.min(.5, c.buff + n * .008) : 0,
-    slow: c.slow ? Math.min(.65, c.slow + n * .008) : 0, splashCap: c.splashCap ? Math.min(.52, c.splashCap + n * .006) : 0, duration: (c.duration || 0) + n * .045, dot: (c.dot || 0) * (1 + n * .055) };
+    minRange: c.minRange || 0, width: (c.width || 0) + n * .4, knights: c.knights ? c.knights + Math.floor(n / 13) : 0, hits: c.hits ? c.hits + Math.floor(n / 8) : 0, slow: c.slow ? Math.min(.65, c.slow + n * .008) : 0, splashCap: c.splashCap ? Math.min(.52, c.splashCap + n * .006) : 0, duration: (c.duration || 0) + n * .045, dot: (c.dot || 0) * (1 + n * .055) };
 }
 export const upgradeCost = (type, level) => Math.ceil(CANNONS[type].cost * .45 * 1.13 ** (level - 1));
 export const energyMultiplier = (hp, maxHP = SETTINGS.maxHP) => .25 + .75 * clamp(hp / maxHP, 0, 1);

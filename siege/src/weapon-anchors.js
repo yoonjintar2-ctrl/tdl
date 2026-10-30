@@ -1,5 +1,6 @@
 // Mouth centers calibrated against the shipping clay atlas frames.
 export const SPRITE_MUZZLES={
+  "siege": [[0.355,-0.81],[0.355,-0.81],[0.355,-0.81],[0.355,-0.81]],
   "machine": [
     [
       -0.19451169014422742,

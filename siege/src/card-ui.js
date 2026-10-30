@@ -1,7 +1,7 @@
-import { CANNONS, cannonStats } from './config.js?v=1139b52f05';
-import { RARITIES, TOWER_RARITY, xpForNext, MAX_CARD_LEVEL, cardOdds, PACKS } from './cards.js?v=1139b52f05';
-import { renderShopIcon } from './renderer.js?v=1139b52f05';
-import { FX } from './fx.js?v=1139b52f05';
+import { CANNONS, cannonStats } from './config.js?v=5b27a7d5b9';
+import { RARITIES, TOWER_RARITY, xpForNext, MAX_CARD_LEVEL, cardOdds, PACKS } from './cards.js?v=5b27a7d5b9';
+import { renderShopIcon } from './renderer.js?v=5b27a7d5b9';
+import { FX } from './fx.js?v=5b27a7d5b9';
 
 const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
 const wait = ms => new Promise(r => setTimeout(r, ms));
@@ -20,6 +20,7 @@ export function towerCard(type, item, { mini = false, faceDown = false } = {}) {
     const bar = el('div', 'tc-bar'), fill = el('i'), need = item ? xpForNext(item.level) : 1;
     fill.style.width = item ? (item.level >= MAX_CARD_LEVEL ? 100 : Math.min(100, (item.xp || 0) / need * 100)) + '%' : '0%';
     bar.append(fill, el('small', '', item ? (item.level >= MAX_CARD_LEVEL ? 'MAX' : `XP ${item.xp || 0} / ${need}`) : '뽑기로 획득'));
+    bar.title = '눌러서 경험치 보기'; bar.addEventListener('click', e => { if (!item) return; e.stopPropagation(); card.classList.toggle('show-xp'); clearTimeout(card._xpT); card._xpT = setTimeout(() => card.classList.remove('show-xp'), 2500); });
     front.append(bar);
   }
   front.append(el('i', 'tc-sheen'), el('i', 'tc-pearl'));
@@ -35,7 +36,7 @@ export class CardStage {
     this.close(true);
     const root = el('div', 'gacha-stage' + (count >= 100 ? ' hundred' : '')); root.setAttribute('role', 'dialog'); root.setAttribute('aria-label', `카드 ${count}장 뽑기`);
     const canvas = el('canvas', 'gacha-fx'), grid = el('div', 'gacha-cards'), ui = el('div', 'gacha-ui'), banner = el('div', 'gacha-banner'), summary = el('div', 'gacha-summary');
-    const skip = el('button', 'gacha-btn ghost', '스킵 ⏭'), flipAll = el('button', 'gacha-btn', '모두 뒤집기'), done = el('button', 'gacha-btn primary', '확인'), again = el('button', 'gacha-btn', `한 번 더 (${count}장)`);
+    const skip = el('button', 'gacha-btn ghost', '스킵'), flipAll = el('button', 'gacha-btn', '모두 뒤집기'), done = el('button', 'gacha-btn primary', '확인'), again = el('button', 'gacha-btn', `한 번 더 (${count}장)`);
     done.hidden = again.hidden = true; [skip, flipAll, done, again].forEach(b => b.type = 'button');
     ui.append(skip, flipAll, again, done); summary.hidden = true;
     root.append(canvas, grid, banner, summary, ui); document.body.append(root); this.root = root; document.body.classList.add('gacha-open');
@@ -108,12 +109,12 @@ export function renderCollection(container, game, { onPack, onCard, slotText }) 
   const packs = el('div', 'pack-row');
   for (const n of [10, 100]) { const b = el('button', 'pack-btn' + (n === 100 ? ' big' : ''), ''); b.type = 'button'; b.innerHTML = `<span>${n}장 뽑기</span><b>${game.cash(PACKS[n])}</b>`; b.disabled = game.gold < PACKS[n]; b.onclick = () => onPack(n); packs.append(b); }
   if (game.freePack) { const f = el('button', 'pack-btn free', ''); f.type = 'button'; f.innerHTML = '<span>첫 선물 · 10장</span><b>무료</b>'; f.onclick = () => onPack(10, true); packs.prepend(f); }
-  const odds = cardOdds(), oddsLine = el('p', 'odds-line', ['legend', 'epic', 'rare', 'common'].map(r => `${RARITIES[r].name} ${(Object.entries(odds).filter(([t]) => TOWER_RARITY[t] === r).reduce((n, [, p]) => n + p, 0) * 100).toFixed(r === 'common' ? 1 : 2).replace(/\.?0+$/, '')}%`).join(' · ') + ' · 중복 카드는 레벨업 재료');
+  const odds = cardOdds(), oddsLine = el('p', 'odds-line odds-note', ['legend', 'epic', 'rare', 'common'].map(r => `${RARITIES[r].name} ${(Object.entries(odds).filter(([t]) => TOWER_RARITY[t] === r).reduce((n, [, p]) => n + p, 0) * 100).toFixed(r === 'common' ? 1 : 2).replace(/\.?0+$/, '')}%`).join(' · ') + ' · 중복 카드는 레벨업 재료');
   const head = el('div', 'coll-head'); head.append(el('strong', '', '내 타워 카드'), el('small', '', slotText));
   const grid = el('div', 'coll-grid');
   const order = Object.keys(TOWER_RARITY).sort((a, b) => ['common', 'rare', 'epic', 'legend'].indexOf(TOWER_RARITY[a]) - ['common', 'rare', 'epic', 'legend'].indexOf(TOWER_RARITY[b]));
   for (const type of order) { const item = game.inventory.find(c => c.type === type), deployed = game.cannons.some(c => c.type === type), card = towerCard(type, item || null); const chip = el('span', 'tc-state ' + (deployed ? 'on' : item ? 'off' : 'none'), deployed ? '배치 중' : item ? '보관 중' : '미보유'); card.append(chip); if (item) { card.tabIndex = 0; card.onclick = () => onCard(type); } grid.append(card); }
-  container.append(packs, oddsLine, head, grid);
+  container.append(packs, head, grid, oddsLine);
 }
 
 export function statLines(game, c) {
@@ -122,6 +123,28 @@ export function statLines(game, c) {
   if (buff > 0) lines.push(['토템 지원', `연사 +${Math.round(buff * 100)}%`]);
   if (c.type === 'totem') lines.push(['주변 지원', `연사 +${Math.round(st.buff * 100)}%`]);
   if (st.pierce) lines.push(['관통', `${st.pierce}마리`]); if (st.slow) lines.push(['감속', `${Math.round(st.slow * 100)}% · ${st.duration.toFixed(1)}초`]); if (c.type === 'poison') lines.push(['독', `${st.dot.toFixed(1)}/초`]); if (c.type === 'mortar') lines.push(['폭발 반경', Math.round(st.radius)]);
+  if (st.minRange) lines.push(['최소 사거리', `${Math.round(st.minRange)} (안쪽은 못 맞힘)`]);
+  if (c.type === 'siege') lines.push(['포격 반경', Math.round(st.radius)]);
+  if (c.type === 'summoner') lines.push(['소환', `기사 ${st.knights}명 · ${Math.round(1 / st.rate)}초마다`], ['기사 공격', `${st.damage.toFixed(1)} × ${st.hits}회`]);
+  if (c.type === 'musk') lines.push(['사이버트럭', `관통 · 폭 ${Math.round(st.width)}`], ['로켓 확률', `${Math.round(st.rocketChance * 100)}% · 초광역`]);
   lines.push(['이번 판 처치', `${game.metrics.killsByType?.[c.type] || 0}마리`]);
   return lines;
+}
+// v23: what the next level adds (shown in the tower info card).
+export function nextLevelLines(c) {
+  if (c.level >= MAX_CARD_LEVEL) return [['다음 레벨', '최고 레벨이에요']];
+  const a = cannonStats(c.type, c.level), b = cannonStats(c.type, c.level + 1), out = [];
+  const pct = (x, y) => `+${((y / x - 1) * 100).toFixed(1)}%`;
+  if (a.damage) out.push(['공격력', pct(a.damage, b.damage)]);
+  if (a.rate && b.rate > a.rate + 1e-9) out.push(['공격 속도', pct(a.rate, b.rate)]);
+  if (b.range > a.range + .01) out.push(['사거리', `+${(b.range - a.range).toFixed(1)}`]);
+  if (b.radius > a.radius + .01) out.push(['폭발 반경', `+${(b.radius - a.radius).toFixed(1)}`]);
+  if (b.buff > a.buff + 1e-9) out.push(['토템 지원', `+${((b.buff - a.buff) * 100).toFixed(1)}%p`]);
+  if (b.dot > a.dot + 1e-9) out.push(['독 피해', pct(a.dot, b.dot)]);
+  if (b.slow > a.slow + 1e-9) out.push(['감속', `+${((b.slow - a.slow) * 100).toFixed(1)}%p`]);
+  if (b.knights > a.knights) out.push(['기사 수', `+${b.knights - a.knights}명`]);
+  if (b.hits > a.hits) out.push(['기사 공격 횟수', `+${b.hits - a.hits}회`]);
+  if (b.pierce > a.pierce) out.push(['관통', `+${b.pierce - a.pierce}`]);
+  if ((c.level + 1) % 10 === 0) out.push(['외형', '다음 레벨에 디자인이 바뀌어요 ✨']);
+  return out;
 }

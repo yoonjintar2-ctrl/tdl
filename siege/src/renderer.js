@@ -1,11 +1,11 @@
-import { WORLD_WIDTH as W,CANNONS,ENEMIES,SUPPLIES,WALL_STAGES,DRONE,WALL,cannonStats,validPlacement,validDronePlacement,clamp } from './config.js?v=1139b52f05';
-import{WALL_MAX_LEVEL,WALL_MAX_XP}from'./progression.js?v=1139b52f05';
-import{isAIStock}from'./symbols.js?v=1139b52f05';
-import { QuarterCamera, DEPTH_SCALE, WALL_ELEVATION } from './camera.js?v=1139b52f05';
-import { drawClayMortar, drawClayMortarIcon, clayBattlefield } from './clay-assets.js?v=1139b52f05';
-import{drawProjectile,drawEffect}from'./combat-fx.js?v=1139b52f05';
-import{artCrop}from'./terrain.js?v=1139b52f05';
-import { drawClayTower, drawClayUnit, drawClayWall, drawClayPreview, wallOutline, tierOf, tierTint, drawTierBack, drawTierFront } from './clay-runtime.js?v=1139b52f05';
+import { WORLD_WIDTH as W,CANNONS,ENEMIES,SUPPLIES,WALL_STAGES,DRONE,WALL,cannonStats,validPlacement,validDronePlacement,clamp } from './config.js?v=5b27a7d5b9';
+import{WALL_MAX_LEVEL,WALL_MAX_XP}from'./progression.js?v=5b27a7d5b9';
+import{isAIStock}from'./symbols.js?v=5b27a7d5b9';
+import { QuarterCamera, DEPTH_SCALE, WALL_ELEVATION } from './camera.js?v=5b27a7d5b9';
+import { drawClayMortar, drawClayMortarIcon, clayBattlefield } from './clay-assets.js?v=5b27a7d5b9';
+import{drawProjectile,drawEffect}from'./combat-fx.js?v=5b27a7d5b9';
+import{artCrop}from'./terrain.js?v=5b27a7d5b9';
+import { drawClayTower, drawClayUnit, drawClayWall, drawClayPreview, wallOutline, tierOf, tierTint, drawTierBack, drawTierFront } from './clay-runtime.js?v=5b27a7d5b9';
 const TAU=Math.PI*2;
 function box(c,x,y,w,h,r,fill,stroke){c.beginPath();c.roundRect(x,y,w,h,r);if(fill){c.fillStyle=fill;c.fill();}if(stroke){c.lineWidth=1;c.strokeStyle=stroke;c.stroke();}}
 function line(c,pts,col,w=1){c.beginPath();c.lineWidth=w;c.strokeStyle=col;pts.forEach(([x,y],i)=>i?c.lineTo(x,y):c.moveTo(x,y));c.stroke();}
@@ -107,7 +107,7 @@ export class Renderer{
  if(type===1){const g=c.createLinearGradient(-20,-45,20,-20);g.addColorStop(0,'#a4ced5');g.addColorStop(.5,'#d0b9d2');g.addColorStop(1,'#c2e3a5');c.fillStyle=g;c.beginPath();c.ellipse(0,-32,26,15,0,0,TAU);c.fill();c.strokeStyle='#84958b';c.stroke();for(let i=-2;i<3;i++)line(c,[[-20,-32+i*4],[20,-32+i*4]],'#7da8a960');}
  else{box(c,-24,-39,29,10,1,'#638c9c','#c9d6bf');for(let i=0;i<4;i++)line(c,[[-22+i*7,-38],[-22+i*7,-30]],'#afc8b966');box(c,13,-44,9,19,2,'#d4d4b5','#8b9b89');}
  if(type===2)text(c,'SOXL',0,3,14,'#315c69');else if(type===0)text(c,'FAB',0,3,12,'#315c69');c.restore();}
- background(c){const h=this.viewHeight,art=clayBattlefield();if(art){const crop=artCrop(h,art.naturalWidth/art.naturalHeight);c.drawImage(art,art.naturalWidth*crop.left,art.naturalHeight*crop.top,art.naturalWidth*crop.wfrac,art.naturalHeight*crop.frac,0,0,W,h);return;}const grad=c.createLinearGradient(0,0,0,h);grad.addColorStop(0,'#c7b17b');grad.addColorStop(.45,'#e0c791');grad.addColorStop(.65,'#b6c078');grad.addColorStop(1,'#819d65');c.fillStyle=grad;c.fillRect(0,0,W,h);
+ background(c){const h=this.viewHeight,art=clayBattlefield();if(art){const crop=artCrop(h,art.naturalWidth/art.naturalHeight);c.drawImage(art,art.naturalWidth*crop.left,art.naturalHeight*crop.top,art.naturalWidth*crop.wfrac,art.naturalHeight*crop.frac,0,0,W,h);this.groundColor=sampleGround(art,crop);return;}const grad=c.createLinearGradient(0,0,0,h);grad.addColorStop(0,'#c7b17b');grad.addColorStop(.45,'#e0c791');grad.addColorStop(.65,'#b6c078');grad.addColorStop(1,'#819d65');c.fillStyle=grad;c.fillRect(0,0,W,h);
  // Deterministic terrain speckles do not consume market/game randomness.
  let seed=1207;const r=()=>{seed=(seed*16807)%2147483647;return(seed-1)/2147483646;};
  for(let i=0;i<700;i++){const x=r()*W,y=r()*h;dot(c,x,y,.5+r()*1.6,i%3?'#786a3e17':'#fff4c624');}
@@ -172,6 +172,33 @@ export class Renderer{
   if(k>=3)for(let x=12;x<W;x+=54){const p=back(x);metal(c,p.x-6,p.y-6,13,10,2,pal[1],pal[0]);}
   c.restore();
  }
+ // Totem aura: the wall span it covers glows, and every tower it buffs gets a link and a +% tag.
+ totemLinks(c,x,level,self){const g=this.game,st=cannonStats('totem',level),t=g.time,y=g.wallAt(x)+WALL.deck+WALL.mountOffset;c.save();
+  const pts=[];for(let i=0;i<=24;i++){const wx=x-st.range+i*st.range/12;if(wx<0||wx>W)continue;const p=this.point(wx,g.wallAt(wx)+WALL.deck+WALL.mountOffset,WALL_ELEVATION);pts.push([p.x,p.y]);}
+  c.globalAlpha=.55+Math.sin(t*4)*.15;line(c,pts,'#ffd36a',7);c.globalAlpha=1;line(c,pts,'#fff3c4',2);
+  const src=this.point(x,y,WALL_ELEVATION+26);let n=0;
+  for(const u of g.cannons){if(u===self||u.type==='totem')continue;const d=u.type==='drone'?Math.hypot(u.x-x,u.y-y):Math.abs(u.x-x);const ok=d<=st.range,p=u.type==='drone'?this.point(u.x,u.y,24):this.point(u.x,g.wallAt(u.x)+WALL.deck+WALL.mountOffset,WALL_ELEVATION+18);
+   if(ok){n++;c.save();c.setLineDash([4,4]);c.lineDashOffset=-t*30;line(c,[[src.x,src.y],[p.x,p.y]],'#ffe08a',2);c.restore();c.save();c.globalAlpha=.6+Math.sin(t*6)*.25;c.strokeStyle='#ffe08a';c.lineWidth=2.5;c.beginPath();c.ellipse(p.x,p.y+14,17,6,0,0,TAU);c.stroke();c.restore();box(c,p.x-17,p.y-40,34,15,7,'#3d5e2ef0','#ffe08a');text(c,'+'+Math.round(st.buff*100)+'%',p.x,p.y-32,9,'#fff3c4');}
+   else{c.save();c.globalAlpha=.5;box(c,p.x-15,p.y-38,30,13,6,'#3a2a22e0','#a08a7a');text(c,'범위 밖',p.x,p.y-31,7,'#e0d0c0');c.restore();}}
+  const lbl=this.point(x,y,WALL_ELEVATION+60);box(c,lbl.x-52,lbl.y-12,104,20,9,'#2c4634f2','#ffd36a');text(c,n?`버프 적용 ${n}기`:'주변에 타워 없음',lbl.x,lbl.y-2,10,'#fff3c4');c.restore();}
+ auraCheck(c,x,self){const g=this.game,tot=g.cannons.filter(u=>u.type==='totem'&&u!==self);if(!tot.length)return;const inside=tot.some(u=>Math.abs(u.x-x)<=cannonStats('totem',u.level).range);
+  for(const u of tot){const st=cannonStats('totem',u.level),pts=[];for(let i=0;i<=24;i++){const wx=u.x-st.range+i*st.range/12;if(wx<0||wx>W)continue;const p=this.point(wx,g.wallAt(wx)+WALL.deck+WALL.mountOffset,WALL_ELEVATION);pts.push([p.x,p.y]);}c.save();c.globalAlpha=.35;line(c,pts,'#ffd36a',7);c.restore();}
+  const p=this.point(x,g.wallAt(x)+WALL.deck+WALL.mountOffset,WALL_ELEVATION+70);box(c,p.x-44,p.y-12,88,20,9,inside?'#3d5e2ef0':'#3a2a22e8',inside?'#ffd36a':'#a08a7a');text(c,inside?'토템 버프 ✓':'토템 범위 밖',p.x,p.y-2,10,inside?'#fff3c4':'#e0d0c0');}
+ knightsAndSweeps(c,t){const g=this.game;
+  for(const k of g.knights||[]){const foot=this.point(k.x,k.y+8);const fake={art:'candle',kind:0,radius:8,phase:k.phase,age:k.age,attacking:k.attacking};c.save();if(!drawClayUnit(c,fake,foot.x,foot.y,t,false)){c.fillStyle='#6fbf4c';c.fillRect(foot.x-5,foot.y-20,10,18);}
+   // helmet + sword
+   c.fillStyle='#d9dde2';c.strokeStyle='#4a4f56';c.lineWidth=1;c.beginPath();c.ellipse(foot.x,foot.y-27,6.5,4.2,0,Math.PI,0);c.fill();c.stroke();c.fillStyle='#ffd34f';c.fillRect(foot.x-.8,foot.y-34,1.6,5);
+   const sw=k.attacking?Math.sin(t*18+k.phase)*.9:-.5;c.save();c.translate(foot.x+7,foot.y-14);c.rotate(sw);c.fillStyle='#eef2f6';c.strokeStyle='#5a5f66';c.beginPath();c.moveTo(0,0);c.lineTo(2,-15);c.lineTo(0,-18);c.lineTo(-2,-15);c.closePath();c.fill();c.stroke();c.fillStyle='#a8733a';c.fillRect(-3.5,-.5,7,2);c.restore();c.restore();}
+  for(const s of g.sweeps||[]){const p=this.point(s.x,s.y,8),q=this.point(s.x+s.dx*10,s.y+s.dy*10,8),ang=Math.atan2(q.y-p.y,q.x-p.x);c.save();
+   if(s.kind==='rocket'){c.globalCompositeOperation='lighter';for(let i=1;i<9;i++){const b=this.point(s.x-s.dx*i*14,s.y-s.dy*i*14,8);c.globalAlpha=.35*(1-i/9);c.fillStyle='#ffb04a';c.beginPath();c.arc(b.x,b.y,s.width*.25*(1-i/12),0,TAU);c.fill();}c.globalCompositeOperation='source-over';c.globalAlpha=1;
+    c.translate(p.x,p.y);c.rotate(ang);c.fillStyle='#f4f6f8';c.strokeStyle='#4a4f56';c.lineWidth=1.2;c.beginPath();c.moveTo(16,0);c.lineTo(6,-5);c.lineTo(-14,-5);c.lineTo(-14,5);c.lineTo(6,5);c.closePath();c.fill();c.stroke();c.fillStyle='#d8402a';c.beginPath();c.moveTo(-10,-5);c.lineTo(-17,-10);c.lineTo(-14,-4);c.fill();c.beginPath();c.moveTo(-10,5);c.lineTo(-17,10);c.lineTo(-14,4);c.fill();c.fillStyle='#ffd34f';c.beginPath();c.moveTo(-14,-3);c.lineTo(-24-Math.random()*6,0);c.lineTo(-14,3);c.fill();
+    c.rotate(-ang);c.globalAlpha=.18;c.strokeStyle='#ffe8b0';c.lineWidth=s.width*.6;c.beginPath();c.moveTo(0,0);const back=this.point(s.x-s.dx*120,s.y-s.dy*120,8);c.lineTo(back.x-p.x,back.y-p.y);c.stroke();}
+   else{for(let i=1;i<6;i++){const b=this.point(s.x-s.dx*i*9,s.y-s.dy*i*9,2);c.globalAlpha=.25*(1-i/6);c.fillStyle='#c9b08a';c.beginPath();c.arc(b.x+(Math.random()-.5)*4,b.y,4+i*2,0,TAU);c.fill();}c.globalAlpha=1;
+    c.translate(p.x,p.y);c.rotate(ang);c.fillStyle='#b9c3cc';c.strokeStyle='#3e454c';c.lineWidth=1.2;c.beginPath();c.moveTo(14,3);c.lineTo(14,-3);c.lineTo(2,-6);c.lineTo(-12,-5);c.lineTo(-13,5);c.lineTo(2,6);c.closePath();c.fill();c.stroke();c.fillStyle='#24303a';c.beginPath();c.moveTo(6,-4.6);c.lineTo(1,-5.6);c.lineTo(1,5.6);c.lineTo(6,4.6);c.closePath();c.fill();c.fillStyle='#ff5a4a';c.fillRect(-13.5,-4,1.5,8);c.fillStyle='#fff6d0';c.fillRect(13.2,-3,1.2,6);c.fillStyle='#2a2f34';for(const wy of [-6.6,5.2])for(const wx of [-8,8]){c.fillRect(wx-2.5,wy,5,1.6);}}
+   c.restore();}}
+ // v23: soft plain-ground strip under the wall so painted buildings don't clash with the masonry.
+ wallGround(c){const g=this.game,col=this.groundColor;if(!col)return;const pts=[];for(let i=0;i<=24;i++){const x=i*W/24,p=this.point(x,g.wallAt(x)+WALL.deck*.4,0);pts.push([p.x,p.y]);}
+  const [r,gg,b]=col;c.save();c.lineCap='round';c.lineJoin='round';for(const [w,a] of [[150,.16],[124,.2],[100,.24],[78,.3],[56,.36]]){c.strokeStyle=`rgba(${r},${gg},${b},${a})`;c.lineWidth=w;c.beginPath();pts.forEach(([x,y],i)=>i?c.lineTo(x,y):c.moveTo(x,y));c.stroke();}c.restore();}
  range(c,x,y,r,color='#a3f2ea',altitude=0){
   c.save();c.beginPath();for(let i=0;i<=80;i++){const a=i/80*TAU,p=this.point(x+Math.cos(a)*r,y+Math.sin(a)*r,altitude);i?c.lineTo(p.x,p.y):c.moveTo(p.x,p.y);}c.closePath();c.fillStyle=color+'12';c.fill();c.setLineDash([5,4]);c.strokeStyle=color+'b0';c.lineWidth=1.2;c.stroke();c.restore();
  }
@@ -180,7 +207,7 @@ export class Renderer{
   if(f.type==='supply-deliver')drawClayUnit(c,{kind:f.kind,radius:f.radius,age:1,art:f.art},pos.x,pos.y-p*4,this.game.time,false,3);
   if(f.type==='particle'){if(this.quality>.6||f.life>.3)dot(c,pos.x,pos.y,2,f.color);}
   if(f.type==='wall-gold')text(c,'+'+this.game.cash(f.amount),pos.x,pos.y-p*26,11,'#ffe6a0');
-  if(f.type==='wall-xp'){const negative=f.amount<0;text(c,`${negative?'−':'+'}${(Math.abs(f.amount)>=1?Math.round(Math.abs(f.amount)):Math.abs(f.amount).toFixed(Math.abs(f.amount)>=.1?1:2))} XP`,pos.x,pos.y-p*23,9,negative?'#ff9d87':'#beef9b');}
+  if(f.type==='wall-xp'&&false){/* v23: wall XP is never shown */const negative=f.amount<0;text(c,`${negative?'−':'+'}${(Math.abs(f.amount)>=1?Math.round(Math.abs(f.amount)):Math.abs(f.amount).toFixed(Math.abs(f.amount)>=.1?1:2))} XP`,pos.x,pos.y-p*23,9,negative?'#ff9d87':'#beef9b');}
   if(f.type==='bullet-hit'){const rr=(f.heavy?8:4)*p;for(let i=0;i<4;i++){const a=i*TAU/4;line(c,[[pos.x+Math.cos(a)*2,pos.y+Math.sin(a)*2],[pos.x+Math.cos(a)*rr,pos.y+Math.sin(a)*rr]],f.color,1.1);}dot(c,pos.x,pos.y,1.5,'#fff2c4');}
   if(f.type==='player-level'){const yy=60-p*12;box(c,121,yy,190,f.unlocked?56:44,12,'#304c37f2','#e6cf8b');text(c,'PLAYER LEVEL UP',216,yy+13,9,'#e8d69b');text(c,`Lv.${f.amount}`,216,yy+30,16,'#f6efcd');if(f.unlocked)text(c,'설치 슬롯 +1 · 최대 '+f.slots+'기',216,yy+46,8,'#e3e9b7');}
   if(f.type==='text'){c.shadowColor='#183622';c.shadowBlur=3;text(c,f.amount,pos.x,pos.y-p*28,14,f.color);}
@@ -199,12 +226,12 @@ export class Renderer{
   if(up){c.save();c.globalCompositeOperation='screen';for(let x=0;x<=W;x+=18){const a=this.point(x,g.wallBackAt(x),WALL_ELEVATION),b=this.point(x,g.wallFaceAt(x),WALL_ELEVATION);const glow=c.createRadialGradient(a.x,a.y,1,a.x,a.y,28+24*p);glow.addColorStop(0,'#fff6be'+Math.round(fade*160).toString(16).padStart(2,'0'));glow.addColorStop(1,'#ffdd7700');c.fillStyle=glow;c.fillRect(a.x-55,a.y-55,110,110);for(let i=0;i<3;i++){const angle=(x*.43+i*2.1),length=(12+24*p)*(1-p*.5);line(c,[[a.x+Math.cos(angle)*5,a.y+Math.sin(angle)*5],[a.x+Math.cos(angle)*length,a.y+Math.sin(angle)*length]],'#fff0b3'+Math.round(fade*190).toString(16).padStart(2,'0'),1);}}
   c.restore();const mask=this.wallFlash.getContext('2d');mask.clearRect(0,0,W,this.viewHeight);drawClayWall(mask,g,point,true);mask.globalCompositeOperation='source-in';mask.fillStyle='#fffbe7';mask.fillRect(0,0,W,this.viewHeight);mask.globalCompositeOperation='source-over';c.save();c.globalAlpha=(p<.13?p/.13:Math.pow(1-p,2))*.82;c.drawImage(this.wallFlash,0,0);c.restore();}
  }
- wallLevelBanner(c){const f=this.game.wallTransition;if(!f||f.to===f.from)return;const p=f.elapsed/f.duration,center=this.point(216,this.game.wallAt(216)),y=center.y-105,up=f.to>f.from;c.save();c.globalAlpha=Math.min(1,p*8,(1-p)*5);c.shadowColor='#152a2390';c.shadowBlur=12;box(c,118,y,196,58,14,up?'#345844f2':'#6b493ef2',up?'#ffe3a3':'#eba58d');c.shadowBlur=0;text(c,up?'WALL LEVEL UP':'WALL LEVEL DOWN',216,y+16,9,up?'#f8d98e':'#ffd4be');text(c,`Lv.${f.from}  →  Lv.${f.to}`,216,y+38,23,'#fff3ce');c.restore();}
+ wallLevelBanner(c){const f=this.game.wallTransition;if(!f||f.to===f.from)return;const p=f.elapsed/f.duration,center=this.point(216,this.game.wallAt(216)),y=center.y-105,up=f.to>f.from;c.save();c.globalAlpha=Math.min(1,p*8,(1-p)*5);c.shadowColor='#152a2390';c.shadowBlur=12;box(c,118,y,196,58,14,up?'#345844f2':'#6b493ef2',up?'#ffe3a3':'#eba58d');c.shadowBlur=0;text(c,up?'WALL UPGRADE':'WALL DAMAGED',216,y+16,9,up?'#f8d98e':'#ffd4be');text(c,up?'성벽 강화!':'성벽이 무너졌어요',216,y+38,20,'#fff3ce');c.restore();}
  wallHUD(c){
   const g=this.game,pct=Number.isFinite(g.market?.changePct)?g.market.changePct:null,center=this.point(W/2,g.wallAt(W/2)),y=center.y+43;
   box(c,12,y-5,119,42,9,'#2c4634ed','#d8d8a9');text(c,'WALL LEVEL',22,y+5,7,'#c8d5ae','left');text(c,`Lv.${g.wallLevel}`,22,y+23,18,'#f7e6b4','left');text(c,g.wallXP>=WALL_MAX_XP?'MAX · GOLD':`${Math.floor(g.wallXP)} XP`,121,y+24,8,'#d6e5c1','right');
  }
- projectile(c,p){if(p.elapsed<0)return;const u=clamp(p.elapsed/p.duration,0,1),arc=p.type==='mortar'?85:p.type==='slime'?20:p.type==='venom'?10:0,position=v=>this.point(p.x+(p.tx-p.x)*v,p.y+(p.ty-p.y)*v,(p.sourceAltitude||0)*(1-v)+(p.targetAltitude||0)*v+Math.sin(v*Math.PI)*arc),pt=position(u);if(this.quality>.6){drawProjectile(c,p,position,this.game.time);return;}
+ projectile(c,p){if(p.elapsed<0)return;const u=clamp(p.elapsed/p.duration,0,1),arc=p.type==='mortar'?85:p.type==='shell'?150:p.type==='slime'?20:p.type==='venom'?10:0,position=v=>this.point(p.x+(p.tx-p.x)*v,p.y+(p.ty-p.y)*v,(p.sourceAltitude||0)*(1-v)+(p.targetAltitude||0)*v+Math.sin(v*Math.PI)*arc),pt=position(u);if(this.quality>.6){drawProjectile(c,p,position,this.game.time);return;}
   if(p.type==='bullet'||p.type==='slug'){const tail=position(Math.max(0,u-(p.type==='slug'?.13:.08)));line(c,[[tail.x,tail.y],[pt.x,pt.y]],p.type==='slug'?'#fff7cb':'#eab957',p.type==='slug'?2:1.5);dot(c,pt.x,pt.y,p.type==='slug'?1.8:1.3,'#fff8d6');}
   else{dot(c,pt.x,pt.y,p.type==='mortar'?3.4:p.type==='slime'?3:2.5,p.color,'#f5f1bb');if(p.type!=='mortar'){const tail=position(Math.max(0,u-.09));dot(c,tail.x,tail.y,1.6,p.color+'80');}}
  }
@@ -212,28 +239,32 @@ export class Renderer{
   const c=this.ctx,g=this.game,s=this.width*this.dpr/W,t=g.time;c.setTransform(s,0,0,s,0,0);c.globalAlpha=1;c.drawImage(this.bg,0,0,W,this.viewHeight);
   /* faction captions removed (v17): they collided with the HUD on phones */
   for(const z of g.zones){const p=this.point(z.x,z.y);c.save();c.globalAlpha=Math.min(.35,z.life*.2);c.fillStyle='#7da522';c.beginPath();c.ellipse(p.x,p.y,z.radius*.92,z.radius*DEPTH_SCALE,0,0,TAU);c.fill();c.restore();}
-  if(g.selected){const u=g.selected,st=cannonStats(u.type,u.level),pos=g.cannonPosition(u);this.range(c,pos.x,pos.y,st.range,u.type==='drone'?'#8be2fa':'#f0f6b8');}
+  if(g.selected){const u=g.selected,st=cannonStats(u.type,u.level),pos=g.cannonPosition(u);if(u.type==='totem')this.totemLinks(c,u.x,u.level,u);else{this.range(c,pos.x,pos.y,st.range,u.type==='drone'?'#8be2fa':'#f0f6b8');if(st.minRange)this.range(c,pos.x,pos.y,st.minRange,'#ff8a7a');}}
   this.effects(c,false);
   for(const e of g.enemies.filter(e=>e.alive).sort((a,b)=>this.point(a.x,a.y+a.radius).y-this.point(b.x,b.y+b.radius).y))this.enemy(c,e);
-  this.wall(c);this.wallLevelFX(c);
+  this.knightsAndSweeps(c,t);
+  this.wallGround(c);this.wall(c);this.wallLevelFX(c);
   for(const u of g.cannons.filter(u=>u.type!=='drone')){const p=this.cannonAnchor(u);c.save();if(this.ghost?.cannon===u)c.globalAlpha=.2;buffAura(c,p.x,p.y,t,g.wallLevel);drawCannon(c,{...u,angle:this.screenAngle(u)},p.x,p.y,t,g.power,u===g.selected);buffAura(c,p.x,p.y,t,g.wallLevel,true);c.restore();}
   // Attackers stop at the north upper silhouette; masonry covers only their
   // south-facing contact edge. Supply units approach from the foreground.
   for(const s of g.supplies.filter(s=>s.alive).sort((a,b)=>this.point(a.x,a.y+a.radius).y-this.point(b.x,b.y+b.radius).y))this.supply(c,s);
   for(const p of g.projectiles)this.projectile(c,p);
   for(const u of g.cannons.filter(u=>u.type==='drone')){const p=this.cannonAnchor(u);c.save();if(this.ghost?.cannon===u)c.globalAlpha=.2;drawDrone(c,{...u,angle:this.screenAngle(u)},p.x,p.y,t,g.power,u===g.selected);c.restore();}
-  this.effects(c,true);this.wallHUD(c);this.wallLevelBanner(c);
+  this.effects(c,true);this.wallLevelBanner(c);
   if(g.placement||this.ghost){
    const exclude=this.ghost?.cannon||null,type=g.placement||exclude.type,air=type==='drone',x=this.ghost?.x??216,y=this.ghost?.y??g.height*.35;
    const valid=this.ghost?.inBounds!==false&&(this.ghost?.swapTarget?!!g.swapPlan(exclude,this.ghost.swapTarget):(air?validDronePlacement(x,y,g.height):validPlacement(x,g.cannons,exclude))),col=valid?'#b5ff7b':'#ff6d70';
    if(air)this.range(c,x,y,cannonStats(type,exclude?.level||1).range,col);
    else{c.save();c.setLineDash([5,5]);line(c,Array.from({length:45},(_,i)=>{const p=this.point(i*10,g.wallAt(i*10)+WALL.deck+WALL.mountOffset,WALL_ELEVATION);return[p.x,p.y];}),col,2);c.restore();}
+   if(!air&&type==='totem')this.totemLinks(c,x,exclude?.level||g.owned('totem')?.level||1,exclude);else if(!air)this.auraCheck(c,x,exclude);
    const temp={type,x,y,level:exclude?.level||g.owned(type)?.level||1,angle:exclude?.angle??-Math.PI/2},p=this.cannonAnchor(temp);c.save();c.globalAlpha=.6;drawCannon(c,{...temp,angle:this.screenAngle(temp)},p.x,p.y,t,1,true);c.restore();
    const bannerY=Math.min(this.viewHeight-46,this.point(216,g.wallY).y+94);box(c,82,bannerY,268,23,6,'#294835eb',col);text(c,this.ghost?.swapTarget?(valid?'놓으면 두 타워의 자리 교환':'교환할 수 없는 위치입니다'):valid?(air?'전투 공간을 터치해 공중 배치':'성벽을 터치해 배치'):(air?'전투 영역 안에 배치하세요':'캐논 사이 간격을 띄워 주세요'),216,bannerY+12,11,col);
   }
  }
 }
 
+// Average colour of the painted road (centre strip of the art) — used to clear the art behind the wall.
+function sampleGround(art,crop){try{const k=document.createElement('canvas');k.width=k.height=8;const x=k.getContext('2d',{willReadFrequently:true});const sx=art.naturalWidth*(crop.left+crop.wfrac*.44),sw=art.naturalWidth*crop.wfrac*.12,sy=art.naturalHeight*(crop.top+crop.frac*.35),sh=art.naturalHeight*crop.frac*.3;x.drawImage(art,sx,sy,sw,sh,0,0,8,8);const d=x.getImageData(0,0,8,8).data;let r=0,g=0,b=0;for(let i=0;i<d.length;i+=4){r+=d[i];g+=d[i+1];b+=d[i+2];}const n=d.length/4;return[r/n|0,g/n|0,b/n|0];}catch{return null;}}
 function tierize(canvas,level){if(!tierOf(level)||typeof document==='undefined')return;const w=canvas.width,h=canvas.height,copy=document.createElement('canvas');copy.width=w;copy.height=h;copy.getContext('2d').drawImage(canvas,0,0);const c=canvas.getContext('2d'),k=w/88;c.clearRect(0,0,w,h);drawTierBack(c,w/2,h*.88,level,k);c.filter=tierTint(level);c.drawImage(copy,0,0);c.filter='none';drawTierFront(c,w/2,h*.16,h*.88,level,0,k);}
 export function renderShopIcon(canvas,type,level=1){if(type==='mortar'&&drawClayMortarIcon(canvas)){tierize(canvas,level);return;}if(drawClayPreview(canvas,type)){tierize(canvas,level);return;}const c=canvas.getContext('2d');c.clearRect(0,0,canvas.width,canvas.height);c.save();c.translate(canvas.width/2,canvas.height*.75);c.scale(.72,.72);drawCannon(c,{type,level,angle:-Math.PI/2},0,0,0,1,false,true);c.restore();}
 
