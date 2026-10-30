@@ -1,4 +1,4 @@
-import{clamp}from'./config.js?v=d6b9d75204';
+import{clamp}from'./config.js?v=b7053fa8a6';
 // A game estimate, NOT aggressor-classified trades. Preserve total volume exactly.
 export function estimateCandleFlow(c,previous=null){
  if(!c||![c.open,c.high,c.low,c.close,c.volume].every(Number.isFinite)||c.volume<0||!Number.isSafeInteger(c.volume)||c.low<=0||c.high<Math.max(c.open,c.close)||c.low>Math.min(c.open,c.close))return null;

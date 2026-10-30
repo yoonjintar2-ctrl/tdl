@@ -1,12 +1,12 @@
-import{campaignProgress}from'./campaign-courses.js?v=d6b9d75204';
-import { SETTINGS, CANNONS, ENEMIES, SUPPLIES, WORLD_WIDTH, DRONE, WALL, CAMERA_DEPTH, ACTOR_STYLE, cannonStats, upgradeCost, energyMultiplier, wallYFor, priceBand, validPlacement, snapSlot, FORWARD_X, FORWARD_DY, validDronePlacement, clamp } from './config.js?v=d6b9d75204';
-import { wallMountDepth } from './fortification.js?v=d6b9d75204';
-import { marketArmy,estimatedArmy } from './market-army.js?v=d6b9d75204';
-import {playerLevelFor,towerSlots,wallLevelFor,wallPower,money,WALL_MAX_XP} from './progression.js?v=d6b9d75204';
-import{TerrainField}from'./terrain.js?v=d6b9d75204';
-import{modeFor}from'./cards.js?v=d6b9d75204';
-import{formatDamage}from'./combat-fx.js?v=d6b9d75204';
-import{wallXPAt}from'./progression.js?v=d6b9d75204';
+import{campaignProgress}from'./campaign-courses.js?v=b7053fa8a6';
+import { SETTINGS, CANNONS, ENEMIES, SUPPLIES, WORLD_WIDTH, DRONE, WALL, CAMERA_DEPTH, ACTOR_STYLE, cannonStats, upgradeCost, energyMultiplier, wallYFor, priceBand, validPlacement, snapSlot, FORWARD_X, FORWARD_DY, validDronePlacement, clamp } from './config.js?v=b7053fa8a6';
+import { wallMountDepth } from './fortification.js?v=b7053fa8a6';
+import { marketArmy,estimatedArmy } from './market-army.js?v=b7053fa8a6';
+import {playerLevelFor,towerSlots,wallLevelFor,wallPower,money,WALL_MAX_XP} from './progression.js?v=b7053fa8a6';
+import{TerrainField}from'./terrain.js?v=b7053fa8a6';
+import{modeFor}from'./cards.js?v=b7053fa8a6';
+import{formatDamage}from'./combat-fx.js?v=b7053fa8a6';
+import{wallXPAt}from'./progression.js?v=b7053fa8a6';
 // Kill gold is scaled down and a steady per-minute battle stipend added, so income stays in a narrow band
 // between a starter and a maxed army (card packs are the only use of gold).
 export const KILL_GOLD=.3,STIPEND_PER_MIN=30;
@@ -15,13 +15,13 @@ export const MAX_TOWERS=5;
 // v24: crowd actors carry a fraction of a 'unit' of volume, but never drop below half a unit of HP — towers no longer one-shot everything.
 export const HP_WEIGHT_FLOOR=.2;
 // v24: the giant is a rare boss — about one per five minutes at most, only on a heavy sell-off minute.
-export const BOSS=Object.freeze({cooldownMs:3*60*1000,minIntensity:.8,minSellShare:.5,chance:.85,hp:4,scale:6.5,radius:56,speed:.6,damage:3});
+export const BOSS=Object.freeze({cooldownMs:3*60*1000,minIntensity:.8,minSellShare:.5,chance:.85,hp:15,scale:6.5,radius:56,speed:.6,damage:.7});
 // v32: special attackers — a six-candle siege ram (shared HP, slow, heavy) and fast kamikaze bombers. Both aim at the wall centre.
 export const SPECIALS=Object.freeze({ram:Object.freeze({hp:2600,speed:8.5,radius:30,damage:110,interval:2.4,cooldownMs:2*60*1000,minIntensity:.7,chance:.75,goldMul:6}),bomber:Object.freeze({hp:12,speed:92,radius:9,damage:150,cooldownMs:40*1000,minIntensity:.5,chance:.85,goldMul:1.5})});
 const SPECIAL_DEF={ram:{...ENEMIES[3],speed:SPECIALS.ram.speed,damage:SPECIALS.ram.damage,interval:SPECIALS.ram.interval},bomber:{...ENEMIES[4],speed:SPECIALS.bomber.speed,damage:SPECIALS.bomber.damage,interval:9}};
 const BOSS_DEF=Object.freeze({...ENEMIES[3],speed:ENEMIES[3].speed*BOSS.speed,damage:ENEMIES[3].damage*BOSS.damage});
-import{isAIStock}from'./symbols.js?v=d6b9d75204';
-import {weaponMuzzle} from './weapon-geometry.js?v=d6b9d75204';
+import{isAIStock}from'./symbols.js?v=b7053fa8a6';
+import {weaponMuzzle} from './weapon-geometry.js?v=b7053fa8a6';
 export class Game {
   constructor(state, { height = 620, random = Math.random,now=Date.now,rewardMultiplier=1,mode } = {}) {
     this.modeKey=modeFor(mode??state.settings?.mode).key;this.stipendClock=0;this.wallHold=0;
@@ -288,6 +288,7 @@ return;/* v26: slime only slows (movement and attack speed) — no damage */}thi
       if (c.type === 'summoner') { this.summonKnights(c, stats); c.cooldown = 1/(stats.rate*(1+this.attackBuff(c))); continue; }
       let targets = this.enemies.filter(e => { if (!e.alive || e.y >= this.wallAt(e.x)) return false; const d = Math.hypot(e.x-c.x,e.y-y); return d <= stats.range && d >= stats.minRange; });
       targets.sort(c.type === 'sniper' ? (a,b) => b.hp-a.hp : (a,b) => Math.hypot(a.x-c.x,a.y-y)-Math.hypot(b.x-c.x,b.y-y));
+      { const major = targets.filter(e => e.boss || e.special === 'ram'); if (major.length) targets = major.sort((a, b) => b.hp - a.hp); }
       { const f = this.focus && this.focus.until > this.time ? this.focus : null; if (f) { const fd = Math.hypot(f.x - c.x, f.y - y); if (fd <= stats.range && fd >= (stats.minRange || 0)) { const near = targets.filter(e => Math.hypot(e.x - f.x, e.y - f.y) <= 72); if (near.length) { if (c.type !== 'sniper') near.sort((a, b) => Math.hypot(a.x - f.x, a.y - f.y) - Math.hypot(b.x - f.x, b.y - f.y)); targets = near; } } } }
       if (!targets.length) { c.cooldown = .06; continue; }
       this.fire(c,stats,targets[0]); c.cooldown = 1/(stats.rate*(1+this.attackBuff(c)));
@@ -308,7 +309,7 @@ return;/* v26: slime only slows (movement and attack speed) — no damage */}thi
     const inRange = e => e.alive && Math.hypot(e.x - pos.x, e.y - pos.y) <= stats.range;
     let target = this.enemies.find(e => e.id === c.targetId && inRange(e));
     if (!target) {
-      target = this.enemies.filter(inRange).sort((a, b) => Math.hypot(a.x-pos.x,a.y-pos.y)-Math.hypot(b.x-pos.x,b.y-pos.y))[0];
+      const isMajor=e=>e.boss||e.special==='ram';target = this.enemies.filter(inRange).sort((a,b)=>(isMajor(b)-isMajor(a))||(Math.hypot(a.x-pos.x,a.y-pos.y)-Math.hypot(b.x-pos.x,b.y-pos.y)))[0];
       c.targetId = target?.id ?? null; c.targetLock = target ? stats.targetSwitch : 0;
     }
     if (!target) { c.cooldown = Math.max(0, c.cooldown); return; }
