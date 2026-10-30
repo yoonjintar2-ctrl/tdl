@@ -1,5 +1,5 @@
-import { loadClayCollection,CLAY_CATALOG } from './clay-runtime.js?v=af41c62e60';
-import { WALL } from './config.js?v=af41c62e60';
+import { loadClayCollection,CLAY_CATALOG } from './clay-runtime.js?v=9470d0d711';
+import { WALL } from './config.js?v=9470d0d711';
 const images = new Map();
 export const CLAY_ART = {
   mortar: new URL('../assets/clay/mortar-master-v1.webp', import.meta.url).href,
@@ -42,6 +42,6 @@ export function drawClayMortar(c, u, x, y, power = 1, selected = false, icon = f
 export function drawClayMortarIcon(canvas) {
   if (!images.get('atlas')) return false;
   const c=canvas.getContext('2d');c.clearRect(0,0,canvas.width,canvas.height);
-  c.save();const scale=Math.min(canvas.width/84,canvas.height/82);c.translate(canvas.width/2,canvas.height*.75);c.scale(scale,scale);
+  c.save();const scale=Math.min(canvas.width/84,canvas.height/82);c.translate(canvas.width/2,canvas.height*.7);c.scale(scale,scale);
   drawClayMortar(c,{angle:Math.PI*.75,level:1},0,0,1,false,true);c.restore();return true;
 }

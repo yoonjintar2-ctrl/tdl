@@ -635,3 +635,9 @@ html,body{touch-action:manipulation;-webkit-text-size-adjust:100%}
 /* sheet body breathing room */
 .shop-sheet>#shop{padding:6px 8px 14px!important}
 .shop .pack-row,.shop>div:first-child{gap:10px}
+/* v26: a little more breathing room at the screen edges */
+.compact-hud{padding-left:max(14px,env(safe-area-inset-left))!important;padding-right:max(14px,env(safe-area-inset-right))!important}
+.float-controls{left:max(12px,env(safe-area-inset-left))!important}
+.battle-dock{left:max(14px,env(safe-area-inset-left))!important;right:max(14px,env(safe-area-inset-right))!important}
+html,body{overflow:hidden;overscroll-behavior:none}
+.tcard .tc-art{object-position:50% 20%!important}

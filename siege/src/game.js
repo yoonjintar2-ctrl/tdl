@@ -1,12 +1,12 @@
-import{campaignProgress}from'./campaign-courses.js?v=af41c62e60';
-import { SETTINGS, CANNONS, ENEMIES, SUPPLIES, WORLD_WIDTH, DRONE, WALL, CAMERA_DEPTH, ACTOR_STYLE, cannonStats, upgradeCost, energyMultiplier, wallYFor, priceBand, validPlacement, validDronePlacement, clamp } from './config.js?v=af41c62e60';
-import { wallMountDepth } from './fortification.js?v=af41c62e60';
-import { marketArmy,estimatedArmy } from './market-army.js?v=af41c62e60';
-import {playerLevelFor,towerSlots,wallLevelFor,wallPower,money,WALL_MAX_XP} from './progression.js?v=af41c62e60';
-import{TerrainField}from'./terrain.js?v=af41c62e60';
-import{modeFor}from'./cards.js?v=af41c62e60';
-import{formatDamage}from'./combat-fx.js?v=af41c62e60';
-import{wallXPAt}from'./progression.js?v=af41c62e60';
+import{campaignProgress}from'./campaign-courses.js?v=9470d0d711';
+import { SETTINGS, CANNONS, ENEMIES, SUPPLIES, WORLD_WIDTH, DRONE, WALL, CAMERA_DEPTH, ACTOR_STYLE, cannonStats, upgradeCost, energyMultiplier, wallYFor, priceBand, validPlacement, snapSlot, FORWARD_X, FORWARD_DY, validDronePlacement, clamp } from './config.js?v=9470d0d711';
+import { wallMountDepth } from './fortification.js?v=9470d0d711';
+import { marketArmy,estimatedArmy } from './market-army.js?v=9470d0d711';
+import {playerLevelFor,towerSlots,wallLevelFor,wallPower,money,WALL_MAX_XP} from './progression.js?v=9470d0d711';
+import{TerrainField}from'./terrain.js?v=9470d0d711';
+import{modeFor}from'./cards.js?v=9470d0d711';
+import{formatDamage}from'./combat-fx.js?v=9470d0d711';
+import{wallXPAt}from'./progression.js?v=9470d0d711';
 // Kill gold is scaled down and a steady per-minute battle stipend added, so income stays in a narrow band
 // between a starter and a maxed army (card packs are the only use of gold).
 export const KILL_GOLD=.3,STIPEND_PER_MIN=30;
@@ -17,8 +17,8 @@ export const HP_WEIGHT_FLOOR=.2;
 // v24: the giant is a rare boss — about one per five minutes at most, only on a heavy sell-off minute.
 export const BOSS=Object.freeze({cooldownMs:5*60*1000,minIntensity:1.6,minSellShare:.6,chance:.55,hp:4,scale:3.8,radius:44,speed:.6,damage:3});
 const BOSS_DEF=Object.freeze({...ENEMIES[3],speed:ENEMIES[3].speed*BOSS.speed,damage:ENEMIES[3].damage*BOSS.damage});
-import{isAIStock}from'./symbols.js?v=af41c62e60';
-import {weaponMuzzle} from './weapon-geometry.js?v=af41c62e60';
+import{isAIStock}from'./symbols.js?v=9470d0d711';
+import {weaponMuzzle} from './weapon-geometry.js?v=9470d0d711';
 export class Game {
   constructor(state, { height = 620, random = Math.random,now=Date.now,rewardMultiplier=1,mode } = {}) {
     this.modeKey=modeFor(mode??state.settings?.mode).key;this.stipendClock=0;this.wallHold=0;
@@ -74,7 +74,7 @@ export class Game {
     e.wallSlot = clamp((best + .2 + this.random() * .6) * WALL_SLOT, b.left, b.right); load[best] += e.radius * 2;
   }
   resize(height) { const ratio = height / this.height; this.wallY *= ratio; if (this.move) { this.move.from *= ratio; this.move.to *= ratio; } this.enemies.forEach(e => e.y *= ratio); this.supplies.forEach(e => e.y *= ratio); this.zones.forEach(e => e.y *= ratio); this.cannons.filter(c => c.type === 'drone').forEach(c => c.y = clamp(c.y * ratio, DRONE.marginTop, height - DRONE.marginBottom)); this.height = height;const art=this.terrain;this.terrain=new TerrainField(height);if(art?.corridor||art?.aspect)this.terrain.setArt(art.aspect,art.corridor); }
-  cannonPosition(c) { return { x: c.x, y: c.type === 'drone' ? c.y : this.wallAt(c.x) + WALL.deck + WALL.mountOffset }; }
+  cannonPosition(c) { if (c.type === 'drone') return { x: c.x, y: c.y }; const y = this.wallAt(c.x) + WALL.deck + WALL.mountOffset; return { x: c.x, y: Math.abs(c.x - FORWARD_X) < .5 && c.type !== 'command' ? y - FORWARD_DY : y }; }
   notify(text) { this.messages.push({ text, until: this.time + 3 }); }
   resetMarket(){this.market=null;this.marketWaves=[];this.enemies=[];this.supplies=[];this.effects=[];this.projectiles=[];this.zones=[];this.knights=[];this.sweeps=[];this.pricePlaced=false;this.move=null;this.band=0;this.targetBand=0;this.wallY=this.height/2;}
   onMarket(snapshot) {
@@ -102,6 +102,8 @@ export class Game {
     const c = ENEMIES[kind],radius=c.radius*ACTOR_STYLE.footprintScale,e = { id: this.nextId++, kind, x: clamp(x, radius, WORLD_WIDTH - radius), y, hp: c.hp*Math.max(HP_WEIGHT_FLOOR,marketWeight)*this.mode.hp, maxHP: c.hp*Math.max(HP_WEIGHT_FLOOR,marketWeight)*this.mode.hp,marketWeight, radius, alive: true, age: 0, contact: 0, attack: .6, attackPulse: 0, hit: 0, slowUntil: 0, slow: 0, poisons: [], phase: this.random() * 6, attacking: false };
     this.terrain.projectSpawn(e);this.enemies.push(e); return e;
   }
+  // v26: the wall's command post always sits in the centre of the wall.
+  get commandX(){return 216;}
   maybeBoss(intensity,sellShare,epoch){if(!(intensity>=BOSS.minIntensity&&sellShare>=BOSS.minSellShare))return false;if(this.lastBossAt!=null&&epoch-this.lastBossAt<BOSS.cooldownMs)return false;if(this.random()>BOSS.chance)return false;this.lastBossAt=epoch;return !!this.spawnBoss();}
   spawnBoss(x=WORLD_WIDTH/2){const e=this.spawnEnemy(3,x,-60,{marketWeight:1});if(!e)return null;e.boss=true;e.scale=BOSS.scale;e.hp=e.maxHP=ENEMIES[3].hp*BOSS.hp*this.mode.hp;e.radius=BOSS.radius;this.notify('⚠ 대량 매도! 거인 음봉이 나타났어요');return e;}
   spawnSupply(kind = 0, x = 24 + this.random() * (WORLD_WIDTH - 48), y = this.height + 25,{marketWeight=1}={}) {
@@ -119,7 +121,7 @@ export class Game {
   remove(entity, reason) {
     if (!entity.alive) return; entity.alive = false;
     const enemy = entity.maxHP !== undefined;
-    if (reason === 'cannon' && enemy) { this.lifetimeKills++;const weight=entity.marketWeight??1,reward=this.creditMarketGold(ENEMIES[entity.kind].reward*weight*KILL_GOLD);if(entity.lastHit){this.metrics.killsByType[entity.lastHit]=(this.metrics.killsByType[entity.lastHit]||0)+1;};this.metrics.kills++;this.gainPlayerXP(([1,2,3,5,.5][entity.kind]??1)*weight*this.rewardMultiplier);this.dirty=true;if(reward)this.effect('text',entity.x,entity.y-15,'#ffdc8c',`+${this.cash(reward)}`,.65); }
+    if (reason === 'cannon' && enemy) { this.lifetimeKills++;const weight=Math.max(HP_WEIGHT_FLOOR,entity.marketWeight??1),reward=this.creditMarketGold(ENEMIES[entity.kind].reward*weight*KILL_GOLD*(entity.boss?BOSS.hp*4:1));if(entity.lastHit){this.metrics.killsByType[entity.lastHit]=(this.metrics.killsByType[entity.lastHit]||0)+1;};this.metrics.kills++;this.gainPlayerXP(([1,2,3,5,.5][entity.kind]??1)*weight*this.rewardMultiplier);this.dirty=true;if(reward)this.effect('text',entity.x,entity.y-15,'#ffdc8c',`+${this.cash(reward)}`,.65); }
     if (reason === 'crush') { this.metrics[enemy ? 'crushedEnemies' : 'crushedSupplies']++; this.effect('crush', entity.x, entity.y, enemy ? '#ff6876' : '#54efbc', '', .5); }
     if (reason === 'expire') { this.metrics.expired++; this.effect('ghost', entity.x, entity.y, enemy ? '#ff6876' : '#54efbc', '', .6, { radius: entity.radius }); }
     else this.burst(entity.x, entity.y, enemy ? '#ff6876' : '#54efbc', reason === 'cannon' ? 5 : 3);
@@ -147,6 +149,7 @@ export class Game {
   }
   place(x, y) {
     const type = this.placement;
+    if (type && type !== 'drone') { const sx = snapSlot(x, this.cannons, null, this.wallAt(x) - y); if (sx == null) return false; x = sx; }
     const owned=this.owned(type);if (!type || this.cannons.length>=this.slotLimit || !(type === 'drone' ? validDronePlacement(x, y, this.height) : validPlacement(x, this.cannons)) || (!owned&&this.gold<CANNONS[type].cost) || this.cannons.some(c => c.type === type)) return false;
     if(!owned&&!this.buyTower(type))return false;const c = { type, x, ...(type === 'drone' ? { y } : {}), level: this.owned(type).level, cooldown: .25, recoil: 0, angle: -Math.PI / 2, targetId: null, targetLock: 0 }; this.cannons.push(c); this.placement = null; this.selected = c; this.dirty = true; this.burst(x, type === 'drone' ? y : this.wallAt(x), CANNONS[type].color); return true;
   }
@@ -157,7 +160,7 @@ export class Game {
     return{ax:b.x,ay,bx:a.x,by};
   }
   swapCannons(a,b){const plan=this.swapPlan(a,b);if(!plan)return false;a.x=plan.ax;b.x=plan.bx;if(a.type==='drone')a.y=plan.ay;if(b.type==='drone')b.y=plan.by;for(const c of[a,b]){c.targetId=null;c.targetLock=0;}this.dirty=true;return true;}
-  moveCannon(c,x,y){if(!this.cannons.includes(c))return false;const other=this.cannons.find(t=>t!==c&&(t.type==='drone')===(c.type==='drone')&&Math.abs(t.x-x)<24&&(t.type!=='drone'||Math.abs(t.y-y)<35));if(other)return this.swapCannons(c,other);if(!(c.type==='drone'?validDronePlacement(x,y,this.height):validPlacement(x,this.cannons,c)))return false;c.x=x;if(c.type==='drone'){c.y=y;c.targetId=null;c.targetLock=0;}this.dirty=true;return true;}
+  moveCannon(c,x,y){if(!this.cannons.includes(c))return false;if(c.type!=='drone'){const north=this.wallAt(x)-y,slot=[...[60,138,294,372],FORWARD_X].map(sx=>({sx,d:sx===FORWARD_X?Math.hypot(x-sx,Math.max(0,FORWARD_DY-north)):Math.hypot(x-sx,Math.max(0,north)*.9+8)})).sort((a,b)=>a.d-b.d)[0].sx,occ=this.cannons.find(t=>t!==c&&t.type!=='drone'&&Math.abs(t.x-slot)<.5);if(occ)return this.swapCannons(c,occ);x=slot;}const other=this.cannons.find(t=>t!==c&&t.type==='drone'&&c.type==='drone'&&Math.abs(t.x-x)<24&&Math.abs(t.y-y)<35);if(other)return this.swapCannons(c,other);if(!(c.type==='drone'?validDronePlacement(x,y,this.height):validPlacement(x,this.cannons,c)))return false;c.x=x;if(c.type==='drone'){c.y=y;c.targetId=null;c.targetLock=0;}this.dirty=true;return true;}
   replaceTower(c,type){const owned=this.owned(type);if(!owned||!this.cannons.includes(c)||this.cannons.some(t=>t.type===type))return false;const y=c.type==='drone'?c.y:this.wallAt(c.x)+WALL.deck+WALL.mountOffset;if(type!=='drone'&&!validPlacement(c.x,this.cannons,c))return false;if(type==='drone'&&!validDronePlacement(c.x,y,this.height))return false;Object.assign(c,{type,level:owned.level,cooldown:.25,angle:-Math.PI/2,recoil:0,targetId:null,targetLock:0});if(type==='drone')c.y=y;else delete c.y;this.selected=c;this.dirty=true;return true;}
   storeTower(c){if(!this.cannons.includes(c))return false;this.cannons=this.cannons.filter(v=>v!==c);if(this.selected===c)this.selected=null;this.dirty=true;return true;}
   upgrade(c) {
@@ -212,10 +215,10 @@ export class Game {
       if(p.type==='slime'){this.zones.push({x:p.tx,y:p.ty,radius:p.radius,life:st.duration,slow:st.slow});if(this.zones.length>22)this.zones.shift();}
       this.enemies.forEach(e=>{if(e.alive&&Math.hypot(e.x-p.tx,e.y-p.ty)<=p.radius+e.radius){if(p.type==='slime'){e.slowUntil=this.time+st.duration;e.slow=st.slow;// Slime is a control tool: one splash never removes more than splashCap of an actor's max HP,
 // so fractional-weight swarm actors survive long enough for the slow to matter.
-this.damage(e,Math.min(p.damage*this.power,e.maxHP*(st.splashCap||1)),{cannonType:p.weapon,scaled:true});return;}this.damage(e,p.damage,{cannonType:p.weapon});}});return;
+return;/* v26: slime only slows (movement and attack speed) — no damage */}this.damage(e,p.damage,{cannonType:p.weapon});}});return;
     }
+    if(p.type==='venom'){/* v26: poison is a splash that only applies slow damage-over-time */const cx=target?.alive?target.x:p.tx,cy=target?.alive?target.y:p.ty,R=st.radius||46;this.effect('explosion',cx,cy,'#a3ed75','',.45,{radius:R*.8});for(const e of this.enemies){if(!e.alive||Math.hypot(e.x-cx,e.y-cy)>R+e.radius)continue;if(e.poisons.length>=3)e.poisons.shift();e.poisons.push({until:this.time+st.duration,dps:st.dot});}return;}
     if(!target)return;this.damage(target,p.damage,{cannonType:p.weapon});this.effect('bullet-hit',target.x,target.y,p.type==='venom'?'#c093ff':'#ffe4a5','',.16,{sourceAltitude:7,heavy:p.type==='slug'});
-    if(p.type==='venom'&&target.alive){if(target.poisons.length>=4)target.poisons.shift();target.poisons.push({until:this.time+st.duration,dps:st.dot});}
   }
   update(dt) {
     dt = Math.min(dt, .05); this.time += dt; this.wallUpdate(dt);this.flushDamage(dt);this.stipend(dt,!!this.market&&['minute','live','last_trade','last_bar','course'].includes(this.market.priceStatus));
@@ -238,7 +241,7 @@ this.damage(e,Math.min(p.damage*this.power,e.maxHP*(st.splashCap||1)),{cannonTyp
         const sb = this.terrain.bounds(stop + e.radius, e.x, e.radius), step = def.speed * (e.slowUntil > this.time ? 1 - e.slow : 1) * dt, nx = clamp(e.x + clamp(e.wallSlot - e.x, -step, step), Math.min(e.x, sb.left), Math.max(e.x, sb.right));
         if (Math.abs(nx - e.x) < 1e-4) e.wallSlot = e.x; e.x = nx; e.y = this.enemyStopAt(e);
       }
-      else if (e.attacking) { e.y = stop; e.contact += dt; e.attack -= dt; if (e.attack <= 0) { e.attack += def.interval; e.attackPulse = 1; this.addWallXP(-def.damage*(e.marketWeight??1)*this.mode.damage,e.x); this.effect('impact', e.x, this.wallBackAt(e.x), '#ffb582', '', .25, { sourceAltitude: WALL.hitHeight }); } }
+      else if (e.attacking) { e.y = stop; e.contact += dt; e.attack -= dt * (e.slowUntil > this.time ? 1 - e.slow : 1); if (e.attack <= 0) { e.attack += def.interval; e.attackPulse = 1; this.addWallXP(-def.damage*(e.marketWeight??1)*this.mode.damage,e.x); this.effect('impact', e.x, this.wallBackAt(e.x), '#ffb582', '', .25, { sourceAltitude: WALL.hitHeight }); } }
       else {
         let factor = e.slowUntil > this.time ? 1 - e.slow : 1;
         for (const z of this.zones) {

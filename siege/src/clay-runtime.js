@@ -1,4 +1,4 @@
-import {CANNONS,ENEMIES,SUPPLIES,WALL,WORLD_WIDTH,ACTOR_STYLE} from './config.js?v=af41c62e60';
+import {CANNONS,ENEMIES,SUPPLIES,WALL,WORLD_WIDTH,ACTOR_STYLE,WALL_SLOTS,COMMAND_X} from './config.js?v=9470d0d711';
 export const ENEMY_ART=['enemy-small','enemy-tall','enemy-fat','enemy-giant'];
 // Kind 4 (초미니 음봉) reuses the small candle art at a much smaller size.
 const ENEMY_KIND_ART=[...ENEMY_ART,'enemy-small'];
@@ -6,9 +6,9 @@ export const SUPPLY_ART=['supply-dram','supply-processor','supply-wafer','supply
 // Wall levels 1–10: two new shabby tiers (earth, wooden palisade) below the original eight.
 export const WALL_ART=['castle-wall-low-0','castle-wall-low-1',...Array.from({length:8},(_,i)=>'castle-wall-'+i)];
 export const BASTION_ART=['castle-bastion-low-0','castle-bastion-low-1',...Array.from({length:8},(_,i)=>'castle-bastion-'+i)];
-export const TOWER_ART=['machine','sniper','laser','totem','sticky','poison','drone','siege','summoner','musk'];
+export const TOWER_ART=['machine','sniper','laser','totem','sticky','poison','drone','siege','summoner','musk','command'];
 const pictures=new Map(),unitSprites=new Map();let metadata={},pending=null;
-const NAMES={'siege':'공성 전차','summoner':'소환사','musk':'삼론 머스크','machine':'기관총','mortar':'박격포','sniper':'저격포','laser':'레이저','totem':'토템','sticky':'끈적이포','poison':'독 캐논','drone':'드론','enemy-small':'작은 음봉','enemy-tall':'키 큰 음봉','enemy-fat':'돼지 음봉','enemy-giant':'거인 음봉','supply-dram':'DRAM','supply-processor':'프로세서','supply-wafer':'실리콘 웨이퍼','supply-optical':'광통신 모듈','supply-connector':'광섬유 커넥터','supply-substrate':'반도체 기판','wall-soil':'흙 성벽','wall-wood':'나무 성벽','wall-reinforced-wood':'강화 나무 성벽','wall-mixed':'나무·돌 성벽','wall-stone':'돌 성벽','wall-reinforced-stone':'강화 돌 성벽','wall-iron':'철·돌 성벽','wall-gold':'황금 성벽'};
+const NAMES={'command':'성벽 지휘본부','siege':'공성 전차','summoner':'소환사','musk':'삼론 머스크','machine':'기관총','mortar':'박격포','sniper':'저격포','laser':'레이저','totem':'토템','sticky':'끈적이포','poison':'독 캐논','drone':'드론','enemy-small':'작은 음봉','enemy-tall':'키 큰 음봉','enemy-fat':'돼지 음봉','enemy-giant':'거인 음봉','supply-dram':'DRAM','supply-processor':'프로세서','supply-wafer':'실리콘 웨이퍼','supply-optical':'광통신 모듈','supply-connector':'광섬유 커넥터','supply-substrate':'반도체 기판','wall-soil':'흙 성벽','wall-wood':'나무 성벽','wall-reinforced-wood':'강화 나무 성벽','wall-mixed':'나무·돌 성벽','wall-stone':'돌 성벽','wall-reinforced-stone':'강화 돌 성벽','wall-iron':'철·돌 성벽','wall-gold':'황금 성벽'};
 export const CLAY_CATALOG=[...TOWER_ART.map(key=>({key,name:NAMES[key],group:'tower'})),...ENEMY_ART.map(key=>({key,name:NAMES[key],group:'enemy'})),...SUPPLY_ART.map(key=>({key,name:NAMES[key],group:'supply'})),...WALL_ART.map((key,i)=>({key,name:['흙 토성','나무 목책','사암 성벽','이끼 낀 성벽','풍화석 성벽','목석 성벽','석회암 성벽','강화 화강암 성벽','철띠 성벽','황금 성벽'][i],group:'wall'})),...BASTION_ART.map((key,i)=>({key,name:'원형 보루 '+(i+1),group:'wall'})),{key:'bull-candle',name:'녹색 양봉',group:'supply'}];
 export async function loadClayCollection(onProgress=()=>{}){
  if(typeof Image==='undefined')return false;if(pending)return pending;
@@ -42,7 +42,7 @@ export function drawTierFront(c,x,top,base,level,time=0,scale=1){const t=tierOf(
  if(t>=4){c.globalCompositeOperation='lighter';for(let i=0;i<4;i++){const a=time*1.6+i*Math.PI/2,sx=x+Math.cos(a)*20*scale,sy=(top+base)/2+Math.sin(a)*8*scale,r=(1.6+Math.sin(time*5+i)*.6)*scale;c.fillStyle='#fff0ffcc';c.beginPath();c.arc(sx,sy,r,0,Math.PI*2);c.fill();c.fillStyle='#c78bff55';c.beginPath();c.arc(sx,sy,r*3,0,Math.PI*2);c.fill();}}
  c.restore();}
 export function drawClayTower(c,u,x,y,t=0,power=1,selected=false,icon=false){
- if(!clayReady(u.type))return false;const air=u.type==='drone',size=air?(icon?70:70*ACTOR_STYLE.droneScale):icon?78:78*WALL.cannonScale;
+ if(!clayReady(u.type))return false;const air=u.type==='drone',size=(air?(icon?70:70*ACTOR_STYLE.droneScale):icon?78:78*WALL.cannonScale)*(u.type==='command'&&!icon?1.35:1);
  c.save();if(selected&&!icon)halo(c,x,y+(air?36:-4),air?22:18,'#dcf6a0');
  if(!air&&!icon){c.fillStyle='#142f2b38';c.beginPath();c.ellipse(x,y-4,16,3,0,0,Math.PI*2);c.fill();}
  if(!icon&&air){c.save();c.globalAlpha=.2;c.fillStyle='#173b32';c.beginPath();c.ellipse(x+2,y+40,16,4,0,0,Math.PI*2);c.fill();c.restore();y+=Math.sin(t*3.1)*2;}
@@ -50,7 +50,7 @@ export function drawClayTower(c,u,x,y,t=0,power=1,selected=false,icon=false){
  if(power<.4&&!icon)c.filter='saturate(.6) brightness(.78)';else if(tierOf(u.level))c.filter=tierTint(u.level);
  sprite(c,u.type,frameForAngle(u.angle??-Math.PI/2),x,y+(u.recoil||0)*2.3,size);c.filter='none';
  drawTierFront(c,x,y-size*(air?.35:.78),y,u.level,t,icon?1.1:1);
- if(!icon)levelLabel(c,u,x,air?y+44:y);
+ if(!icon&&u.type!=='command')levelLabel(c,u,x,air?y+44:y);
  if(u.type==='totem'&&!icon){c.save();c.globalAlpha=.1+Math.sin(t*3)*.04;halo(c,x,y-30,21,'#c5f4b9');c.restore();}
  c.restore();return true;
 }
@@ -90,8 +90,12 @@ export function drawClayWall(c,g,point,mask=false){
   texture(c,image,top,next,d,sx,step/tile*bodyWidth,f.y+f.h*.38,f.h*.56);
  }
  for(let x=-24;x<WORLD_WIDTH+24;x+=step){const a=point(x,g.wallAt(x)+WALL.back,WALL.elevation),b=point(x+step,g.wallAt(x+step)+WALL.back,WALL.elevation),d=point(x,g.wallAt(x)+WALL.north,0),sx=f.x+((x%tile+tile)%tile)/tile*f.w,sw=step/tile*f.w;texture(c,image,a,b,d,sx,sw,f.y,f.h);}
- const bastion=info(BASTION_ART[g.stage]);if(bastion){const f=bastion.frame;for(const tower of g.cannons.filter(t=>t.type!=='drone').sort((a,b)=>a.x-b.x)){const base=point(tower.x,g.cannonPosition(tower).y,WALL.elevation),height=76,width=height*f.w/f.h;c.drawImage(bastion.image,f.x,f.y,f.w,f.h,base.x-width/2,base.y-height*.26,width,height);}}
+ const bastion=info(BASTION_ART[g.stage]);if(bastion){const f=bastion.frame;// v26: bastions stand at the four fixed slots (empty or not) and a larger one carries the command post.
+ for(const x of [...WALL_SLOTS,COMMAND_X]){const big=x===COMMAND_X,base=point(x,g.wallAt(x)+WALL.deck+WALL.mountOffset,WALL.elevation),height=big?92:76,width=height*f.w/f.h;c.drawImage(bastion.image,f.x,f.y,f.w,f.h,base.x-width/2,base.y-height*.26,width,height);}}
  c.restore();return true;
 }
-export function drawClayPreview(canvas,key,frame=0){const data=info(key,frame);if(!data)return false;const c=canvas.getContext('2d');c.clearRect(0,0,canvas.width,canvas.height);const f=data.frame,pad=Math.min(canvas.width,canvas.height)*.07,scale=Math.min((canvas.width-pad*2)/f.w,(canvas.height-pad*2)/f.h);c.imageSmoothingEnabled=true;c.imageSmoothingQuality='high';c.drawImage(data.image,f.x,f.y,f.w,f.h,(canvas.width-f.w*scale)/2,(canvas.height-f.h*scale)/2,f.w*scale,f.h*scale);return true;}
+// v26: the forward outpost north of the wall centre — a smaller bastion standing on the field.
+export function drawForwardPad(c,g,point,occupied){const bastion=info(BASTION_ART[g.stage]);const x=216,y=g.wallAt(x)+WALL.deck+WALL.mountOffset-175,base=point(x,y,16);c.save();c.fillStyle='#1d2a1e40';c.beginPath();c.ellipse(base.x,base.y+20,30,8,0,0,Math.PI*2);c.fill();if(!occupied)c.globalAlpha=.75;if(bastion){const f=bastion.frame,height=70,width=height*f.w/f.h;c.drawImage(bastion.image,f.x,f.y,f.w,f.h,base.x-width/2,base.y-height*.26,width,height);}
+ if(!occupied){c.globalAlpha=1;c.setLineDash([4,4]);c.strokeStyle='#fff3c4cc';c.lineWidth=1.6;c.beginPath();c.ellipse(base.x,base.y+2,15,5,0,0,Math.PI*2);c.stroke();c.setLineDash([]);c.fillStyle='#fff3c4';c.font='800 8px system-ui';c.textAlign='center';c.fillText('전진',base.x,base.y-6);}c.restore();}
+export function drawClayPreview(canvas,key,frame=0){const data=info(key,frame);if(!data)return false;const c=canvas.getContext('2d');c.clearRect(0,0,canvas.width,canvas.height);const f=data.frame,pad=Math.min(canvas.width,canvas.height)*.07,scale=Math.min((canvas.width-pad*2)/f.w,(canvas.height-pad*2)/f.h);c.imageSmoothingEnabled=true;c.imageSmoothingQuality='high';c.drawImage(data.image,f.x,f.y,f.w,f.h,(canvas.width-f.w*scale)/2,(canvas.height-f.h*scale)*.28,f.w*scale,f.h*scale);return true;}
 export function collectionDiagnostics(){return{loaded:pictures.size,expected:CLAY_CATALOG.length,frames:Object.fromEntries(Object.entries(metadata).map(([key,value])=>[key,value.frames.length]))};}

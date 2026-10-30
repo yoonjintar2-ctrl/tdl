@@ -27,9 +27,9 @@ export const CANNONS = {
   mortar: { name: '박격포', short: '박격포', icon: 'MR', cost: 180, damage: 4, rate: .55, range: 265, radius: 55, color: '#ffc478', role: '포물선 포탄 · 범위 폭발' },
   sniper: { name: '스나이퍼', short: '저격', icon: 'SR', cost: 250, damage: 90, rate: .45, range: 530, color: '#85beff', role: '현재 HP가 가장 높은 적 우선' },
   laser: { name: '레이저', short: '레이저', icon: 'LS', cost: 280, damage: 4.5, rate: 1.1, range: 360, pierce: 9, color: '#58efd9', role: '직선 관통 · 다중 타격' },
-  totem: { name: '토템', short: '토템', icon: 'TT', cost: 300, damage: 0, rate: 0, range: 120, buff: .2, color: '#ffda7a', role: '주변 캐논 연사력 지원 · 자신 제외' },
-  sticky: { name: '끈적이', short: '끈적이', icon: 'GL', cost: 210, damage: 7, rate: 1, range: 235, radius: 31, slow: .35, duration: 2.4, splashCap: .28, color: '#a3ed75', role: '끈적한 감속 지대 · 한 방 처치 없이 체력 일부만 깎음' },
-  poison: { name: '독 캐논', short: '독', icon: 'TX', cost: 240, damage: 6, rate: 1.2, range: 750, minRange: 170, dot: 10, duration: 4, color: '#c093ff', role: '먼 적에게 독 피해 · 최대 4중첩 · 가까운 적은 못 맞힘' },
+  totem: { name: '토템', short: '토템', icon: 'TT', cost: 300, damage: 0, rate: 0, range: 165, buff: .2, color: '#ffda7a', role: '주변 캐논 연사력 지원 · 자신 제외' },
+  sticky: { name: '끈적이', short: '끈적이', icon: 'GL', cost: 210, damage: 0, rate: 1, range: 235, radius: 34, slow: .55, duration: 3, color: '#a3ed75', role: '피해 없이 범위 안 음봉의 이동·공격 속도를 크게 낮춤' },
+  poison: { name: '독 캐논', short: '독', icon: 'TX', cost: 240, damage: 0, rate: .9, range: 750, minRange: 170, radius: 46, dot: 1.4, duration: 6, color: '#c093ff', role: '먼 곳에 독 웅덩이 · 범위 안 음봉의 체력을 서서히 깎음 · 최대 3중첩 · 가까운 적은 못 맞힘' },
   siege: { name: '공성 전차', short: '공성전차', icon: 'ST', cost: 260, damage: 4.5, rate: .32, range: 820, minRange: 230, radius: 72, color: '#ffb35a', role: '아주 먼 적에게 광역 포격 · 가까운 적은 못 맞힘' },
   summoner: { name: '소환사', short: '소환사', icon: 'SM', cost: 240, damage: 7, rate: .16, range: 70, knights: 3, hits: 6, color: '#9be064', role: '양봉 기사 3명을 주기적으로 소환 · 기사는 가까운 음봉부터 베며 북진' },
   musk: { name: '삼론 머스크', short: '삼론머스크', icon: 'EM', cost: 320, damage: 3.5, rate: .24, range: 900, width: 30, rocketChance: .12, color: '#d9e3ec', role: '사이버트럭 발사 · 관통 광역 피해 · 가끔 초광역 로켓' },
@@ -49,7 +49,7 @@ export function cannonStats(type, level = 1) {
   const c = CANNONS[type], n = clamp(level, 1, 40) - 1;
   return { ...c, damage: c.damage * (1 + n * .09), rate: c.rate * (1 + n * (type === 'machine' ? .012 : type === 'drone' ? .008 : .004)),
     targetSwitch: c.targetSwitch ? c.targetSwitch / (1 + n * .045) : 0,
-    range: c.range + n * (type === 'sniper' ? 4 : type === 'totem' || type === 'drone' ? 2 : .45), radius: (c.radius || 0) + n * (type === 'mortar' ? .65 : .35),
+    range: c.range + n * (type === 'sniper' ? 4 : type === 'totem' || type === 'drone' ? 2 : .45), radius: (c.radius || 0) + n * (type === 'mortar' ? .65 : type === 'poison' ? .5 : .35),
     pierce: c.pierce ? Math.min(12, c.pierce + Math.floor(n / 6)) : 0, buff: c.buff ? Math.min(.5, c.buff + n * .008) : 0,
     minRange: c.minRange || 0, width: (c.width || 0) + n * .4, knights: c.knights ? c.knights + Math.floor(n / 13) : 0, hits: c.hits ? c.hits + Math.floor(n / 8) : 0, slow: c.slow ? Math.min(.65, c.slow + n * .008) : 0, splashCap: c.splashCap ? Math.min(.52, c.splashCap + n * .006) : 0, duration: (c.duration || 0) + n * .045, dot: (c.dot || 0) * (1 + n * .055) };
 }
@@ -57,6 +57,14 @@ export const upgradeCost = (type, level) => Math.ceil(CANNONS[type].cost * .45 *
 export const energyMultiplier = (hp, maxHP = SETTINGS.maxHP) => .25 + .75 * clamp(hp / maxHP, 0, 1);
 export const wallYFor = (pct, height) => height * (.5 - .2 * clamp(pct, -30, 30) / 30);
 export const priceBand = pct => { const value = clamp(pct, -30, 30), nearest = Math.round(value); return Math.trunc(Math.abs(value - nearest) < 1e-9 ? nearest : value); };
-export function validPlacement(x, cannons, exclude = null) { return Number.isFinite(x) && x >= 25 && x <= WORLD_WIDTH - 25 && cannons.every(c => c.type === 'drone' || c === exclude || Math.abs(c.x - x) >= SETTINGS.minSpacing); }
+// v26: fixed layout — four wall slots (two left, two right), the command post in the centre,
+// and one forward slot north of the centre (stored as x = FORWARD_X).
+export const WALL_SLOTS = Object.freeze([60, 138, 294, 372]);
+export const FORWARD_X = 216, FORWARD_DY = 175, COMMAND_X = 216;
+export const ALL_SLOTS = Object.freeze([...WALL_SLOTS, FORWARD_X]);
+export const isSlotX = x => ALL_SLOTS.some(s => Math.abs(s - x) < .5);
+export function validPlacement(x, cannons, exclude = null) { return Number.isFinite(x) && isSlotX(x) && cannons.every(c => c.type === 'drone' || c === exclude || Math.abs(c.x - x) >= .5); }
+// Nearest free slot to a drop point. `north` = how far north of the wall the finger is (world units).
+export function snapSlot(x, cannons, exclude = null, north = 0) { const free = ALL_SLOTS.filter(s => validPlacement(s, cannons, exclude)); if (!free.length) return null; return free.map(s => ({ s, d: s === FORWARD_X ? Math.hypot(x - s, Math.max(0, FORWARD_DY - north)) : Math.hypot(x - s, Math.max(0, north) * .9 + 8) })).sort((a, b) => a.d - b.d)[0].s; }
 export function validDronePlacement(x, y, height) { return Number.isFinite(x) && Number.isFinite(y) && x >= DRONE.marginX && x <= WORLD_WIDTH - DRONE.marginX && y >= DRONE.marginTop && y <= height - DRONE.marginBottom; }
 

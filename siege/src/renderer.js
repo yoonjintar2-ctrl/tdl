@@ -1,11 +1,11 @@
-import { WORLD_WIDTH as W,CANNONS,ENEMIES,SUPPLIES,WALL_STAGES,DRONE,WALL,cannonStats,validPlacement,validDronePlacement,clamp } from './config.js?v=af41c62e60';
-import{WALL_MAX_LEVEL,WALL_MAX_XP}from'./progression.js?v=af41c62e60';
-import{isAIStock}from'./symbols.js?v=af41c62e60';
-import { QuarterCamera, DEPTH_SCALE, WALL_ELEVATION } from './camera.js?v=af41c62e60';
-import { drawClayMortar, drawClayMortarIcon, clayBattlefield } from './clay-assets.js?v=af41c62e60';
-import{drawProjectile,drawEffect}from'./combat-fx.js?v=af41c62e60';
-import{artCrop}from'./terrain.js?v=af41c62e60';
-import { drawClayTower, drawClayUnit, drawClayWall, drawClayPreview, wallOutline, tierOf, tierTint, drawTierBack, drawTierFront } from './clay-runtime.js?v=af41c62e60';
+import { WORLD_WIDTH as W,CANNONS,ENEMIES,SUPPLIES,WALL_STAGES,DRONE,WALL,cannonStats,validPlacement,validDronePlacement,snapSlot,ALL_SLOTS,FORWARD_X,FORWARD_DY,clamp } from './config.js?v=9470d0d711';
+import{WALL_MAX_LEVEL,WALL_MAX_XP}from'./progression.js?v=9470d0d711';
+import{isAIStock}from'./symbols.js?v=9470d0d711';
+import { QuarterCamera, DEPTH_SCALE, WALL_ELEVATION } from './camera.js?v=9470d0d711';
+import { drawClayMortar, drawClayMortarIcon, clayBattlefield } from './clay-assets.js?v=9470d0d711';
+import{drawProjectile,drawEffect}from'./combat-fx.js?v=9470d0d711';
+import{artCrop}from'./terrain.js?v=9470d0d711';
+import { drawClayTower, drawClayUnit, drawClayWall, drawClayPreview, drawForwardPad, wallOutline, tierOf, tierTint, drawTierBack, drawTierFront } from './clay-runtime.js?v=9470d0d711';
 const TAU=Math.PI*2;
 function box(c,x,y,w,h,r,fill,stroke){c.beginPath();c.roundRect(x,y,w,h,r);if(fill){c.fillStyle=fill;c.fill();}if(stroke){c.lineWidth=1;c.strokeStyle=stroke;c.stroke();}}
 function line(c,pts,col,w=1){c.beginPath();c.lineWidth=w;c.strokeStyle=col;pts.forEach(([x,y],i)=>i?c.lineTo(x,y):c.moveTo(x,y));c.stroke();}
@@ -246,8 +246,11 @@ export class Renderer{
   this.effects(c,false);
   for(const e of g.enemies.filter(e=>e.alive).sort((a,b)=>this.point(a.x,a.y+a.radius).y-this.point(b.x,b.y+b.radius).y))this.enemy(c,e);
   this.knightsAndSweeps(c,t);
+  // forward outpost stands north of the wall, so it is drawn before (behind) the masonry
+  {const fwd=g.cannons.find(u=>u.type!=='drone'&&Math.abs(u.x-216)<.5);drawForwardPad(c,g,(x,y,z)=>this.point(x,y,z),!!fwd);if(fwd){const p=this.cannonAnchor(fwd);c.save();if(this.ghost?.cannon===fwd)c.globalAlpha=.2;buffAura(c,p.x,p.y,t,g.wallLevel);drawCannon(c,{...fwd,angle:this.screenAngle(fwd)},p.x,p.y,t,g.power,fwd===g.selected);buffAura(c,p.x,p.y,t,g.wallLevel,true);c.restore();}}
   this.wallGround(c);this.wall(c);this.wallLevelFX(c);
-  for(const u of g.cannons.filter(u=>u.type!=='drone')){const p=this.cannonAnchor(u);c.save();if(this.ghost?.cannon===u)c.globalAlpha=.2;buffAura(c,p.x,p.y,t,g.wallLevel);drawCannon(c,{...u,angle:this.screenAngle(u)},p.x,p.y,t,g.power,u===g.selected);buffAura(c,p.x,p.y,t,g.wallLevel,true);c.restore();}
+  {const cx=g.commandX,cu={type:'command',x:cx,level:1,angle:-Math.PI/2},cp=this.cannonAnchor(cu);drawClayTower(c,cu,cp.x,cp.y,t,1,g.selectedCommand,false);}
+  for(const u of g.cannons.filter(u=>u.type!=='drone'&&Math.abs(u.x-216)>=.5)){const p=this.cannonAnchor(u);c.save();if(this.ghost?.cannon===u)c.globalAlpha=.2;buffAura(c,p.x,p.y,t,g.wallLevel);drawCannon(c,{...u,angle:this.screenAngle(u)},p.x,p.y,t,g.power,u===g.selected);buffAura(c,p.x,p.y,t,g.wallLevel,true);c.restore();}
   // Attackers stop at the north upper silhouette; masonry covers only their
   // south-facing contact edge. Supply units approach from the foreground.
   for(const s of g.supplies.filter(s=>s.alive).sort((a,b)=>this.point(a.x,a.y+a.radius).y-this.point(b.x,b.y+b.radius).y))this.supply(c,s);
@@ -255,13 +258,13 @@ export class Renderer{
   for(const u of g.cannons.filter(u=>u.type==='drone')){const p=this.cannonAnchor(u);c.save();if(this.ghost?.cannon===u)c.globalAlpha=.2;drawDrone(c,{...u,angle:this.screenAngle(u)},p.x,p.y,t,g.power,u===g.selected);c.restore();}
   this.effects(c,true);this.wallLevelBanner(c);
   if(g.placement||this.ghost){
-   const exclude=this.ghost?.cannon||null,type=g.placement||exclude.type,air=type==='drone',x=this.ghost?.x??216,y=this.ghost?.y??g.height*.35;
+   const exclude=this.ghost?.cannon||null,type=g.placement||exclude.type,air=type==='drone',rawX=this.ghost?.x??216,y0=this.ghost?.y??g.height*.35,snapped=air?rawX:(snapSlot(rawX,g.cannons.filter(u=>!(this.ghost?.swapTarget&&u===this.ghost.swapTarget)),exclude,g.wallAt(rawX)-y0)??rawX),x=snapped,y=air?y0:(Math.abs(snapped-FORWARD_X)<.5?g.wallAt(snapped)+WALL.deck+WALL.mountOffset-FORWARD_DY:y0);
    const valid=this.ghost?.inBounds!==false&&(this.ghost?.swapTarget?!!g.swapPlan(exclude,this.ghost.swapTarget):(air?validDronePlacement(x,y,g.height):validPlacement(x,g.cannons,exclude))),col=valid?'#b5ff7b':'#ff6d70';
    if(air)this.range(c,x,y,cannonStats(type,exclude?.level||1).range,col);
-   else{c.save();c.setLineDash([5,5]);line(c,Array.from({length:45},(_,i)=>{const p=this.point(i*10,g.wallAt(i*10)+WALL.deck+WALL.mountOffset,WALL_ELEVATION);return[p.x,p.y];}),col,2);c.restore();}
+   else{c.save();for(const sx of ALL_SLOTS){const fwd=sx===FORWARD_X,occ=g.cannons.some(u=>u!==exclude&&u.type!=='drone'&&Math.abs(u.x-sx)<.5),p=this.point(sx,g.wallAt(sx)+WALL.deck+WALL.mountOffset-(fwd?FORWARD_DY:0),fwd?16:WALL_ELEVATION),on=Math.abs(sx-x)<.5;c.setLineDash(on?[]:[4,4]);c.strokeStyle=occ?'#ffd36acc':on?col:'#fff3c499';c.lineWidth=on?3:1.6;c.beginPath();c.ellipse(p.x,p.y+3,on?20:16,on?7:5.5,0,0,TAU);c.stroke();}c.restore();}
    if(!air&&type==='totem')this.totemLinks(c,x,exclude?.level||g.owned('totem')?.level||1,exclude);else if(!air)this.auraCheck(c,x,exclude);
    const temp={type,x,y,level:exclude?.level||g.owned(type)?.level||1,angle:exclude?.angle??-Math.PI/2},p=this.cannonAnchor(temp);c.save();c.globalAlpha=.6;drawCannon(c,{...temp,angle:this.screenAngle(temp)},p.x,p.y,t,1,true);c.restore();
-   const bannerY=Math.min(this.viewHeight-46,this.point(216,g.wallY).y+94);box(c,82,bannerY,268,23,6,'#294835eb',col);text(c,this.ghost?.swapTarget?(valid?'놓으면 두 타워의 자리 교환':'교환할 수 없는 위치입니다'):valid?(air?'전투 공간을 터치해 공중 배치':'성벽을 터치해 배치'):(air?'전투 영역 안에 배치하세요':'캐논 사이 간격을 띄워 주세요'),216,bannerY+12,11,col);
+   const bannerY=Math.min(this.viewHeight-46,this.point(216,g.wallY).y+94);box(c,82,bannerY,268,23,6,'#294835eb',col);text(c,this.ghost?.swapTarget?(valid?'놓으면 두 타워의 자리 교환':'교환할 수 없는 위치입니다'):valid?(air?'전투 공간을 터치해 공중 배치':'원하는 자리를 터치해 배치'):(air?'전투 영역 안에 배치하세요':'빈 자리에 놓아 주세요'),216,bannerY+12,11,col);
   }
  }
 }
