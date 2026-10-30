@@ -1,12 +1,12 @@
-import{campaignProgress}from'./campaign-courses.js?v=da2c27a070';
-import { SETTINGS, CANNONS, ENEMIES, SUPPLIES, WORLD_WIDTH, DRONE, WALL, CAMERA_DEPTH, ACTOR_STYLE, cannonStats, upgradeCost, energyMultiplier, wallYFor, priceBand, validPlacement, snapSlot, FORWARD_X, FORWARD_DY, validDronePlacement, clamp } from './config.js?v=da2c27a070';
-import { wallMountDepth } from './fortification.js?v=da2c27a070';
-import { marketArmy,estimatedArmy } from './market-army.js?v=da2c27a070';
-import {playerLevelFor,towerSlots,wallLevelFor,wallPower,money,WALL_MAX_XP} from './progression.js?v=da2c27a070';
-import{TerrainField}from'./terrain.js?v=da2c27a070';
-import{modeFor}from'./cards.js?v=da2c27a070';
-import{formatDamage}from'./combat-fx.js?v=da2c27a070';
-import{wallXPAt}from'./progression.js?v=da2c27a070';
+import{campaignProgress}from'./campaign-courses.js?v=182b83ac01';
+import { SETTINGS, CANNONS, ENEMIES, SUPPLIES, WORLD_WIDTH, DRONE, WALL, CAMERA_DEPTH, ACTOR_STYLE, cannonStats, upgradeCost, energyMultiplier, wallYFor, priceBand, validPlacement, snapSlot, FORWARD_X, FORWARD_DY, validDronePlacement, clamp } from './config.js?v=182b83ac01';
+import { wallMountDepth } from './fortification.js?v=182b83ac01';
+import { marketArmy,estimatedArmy } from './market-army.js?v=182b83ac01';
+import {playerLevelFor,towerSlots,wallLevelFor,wallPower,money,WALL_MAX_XP} from './progression.js?v=182b83ac01';
+import{TerrainField}from'./terrain.js?v=182b83ac01';
+import{modeFor}from'./cards.js?v=182b83ac01';
+import{formatDamage}from'./combat-fx.js?v=182b83ac01';
+import{wallXPAt}from'./progression.js?v=182b83ac01';
 // Kill gold is scaled down and a steady per-minute battle stipend added, so income stays in a narrow band
 // between a starter and a maxed army (card packs are the only use of gold).
 export const KILL_GOLD=.3,STIPEND_PER_MIN=30;
@@ -20,8 +20,8 @@ export const BOSS=Object.freeze({cooldownMs:5*60*1000,minIntensity:1.2,minSellSh
 export const SPECIALS=Object.freeze({ram:Object.freeze({hp:2600,speed:8.5,radius:30,damage:110,interval:2.4,cooldownMs:4*60*1000,minIntensity:1.3,chance:.5,goldMul:6}),bomber:Object.freeze({hp:12,speed:92,radius:9,damage:150,cooldownMs:75*1000,minIntensity:1,chance:.6,goldMul:1.5})});
 const SPECIAL_DEF={ram:{...ENEMIES[3],speed:SPECIALS.ram.speed,damage:SPECIALS.ram.damage,interval:SPECIALS.ram.interval},bomber:{...ENEMIES[4],speed:SPECIALS.bomber.speed,damage:SPECIALS.bomber.damage,interval:9}};
 const BOSS_DEF=Object.freeze({...ENEMIES[3],speed:ENEMIES[3].speed*BOSS.speed,damage:ENEMIES[3].damage*BOSS.damage});
-import{isAIStock}from'./symbols.js?v=da2c27a070';
-import {weaponMuzzle} from './weapon-geometry.js?v=da2c27a070';
+import{isAIStock}from'./symbols.js?v=182b83ac01';
+import {weaponMuzzle} from './weapon-geometry.js?v=182b83ac01';
 export class Game {
   constructor(state, { height = 620, random = Math.random,now=Date.now,rewardMultiplier=1,mode } = {}) {
     this.modeKey=modeFor(mode??state.settings?.mode).key;this.stipendClock=0;this.wallHold=0;
@@ -79,15 +79,15 @@ export class Game {
   resize(height) { const ratio = height / this.height; this.wallY *= ratio; if (this.move) { this.move.from *= ratio; this.move.to *= ratio; } this.enemies.forEach(e => e.y *= ratio); this.supplies.forEach(e => e.y *= ratio); this.zones.forEach(e => e.y *= ratio); this.cannons.filter(c => c.type === 'drone').forEach(c => c.y = clamp(c.y * ratio, DRONE.marginTop, height - DRONE.marginBottom)); this.height = height;const art=this.terrain;this.terrain=new TerrainField(height);if(art?.corridor||art?.aspect)this.terrain.setArt(art.aspect,art.corridor); }
   cannonPosition(c) { if (c.type === 'drone') return { x: c.x, y: c.y }; const y = this.wallAt(c.x) + WALL.deck + WALL.mountOffset; return { x: c.x, y: Math.abs(c.x - FORWARD_X) < .5 && c.type !== 'command' ? y - FORWARD_DY : y }; }
   notify(text) { this.messages.push({ text, until: this.time + 3 }); }
-  resetMarket(){this.market=null;this.marketWaves=[];this.enemies=[];this.supplies=[];this.effects=[];this.projectiles=[];this.zones=[];this.knights=[];this.sweeps=[];this.pricePlaced=false;this.move=null;this.band=0;this.targetBand=0;this.wallY=this.height/2;}
+  resetMarket(){this.marketPrimed=false;this.focus=null;this.market=null;this.marketWaves=[];this.enemies=[];this.supplies=[];this.effects=[];this.projectiles=[];this.zones=[];this.knights=[];this.sweeps=[];this.pricePlaced=false;this.move=null;this.band=0;this.targetBand=0;this.wallY=this.height/2;}
   onMarket(snapshot) {
     // Keep already received finite waves through a temporary provider failure.
     if(snapshot.priceStatus==='connection_required'&&snapshot.volumeStatus==='connection_required')this.marketWaves=[];
     this.market = snapshot;
     if(Number.isFinite(snapshot.changePct)){this.targetBand=priceBand(snapshot.changePct);if(!this.pricePlaced){this.pricePlaced=true;this.band=this.targetBand;this.wallY=wallYFor(this.band,this.height);this.move=null;}}
-    if(snapshot.tradeClassification==='estimated-candle-flow'){const epoch=this.now();this.marketWaves=this.marketWaves.filter(w=>!w.expiresAt||w.expiresAt>epoch);for(const event of snapshot.barEvents||[snapshot.barEvent]){if(!event)continue;this.marketWaves.push(...estimatedArmy(event,this.time,epoch));this.maybeBoss(event.volume/event.baselineVolume,event.volume>0?event.sellVolume/event.volume:0,epoch);this.maybeSpecials(event.volume/event.baselineVolume,event.volume>0?event.sellVolume/event.volume:0,epoch);}this.marketWaves.sort((a,b)=>a.at-b.at);this.marketWaves=this.marketWaves.slice(-SETTINGS.swarmMinuteCap*2);return;}
+    if(snapshot.tradeClassification==='estimated-candle-flow'){const epoch=this.now();this.marketWaves=this.marketWaves.filter(w=>!w.expiresAt||w.expiresAt>epoch);const primed=this.marketPrimed;this.marketPrimed=true;for(const event of snapshot.barEvents||[snapshot.barEvent]){if(!event)continue;this.marketWaves.push(...estimatedArmy(event,this.time,epoch).filter(w=>primed||w.side!=='buy'));this.maybeBoss(event.volume/event.baselineVolume,event.volume>0?event.sellVolume/event.volume:0,epoch);this.maybeSpecials(event.volume/event.baselineVolume,event.volume>0?event.sellVolume/event.volume:0,epoch);}this.marketWaves.sort((a,b)=>a.at-b.at);this.marketWaves=this.marketWaves.slice(-SETTINGS.swarmMinuteCap*2);return;}
     if(snapshot.tradeClassification==='minute-candle-direction'){
-      const events=snapshot.barEvents||[snapshot.barEvent];let start=Math.max(this.time,(this.marketWaves.at(-1)?.at??this.time-1)+1);for(const event of events){if(!event)continue;const waves=marketArmy(event,start);this.maybeBoss(event.volume/event.baselineVolume,event.direction<0?1:0,this.now());this.maybeSpecials(event.volume/event.baselineVolume,event.direction<0?1:0,this.now());this.marketWaves.push(...waves);if(waves.length)start+=60;}this.marketWaves.sort((a,b)=>a.at-b.at);this.marketWaves=this.marketWaves.slice(-SETTINGS.swarmMinuteCap*3);return;
+      const events=snapshot.barEvents||[snapshot.barEvent];let start=Math.max(this.time,(this.marketWaves.at(-1)?.at??this.time-1)+1);for(const event of events){if(!event)continue;const waves=marketArmy(event,start).filter(w=>this.marketPrimed||w.side!=='buy');this.maybeBoss(event.volume/event.baselineVolume,event.direction<0?1:0,this.now());this.maybeSpecials(event.volume/event.baselineVolume,event.direction<0?1:0,this.now());this.marketWaves.push(...waves);if(waves.length)start+=60;}this.marketPrimed=true;this.marketWaves.sort((a,b)=>a.at-b.at);this.marketWaves=this.marketWaves.slice(-SETTINGS.swarmMinuteCap*3);return;
     }
     if(!Number.isFinite(snapshot.changePct))return; const avg = snapshot.averageVolumePerSecond;
     if (!(avg > 0)) return;
@@ -113,7 +113,7 @@ export class Game {
    if(intensity>=S.ram.minIntensity&&sellShare>=.55&&(this.lastSpecial.ram==null||epoch-this.lastSpecial.ram>=S.ram.cooldownMs)&&this.random()<S.ram.chance){this.lastSpecial.ram=epoch;if(this.spawnSpecial('ram'))this.notify('⚠ 공성 음봉 부대가 성문으로 향해요!');}
    if(intensity>=S.bomber.minIntensity&&(this.lastSpecial.bomber==null||epoch-this.lastSpecial.bomber>=S.bomber.cooldownMs)&&this.random()<S.bomber.chance){this.lastSpecial.bomber=epoch;const n=3+Math.floor(this.random()*3);for(let i=0;i<n;i++)this.spawnSpecial('bomber',40+this.random()*(WORLD_WIDTH-80),-40-i*55);this.notify('💣 공습 음봉 접근 중!');}}
   // v32: attack point — towers that can reach it focus enemies around it for a few seconds.
-  setFocus(x,y){this.focus={x,y,until:this.time+8};this.effect('attack-marker',x,y,'#7fff6a','',.7,{radius:26});}
+  setFocus(x,y){this.focus={x,y,until:this.time+30,at:this.time};this.effect('attack-marker',x,y,'#7fff6a','',.7,{radius:26});}
   spawnBoss(x=WORLD_WIDTH/2){const e=this.spawnEnemy(3,x,-60,{marketWeight:1});if(!e)return null;e.boss=true;e.scale=BOSS.scale;e.hp=e.maxHP=ENEMIES[3].hp*BOSS.hp*this.mode.hp;e.radius=BOSS.radius;this.notify('⚠ 대량 매도! 거인 음봉이 나타났어요');return e;}
   spawnSupply(kind = 0, x = 24 + this.random() * (WORLD_WIDTH - 48), y = this.height + 25,{marketWeight=1}={}) {
     if (this.supplies.length >= SETTINGS.supplyCap) return null;
@@ -294,6 +294,7 @@ return;/* v26: slime only slows (movement and attack speed) — no damage */}thi
     }
     for(const p of this.projectiles){p.elapsed+=dt;if(p.elapsed>=p.duration)this.resolveProjectile(p);}
     this.updateKnights(dt);this.updateSweeps(dt);
+    if(this.focus){const f=this.focus;if(f.until<=this.time||(this.time-f.at>.5&&!this.enemies.some(e=>e.alive&&Math.hypot(e.x-f.x,e.y-f.y)<=80))){this.effect('attack-marker',f.x,f.y,'#ff8a7a','',.35,{radius:16});this.focus=null;}}
     this.projectiles=this.projectiles.filter(p=>p.elapsed<p.duration);
     for (const f of this.effects) { f.life -= dt; if (f.type === 'particle') { f.x += f.vx*dt; f.y += f.vy*dt; f.vy += 90*dt; } }
     this.effects = this.effects.filter(f => f.life>0); this.messages = this.messages.filter(m=>m.until>this.time);
