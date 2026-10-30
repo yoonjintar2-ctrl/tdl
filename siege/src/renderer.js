@@ -1,11 +1,11 @@
-import { WORLD_WIDTH as W,CANNONS,ENEMIES,SUPPLIES,WALL_STAGES,DRONE,WALL,cannonStats,validPlacement,validDronePlacement,snapSlot,ALL_SLOTS,FORWARD_X,FORWARD_DY,clamp } from './config.js?v=81fbdd042d';
-import{WALL_MAX_LEVEL,WALL_MAX_XP}from'./progression.js?v=81fbdd042d';
-import{isAIStock}from'./symbols.js?v=81fbdd042d';
-import { QuarterCamera, DEPTH_SCALE, WALL_ELEVATION } from './camera.js?v=81fbdd042d';
-import { drawClayMortar, drawClayMortarIcon, clayBattlefield } from './clay-assets.js?v=81fbdd042d';
-import{drawProjectile,drawEffect}from'./combat-fx.js?v=81fbdd042d';
-import{artCrop}from'./terrain.js?v=81fbdd042d';
-import { drawClayTower, drawClayUnit, drawClayWall, drawClayPreview, drawForwardPad, hasKeep, wallOutline, tierOf, tierTint, drawTierBack, drawTierFront } from './clay-runtime.js?v=81fbdd042d';
+import { WORLD_WIDTH as W,CANNONS,ENEMIES,SUPPLIES,WALL_STAGES,DRONE,WALL,cannonStats,validPlacement,validDronePlacement,snapSlot,ALL_SLOTS,FORWARD_X,FORWARD_DY,clamp } from './config.js?v=da2c27a070';
+import{WALL_MAX_LEVEL,WALL_MAX_XP}from'./progression.js?v=da2c27a070';
+import{isAIStock}from'./symbols.js?v=da2c27a070';
+import { QuarterCamera, DEPTH_SCALE, WALL_ELEVATION } from './camera.js?v=da2c27a070';
+import { drawClayMortar, drawClayMortarIcon, clayBattlefield } from './clay-assets.js?v=da2c27a070';
+import{drawProjectile,drawEffect}from'./combat-fx.js?v=da2c27a070';
+import{artCrop}from'./terrain.js?v=da2c27a070';
+import { drawClayTower, drawClayUnit, drawClayWall, drawClayPreview, drawForwardPad, hasKeep, wallOutline, tierOf, tierTint, drawTierBack, drawTierFront } from './clay-runtime.js?v=da2c27a070';
 const TAU=Math.PI*2;
 function box(c,x,y,w,h,r,fill,stroke){c.beginPath();c.roundRect(x,y,w,h,r);if(fill){c.fillStyle=fill;c.fill();}if(stroke){c.lineWidth=1;c.strokeStyle=stroke;c.stroke();}}
 function line(c,pts,col,w=1){c.beginPath();c.lineWidth=w;c.strokeStyle=col;pts.forEach(([x,y],i)=>i?c.lineTo(x,y):c.moveTo(x,y));c.stroke();}
@@ -121,7 +121,23 @@ export class Renderer{
  this.building(c,55,h-27,.8,2);this.building(c,371,h-31,.82,0);this.building(c,201,h-12,.93,1);this.building(c,-14,h-103,.58,0);this.building(c,445,h-126,.65,1);
  for(const [x,y,s]of [[12,h-13,.8],[111,h-22,.62],[301,h-14,.8],[410,h-10,.9]])this.tree(c,x,y,s);
  }
- enemy(c,e){const clayFoot=this.point(e.x,e.y+e.radius);if(drawClayUnit(c,e,clayFoot.x,clayFoot.y,this.game.time,true))return;const d=ENEMIES[e.kind],t=this.game.time,run=Math.sin(t*(e.kind===3?6:12)+e.phase),bob=e.attacking?Math.sin(t*8):Math.abs(run)*2;
+ specialEnemy(c,e){const t=this.game.time,foot=this.point(e.x,e.y+e.radius);const bar=(x,y,w)=>{const k=Math.max(0,e.hp/e.maxHP);c.fillStyle='#2b1a0bdd';c.beginPath();c.roundRect(x-w/2-1,y-1,w+2,6,3);c.fill();c.fillStyle=k>.5?'#ff8a72':'#ff4a3a';c.beginPath();c.roundRect(x-w/2,y,w*k,4,2);c.fill();};
+  if(e.special==='ram'){const bob=e.attacking?0:Math.sin(t*5)*1.2,lunge=e.attacking?Math.max(0,e.attackPulse||0)*8:0;c.save();c.fillStyle='#1d2a1e40';c.beginPath();c.ellipse(foot.x,foot.y,36,9,0,0,TAU);c.fill();
+   const rows=[-46,-28,-10];for(const side of [-1,1])for(let i=0;i<3;i++)drawClayUnit(c,{kind:0,radius:8,phase:i+side,age:1,attacking:e.attacking,hit:e.hit},foot.x+side*15,foot.y+rows[i]+bob+lunge,t,true);
+   // the log: carried forward toward the gate
+   const lx=foot.x,ty=foot.y-64+bob+lunge,by=foot.y+10+bob+lunge;const g=c.createLinearGradient(lx-7,0,lx+7,0);g.addColorStop(0,'#5a3414');g.addColorStop(.45,'#a8703a');g.addColorStop(1,'#4a2a10');c.fillStyle=g;c.strokeStyle='#2b1a0b';c.lineWidth=1.4;c.beginPath();c.roundRect(lx-7,ty,14,by-ty,6);c.fill();c.stroke();
+   c.strokeStyle='#3a220c88';c.lineWidth=1;for(let y=ty+10;y<by-6;y+=13){c.beginPath();c.moveTo(lx-6,y);c.lineTo(lx+6,y+2);c.stroke();}
+   c.fillStyle='#4f5660';c.strokeStyle='#22262b';c.beginPath();c.roundRect(lx-9,by-8,18,12,4);c.fill();c.stroke();c.fillStyle='#9aa4ae';c.fillRect(lx-6,by-6,12,2);
+   for(const yy of [ty+18,by-26]){c.strokeStyle='#b88a4a';c.lineWidth=2;c.beginPath();c.moveTo(lx-16,yy);c.lineTo(lx+16,yy);c.stroke();}
+   bar(foot.x,foot.y-78,60);c.restore();return;}
+  if(e.special==='bomber'){const p=this.point(e.x,e.y,22+Math.sin(t*9+e.id)*2);c.save();c.fillStyle='#1d2a1e33';c.beginPath();c.ellipse(foot.x,foot.y,8,3,0,0,TAU);c.fill();
+   for(let i=1;i<6;i++){const q=this.point(e.x,e.y-i*7,22);c.globalAlpha=.3*(1-i/6);c.fillStyle='#6a5a4e';c.beginPath();c.arc(q.x,q.y-2,3+i,0,TAU);c.fill();}c.globalAlpha=1;
+   c.globalCompositeOperation='lighter';const gl=c.createRadialGradient(p.x,p.y,0,p.x,p.y,18);gl.addColorStop(0,`rgba(255,90,40,${.5+Math.sin(t*14)*.25})`);gl.addColorStop(1,'rgba(255,60,20,0)');c.fillStyle=gl;c.beginPath();c.arc(p.x,p.y,18,0,TAU);c.fill();c.globalCompositeOperation='source-over';
+   const flap=Math.sin(t*28+e.id)*5;c.fillStyle='#3a2a22';c.strokeStyle='#1a1009';c.lineWidth=1;for(const s of [-1,1]){c.beginPath();c.moveTo(p.x+s*4,p.y-4);c.lineTo(p.x+s*16,p.y-8-flap);c.lineTo(p.x+s*12,p.y+1);c.closePath();c.fill();c.stroke();}
+   drawClayUnit(c,{kind:4,radius:7,phase:e.id,age:1,hit:e.hit},p.x,p.y+2,t,true);
+   c.fillStyle='#22262b';c.beginPath();c.arc(p.x,p.y+8,4.5,0,TAU);c.fill();c.fillStyle=Math.sin(t*30)>0?'#ffe08a':'#ff7a3a';c.beginPath();c.arc(p.x+3,p.y+4,1.6,0,TAU);c.fill();
+   c.restore();return;}}
+ enemy(c,e){if(e.special){this.specialEnemy(c,e);return;}const clayFoot=this.point(e.x,e.y+e.radius);if(drawClayUnit(c,e,clayFoot.x,clayFoot.y,this.game.time,true))return;const d=ENEMIES[e.kind],t=this.game.time,run=Math.sin(t*(e.kind===3?6:12)+e.phase),bob=e.attacking?Math.sin(t*8):Math.abs(run)*2;
  const foot=this.point(e.x,e.y+e.radius),pulse=e.attackPulse||0,bodyY=foot.y-(d.height/2+6)*.84-bob+pulse*2;
  c.save();c.translate(foot.x,bodyY);c.scale(.84,.84);c.globalAlpha=clamp(Math.min(e.age*3,(35-e.age)*2,(20-e.contact)*2),0,1);c.lineCap='round';shadow(c,2,d.height/2+7,d.width*.7,4);
  for(const side of [-1,1]){
@@ -242,6 +258,9 @@ export class Renderer{
   const c=this.ctx,g=this.game,s=this.width*this.dpr/W,t=g.time;c.setTransform(s,0,0,s,0,0);c.globalAlpha=1;c.drawImage(this.bg,0,0,W,this.viewHeight);
   /* faction captions removed (v17): they collided with the HUD on phones */
   for(const z of g.zones){const p=this.point(z.x,z.y);c.save();c.globalAlpha=Math.min(.35,z.life*.2);c.fillStyle='#7da522';c.beginPath();c.ellipse(p.x,p.y,z.radius*.92,z.radius*DEPTH_SCALE,0,0,TAU);c.fill();c.restore();}
+  if(g.focus&&g.focus.until>g.time){const f=g.focus,p=this.point(f.x,f.y,0),left=f.until-g.time,a=Math.min(1,left);c.save();c.globalAlpha=a;
+   for(const u of g.cannons){if(['totem','blackhole','summoner','sonic'].includes(u.type))continue;const st=cannonStats(u.type,u.level),pp=g.cannonPosition(u),d=Math.hypot(f.x-pp.x,f.y-pp.y);if(d>st.range||d<(st.minRange||0))continue;const q=this.cannonAnchor(u);c.setLineDash([3,5]);c.lineDashOffset=-g.time*24;line(c,[[q.x,q.y-20],[p.x,p.y]],'#ff6a5a99',1.4);}
+   c.setLineDash([]);const r=22+Math.sin(g.time*6)*2;c.strokeStyle='#ff5a4a';c.lineWidth=2;c.beginPath();c.ellipse(p.x,p.y,r,r*.45,0,0,TAU);c.stroke();for(let i=0;i<4;i++){const ang=i*Math.PI/2+g.time;const x1=p.x+Math.cos(ang)*(r+6),y1=p.y+Math.sin(ang)*(r+6)*.45,x2=p.x+Math.cos(ang)*(r-6),y2=p.y+Math.sin(ang)*(r-6)*.45;line(c,[[x1,y1],[x2,y2]],'#ff8a7a',2.4);}c.restore();}
   if(g.selected){const u=g.selected,st=cannonStats(u.type,u.level),pos=g.cannonPosition(u);if(u.type==='totem')this.totemLinks(c,u.x,u.level,u);else{this.range(c,pos.x,pos.y,st.range,u.type==='drone'?'#8be2fa':'#f0f6b8');if(st.minRange)this.range(c,pos.x,pos.y,st.minRange,'#ff8a7a');}}
   this.effects(c,false);
   for(const e of g.enemies.filter(e=>e.alive).sort((a,b)=>this.point(a.x,a.y+a.radius).y-this.point(b.x,b.y+b.radius).y))this.enemy(c,e);
