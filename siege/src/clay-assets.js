@@ -1,5 +1,5 @@
-import { loadClayCollection,CLAY_CATALOG } from './clay-runtime.js?v=b107414a9f';
-import { WALL } from './config.js?v=b107414a9f';
+import { loadClayCollection,CLAY_CATALOG } from './clay-runtime.js?v=af41c62e60';
+import { WALL } from './config.js?v=af41c62e60';
 const images = new Map();
 export const CLAY_ART = {
   mortar: new URL('../assets/clay/mortar-master-v1.webp', import.meta.url).href,
@@ -34,8 +34,8 @@ export function drawClayMortar(c, u, x, y, power = 1, selected = false, icon = f
   c.drawImage(atlas, (frame % 4) * sw, Math.floor(frame / 4) * sh, sw, sh, -size/2, -size*.79, size, size);
   c.filter='none';
   if (!icon) {
-    const level=u.level||1; c.fillStyle='#233e35eb'; c.beginPath(); c.roundRect(-16,17,32,13,5); c.fill(); c.strokeStyle=level>=40?'#f7d386':'#b7c99c'; c.lineWidth=1; c.stroke();
-    c.font='700 8px system-ui';c.textAlign='center';c.textBaseline='middle';c.fillStyle='#f7edca';c.fillText(`Lv.${level}`,0,24);
+    const level=u.level||1,t=Math.min(4,Math.floor(level/10)),rim=['#c9b98a','#e09a5a','#e2e8ee','#ffd34f','#c78bff'][t]; c.fillStyle='#1d3328ee'; c.beginPath(); c.roundRect(-15,6,30,13,6.5); c.fill(); c.strokeStyle=rim; c.lineWidth=1.3; c.stroke();
+    c.font='800 8px system-ui';c.textAlign='center';c.textBaseline='middle';c.fillStyle='#fff3d0';c.fillText(`Lv.${level}`,0,12.8);
   }
   c.restore(); return true;
 }

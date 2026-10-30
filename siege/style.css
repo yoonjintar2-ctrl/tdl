@@ -598,3 +598,40 @@ html,body{touch-action:manipulation;-webkit-text-size-adjust:100%}
 .profile-pop .pp-edit{width:26px;height:26px;padding:0;border-radius:50%;border:2px solid #5a3a10;background:linear-gradient(#fff4b5,#e39a1c);color:#4a2804;font:400 13px/1 var(--gk-font);box-shadow:0 2px 0 #4a2a04}
 .profile-pop .pp-input{width:130px;height:30px;padding:0 8px;border-radius:10px;border:2px solid #5a3a10;background:#fffdf4;font:400 15px var(--gk-font);color:#2b1a0b}
 .profile-pop .pp-ok{height:30px;padding:0 10px;border-radius:10px;border:2px solid #1f4518;background:linear-gradient(#e6ffc2,#5fa636);font:400 13px var(--gk-font);color:#173a10;box-shadow:0 2px 0 #183812}
+/* ============ v25 CARD LAYOUT (definitive) — top row (rarity · level), name as plain text,
+   art, slim XP bar. No corner jewels; generous, even padding. ============ */
+.tcard .tcard-face.front{display:grid!important;grid-template-areas:"top" "name" "art" "bar";grid-template-rows:auto auto minmax(0,1fr) auto!important;row-gap:5px!important;padding:9px 9px 10px!important}
+.tcard .tcard-face.front::after{display:none!important}
+.tcard .tcard-face.front::before{inset:3px!important;border-radius:12px!important;opacity:.7}
+.tcard .tc-top{grid-area:top;display:flex!important;justify-content:space-between;align-items:center;padding:0!important;gap:4px;font-size:9px!important;line-height:1}
+.tcard .tc-rarity{padding:2px 6px!important;font:400 9px/1.25 var(--gk-font)!important}
+.tcard .tc-lv{display:inline-block!important;padding:2px 6px!important;border-radius:99px;font:400 10px/1.2 var(--gk-font)!important;color:#fff3d0!important;background:#2b1a0bcc!important;box-shadow:none!important}
+.tcard.unowned .tc-lv{opacity:.5}
+.tcard .tc-name{grid-area:name;margin:0!important;padding:0!important;background:none!important;box-shadow:none!important;border:0!important;border-radius:0!important;text-align:center;font:400 13px/1.15 var(--gk-font)!important;color:#3a2a12!important;text-shadow:0 1px 0 #ffffffcc;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tcard.r-rare .tc-name{color:#0f2f62!important}.tcard.r-legend .tc-name{color:#4a1d00!important}
+.tcard .tc-art{grid-area:art;margin:0!important;width:100%!important;height:100%!important;min-height:0!important;border-radius:10px!important}
+.tcard .tc-bar{grid-area:bar;margin:0 2px!important}
+.tcard.unowned .tc-bar{margin:0!important;text-align:center}
+/* state chip sits fully below the card instead of covering it */
+.tcard .tc-state{bottom:-21px!important;font:400 10px/1.4 var(--gk-font)!important;padding:1px 9px!important}
+.coll-grid{gap:30px 10px!important;padding:4px 2px 26px!important}
+/* collection & info card sizes */
+.coll-grid .tcard .tc-name{font-size:12px!important}
+.ti-card .tcard .tcard-face.front{padding:10px!important}
+/* phone 10-pack reveal: compact but complete (level visible, rarity pill hidden — colour says it) */
+@media(max-width:620px){
+.gacha-cards{gap:16px 8px!important}
+.gacha-cards .tcard:not(.mini) .tcard-face.front{grid-template-rows:auto auto minmax(0,1fr) auto!important;padding:6px 5px 7px!important;row-gap:3px!important}
+.gacha-cards .tcard:not(.mini) .tc-top{display:flex!important;justify-content:flex-end}
+.gacha-cards .tcard:not(.mini) .tc-rarity{display:none!important}
+.gacha-cards .tcard:not(.mini) .tc-lv{font-size:8px!important;padding:1px 5px!important}
+.gacha-cards .tcard:not(.mini) .tc-name{font-size:10px!important}
+.coll-grid{gap:28px 8px!important}
+.coll-grid .tcard .tcard-face.front{padding:7px 6px 8px!important;row-gap:4px!important}
+.coll-grid .tcard .tc-rarity{font-size:8px!important;padding:1px 5px!important}
+.coll-grid .tcard .tc-lv{font-size:8px!important;padding:1px 5px!important}
+.coll-grid .tcard .tc-name{font-size:11px!important}
+}
+/* sheet body breathing room */
+.shop-sheet>#shop{padding:6px 8px 14px!important}
+.shop .pack-row,.shop>div:first-child{gap:10px}

@@ -1,4 +1,4 @@
-import {CANNONS,ENEMIES,SUPPLIES,WALL,WORLD_WIDTH,ACTOR_STYLE} from './config.js?v=b107414a9f';
+import {CANNONS,ENEMIES,SUPPLIES,WALL,WORLD_WIDTH,ACTOR_STYLE} from './config.js?v=af41c62e60';
 export const ENEMY_ART=['enemy-small','enemy-tall','enemy-fat','enemy-giant'];
 // Kind 4 (초미니 음봉) reuses the small candle art at a much smaller size.
 const ENEMY_KIND_ART=[...ENEMY_ART,'enemy-small'];
@@ -24,7 +24,7 @@ function sprite(c,key,frame,x,y,size){const data=info(key,frame);if(!data)return
 // not each resample a large atlas rectangle every animation frame.
 function unitSprite(c,key,frame,x,y,size){const data=info(key,frame);if(!data)return false;const f=data.frame,k=size/f.cellW,id=key+':'+frame+':'+size;let cached=unitSprites.get(id);if(!cached){const bitmap=document.createElement('canvas'),w=f.w*k,h=f.h*k;bitmap.width=Math.ceil(w*3);bitmap.height=Math.ceil(h*3);const ctx=bitmap.getContext('2d');ctx.imageSmoothingQuality='high';ctx.drawImage(data.image,f.x,f.y,f.w,f.h,0,0,bitmap.width,bitmap.height);cached={bitmap,w,h};unitSprites.set(id,cached);}c.drawImage(cached.bitmap,x+(f.x-f.anchorX)*k,y+(f.y-f.anchorY)*k,cached.w,cached.h);return true;}
 function halo(c,x,y,r,color){c.save();c.strokeStyle=color;c.lineWidth=1.2;c.beginPath();c.ellipse(x,y,r,r*.3,0,0,Math.PI*2);c.stroke();c.restore();}
-function levelLabel(c,u,x,y){const tier=Math.min(8,Math.floor(u.level/5));c.fillStyle='#203c33ed';c.beginPath();c.roundRect(x-13,y+6,26,11,4);c.fill();c.strokeStyle=u.level>=40?'#f4d38b':'#adbf94';c.lineWidth=1;c.stroke();c.fillStyle='#f4edcc';c.textAlign='center';c.textBaseline='middle';c.font='700 7px system-ui';c.fillText(`Lv.${u.level}`,x,y+12);if(tier){for(let i=0;i<tier;i++){c.beginPath();c.arc(x-(tier-1)*2+i*4,y+4,1.1,0,Math.PI*2);c.fillStyle='#f0ce83';c.fill();}}}
+function levelLabel(c,u,x,y){const t=Math.min(4,Math.floor(Math.max(1,u.level||1)/10)),rim=['#c9b98a','#e09a5a','#e2e8ee','#ffd34f','#c78bff'][t];c.save();c.fillStyle='#1d3328ee';c.beginPath();c.roundRect(x-15,y+5,30,13,6.5);c.fill();c.strokeStyle=rim;c.lineWidth=1.3;c.stroke();c.fillStyle='#fff3d0';c.textAlign='center';c.textBaseline='middle';c.font='800 8px system-ui';c.fillText(`Lv.${u.level||1}`,x,y+11.8);c.restore();}
 // v22: towers change look every 10 levels — plinth, trims, banners, crest and tint by design tier.
 export const tierOf=level=>Math.min(4,Math.floor(Math.max(1,level||1)/10));
 const TIER_TINT=['none','saturate(1.12) contrast(1.04)','saturate(1.2) brightness(1.05)','sepia(.3) saturate(1.5) brightness(1.07)','sepia(.2) saturate(1.7) brightness(1.1) hue-rotate(-8deg)'];
@@ -50,6 +50,7 @@ export function drawClayTower(c,u,x,y,t=0,power=1,selected=false,icon=false){
  if(power<.4&&!icon)c.filter='saturate(.6) brightness(.78)';else if(tierOf(u.level))c.filter=tierTint(u.level);
  sprite(c,u.type,frameForAngle(u.angle??-Math.PI/2),x,y+(u.recoil||0)*2.3,size);c.filter='none';
  drawTierFront(c,x,y-size*(air?.35:.78),y,u.level,t,icon?1.1:1);
+ if(!icon)levelLabel(c,u,x,air?y+44:y);
  if(u.type==='totem'&&!icon){c.save();c.globalAlpha=.1+Math.sin(t*3)*.04;halo(c,x,y-30,21,'#c5f4b9');c.restore();}
  c.restore();return true;
 }
