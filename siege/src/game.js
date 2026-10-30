@@ -1,12 +1,12 @@
-import{campaignProgress}from'./campaign-courses.js?v=9e634d462c';
-import { SETTINGS, CANNONS, ENEMIES, SUPPLIES, WORLD_WIDTH, DRONE, WALL, CAMERA_DEPTH, ACTOR_STYLE, cannonStats, upgradeCost, energyMultiplier, wallYFor, priceBand, validPlacement, validDronePlacement, clamp } from './config.js?v=9e634d462c';
-import { wallMountDepth } from './fortification.js?v=9e634d462c';
-import { marketArmy,estimatedArmy } from './market-army.js?v=9e634d462c';
-import {playerLevelFor,towerSlots,wallLevelFor,wallPower,money,WALL_MAX_XP} from './progression.js?v=9e634d462c';
-import{TerrainField}from'./terrain.js?v=9e634d462c';
-import{modeFor}from'./cards.js?v=9e634d462c';
-import{formatDamage}from'./combat-fx.js?v=9e634d462c';
-import{wallXPAt}from'./progression.js?v=9e634d462c';
+import{campaignProgress}from'./campaign-courses.js?v=b107414a9f';
+import { SETTINGS, CANNONS, ENEMIES, SUPPLIES, WORLD_WIDTH, DRONE, WALL, CAMERA_DEPTH, ACTOR_STYLE, cannonStats, upgradeCost, energyMultiplier, wallYFor, priceBand, validPlacement, validDronePlacement, clamp } from './config.js?v=b107414a9f';
+import { wallMountDepth } from './fortification.js?v=b107414a9f';
+import { marketArmy,estimatedArmy } from './market-army.js?v=b107414a9f';
+import {playerLevelFor,towerSlots,wallLevelFor,wallPower,money,WALL_MAX_XP} from './progression.js?v=b107414a9f';
+import{TerrainField}from'./terrain.js?v=b107414a9f';
+import{modeFor}from'./cards.js?v=b107414a9f';
+import{formatDamage}from'./combat-fx.js?v=b107414a9f';
+import{wallXPAt}from'./progression.js?v=b107414a9f';
 // Kill gold is scaled down and a steady per-minute battle stipend added, so income stays in a narrow band
 // between a starter and a maxed army (card packs are the only use of gold).
 export const KILL_GOLD=.3,STIPEND_PER_MIN=30;
@@ -14,8 +14,11 @@ const WALL_SLOT=8;
 export const MAX_TOWERS=5;
 // v24: crowd actors carry a fraction of a 'unit' of volume, but never drop below half a unit of HP — towers no longer one-shot everything.
 export const HP_WEIGHT_FLOOR=.2;
-import{isAIStock}from'./symbols.js?v=9e634d462c';
-import {weaponMuzzle} from './weapon-geometry.js?v=9e634d462c';
+// v24: the giant is a rare boss — about one per five minutes at most, only on a heavy sell-off minute.
+export const BOSS=Object.freeze({cooldownMs:5*60*1000,minIntensity:1.6,minSellShare:.6,chance:.55,hp:4,scale:3.8,radius:44,speed:.6,damage:3});
+const BOSS_DEF=Object.freeze({...ENEMIES[3],speed:ENEMIES[3].speed*BOSS.speed,damage:ENEMIES[3].damage*BOSS.damage});
+import{isAIStock}from'./symbols.js?v=b107414a9f';
+import {weaponMuzzle} from './weapon-geometry.js?v=b107414a9f';
 export class Game {
   constructor(state, { height = 620, random = Math.random,now=Date.now,rewardMultiplier=1,mode } = {}) {
     this.modeKey=modeFor(mode??state.settings?.mode).key;this.stipendClock=0;this.wallHold=0;
@@ -27,7 +30,7 @@ export class Game {
     this.dmgAcc={};this.time = 0; this.wallY = height / 2; this.band = 0; this.targetBand = 0; this.move = null; this.stage = Math.min(9,this.wallLevel-1);
     this.terrain=new TerrainField(height);this.pricePlaced=false;this.market = null; this.selected = null; this.placement = null; this.dirty = false; this.nextId = 1; this.autoTimer = 0; this.messages = []; this.marketWaves=[];
     this.marketGoldRemainder=0;
-    this.lifetimeKills = Math.max(0, state.lifetimeKills || 0);
+    this.lifetimeKills = Math.max(0, state.lifetimeKills || 0); this.playerName = state.playerName || '';
     this.metrics = { killsByType: {}, kills: 0, crushedEnemies: 0, crushedSupplies: 0, healed: 0, goldEarned: 0, shots: {}, wallSteps: 0, expired: 0 };
   }
   wallAt(x, y = this.wallY) { return y + Math.sin(x / WORLD_WIDTH * Math.PI * 2 - .4) * 5 + Math.sin(x / WORLD_WIDTH * Math.PI * 4) * 1.5; }
@@ -46,7 +49,7 @@ export class Game {
   cash(value){return money(value,this.marketCode);}
   owned(type){return this.inventory.find(c=>c.type===type)||this.cannons.find(c=>c.type===type);}
   gainPlayerXP(amount){const before=this.playerLevel,slots=this.slotLimit;this.playerXP+=amount;this.dirty=true;if(this.playerLevel>before){this.effect('player-level',216,this.wallY,'#ffe5a2',`${before} → ${this.playerLevel}`,2,{slots:this.slotLimit,unlocked:this.slotLimit>slots});}}
-  wallXPLabel(amount,x){if(!amount)return;const lane=Math.floor(x/25),same=this.effects.find(f=>f.type==='wall-xp'&&f.lane===lane&&Math.sign(f.amount)===Math.sign(amount)&&f.life>.55);if(same){same.amount+=amount;same.life=.9;}else this.effect('wall-xp',x,this.wallBackAt(x),'',amount,.9,{sourceAltitude:WALL.elevation+8,lane});}
+  wallXPLabel(amount,x){if(!amount)return;const lane=Math.floor(x/72),same=this.effects.find(f=>f.type==='wall-xp'&&f.lane===lane&&Math.sign(f.amount)===Math.sign(amount)&&f.life>.55);if(same){same.amount+=amount;same.life=.9;}else this.effect('wall-xp',x,this.wallBackAt(x),'',amount,.9,{sourceAltitude:WALL.elevation+8,lane});}
   addWallXP(amount,x=216){const before=this.wallXP;this.wallXP=clamp(this.wallXP+amount,0,WALL_MAX_XP);const delta=this.wallXP-before;this.wallXPLabel(delta,x);this.dirty=true;return delta;}
   updateWallLevel(dt){this.wallHold=Math.max(0,this.wallHold-dt);const desired=this.desiredWallLevel();if(!this.wallTransition&&desired<this.wallLevel&&this.wallHold>0&&this.wallXP>0&&desired>=this.wallLevel-1)return;if(!this.wallTransition&&desired!==this.wallLevel)this.wallTransition={from:this.wallLevel,to:desired,elapsed:0,duration:desired>this.wallLevel?1.8:.75};const f=this.wallTransition;if(!f)return;f.elapsed+=dt;f.to=desired;if(f.elapsed>=f.duration){const before=this.wallLevel;this.wallLevel=desired;this.stage=Math.min(9,desired-1);this.wallTransition=null;if(desired!==before){this.wallHold=12;this.notify(`장벽 Lv.${before} → Lv.${desired}`);}}}
   // Hysteresis: level up at the threshold, but only fall back after dropping 35% into the band below,
@@ -79,9 +82,9 @@ export class Game {
     if(snapshot.priceStatus==='connection_required'&&snapshot.volumeStatus==='connection_required')this.marketWaves=[];
     this.market = snapshot;
     if(Number.isFinite(snapshot.changePct)){this.targetBand=priceBand(snapshot.changePct);if(!this.pricePlaced){this.pricePlaced=true;this.band=this.targetBand;this.wallY=wallYFor(this.band,this.height);this.move=null;}}
-    if(snapshot.tradeClassification==='estimated-candle-flow'){const epoch=this.now();this.marketWaves=this.marketWaves.filter(w=>!w.expiresAt||w.expiresAt>epoch);for(const event of snapshot.barEvents||[snapshot.barEvent]){if(!event)continue;this.marketWaves.push(...estimatedArmy(event,this.time,epoch));}this.marketWaves.sort((a,b)=>a.at-b.at);this.marketWaves=this.marketWaves.slice(-SETTINGS.swarmMinuteCap*2);return;}
+    if(snapshot.tradeClassification==='estimated-candle-flow'){const epoch=this.now();this.marketWaves=this.marketWaves.filter(w=>!w.expiresAt||w.expiresAt>epoch);for(const event of snapshot.barEvents||[snapshot.barEvent]){if(!event)continue;this.marketWaves.push(...estimatedArmy(event,this.time,epoch));this.maybeBoss(event.volume/event.baselineVolume,event.volume>0?event.sellVolume/event.volume:0,epoch);}this.marketWaves.sort((a,b)=>a.at-b.at);this.marketWaves=this.marketWaves.slice(-SETTINGS.swarmMinuteCap*2);return;}
     if(snapshot.tradeClassification==='minute-candle-direction'){
-      const events=snapshot.barEvents||[snapshot.barEvent];let start=Math.max(this.time,(this.marketWaves.at(-1)?.at??this.time-1)+1);for(const event of events){if(!event)continue;const waves=marketArmy(event,start);this.marketWaves.push(...waves);if(waves.length)start+=60;}this.marketWaves.sort((a,b)=>a.at-b.at);this.marketWaves=this.marketWaves.slice(-SETTINGS.swarmMinuteCap*3);return;
+      const events=snapshot.barEvents||[snapshot.barEvent];let start=Math.max(this.time,(this.marketWaves.at(-1)?.at??this.time-1)+1);for(const event of events){if(!event)continue;const waves=marketArmy(event,start);this.maybeBoss(event.volume/event.baselineVolume,event.direction<0?1:0,this.now());this.marketWaves.push(...waves);if(waves.length)start+=60;}this.marketWaves.sort((a,b)=>a.at-b.at);this.marketWaves=this.marketWaves.slice(-SETTINGS.swarmMinuteCap*3);return;
     }
     if(!Number.isFinite(snapshot.changePct))return; const avg = snapshot.averageVolumePerSecond;
     if (!(avg > 0)) return;
@@ -99,6 +102,8 @@ export class Game {
     const c = ENEMIES[kind],radius=c.radius*ACTOR_STYLE.footprintScale,e = { id: this.nextId++, kind, x: clamp(x, radius, WORLD_WIDTH - radius), y, hp: c.hp*Math.max(HP_WEIGHT_FLOOR,marketWeight)*this.mode.hp, maxHP: c.hp*Math.max(HP_WEIGHT_FLOOR,marketWeight)*this.mode.hp,marketWeight, radius, alive: true, age: 0, contact: 0, attack: .6, attackPulse: 0, hit: 0, slowUntil: 0, slow: 0, poisons: [], phase: this.random() * 6, attacking: false };
     this.terrain.projectSpawn(e);this.enemies.push(e); return e;
   }
+  maybeBoss(intensity,sellShare,epoch){if(!(intensity>=BOSS.minIntensity&&sellShare>=BOSS.minSellShare))return false;if(this.lastBossAt!=null&&epoch-this.lastBossAt<BOSS.cooldownMs)return false;if(this.random()>BOSS.chance)return false;this.lastBossAt=epoch;return !!this.spawnBoss();}
+  spawnBoss(x=WORLD_WIDTH/2){const e=this.spawnEnemy(3,x,-60,{marketWeight:1});if(!e)return null;e.boss=true;e.scale=BOSS.scale;e.hp=e.maxHP=ENEMIES[3].hp*BOSS.hp*this.mode.hp;e.radius=BOSS.radius;this.notify('⚠ 대량 매도! 거인 음봉이 나타났어요');return e;}
   spawnSupply(kind = 0, x = 24 + this.random() * (WORLD_WIDTH - 48), y = this.height + 25,{marketWeight=1}={}) {
     if (this.supplies.length >= SETTINGS.supplyCap) return null;
     const c = SUPPLIES[kind],radius=c.radius*ACTOR_STYLE.footprintScale,e = { id: this.nextId++, kind, x: clamp(x, radius, WORLD_WIDTH - radius), y, radius,marketWeight, alive: true, age: 0, phase: this.random() * 6 };
@@ -224,7 +229,7 @@ this.damage(e,Math.min(p.damage*this.power,e.maxHP*(st.splashCap||1)),{cannonTyp
       e.poisons = e.poisons.filter(p => p.until > this.time);
       if (e.poisons.length) this.damage(e, e.poisons.reduce((v,p) => v + p.dps * dt, 0), { cannonType: 'poison' });
       if (!e.alive) continue;
-      const def = ENEMIES[e.kind], stop = this.enemyStopAt(e);
+      const def = e.boss ? BOSS_DEF : ENEMIES[e.kind], stop = this.enemyStopAt(e);
       if (!Number.isFinite(e.wallSlot) && stop - e.y < 46) this.assignWallSlot(e, stop, wallLoad);
       const atWall = e.y >= stop - .1, sliding = atWall && Number.isFinite(e.wallSlot) && Math.abs(e.wallSlot - e.x) > 1.5;
       e.attacking = atWall && !sliding;

@@ -1,23 +1,23 @@
-import{CampaignView}from'./campaign-view.js?v=9e634d462c';
-import{CampaignDataProvider,newCourseRun,readCourseRun,checkpointCourse,storeCourseRun,removeCourseRun,restoreCourseCombat,settleCourse}from'./campaign.js?v=9e634d462c';
-import{courseFor,courseTime,CAMPAIGN_REWARD_RATE,campaignProgress}from'./campaign-courses.js?v=9e634d462c';
-import{stockFor}from'./symbols.js?v=9e634d462c';
-import{StockPicker}from'./stock-picker.js?v=9e634d462c';
-import{drawSessionChart}from'./session-chart.js?v=9e634d462c';
-import{WALL_MAX_XP}from'./progression.js?v=9e634d462c';
-import { CANNONS,SCENARIOS,SETTINGS,ENEMIES,SUPPLIES,WORLD_WIDTH,DRONE,WALL,cannonStats,upgradeCost,validPlacement,clamp } from './config.js?v=9e634d462c';
-import { DemoMarketDataProvider, LiveMarketDataProvider, AlpacaMarketDataProvider, MARKET_ERRORS } from './market.js?v=9e634d462c';
-import { Game } from './game.js?v=9e634d462c';
-import { Renderer,renderShopIcon } from './renderer.js?v=9e634d462c';
-import { initialState,readSave,writeSave,snapshotGame,safeStorage,readRawSave,writeRawSave } from './storage.js?v=9e634d462c';
-import{cloudConfigured,currentUser,signUpEmail,signInEmail,signOut,pull,push,EMAIL_RULE,idOf,claimSession,sessionState,SESSION_ID}from'./cloud.js?v=9e634d462c';
-import{recentSymbols}from'./stock-picker.js?v=9e634d462c';
-import { loadClayAssets,useBattlefield } from './clay-assets.js?v=9e634d462c';
-import{THEMES,themeFor}from'./themes.js?v=9e634d462c';
-import { drawClayPreview } from './clay-runtime.js?v=9e634d462c';
-import{money,playerXPAt,SLOT_LEVELS}from'./progression.js?v=9e634d462c';
-import{openPack,applyCard,PACKS,MODES,MODE_ORDER,modeFor,RARITIES,TOWER_RARITY}from'./cards.js?v=9e634d462c';
-import{CardStage,renderCollection,towerCard,statLines,nextLevelLines}from'./card-ui.js?v=9e634d462c';
+import{CampaignView}from'./campaign-view.js?v=b107414a9f';
+import{CampaignDataProvider,newCourseRun,readCourseRun,checkpointCourse,storeCourseRun,removeCourseRun,restoreCourseCombat,settleCourse}from'./campaign.js?v=b107414a9f';
+import{courseFor,courseTime,CAMPAIGN_REWARD_RATE,campaignProgress}from'./campaign-courses.js?v=b107414a9f';
+import{stockFor}from'./symbols.js?v=b107414a9f';
+import{StockPicker}from'./stock-picker.js?v=b107414a9f';
+import{drawSessionChart}from'./session-chart.js?v=b107414a9f';
+import{WALL_MAX_XP}from'./progression.js?v=b107414a9f';
+import { CANNONS,SCENARIOS,SETTINGS,ENEMIES,SUPPLIES,WORLD_WIDTH,DRONE,WALL,cannonStats,upgradeCost,validPlacement,clamp } from './config.js?v=b107414a9f';
+import { DemoMarketDataProvider, LiveMarketDataProvider, AlpacaMarketDataProvider, MARKET_ERRORS } from './market.js?v=b107414a9f';
+import { Game } from './game.js?v=b107414a9f';
+import { Renderer,renderShopIcon } from './renderer.js?v=b107414a9f';
+import { initialState,readSave,writeSave,snapshotGame,safeStorage,readRawSave,writeRawSave } from './storage.js?v=b107414a9f';
+import{cloudConfigured,currentUser,signUpEmail,signInEmail,signOut,pull,push,EMAIL_RULE,idOf,claimSession,sessionState,SESSION_ID}from'./cloud.js?v=b107414a9f';
+import{recentSymbols}from'./stock-picker.js?v=b107414a9f';
+import { loadClayAssets,useBattlefield } from './clay-assets.js?v=b107414a9f';
+import{THEMES,themeFor}from'./themes.js?v=b107414a9f';
+import { drawClayPreview } from './clay-runtime.js?v=b107414a9f';
+import{money,playerXPAt,SLOT_LEVELS}from'./progression.js?v=b107414a9f';
+import{openPack,applyCard,PACKS,MODES,MODE_ORDER,modeFor,RARITIES,TOWER_RARITY}from'./cards.js?v=b107414a9f';
+import{CardStage,renderCollection,towerCard,statLines,nextLevelLines}from'./card-ui.js?v=b107414a9f';
 const $=id=>document.getElementById(id),fmt=new Intl.NumberFormat('ko-KR'),nyTime=new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',hour12:false,hour:'2-digit',minute:'2-digit',second:'2-digit'});
 async function prepareArt(){const started=performance.now();
  $('asset-retry').hidden=true;$('asset-loading-message').textContent='클레이 전장을 준비하고 있어요.';
@@ -27,6 +27,8 @@ async function prepareArt(){const started=performance.now();
 $('asset-retry').addEventListener('click',prepareArt);
 // iOS ignores user-scalable=no: block pinch and double-tap zoom explicitly.
 for(const ev of['gesturestart','gesturechange','gestureend'])document.addEventListener(ev,e=>e.preventDefault(),{passive:false});
+// v24: belt-and-braces double-tap guard — a second tap within 320ms never reaches Safari's zoom; taps on controls still click.
+{let lastTap=0;document.addEventListener('touchend',e=>{const now=e.timeStamp||performance.now();if(now-lastTap<320&&e.changedTouches.length===1&&!e.target.closest('input,textarea,select,#battle')){e.preventDefault();const t=e.target.closest('button,[role=button],.tcard,a,label');if(t)t.click();}lastTap=now;},{passive:false});document.addEventListener('dblclick',e=>e.preventDefault(),{passive:false});}
 const clayLoaded=await prepareArt();
 const qaMode=new URLSearchParams(location.search).has('qa');
 let game=new Game(qaMode?initialState():readSave());const canvas=$('battle'),renderer=new Renderer(canvas,game),courseValues=new Map(),courseStorage=qaMode?{getItem:k=>courseValues.get(k)??null,setItem:(k,v)=>courseValues.set(k,v),removeItem:k=>courseValues.delete(k)}:safeStorage();
@@ -106,10 +108,12 @@ const FRAME_NAMES=['견습 수비대의 무쇠 테두리','청동 테두리','�
 function openProfile(){closeProfile();const h=homeOf(),L=h.playerLevel,t=L>=50?5:L>=35?4:L>=20?3:L>=10?2:L>=5?1:0,cur=playerXPAt(L),next=playerXPAt(L+1),pct=Math.max(0,Math.min(100,(h.playerXP-cur)/Math.max(1,next-cur)*100));
  const box=document.createElement('div');box.className='profile-pop';box.id='profile-pop';box.setAttribute('role','dialog');box.setAttribute('aria-label','내 정보');
  const owned=h.inventory.length,total=Object.keys(CANNONS).length,cleared=h.campaign?.cleared||0,kills=Math.floor(h.lifetimeKills||0),nextT=FRAME_AT[t+1];
- box.innerHTML=`<button class="pp-close" type="button" aria-label="닫기">×</button><div class="pp-head"><span class="user-portrait pf-t${t}"><span class="pf-wings"></span><span class="pf-face"></span><b>${L}</b></span><div><h3>수비대장 Lv.${L}</h3><small>${FRAME_NAMES[t]}</small></div></div>
+ box.innerHTML=`<button class="pp-close" type="button" aria-label="닫기">×</button><div class="pp-head"><span class="user-portrait pf-t${t}"><span class="pf-wings"></span><span class="pf-face"></span><b>${L}</b></span><div class="pp-who"><h3><span class="pp-name"></span> <em>Lv.${L}</em> <button type="button" class="pp-edit" aria-label="이름 바꾸기">✎</button></h3><small>${FRAME_NAMES[t]}</small></div></div>
  <div class="pp-bar"><i style="width:${pct.toFixed(1)}%"></i><span>${Math.floor(h.playerXP-cur).toLocaleString()} / ${(next-cur).toLocaleString()} XP</span></div>
  <dl><dt>누적 토벌</dt><dd>${kills.toLocaleString()} 음봉</dd><dt>이번 전투 토벌</dt><dd>${Math.floor(Object.values(h.metrics?.killsByType||{}).reduce((a,b)=>a+b,0)).toLocaleString()} 음봉</dd><dt>정복한 미션</dt><dd>${cleared} / 20</dd><dt>보유 타워</dt><dd>${owned} / ${total}종</dd><dt>보유 자금</dt><dd>${money(h.gold,'US')}</dd><dt>난이도</dt><dd>${MODES[h.modeKey]?.name||'노말'}</dd></dl>
  <div class="pp-next">${nextT?`Lv.${nextT}이 되면 테두리가 한 단계 더 화려해져요`:'최고 등급 테두리를 달성했어요!'}</div>`;
+ const nameEl=box.querySelector('.pp-name');nameEl.textContent=h.playerName||'수비대장';
+ box.querySelector('.pp-edit').onclick=()=>{const who=box.querySelector('.pp-who h3');const inp=document.createElement('input');inp.type='text';inp.maxLength=12;inp.className='pp-input';inp.value=h.playerName||'';inp.placeholder='이름 (최대 12자)';const ok=document.createElement('button');ok.type='button';ok.className='pp-ok';ok.textContent='저장';const done=()=>{const v=inp.value.replace(/[<>]/g,'').trim().slice(0,12);h.playerName=v;if(game!==h)game.playerName=v;h.dirty=true;save();closeProfile();openProfile();toast(v?`이름을 '${v}'(으)로 바꿨어요`:'기본 이름으로 돌아갔어요');};ok.onclick=done;inp.onkeydown=e=>{if(e.key==='Enter')done();};who.replaceChildren(inp,ok);inp.focus();};
  box.querySelector('.pp-close').onclick=closeProfile;$('app').append(box);setTimeout(()=>document.addEventListener('pointerdown',profileOutside,true),0);}
 function profileOutside(e){const b=$('profile-pop');if(b&&!b.contains(e.target)&&!e.target.closest('#user-portrait'))closeProfile();}
 function closeProfile(){$('profile-pop')?.remove();document.removeEventListener('pointerdown',profileOutside,true);}

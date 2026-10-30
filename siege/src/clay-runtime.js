@@ -1,4 +1,4 @@
-import {CANNONS,ENEMIES,SUPPLIES,WALL,WORLD_WIDTH,ACTOR_STYLE} from './config.js?v=9e634d462c';
+import {CANNONS,ENEMIES,SUPPLIES,WALL,WORLD_WIDTH,ACTOR_STYLE} from './config.js?v=b107414a9f';
 export const ENEMY_ART=['enemy-small','enemy-tall','enemy-fat','enemy-giant'];
 // Kind 4 (초미니 음봉) reuses the small candle art at a much smaller size.
 const ENEMY_KIND_ART=[...ENEMY_ART,'enemy-small'];
@@ -56,7 +56,7 @@ export function drawClayTower(c,u,x,y,t=0,power=1,selected=false,icon=false){
 export function drawClayUnit(c,e,x,y,t=0,enemy=true,forcedFrame){
  const key=!enemy&&e.art==='candle'?'bull-candle':(enemy?ENEMY_KIND_ART:SUPPLY_ART)[e.kind];if(!clayReady(key))return false;
  const frame=forcedFrame??(enemy&&e.attacking?(e.attackPulse>.2?3:2):Math.floor(t*(enemy?7:9)+(e.phase||0))%(enemy?2:3));
- const size=(enemy?ENEMIES[e.kind].height+28:SUPPLIES[e.kind].radius*2+30)*ACTOR_STYLE.unitScale,bob=enemy&&e.attacking?0:Math.sin(t*8+(e.phase||0))*.5;
+ const size=(enemy?ENEMIES[e.kind].height+28:SUPPLIES[e.kind].radius*2+30)*ACTOR_STYLE.unitScale*(e.scale||1),bob=enemy&&e.attacking?0:Math.sin(t*8+(e.phase||0))*.5;
  c.save();c.globalAlpha*=Math.max(0,Math.min(1,(e.age??1)*3,(35-(e.age??1))*2,enemy?(20-(e.contact||0))*2:1));
  c.fillStyle='#26382625';c.beginPath();c.ellipse(x+1,y+1,e.radius*.8,2.3,0,0,Math.PI*2);c.fill();
  if(e.hit>0)c.filter='brightness(1.5)';else if(e.poisons?.length)c.filter='hue-rotate(320deg) saturate(.85)';
@@ -64,7 +64,7 @@ export function drawClayUnit(c,e,x,y,t=0,enemy=true,forcedFrame){
  const contactOffset=enemy&&e.attacking&&frame===3?[6,2,2,2,4][e.kind]*ACTOR_STYLE.unitScale:0;
  unitSprite(c,key,frame,x,y+bob+contactOffset,size);c.filter='none';
  if(enemy&&e.showHealth!==false&&(e.hp<e.maxHP||e.kind===3)){
-  const f=info(key,frame).frame,top=y+(f.y-f.anchorY)*size/f.cellW-5,w=Math.max(12,ENEMIES[e.kind].width*.8*ACTOR_STYLE.unitScale);c.fillStyle='#3d463add';c.beginPath();c.roundRect(x-w/2-1,top-1,w+2,4,2);c.fill();c.fillStyle='#ed8e76';c.fillRect(x-w/2,top,Math.max(0,w*e.hp/e.maxHP),2);
+  const f=info(key,frame).frame,top=y+(f.y-f.anchorY)*size/f.cellW-5,w=Math.max(12,ENEMIES[e.kind].width*.8*ACTOR_STYLE.unitScale*(e.scale?e.scale*.7:1));c.fillStyle='#3d463add';c.beginPath();c.roundRect(x-w/2-1,top-1,w+2,4,2);c.fill();c.fillStyle='#ed8e76';c.fillRect(x-w/2,top,Math.max(0,w*e.hp/e.maxHP),2);
  }
  c.restore();return true;
 }

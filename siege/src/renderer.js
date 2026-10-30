@@ -1,11 +1,11 @@
-import { WORLD_WIDTH as W,CANNONS,ENEMIES,SUPPLIES,WALL_STAGES,DRONE,WALL,cannonStats,validPlacement,validDronePlacement,clamp } from './config.js?v=9e634d462c';
-import{WALL_MAX_LEVEL,WALL_MAX_XP}from'./progression.js?v=9e634d462c';
-import{isAIStock}from'./symbols.js?v=9e634d462c';
-import { QuarterCamera, DEPTH_SCALE, WALL_ELEVATION } from './camera.js?v=9e634d462c';
-import { drawClayMortar, drawClayMortarIcon, clayBattlefield } from './clay-assets.js?v=9e634d462c';
-import{drawProjectile,drawEffect}from'./combat-fx.js?v=9e634d462c';
-import{artCrop}from'./terrain.js?v=9e634d462c';
-import { drawClayTower, drawClayUnit, drawClayWall, drawClayPreview, wallOutline, tierOf, tierTint, drawTierBack, drawTierFront } from './clay-runtime.js?v=9e634d462c';
+import { WORLD_WIDTH as W,CANNONS,ENEMIES,SUPPLIES,WALL_STAGES,DRONE,WALL,cannonStats,validPlacement,validDronePlacement,clamp } from './config.js?v=b107414a9f';
+import{WALL_MAX_LEVEL,WALL_MAX_XP}from'./progression.js?v=b107414a9f';
+import{isAIStock}from'./symbols.js?v=b107414a9f';
+import { QuarterCamera, DEPTH_SCALE, WALL_ELEVATION } from './camera.js?v=b107414a9f';
+import { drawClayMortar, drawClayMortarIcon, clayBattlefield } from './clay-assets.js?v=b107414a9f';
+import{drawProjectile,drawEffect}from'./combat-fx.js?v=b107414a9f';
+import{artCrop}from'./terrain.js?v=b107414a9f';
+import { drawClayTower, drawClayUnit, drawClayWall, drawClayPreview, wallOutline, tierOf, tierTint, drawTierBack, drawTierFront } from './clay-runtime.js?v=b107414a9f';
 const TAU=Math.PI*2;
 function box(c,x,y,w,h,r,fill,stroke){c.beginPath();c.roundRect(x,y,w,h,r);if(fill){c.fillStyle=fill;c.fill();}if(stroke){c.lineWidth=1;c.strokeStyle=stroke;c.stroke();}}
 function line(c,pts,col,w=1){c.beginPath();c.lineWidth=w;c.strokeStyle=col;pts.forEach(([x,y],i)=>i?c.lineTo(x,y):c.moveTo(x,y));c.stroke();}
@@ -97,7 +97,7 @@ export function drawCannon(c,u,x,y,t=0,power=1,selected=false,icon=false){
 }
 export class Renderer{
  constructor(canvas,game){this.canvas=canvas;this.ctx=canvas.getContext('2d',{alpha:false});this.game=game;this.quality=1;this.ghost=null;this.camera=new QuarterCamera(game.height);}
- resize(width,height){this.width=width;this.height=height;this.viewHeight=W*height/width;this.game.resize(this.viewHeight/DEPTH_SCALE);this.camera.resize(this.game.height);this.dpr=Math.min(globalThis.devicePixelRatio||1,this.quality<.7?1.25:2);this.canvas.width=Math.round(width*this.dpr);this.canvas.height=Math.round(height*this.dpr);this.bg=document.createElement('canvas');this.bg.width=W;this.bg.height=Math.ceil(this.viewHeight);this.background(this.bg.getContext('2d'));this.wallFlash=document.createElement('canvas');this.wallFlash.width=W;this.wallFlash.height=Math.ceil(this.viewHeight);}
+ resize(width,height){this.width=width;this.height=height;this.viewHeight=W*height/width;this.game.resize(this.viewHeight/DEPTH_SCALE);this.camera.resize(this.game.height);this.dpr=Math.min(globalThis.devicePixelRatio||1,this.quality<.7?1.25:2);this.canvas.width=Math.round(width*this.dpr);this.canvas.height=Math.round(height*this.dpr);this.bg=document.createElement('canvas');const bk=this.width*this.dpr/W;this.bg.width=Math.round(W*bk);this.bg.height=Math.ceil(this.viewHeight*bk);{const bc=this.bg.getContext('2d');bc.imageSmoothingEnabled=true;bc.imageSmoothingQuality='high';bc.setTransform(bk,0,0,bk,0,0);this.background(bc);}this.wallFlash=document.createElement('canvas');this.wallFlash.width=W;this.wallFlash.height=Math.ceil(this.viewHeight);}
  point(x,y,z=0){return this.camera.project(x,y,z);}
  cannonAnchor(c){return this.camera.cannonAnchor(c,this.game);}
  screenAngle(c){const pos=this.game.cannonPosition(c),a=this.point(pos.x,pos.y),b=this.point(pos.x+Math.cos(c.angle)*20,pos.y+Math.sin(c.angle)*20);return Math.atan2(b.y-a.y,b.x-a.x);}

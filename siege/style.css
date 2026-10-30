@@ -592,3 +592,9 @@ body.is-fullscreen .float-controls,body.is-fullscreen .clock-chip,body.is-fullsc
 body.is-fullscreen .clock-chip{transform:translate(-50%,46px)}
 .coll-grid .tcard .tcard-inner,.ti-card .tcard .tcard-inner{animation:none!important;transform:none!important}
 .ti-locked{flex-basis:100%;margin:0 0 6px;text-align:center;font:400 13px var(--gk-font);color:#7a5420}
+html,body{touch-action:manipulation;-webkit-text-size-adjust:100%}
+.profile-pop .pp-who h3{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.profile-pop .pp-who h3 em{font-style:normal;font-size:14px;color:#7a5420}
+.profile-pop .pp-edit{width:26px;height:26px;padding:0;border-radius:50%;border:2px solid #5a3a10;background:linear-gradient(#fff4b5,#e39a1c);color:#4a2804;font:400 13px/1 var(--gk-font);box-shadow:0 2px 0 #4a2a04}
+.profile-pop .pp-input{width:130px;height:30px;padding:0 8px;border-radius:10px;border:2px solid #5a3a10;background:#fffdf4;font:400 15px var(--gk-font);color:#2b1a0b}
+.profile-pop .pp-ok{height:30px;padding:0 10px;border-radius:10px;border:2px solid #1f4518;background:linear-gradient(#e6ffc2,#5fa636);font:400 13px var(--gk-font);color:#173a10;box-shadow:0 2px 0 #183812}

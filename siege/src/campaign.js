@@ -1,9 +1,9 @@
-import{MarketDataProvider}from'./market.js?v=9e634d462c';
-import{courseFor,courseChange,courseUnlocked,campaignProgress,CAMPAIGN_REWARD_RATE}from'./campaign-courses.js?v=9e634d462c';
-import{estimateCandleFlow}from'./candle-flow.js?v=9e634d462c';
-import{snapshotGame,readSave,safeStorage}from'./storage.js?v=9e634d462c';
-import{SETTINGS,ENEMIES,SUPPLIES,validPlacement}from'./config.js?v=9e634d462c';
-import{playerLevelFor,towerSlots}from'./progression.js?v=9e634d462c';
+import{MarketDataProvider}from'./market.js?v=b107414a9f';
+import{courseFor,courseChange,courseUnlocked,campaignProgress,CAMPAIGN_REWARD_RATE}from'./campaign-courses.js?v=b107414a9f';
+import{estimateCandleFlow}from'./candle-flow.js?v=b107414a9f';
+import{snapshotGame,readSave,safeStorage}from'./storage.js?v=b107414a9f';
+import{SETTINGS,ENEMIES,SUPPLIES,validPlacement}from'./config.js?v=b107414a9f';
+import{playerLevelFor,towerSlots}from'./progression.js?v=b107414a9f';
 export const CAMPAIGN_SAVE_KEY=SETTINGS.saveKey+':course-v1';
 const EPOCH=Date.UTC(2026,0,5,14,30),BASE_VOLUME=40000;
 export class CampaignDataProvider extends MarketDataProvider{
