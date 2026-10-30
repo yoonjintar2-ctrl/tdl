@@ -1,11 +1,11 @@
-import { WORLD_WIDTH as W,CANNONS,ENEMIES,SUPPLIES,WALL_STAGES,DRONE,WALL,cannonStats,validPlacement,validDronePlacement,clamp } from './config.js?v=5b27a7d5b9';
-import{WALL_MAX_LEVEL,WALL_MAX_XP}from'./progression.js?v=5b27a7d5b9';
-import{isAIStock}from'./symbols.js?v=5b27a7d5b9';
-import { QuarterCamera, DEPTH_SCALE, WALL_ELEVATION } from './camera.js?v=5b27a7d5b9';
-import { drawClayMortar, drawClayMortarIcon, clayBattlefield } from './clay-assets.js?v=5b27a7d5b9';
-import{drawProjectile,drawEffect}from'./combat-fx.js?v=5b27a7d5b9';
-import{artCrop}from'./terrain.js?v=5b27a7d5b9';
-import { drawClayTower, drawClayUnit, drawClayWall, drawClayPreview, wallOutline, tierOf, tierTint, drawTierBack, drawTierFront } from './clay-runtime.js?v=5b27a7d5b9';
+import { WORLD_WIDTH as W,CANNONS,ENEMIES,SUPPLIES,WALL_STAGES,DRONE,WALL,cannonStats,validPlacement,validDronePlacement,clamp } from './config.js?v=9e634d462c';
+import{WALL_MAX_LEVEL,WALL_MAX_XP}from'./progression.js?v=9e634d462c';
+import{isAIStock}from'./symbols.js?v=9e634d462c';
+import { QuarterCamera, DEPTH_SCALE, WALL_ELEVATION } from './camera.js?v=9e634d462c';
+import { drawClayMortar, drawClayMortarIcon, clayBattlefield } from './clay-assets.js?v=9e634d462c';
+import{drawProjectile,drawEffect}from'./combat-fx.js?v=9e634d462c';
+import{artCrop}from'./terrain.js?v=9e634d462c';
+import { drawClayTower, drawClayUnit, drawClayWall, drawClayPreview, wallOutline, tierOf, tierTint, drawTierBack, drawTierFront } from './clay-runtime.js?v=9e634d462c';
 const TAU=Math.PI*2;
 function box(c,x,y,w,h,r,fill,stroke){c.beginPath();c.roundRect(x,y,w,h,r);if(fill){c.fillStyle=fill;c.fill();}if(stroke){c.lineWidth=1;c.strokeStyle=stroke;c.stroke();}}
 function line(c,pts,col,w=1){c.beginPath();c.lineWidth=w;c.strokeStyle=col;pts.forEach(([x,y],i)=>i?c.lineTo(x,y):c.moveTo(x,y));c.stroke();}
@@ -204,10 +204,13 @@ export class Renderer{
  }
  effects(c,front){for(const f of this.game.effects){const isFront=['text','wall-xp','wall-gold','player-level','impact','bullet-hit','beam','muzzle','supply-deliver','dmg'].includes(f.type);if(isFront!==front)continue;const p=1-f.life/f.maxLife,pos=this.point(f.x,f.y,f.sourceAltitude||0);c.save();c.globalAlpha=Math.min(1,f.life/f.maxLife*1.8);
   if(drawEffect(c,f,pos,p,(x,y,z)=>this.point(x,y,z))){c.restore();continue;}
-  if(f.type==='supply-deliver')drawClayUnit(c,{kind:f.kind,radius:f.radius,age:1,art:f.art},pos.x,pos.y-p*4,this.game.time,false,3);
+  if(f.type==='supply-deliver'){/* v24: the bull dissolves into the wall with a green blessing burst */c.save();c.globalAlpha=1-p;const k=1-p*.6;c.translate(pos.x,pos.y-p*10);c.scale(k,k);drawClayUnit(c,{kind:f.kind,radius:f.radius,age:1,art:f.art},0,0,this.game.time,false,3);c.restore();
+   c.save();c.globalCompositeOperation='lighter';const r=10+p*26;const g=c.createRadialGradient(pos.x,pos.y-8,0,pos.x,pos.y-8,r);g.addColorStop(0,`rgba(220,255,190,${.75*(1-p)})`);g.addColorStop(.5,`rgba(130,230,110,${.4*(1-p)})`);g.addColorStop(1,'rgba(80,200,80,0)');c.fillStyle=g;c.beginPath();c.arc(pos.x,pos.y-8,r,0,TAU);c.fill();
+   c.strokeStyle=`rgba(190,255,150,${.8*(1-p)})`;c.lineWidth=2;c.beginPath();c.ellipse(pos.x,pos.y,6+p*22,(6+p*22)*.35,0,0,TAU);c.stroke();
+   for(let i=0;i<5;i++){const a=f.x*7+i*1.3,sx=pos.x+Math.cos(a)*(6+p*14),sy=pos.y-6-p*(22+i*5);c.fillStyle=`rgba(230,255,200,${1-p})`;c.fillRect(sx-.8,sy-3,1.6,6);c.fillRect(sx-3,sy-.8,6,1.6);}c.restore();}
   if(f.type==='particle'){if(this.quality>.6||f.life>.3)dot(c,pos.x,pos.y,2,f.color);}
   if(f.type==='wall-gold')text(c,'+'+this.game.cash(f.amount),pos.x,pos.y-p*26,11,'#ffe6a0');
-  if(f.type==='wall-xp'&&false){/* v23: wall XP is never shown */const negative=f.amount<0;text(c,`${negative?'−':'+'}${(Math.abs(f.amount)>=1?Math.round(Math.abs(f.amount)):Math.abs(f.amount).toFixed(Math.abs(f.amount)>=.1?1:2))} XP`,pos.x,pos.y-p*23,9,negative?'#ff9d87':'#beef9b');}
+  if(f.type==='wall-xp'){/* v24: a plain +N / −N shows the wall gaining or losing strength (no 'XP' wording) */const negative=f.amount<0,v=Math.abs(f.amount),n=v>=1?Math.round(v):v.toFixed(v>=.1?1:2);c.save();c.font=`900 ${negative?11:12}px system-ui`;c.textAlign='center';c.lineJoin='round';c.lineWidth=3;c.strokeStyle=negative?'#4a0e06':'#0e3a12';const yy=pos.y-p*26;c.globalAlpha=Math.min(1,(1-p)*2.2);c.strokeText(`${negative?'−':'+'}${n}`,pos.x,yy);c.fillStyle=negative?'#ff8a72':'#b6ff8a';c.fillText(`${negative?'−':'+'}${n}`,pos.x,yy);c.restore();}
   if(f.type==='bullet-hit'){const rr=(f.heavy?8:4)*p;for(let i=0;i<4;i++){const a=i*TAU/4;line(c,[[pos.x+Math.cos(a)*2,pos.y+Math.sin(a)*2],[pos.x+Math.cos(a)*rr,pos.y+Math.sin(a)*rr]],f.color,1.1);}dot(c,pos.x,pos.y,1.5,'#fff2c4');}
   if(f.type==='player-level'){const yy=60-p*12;box(c,121,yy,190,f.unlocked?56:44,12,'#304c37f2','#e6cf8b');text(c,'PLAYER LEVEL UP',216,yy+13,9,'#e8d69b');text(c,`Lv.${f.amount}`,216,yy+30,16,'#f6efcd');if(f.unlocked)text(c,'설치 슬롯 +1 · 최대 '+f.slots+'기',216,yy+46,8,'#e3e9b7');}
   if(f.type==='text'){c.shadowColor='#183622';c.shadowBlur=3;text(c,f.amount,pos.x,pos.y-p*28,14,f.color);}

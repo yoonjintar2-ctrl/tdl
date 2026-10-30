@@ -1,7 +1,7 @@
-import { CANNONS, cannonStats } from './config.js?v=5b27a7d5b9';
-import { RARITIES, TOWER_RARITY, xpForNext, MAX_CARD_LEVEL, cardOdds, PACKS } from './cards.js?v=5b27a7d5b9';
-import { renderShopIcon } from './renderer.js?v=5b27a7d5b9';
-import { FX } from './fx.js?v=5b27a7d5b9';
+import { CANNONS, cannonStats } from './config.js?v=9e634d462c';
+import { RARITIES, TOWER_RARITY, xpForNext, MAX_CARD_LEVEL, cardOdds, PACKS } from './cards.js?v=9e634d462c';
+import { renderShopIcon } from './renderer.js?v=9e634d462c';
+import { FX } from './fx.js?v=9e634d462c';
 
 const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
 const wait = ms => new Promise(r => setTimeout(r, ms));
@@ -113,13 +113,13 @@ export function renderCollection(container, game, { onPack, onCard, slotText }) 
   const head = el('div', 'coll-head'); head.append(el('strong', '', '내 타워 카드'), el('small', '', slotText));
   const grid = el('div', 'coll-grid');
   const order = Object.keys(TOWER_RARITY).sort((a, b) => ['common', 'rare', 'epic', 'legend'].indexOf(TOWER_RARITY[a]) - ['common', 'rare', 'epic', 'legend'].indexOf(TOWER_RARITY[b]));
-  for (const type of order) { const item = game.inventory.find(c => c.type === type), deployed = game.cannons.some(c => c.type === type), card = towerCard(type, item || null); const chip = el('span', 'tc-state ' + (deployed ? 'on' : item ? 'off' : 'none'), deployed ? '배치 중' : item ? '보관 중' : '미보유'); card.append(chip); if (item) { card.tabIndex = 0; card.onclick = () => onCard(type); } grid.append(card); }
+  for (const type of order) { const item = game.inventory.find(c => c.type === type), deployed = game.cannons.some(c => c.type === type), card = towerCard(type, item || null); const chip = el('span', 'tc-state ' + (deployed ? 'on' : item ? 'off' : 'none'), deployed ? '배치 중' : item ? '보관 중' : '미보유'); card.append(chip); card.tabIndex = 0; card.onclick = () => onCard(type); grid.append(card); }
   container.append(packs, head, grid, oddsLine);
 }
 
 export function statLines(game, c) {
   const st = cannonStats(c.type, c.level), buff = game.attackBuff(c), power = game.power;
-  const lines = [['공격력', c.type === 'totem' ? '지원 전용' : (st.damage * power).toFixed(1)], ['공격 속도', c.type === 'totem' ? '지원 전용' : `${(st.rate * (1 + buff)).toFixed(2)} / 초`], ['사거리', Math.round(st.range)], ['장벽 버프', `Lv.${game.wallLevel} · 피해 ×${power.toFixed(2)}`]];
+  const lines = [['공격력', c.type === 'totem' ? '지원 전용' : (st.damage * power).toFixed(1)], ['공격 속도', c.type === 'totem' ? '지원 전용' : `${(st.rate * (1 + buff)).toFixed(2)} / 초`], ['사거리', Math.round(st.range)], ['성벽 화력', `피해 ×${power.toFixed(2)}`]];
   if (buff > 0) lines.push(['토템 지원', `연사 +${Math.round(buff * 100)}%`]);
   if (c.type === 'totem') lines.push(['주변 지원', `연사 +${Math.round(st.buff * 100)}%`]);
   if (st.pierce) lines.push(['관통', `${st.pierce}마리`]); if (st.slow) lines.push(['감속', `${Math.round(st.slow * 100)}% · ${st.duration.toFixed(1)}초`]); if (c.type === 'poison') lines.push(['독', `${st.dot.toFixed(1)}/초`]); if (c.type === 'mortar') lines.push(['폭발 반경', Math.round(st.radius)]);

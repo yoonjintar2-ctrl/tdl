@@ -1,19 +1,21 @@
-import{campaignProgress}from'./campaign-courses.js?v=5b27a7d5b9';
-import { SETTINGS, CANNONS, ENEMIES, SUPPLIES, WORLD_WIDTH, DRONE, WALL, CAMERA_DEPTH, ACTOR_STYLE, cannonStats, upgradeCost, energyMultiplier, wallYFor, priceBand, validPlacement, validDronePlacement, clamp } from './config.js?v=5b27a7d5b9';
-import { wallMountDepth } from './fortification.js?v=5b27a7d5b9';
-import { marketArmy,estimatedArmy } from './market-army.js?v=5b27a7d5b9';
-import {playerLevelFor,towerSlots,wallLevelFor,wallPower,money,WALL_MAX_XP} from './progression.js?v=5b27a7d5b9';
-import{TerrainField}from'./terrain.js?v=5b27a7d5b9';
-import{modeFor}from'./cards.js?v=5b27a7d5b9';
-import{formatDamage}from'./combat-fx.js?v=5b27a7d5b9';
-import{wallXPAt}from'./progression.js?v=5b27a7d5b9';
+import{campaignProgress}from'./campaign-courses.js?v=9e634d462c';
+import { SETTINGS, CANNONS, ENEMIES, SUPPLIES, WORLD_WIDTH, DRONE, WALL, CAMERA_DEPTH, ACTOR_STYLE, cannonStats, upgradeCost, energyMultiplier, wallYFor, priceBand, validPlacement, validDronePlacement, clamp } from './config.js?v=9e634d462c';
+import { wallMountDepth } from './fortification.js?v=9e634d462c';
+import { marketArmy,estimatedArmy } from './market-army.js?v=9e634d462c';
+import {playerLevelFor,towerSlots,wallLevelFor,wallPower,money,WALL_MAX_XP} from './progression.js?v=9e634d462c';
+import{TerrainField}from'./terrain.js?v=9e634d462c';
+import{modeFor}from'./cards.js?v=9e634d462c';
+import{formatDamage}from'./combat-fx.js?v=9e634d462c';
+import{wallXPAt}from'./progression.js?v=9e634d462c';
 // Kill gold is scaled down and a steady per-minute battle stipend added, so income stays in a narrow band
 // between a starter and a maxed army (card packs are the only use of gold).
 export const KILL_GOLD=.3,STIPEND_PER_MIN=30;
 const WALL_SLOT=8;
 export const MAX_TOWERS=5;
-import{isAIStock}from'./symbols.js?v=5b27a7d5b9';
-import {weaponMuzzle} from './weapon-geometry.js?v=5b27a7d5b9';
+// v24: crowd actors carry a fraction of a 'unit' of volume, but never drop below half a unit of HP — towers no longer one-shot everything.
+export const HP_WEIGHT_FLOOR=.2;
+import{isAIStock}from'./symbols.js?v=9e634d462c';
+import {weaponMuzzle} from './weapon-geometry.js?v=9e634d462c';
 export class Game {
   constructor(state, { height = 620, random = Math.random,now=Date.now,rewardMultiplier=1,mode } = {}) {
     this.modeKey=modeFor(mode??state.settings?.mode).key;this.stipendClock=0;this.wallHold=0;
@@ -94,7 +96,7 @@ export class Game {
   }
   spawnEnemy(kind = 0, x = 24 + this.random() * (WORLD_WIDTH - 48), y = -30,{marketWeight=1}={}) {
     if (this.enemies.length >= SETTINGS.enemyCap) return null;
-    const c = ENEMIES[kind],radius=c.radius*ACTOR_STYLE.footprintScale,e = { id: this.nextId++, kind, x: clamp(x, radius, WORLD_WIDTH - radius), y, hp: c.hp*marketWeight*this.mode.hp, maxHP: c.hp*marketWeight*this.mode.hp,marketWeight, radius, alive: true, age: 0, contact: 0, attack: .6, attackPulse: 0, hit: 0, slowUntil: 0, slow: 0, poisons: [], phase: this.random() * 6, attacking: false };
+    const c = ENEMIES[kind],radius=c.radius*ACTOR_STYLE.footprintScale,e = { id: this.nextId++, kind, x: clamp(x, radius, WORLD_WIDTH - radius), y, hp: c.hp*Math.max(HP_WEIGHT_FLOOR,marketWeight)*this.mode.hp, maxHP: c.hp*Math.max(HP_WEIGHT_FLOOR,marketWeight)*this.mode.hp,marketWeight, radius, alive: true, age: 0, contact: 0, attack: .6, attackPulse: 0, hit: 0, slowUntil: 0, slow: 0, poisons: [], phase: this.random() * 6, attacking: false };
     this.terrain.projectSpawn(e);this.enemies.push(e); return e;
   }
   spawnSupply(kind = 0, x = 24 + this.random() * (WORLD_WIDTH - 48), y = this.height + 25,{marketWeight=1}={}) {
@@ -251,7 +253,7 @@ this.damage(e,Math.min(p.damage*this.power,e.maxHP*(st.splashCap||1)),{cannonTyp
     for (const s of this.supplies) {
       if (!s.alive) continue; s.age += dt; if (s.age >= 35) { this.remove(s,'expire'); continue; }
       this.terrain.move(s,-SUPPLIES[s.kind].speed*dt,SUPPLIES[s.kind].speed,dt);
-      if (s.y-s.radius <= this.wallAt(s.x)+13) { this.deliverSupply(s); this.effect('supply-deliver',s.x,s.y+s.radius,'#bcefb0','',.4,{kind:s.kind,radius:s.radius,art:s.art});this.remove(s,'heal'); }
+      if (s.y-s.radius <= this.wallAt(s.x)+13) { this.deliverSupply(s); this.effect('supply-deliver',s.x,s.y+s.radius,'#bcefb0','',.7,{kind:s.kind,radius:s.radius,art:s.art});this.remove(s,'heal'); }
     }
     this.enemies = this.enemies.filter(e => e.alive); this.supplies = this.supplies.filter(s => s.alive);
     for (const c of this.cannons) {

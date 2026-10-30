@@ -590,3 +590,5 @@ body.gacha-open #app .battle,body.gacha-open #app .hud,body.gacha-open .sheet,bo
 body.is-fullscreen .compact-hud{padding-top:calc(46px + env(safe-area-inset-top))!important}
 body.is-fullscreen .float-controls,body.is-fullscreen .clock-chip,body.is-fullscreen .field-status{transform:translateY(46px)}
 body.is-fullscreen .clock-chip{transform:translate(-50%,46px)}
+.coll-grid .tcard .tcard-inner,.ti-card .tcard .tcard-inner{animation:none!important;transform:none!important}
+.ti-locked{flex-basis:100%;margin:0 0 6px;text-align:center;font:400 13px var(--gk-font);color:#7a5420}
