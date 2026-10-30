@@ -243,3 +243,17 @@ body *{touch-action:manipulation}
 .account-box button{min-height:40px;border-radius:12px;border:0;font:850 13px system-ui;background:#fffbe9;color:#2c472e;box-shadow:inset 0 -2px 0 #d9c38f}
 .account-box button.primary{background:#3f6a46;color:#fff7d8;box-shadow:inset 0 -2px 0 #26432c}
 .course-active .battle .mode-toggle{display:none}
+.account-form{text-align:left;gap:9px}
+.account-form>strong{text-align:center}
+.account-form label{display:grid;gap:4px;font:800 12px system-ui;color:#3d5236}
+.account-form input{min-height:44px;padding:0 12px;border-radius:12px;border:1.5px solid #c9b27a;background:#fffdf3;color:#24402a;font:700 16px system-ui}
+.account-form input:focus{outline:2px solid #6f9a5a;outline-offset:1px}
+.af-error{min-height:16px;color:#a24934!important;font-weight:800!important}
+.af-reason{font-weight:900!important;color:#2c472e!important;text-align:center}
+.af-switch{border:0;background:none;color:#3f6a46;font:800 12px system-ui;text-decoration:underline;justify-self:center;padding:4px}
+.af-note{text-align:center;font:700 10px system-ui;color:#7a6a40}
+.account-form input{width:100%;box-sizing:border-box;min-width:0}
+.account-form label{min-width:0}
+#af-cancel{background:#fffbe9;color:#2c472e;box-shadow:inset 0 -2px 0 #d9c38f}
+#af-ok{background:#3f6a46;color:#fff7d8;box-shadow:inset 0 -2px 0 #26432c}
+#af-ok:disabled{opacity:.6}

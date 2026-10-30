@@ -20,7 +20,13 @@ export async function currentUser() {
   const returning = /[?&]code=/.test(location.search) || hint(); if (!returning) return null;
   try { const sb = await sdk(); const { data } = await sb.auth.getSession(); const user = data.session?.user || null; hint(!!user); if (/[?&]code=/.test(location.search)) history.replaceState(null, '', location.pathname + location.hash); return user; } catch { return null; }
 }
-export async function signIn() { const sb = await sdk(); hint(true); const { error } = await sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: location.origin + location.pathname } }); if (error) throw error; }
+// ID + password accounts (no personal info). Supabase needs an email, so the ID maps to an internal address.
+export const ID_RULE = /^[a-z0-9_]{4,16}$/;
+const idEmail = id => `${String(id).trim().toLowerCase()}@siege.jintar.co.kr`;
+export const idOf = user => user?.email?.endsWith('@siege.jintar.co.kr') ? user.email.split('@')[0] : (user?.email || '');
+const authError = e => { const m = String(e?.message || e || ''); return /already registered|already exists/i.test(m) ? 'taken' : /invalid login|invalid credentials/i.test(m) ? 'wrong' : /confirm/i.test(m) ? 'confirm' : /password/i.test(m) ? 'weak' : 'network'; };
+export async function signUpId(id, password) { const sb = await sdk(); const { data, error } = await sb.auth.signUp({ email: idEmail(id), password }); if (error) throw Object.assign(new Error(error.message), { code: authError(error) }); if (!data.session) { const r = await sb.auth.signInWithPassword({ email: idEmail(id), password }); if (r.error) throw Object.assign(new Error(r.error.message), { code: authError(r.error) }); hint(true); return r.data.user; } hint(true); return data.user; }
+export async function signInId(id, password) { const sb = await sdk(); const { data, error } = await sb.auth.signInWithPassword({ email: idEmail(id), password }); if (error) throw Object.assign(new Error(error.message), { code: authError(error) }); hint(true); return data.user; }
 export async function signOut() { try { const sb = await sdk(); await sb.auth.signOut(); } finally { hint(false); } }
 export async function pull(user) { const sb = await sdk(); const { data, error } = await sb.from('siege_saves').select('data,updated_at').eq('user_id', user.id).maybeSingle(); if (error) throw error; return data ? { data: data.data, updatedAt: Date.parse(data.updated_at) } : null; }
 export async function push(user, save) { const sb = await sdk(); const { error } = await sb.from('siege_saves').upsert({ user_id: user.id, data: save, updated_at: new Date(save.savedAt || Date.now()).toISOString() }); if (error) throw error; return true; }

@@ -1,21 +1,21 @@
-import{CampaignView}from'./campaign-view.js?v=551d2f9a49';
-import{CampaignDataProvider,newCourseRun,readCourseRun,checkpointCourse,storeCourseRun,removeCourseRun,restoreCourseCombat,settleCourse}from'./campaign.js?v=551d2f9a49';
-import{courseFor,courseTime,CAMPAIGN_REWARD_RATE,campaignProgress}from'./campaign-courses.js?v=551d2f9a49';
-import{stockFor}from'./symbols.js?v=551d2f9a49';
-import{StockPicker}from'./stock-picker.js?v=551d2f9a49';
-import{drawSessionChart}from'./session-chart.js?v=551d2f9a49';
-import{WALL_MAX_XP}from'./progression.js?v=551d2f9a49';
-import { CANNONS,SCENARIOS,SETTINGS,ENEMIES,SUPPLIES,WORLD_WIDTH,DRONE,WALL,cannonStats,upgradeCost,validPlacement,clamp } from './config.js?v=551d2f9a49';
-import { DemoMarketDataProvider, LiveMarketDataProvider, AlpacaMarketDataProvider, MARKET_ERRORS } from './market.js?v=551d2f9a49';
-import { Game } from './game.js?v=551d2f9a49';
-import { Renderer,renderShopIcon } from './renderer.js?v=551d2f9a49';
-import { initialState,readSave,writeSave,snapshotGame,safeStorage,readRawSave,writeRawSave } from './storage.js?v=551d2f9a49';
-import{cloudConfigured,currentUser,signIn,signOut,pull,push}from'./cloud.js?v=551d2f9a49';
-import { loadClayAssets } from './clay-assets.js?v=551d2f9a49';
-import { drawClayPreview } from './clay-runtime.js?v=551d2f9a49';
-import{money,playerXPAt,SLOT_LEVELS}from'./progression.js?v=551d2f9a49';
-import{openPack,applyCard,PACKS,MODES,MODE_ORDER,modeFor}from'./cards.js?v=551d2f9a49';
-import{CardStage,renderCollection,towerCard,statLines}from'./card-ui.js?v=551d2f9a49';
+import{CampaignView}from'./campaign-view.js?v=31df2bada5';
+import{CampaignDataProvider,newCourseRun,readCourseRun,checkpointCourse,storeCourseRun,removeCourseRun,restoreCourseCombat,settleCourse}from'./campaign.js?v=31df2bada5';
+import{courseFor,courseTime,CAMPAIGN_REWARD_RATE,campaignProgress}from'./campaign-courses.js?v=31df2bada5';
+import{stockFor}from'./symbols.js?v=31df2bada5';
+import{StockPicker}from'./stock-picker.js?v=31df2bada5';
+import{drawSessionChart}from'./session-chart.js?v=31df2bada5';
+import{WALL_MAX_XP}from'./progression.js?v=31df2bada5';
+import { CANNONS,SCENARIOS,SETTINGS,ENEMIES,SUPPLIES,WORLD_WIDTH,DRONE,WALL,cannonStats,upgradeCost,validPlacement,clamp } from './config.js?v=31df2bada5';
+import { DemoMarketDataProvider, LiveMarketDataProvider, AlpacaMarketDataProvider, MARKET_ERRORS } from './market.js?v=31df2bada5';
+import { Game } from './game.js?v=31df2bada5';
+import { Renderer,renderShopIcon } from './renderer.js?v=31df2bada5';
+import { initialState,readSave,writeSave,snapshotGame,safeStorage,readRawSave,writeRawSave } from './storage.js?v=31df2bada5';
+import{cloudConfigured,currentUser,signUpId,signInId,signOut,pull,push,ID_RULE,idOf}from'./cloud.js?v=31df2bada5';
+import { loadClayAssets } from './clay-assets.js?v=31df2bada5';
+import { drawClayPreview } from './clay-runtime.js?v=31df2bada5';
+import{money,playerXPAt,SLOT_LEVELS}from'./progression.js?v=31df2bada5';
+import{openPack,applyCard,PACKS,MODES,MODE_ORDER,modeFor}from'./cards.js?v=31df2bada5';
+import{CardStage,renderCollection,towerCard,statLines}from'./card-ui.js?v=31df2bada5';
 const $=id=>document.getElementById(id),fmt=new Intl.NumberFormat('ko-KR'),nyTime=new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',hour12:false,hour:'2-digit',minute:'2-digit',second:'2-digit'});
 async function prepareArt(){const started=performance.now();
  $('asset-retry').hidden=true;$('asset-loading-message').textContent='클레이 전장을 준비하고 있어요.';
@@ -188,17 +188,29 @@ $('float-pause').onclick=pauseCourse;
 let cloudUser=null,cloudTimer=null,cloudState='guest',playClock=0,promptShown=false;
 function scheduleCloudPush(delay=15000){if(!cloudUser||qaMode)return;clearTimeout(cloudTimer);cloudTimer=setTimeout(pushNow,delay);}
 async function pushNow(){clearTimeout(cloudTimer);const raw=readRawSave();if(!cloudUser||!raw)return;try{await push(cloudUser,raw);cloudState='synced';}catch{cloudState='error';}renderAccount();}
-async function startCloud(){if(qaMode||!cloudConfigured())return;cloudUser=await currentUser();if(!cloudUser){renderAccount();return;}cloudState='syncing';renderAccount();
+async function startCloud(fromLogin=false){if(qaMode||!cloudConfigured())return;if(!fromLogin)cloudUser=await currentUser();if(!cloudUser){renderAccount();return;}cloudState='syncing';renderAccount();
  try{const remote=await pull(cloudUser),local=readRawSave();
   if(remote&&(!local||remote.updatedAt>(local.savedAt||0)+3000)){let applied=false;try{applied=sessionStorage.getItem('siege-cloud-applied')===String(remote.updatedAt);}catch{}if(!applied&&!courseRun){writeRawSave({...remote.data,savedAt:remote.updatedAt});try{sessionStorage.setItem('siege-cloud-applied',String(remote.updatedAt));}catch{}location.reload();return;}}
-  else if(local)await push(cloudUser,local);cloudState='synced';toast('☁ '+(cloudUser.email||'계정')+' · 클라우드 저장 연결됨');}
+  else if(local)await push(cloudUser,local);cloudState='synced';toast('☁ '+idOf(cloudUser)+' · 계정 저장 연결됨');}
  catch{cloudState='error';}renderAccount();}
 function renderAccount(){const box=document.getElementById('account-box');if(!box)return;box.replaceChildren();const t=document.createElement('strong');const p=document.createElement('p');const b=document.createElement('button');b.type='button';b.className='primary';
  if(!cloudConfigured()){t.textContent='계정 저장';p.textContent='준비 중입니다.';box.append(t,p);return;}
- if(cloudUser){t.textContent='☁ '+(cloudUser.email||'로그인됨');p.textContent=cloudState==='error'?'클라우드 저장에 실패했어요. 잠시 후 자동으로 다시 시도해요.':cloudState==='syncing'?'동기화 중…':'진행 상황이 계정에 자동 저장돼요. 아이패드·PC에서 같은 구글 계정으로 이어서 할 수 있어요.';b.textContent='로그아웃';b.className='';b.onclick=async()=>{await pushNow();await signOut();cloudUser=null;cloudState='guest';renderAccount();toast('로그아웃했어요 · 이 기기에는 계속 저장돼요');};}
- else{t.textContent='진행 상황 저장하기';p.textContent='지금은 이 기기에만 저장돼요. 구글로 가입하면 골드·타워 카드·미션 기록을 계정에 저장하고 다른 기기에서도 이어서 할 수 있어요.';b.textContent='G  구글로 가입·로그인';b.onclick=()=>signIn().catch(()=>toast('로그인 창을 열지 못했어요'));}
+ if(cloudUser){t.textContent='☁ '+idOf(cloudUser);p.textContent=cloudState==='error'?'계정 저장에 실패했어요. 잠시 후 자동으로 다시 시도해요.':cloudState==='syncing'?'동기화 중…':'진행 상황이 계정에 자동 저장돼요. 아이패드·PC에서 같은 아이디로 로그인하면 이어서 할 수 있어요.';b.textContent='로그아웃';b.className='';b.onclick=async()=>{await pushNow();await signOut();cloudUser=null;cloudState='guest';renderAccount();toast('로그아웃했어요 · 이 기기에는 계속 저장돼요');};}
+ else{t.textContent='진행 상황 저장하기';p.textContent='지금은 이 기기에만 저장돼요. 아이디와 비밀번호만으로 가입하면(이메일·개인정보 없음) 골드·타워 카드·미션 기록을 계정에 저장하고 다른 기기에서도 이어서 할 수 있어요.';b.textContent='가입 · 로그인';b.onclick=()=>openAccountForm('signup');}
  box.append(t,p,b);}
-function promptSignup(reason){if(promptShown||cloudUser||qaMode||!cloudConfigured()||document.getElementById('signup-prompt'))return;try{if(Date.now()-Number(localStorage.getItem('siege-signup-later')||0)<864e5)return;}catch{}promptShown=true;const w=document.createElement('div');w.id='signup-prompt';w.className='exit-confirm';w.innerHTML='<div class="exit-card"><strong>진행 상황을 저장할까요?</strong><p></p><div class="exit-actions"><button type="button" id="signup-later">나중에</button><button type="button" id="signup-go">G 구글로 가입</button></div></div>';w.querySelector('p').textContent=reason+' 구글로 가입하면 골드·타워 카드·미션 기록이 계정에 저장되고, 아이패드나 PC에서도 이어서 할 수 있어요.';w.querySelector('#signup-later').onclick=()=>{try{localStorage.setItem('siege-signup-later',String(Date.now()));}catch{}w.remove();};w.querySelector('#signup-go').onclick=()=>{save();signIn().catch(()=>{toast('로그인 창을 열지 못했어요');w.remove();});};document.body.append(w);}
+function promptSignup(reason){if(promptShown||cloudUser||qaMode||!cloudConfigured()||document.getElementById('account-form'))return;try{if(Date.now()-Number(localStorage.getItem('siege-signup-later')||0)<864e5)return;}catch{}promptShown=true;openAccountForm('signup',reason);}
+function openAccountForm(mode='signup',reason=''){document.getElementById('account-form')?.remove();const w=document.createElement('div');w.id='account-form';w.className='exit-confirm';const card=document.createElement('form');card.className='exit-card account-form';card.noValidate=true;
+ const render=()=>{const signup=mode==='signup';card.innerHTML=`<strong>${signup?'진행 상황 저장하기':'로그인'}</strong>${reason&&signup?'<p class="af-reason"></p>':''}<p>${signup?'아이디와 비밀번호만 있으면 돼요. 이메일·전화번호 같은 개인정보는 받지 않아요.':'가입한 아이디와 비밀번호를 입력하세요.'}</p><label>아이디<input id="af-id" autocomplete="username" autocapitalize="none" spellcheck="false" inputmode="latin" maxlength="16" placeholder="영문 소문자·숫자 4~16자"></label><label>비밀번호<input id="af-pw" type="password" autocomplete="${signup?'new-password':'current-password'}" maxlength="64" placeholder="6자 이상"></label>${signup?'<label>비밀번호 확인<input id="af-pw2" type="password" autocomplete="new-password" maxlength="64" placeholder="한 번 더 입력"></label>':''}<p class="af-error" role="alert"></p><div class="exit-actions"><button type="button" id="af-cancel">${signup?'나중에':'닫기'}</button><button type="submit" id="af-ok">${signup?'가입하기':'로그인'}</button></div><button type="button" class="af-switch">${signup?'이미 계정이 있어요 · 로그인':'처음이에요 · 가입하기'}</button><small class="af-note">${signup?'비밀번호를 잊으면 찾을 수 없으니 꼭 기억해 두세요.':''}</small>`;
+  if(reason&&signup)card.querySelector('.af-reason').textContent=reason;
+  card.querySelector('#af-cancel').onclick=()=>{if(mode==='signup'&&reason){try{localStorage.setItem('siege-signup-later',String(Date.now()));}catch{}}w.remove();};
+  card.querySelector('.af-switch').onclick=()=>{mode=signup?'login':'signup';render();};
+  setTimeout(()=>card.querySelector('#af-id')?.focus(),50);};
+ card.onsubmit=async e=>{e.preventDefault();const id=card.querySelector('#af-id').value.trim().toLowerCase(),pw=card.querySelector('#af-pw').value,pw2=card.querySelector('#af-pw2')?.value,err=card.querySelector('.af-error'),ok=card.querySelector('#af-ok');
+  if(!ID_RULE.test(id)){err.textContent='아이디는 영문 소문자·숫자·밑줄(_) 4~16자로 입력해 주세요.';return;}if(pw.length<6){err.textContent='비밀번호는 6자 이상이어야 해요.';return;}if(mode==='signup'&&pw!==pw2){err.textContent='비밀번호 두 개가 서로 달라요. 다시 확인해 주세요.';return;}
+  ok.disabled=true;err.textContent=mode==='signup'?'가입하는 중…':'로그인하는 중…';
+  try{save();cloudUser=mode==='signup'?await signUpId(id,pw):await signInId(id,pw);w.remove();await startCloud(true);}
+  catch(x){ok.disabled=false;err.textContent={taken:'이미 쓰고 있는 아이디예요. 다른 아이디를 써 주세요.',wrong:'아이디 또는 비밀번호가 맞지 않아요.',weak:'비밀번호가 너무 짧거나 쉬워요. 6자 이상으로 입력해 주세요.',confirm:'계정 서버 설정이 아직 끝나지 않았어요. 잠시 후 다시 시도해 주세요.'}[x.code]||'연결에 실패했어요. 잠시 후 다시 시도해 주세요.';}};
+ render();w.append(card);w.onclick=e=>{if(e.target===w)w.remove();};document.body.append(w);}
 {const sp=$('settings-panel'),acc=document.createElement('section');acc.id='account-box';acc.className='account-box';const anchor=sp.querySelector('h2');(anchor?.parentNode===sp?anchor.nextSibling:null)?sp.insertBefore(acc,anchor.nextSibling):sp.prepend(acc);renderAccount();}
 setInterval(()=>{if(marketChosen&&!document.hidden){playClock+=10;if(playClock>=300)promptSignup('5분 넘게 플레이했어요!');}},10000);
 window.addEventListener('pagehide',()=>{if(cloudUser)pushNow();});

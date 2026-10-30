@@ -1,18 +1,18 @@
-import{campaignProgress}from'./campaign-courses.js?v=551d2f9a49';
-import { SETTINGS, CANNONS, ENEMIES, SUPPLIES, WORLD_WIDTH, DRONE, WALL, CAMERA_DEPTH, ACTOR_STYLE, cannonStats, upgradeCost, energyMultiplier, wallYFor, priceBand, validPlacement, validDronePlacement, clamp } from './config.js?v=551d2f9a49';
-import { wallMountDepth } from './fortification.js?v=551d2f9a49';
-import { marketArmy,estimatedArmy } from './market-army.js?v=551d2f9a49';
-import {playerLevelFor,towerSlots,wallLevelFor,wallPower,money,WALL_MAX_XP} from './progression.js?v=551d2f9a49';
-import{TerrainField}from'./terrain.js?v=551d2f9a49';
-import{modeFor}from'./cards.js?v=551d2f9a49';
-import{formatDamage}from'./combat-fx.js?v=551d2f9a49';
-import{wallXPAt}from'./progression.js?v=551d2f9a49';
+import{campaignProgress}from'./campaign-courses.js?v=31df2bada5';
+import { SETTINGS, CANNONS, ENEMIES, SUPPLIES, WORLD_WIDTH, DRONE, WALL, CAMERA_DEPTH, ACTOR_STYLE, cannonStats, upgradeCost, energyMultiplier, wallYFor, priceBand, validPlacement, validDronePlacement, clamp } from './config.js?v=31df2bada5';
+import { wallMountDepth } from './fortification.js?v=31df2bada5';
+import { marketArmy,estimatedArmy } from './market-army.js?v=31df2bada5';
+import {playerLevelFor,towerSlots,wallLevelFor,wallPower,money,WALL_MAX_XP} from './progression.js?v=31df2bada5';
+import{TerrainField}from'./terrain.js?v=31df2bada5';
+import{modeFor}from'./cards.js?v=31df2bada5';
+import{formatDamage}from'./combat-fx.js?v=31df2bada5';
+import{wallXPAt}from'./progression.js?v=31df2bada5';
 // Kill gold is scaled down and a steady per-minute battle stipend added, so income stays in a narrow band
 // between a starter and a maxed army (card packs are the only use of gold).
 export const KILL_GOLD=.3,STIPEND_PER_MIN=30;
 const WALL_SLOT=8;
-import{isAIStock}from'./symbols.js?v=551d2f9a49';
-import {weaponMuzzle} from './weapon-geometry.js?v=551d2f9a49';
+import{isAIStock}from'./symbols.js?v=31df2bada5';
+import {weaponMuzzle} from './weapon-geometry.js?v=31df2bada5';
 export class Game {
   constructor(state, { height = 620, random = Math.random,now=Date.now,rewardMultiplier=1,mode } = {}) {
     this.modeKey=modeFor(mode??state.settings?.mode).key;this.stipendClock=0;this.wallHold=0;
