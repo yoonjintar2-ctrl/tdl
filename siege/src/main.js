@@ -1,25 +1,25 @@
-import{CampaignView}from'./campaign-view.js?v=34a9740d56';
-import{CampaignDataProvider,newCourseRun,readCourseRun,checkpointCourse,storeCourseRun,removeCourseRun,restoreCourseCombat,settleCourse}from'./campaign.js?v=34a9740d56';
-import{courseFor,courseTime,CAMPAIGN_REWARD_RATE,campaignProgress}from'./campaign-courses.js?v=34a9740d56';
-import{stockFor}from'./symbols.js?v=34a9740d56';
-import{StockPicker}from'./stock-picker.js?v=34a9740d56';
-import{drawSessionChart}from'./session-chart.js?v=34a9740d56';
-import{WALL_MAX_XP}from'./progression.js?v=34a9740d56';
-import { CANNONS,SCENARIOS,SETTINGS,ENEMIES,SUPPLIES,WORLD_WIDTH,DRONE,WALL,WALL_STAGES,cannonStats,upgradeCost,validPlacement,clamp } from './config.js?v=34a9740d56';
-import { DemoMarketDataProvider, LiveMarketDataProvider, AlpacaMarketDataProvider, MARKET_ERRORS } from './market.js?v=34a9740d56';
-import { Game } from './game.js?v=34a9740d56';
-import { DIGITS, DIGIT_H, DIGIT_W } from './digit-sprites.js?v=34a9740d56';
+import{CampaignView}from'./campaign-view.js?v=984ba11a08';
+import{CampaignDataProvider,newCourseRun,readCourseRun,checkpointCourse,storeCourseRun,removeCourseRun,restoreCourseCombat,settleCourse}from'./campaign.js?v=984ba11a08';
+import{courseFor,courseTime,CAMPAIGN_REWARD_RATE,campaignProgress}from'./campaign-courses.js?v=984ba11a08';
+import{stockFor}from'./symbols.js?v=984ba11a08';
+import{StockPicker}from'./stock-picker.js?v=984ba11a08';
+import{drawSessionChart}from'./session-chart.js?v=984ba11a08';
+import{WALL_MAX_XP}from'./progression.js?v=984ba11a08';
+import { CANNONS,SCENARIOS,SETTINGS,ENEMIES,SUPPLIES,WORLD_WIDTH,DRONE,WALL,WALL_STAGES,cannonStats,upgradeCost,validPlacement,validDronePlacement,clamp } from './config.js?v=984ba11a08';
+import { DemoMarketDataProvider, LiveMarketDataProvider, AlpacaMarketDataProvider, MARKET_ERRORS } from './market.js?v=984ba11a08';
+import { Game } from './game.js?v=984ba11a08';
+import { DIGITS, DIGIT_H, DIGIT_W } from './digit-sprites.js?v=984ba11a08';
 var goldShown='',goldNum=0;
-import { Renderer,renderShopIcon } from './renderer.js?v=34a9740d56';
-import { initialState,readSave,writeSave,snapshotGame,safeStorage,readRawSave,writeRawSave } from './storage.js?v=34a9740d56';
-import{cloudConfigured,currentUser,signUpEmail,signInEmail,signOut,pull,push,EMAIL_RULE,idOf,claimSession,sessionState,SESSION_ID,pullGrant}from'./cloud.js?v=34a9740d56';
-import{recentSymbols}from'./stock-picker.js?v=34a9740d56';
-import { loadClayAssets,useBattlefield } from './clay-assets.js?v=34a9740d56';
-import{THEMES,themeFor}from'./themes.js?v=34a9740d56';
-import { drawClayPreview } from './clay-runtime.js?v=34a9740d56';
-import{money,playerXPAt,SLOT_LEVELS,wallXPAt,WALL_MAX_LEVEL,wallPower}from'./progression.js?v=34a9740d56';
-import{openPack,applyCard,PACKS,MODES,MODE_ORDER,modeFor,RARITIES,TOWER_RARITY}from'./cards.js?v=34a9740d56';
-import{CardStage,renderCollection,towerCard,statLines,nextLevelLines}from'./card-ui.js?v=34a9740d56';
+import { Renderer,renderShopIcon } from './renderer.js?v=984ba11a08';
+import { initialState,readSave,writeSave,snapshotGame,safeStorage,readRawSave,writeRawSave } from './storage.js?v=984ba11a08';
+import{cloudConfigured,currentUser,signUpEmail,signInEmail,signOut,pull,push,EMAIL_RULE,idOf,claimSession,sessionState,SESSION_ID,pullGrant}from'./cloud.js?v=984ba11a08';
+import{recentSymbols}from'./stock-picker.js?v=984ba11a08';
+import { loadClayAssets,useBattlefield } from './clay-assets.js?v=984ba11a08';
+import{THEMES,themeFor}from'./themes.js?v=984ba11a08';
+import { drawClayPreview } from './clay-runtime.js?v=984ba11a08';
+import{money,playerXPAt,SLOT_LEVELS,wallXPAt,WALL_MAX_LEVEL,wallPower}from'./progression.js?v=984ba11a08';
+import{openPack,applyCard,PACKS,MODES,MODE_ORDER,modeFor,RARITIES,TOWER_RARITY}from'./cards.js?v=984ba11a08';
+import{CardStage,renderCollection,towerCard,statLines,nextLevelLines}from'./card-ui.js?v=984ba11a08';
 const $=id=>document.getElementById(id),fmt=new Intl.NumberFormat('ko-KR'),nyTime=new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',hour12:false,hour:'2-digit',minute:'2-digit',second:'2-digit'});
 async function prepareArt(){const started=performance.now();
  $('asset-retry').hidden=true;$('asset-loading-message').textContent='클레이 전장을 준비하고 있어요.';
@@ -37,14 +37,14 @@ const clayLoaded=await prepareArt();
 const qaMode=new URLSearchParams(location.search).has('qa');
 let game=new Game(qaMode?initialState():readSave());const canvas=$('battle'),renderer=new Renderer(canvas,game),courseValues=new Map(),courseStorage=qaMode?{getItem:k=>courseValues.get(k)??null,setItem:(k,v)=>courseValues.set(k,v),removeItem:k=>courseValues.delete(k)}:safeStorage();
 function makeProvider(symbol=game.settings.symbol){return stockFor(symbol)?.market==='US'&&game.settings.marketProvider==='alpaca'?new AlpacaMarketDataProvider({symbol}):new LiveMarketDataProvider({symbol});}
-let provider=makeProvider(),marketChosen=false;let picker,campaignView,courseRun=null,homeGame=null;
+let droneMove=null;let provider=makeProvider(),marketChosen=false;let picker,campaignView,courseRun=null,homeGame=null;
 let activeType=null,modal=null,previousFocus=null,frames=0,fps=60,fpsTime=0,last=performance.now(),uiTime=0,saveTime=0,acc=0,drag=null,lastShop='',slowSamples=0;
 let replaceTarget=null,lastTowerMenu='';
 const cash=n=>game.cash(n);
 const shopButtons=new Map();const cardStage=new CardStage();
 // Reserve towers: install straight from the shop, or pick a wall tower to swap out when slots are full.
 let replaceType=null;
-function installReserve(type){if(!game.owned(type)||game.cannons.some(c=>c.type===type))return;if(game.cannons.length<game.slotLimit){if(game.beginPlacement(type)){closePanel();updatePlacement();toast(CANNONS[type].name+' · '+(type==='drone'?'전투 공간':'빈 자리')+'을 눌러 설치');}return;}replaceType=type;closePanel();updatePlacement();}
+function installReserve(type){if(!game.owned(type)||game.cannons.some(c=>c.type===type))return;if(!game.full(type)){if(game.beginPlacement(type)){closePanel();updatePlacement();toast(CANNONS[type].name+' · '+(type==='drone'?'전투 공간':'빈 자리')+'을 눌러 설치');}return;}replaceType=type;closePanel();updatePlacement();}
 // ---- card packs (gold's only use) ----
 function syncLevels(g){for(const c of g.cannons){const item=g.inventory.find(v=>v.type===c.type);if(item)c.level=item.level;}}
 function buyPack(n,free=false){if(cardStage.root)return;const price=free?0:PACKS[n];if(free&&!game.freePack)return;if(!free&&game.gold<price){toast('골드가 부족해요');return;}
@@ -59,7 +59,7 @@ let infoTower=null;
 function openTowerInfo(c,{fromShop=false}={}){closeTowerInfo();infoTower=c;if(!c.virtual)game.selected=c;const wrap=document.createElement('div');wrap.className='tower-info'+(!c.virtual&&!fromShop?' field-info':'');wrap.id='tower-info';const card=document.createElement('div');card.className='ti-card';const item=game.inventory.find(v=>v.type===c.type)||(c.virtual?null:{level:c.level,xp:0});card.append(towerCard(c.type,item));const stats=document.createElement('div');stats.className='ti-stats';const h=document.createElement('h3');h.textContent=CANNONS[c.type].name;stats.append(h);{const r=document.createElement('p');r.className='ti-role';r.textContent=CANNONS[c.type].role;stats.append(r);}const rows=document.createElement('div');rows.className='ti-rows';stats.append(rows);card.append(stats);
  const actions=document.createElement('div');actions.className='ti-actions';const mk=(t,f,cls='')=>{const b=document.createElement('button');b.type='button';b.textContent=t;b.className=cls;b.onclick=f;actions.append(b);return b;};
  if(c.virtual){if(c.owned)mk('성벽에 설치',()=>{closeTowerInfo();installReserve(c.type);},'primary');else{const n=document.createElement('p');n.className='ti-locked';n.textContent='아직 없는 타워예요 · 카드 뽑기로 얻을 수 있어요';actions.append(n);}mk('닫기',closeTowerInfo);card.append(actions);wrap.append(card);const openedAt=performance.now();wrap.onclick=e=>{if(e.target===wrap&&performance.now()-openedAt>450)closeTowerInfo();};document.body.append(wrap);refreshTowerInfo();return;}
- mk('보관',()=>{if(game.storeTower(c)){save();closeTowerInfo();updateUI();toast('타워를 보관했습니다');}});mk('교체',()=>{if(c.type==='drone'){closeTowerInfo();replaceTarget=c;openShop();toast('바꿀 카드를 고르세요');return;}openSlotPicker(c.x,c);}).disabled=game.inventory.length<2;mk('닫기',closeTowerInfo,'primary');card.append(actions);wrap.append(card);const openedAt=performance.now();wrap.onclick=e=>{if(e.target===wrap&&performance.now()-openedAt>450)closeTowerInfo();};document.body.append(wrap);refreshTowerInfo();}
+ if(c.type==='drone')mk('위치 이동',()=>{closeTowerInfo();droneMove=c;toast('드론을 옮길 곳을 눌러 주세요');});mk('보관',()=>{if(game.storeTower(c)){save();closeTowerInfo();updateUI();toast('타워를 보관했습니다');}});mk('교체',()=>{if(c.type==='drone'){closeTowerInfo();replaceTarget=c;openShop();toast('바꿀 카드를 고르세요');return;}openSlotPicker(c.x,c);}).disabled=game.inventory.length<2;mk('닫기',closeTowerInfo,'primary');card.append(actions);wrap.append(card);const openedAt=performance.now();wrap.onclick=e=>{if(e.target===wrap&&performance.now()-openedAt>450)closeTowerInfo();};document.body.append(wrap);refreshTowerInfo();}
 function refreshTowerInfo(){const box=document.querySelector('#tower-info .ti-rows');if(!box||!infoTower)return;if(!infoTower.virtual&&!game.cannons.includes(infoTower)){closeTowerInfo();return;}const row=([k,v],cls='ti-row')=>{const r=document.createElement('div');r.className=cls;const a=document.createElement('span');a.textContent=k;const b=document.createElement('b');b.textContent=v;r.append(a,b);return r;};const head=document.createElement('div');head.className='ti-next-head';head.textContent='다음 레벨이 되면';/* v43: next-level details live in the ? codex */box.replaceChildren(...statLines(game,infoTower).map(l=>row(l)));}
 // v26: tap the command post → current wall grade, gauge to the next grade and what the grade does.
 function openWallInfo(){closeTowerInfo();const g=game,L=g.wallLevel,cur=wallXPAt(L),next=L>=WALL_MAX_LEVEL?null:wallXPAt(L+1),pct=next?Math.max(0,Math.min(100,(g.wallXP-cur)/(next-cur)*100)):100,stage=n=>WALL_STAGES[Math.max(0,Math.min(WALL_STAGES.length-1,n-1))]?.name||'',mult=n=>(wallPower(n)/wallPower(1)).toFixed(2);
@@ -79,7 +79,7 @@ function campaignUnview(state,mode,original){if(mode==='normal')return state;ret
 function renderModeToggles(){for(const box of document.querySelectorAll('.mode-toggle')){box.replaceChildren();for(const key of MODE_ORDER){const b=document.createElement('button');b.type='button';b.dataset.mode=key;const open=modeUnlocked(key);b.textContent=(open?'':'🔒 ')+MODES[key].name;b.setAttribute('aria-pressed',String(homeOf().modeKey===key));b.disabled=!!courseRun;b.classList.toggle('locked',!open);b.title=open?MODES[key].name+' · 몹 체력 ×'+MODES[key].hp+' · 골드 ×'+MODES[key].gold:(key==='nightmare'?'노말 20단계 정복 시 개방':'악몽 20단계 정복 시 개방');b.onclick=()=>setMode(key);box.append(b);}}}
 function modeLockHint(key){const h=homeOf();if(key==='nightmare')return `🔒 악몽은 노말 미션 20단계를 모두 정복하면 열려요 (지금 ${h.campaign?.cleared||0}/20)`;return `🔒 지옥은 악몽 미션 20단계를 모두 정복하면 열려요 (지금 ${h.campaignModes?.nightmare?.cleared||0}/20)`;}
 function setMode(key){if(courseRun)return;if(!modeUnlocked(key)){toast(modeLockHint(key));return;}homeOf().setMode(key);if(game!==homeOf())game.setMode(key);if(marketChosen)applyTheme(game.settings.symbol);save();renderModeToggles();picker.render?.();toast(MODES[key].name+' 모드 · 몹 체력 ×'+MODES[key].hp+' · 골드 ×'+MODES[key].gold);}
-function shopAction(type){const owned=game.owned(type);if(owned){if(game.upgrade(owned)){save();updateUI();toast(CANNONS[type].name+' 강화 완료');}}else if(game.cannons.length>=game.slotLimit){if(game.buyTower(type)){save();updateUI();toast('보관함에 추가했습니다 · 설치 타워를 눌러 교체하세요');}}else if(game.beginPurchase(type)){closePanel();updatePlacement();toast(CANNONS[type].name+' · 성벽을 터치해 설치');}}
+function shopAction(type){const owned=game.owned(type);if(owned){if(game.upgrade(owned)){save();updateUI();toast(CANNONS[type].name+' 강화 완료');}}else if(game.full(type)){if(game.buyTower(type)){save();updateUI();toast('보관함에 추가했습니다 · 설치 타워를 눌러 교체하세요');}}else if(game.beginPurchase(type)){closePanel();updatePlacement();toast(CANNONS[type].name+' · 성벽을 터치해 설치');}}
 $('scenario').innerHTML=SCENARIOS.map(([v,t])=>`<option value="${v}">${t}</option>`).join('');$('scenario').value=game.settings.scenario;$('quality').value=game.settings.quality;$('auto-upgrade').checked=game.settings.autoUpgrade;
 function chart(snapshot){const cv=$('chart'),c=cv.getContext('2d'),w=cv.width,h=cv.height,items=snapshot.candles.slice(-28);c.clearRect(0,0,w,h);if(!items.length)return;
  const lo=Math.min(...items.map(i=>i.low)),hi=Math.max(...items.map(i=>i.high)),pad=Math.max((hi-lo)*.1,.01),y=p=>h-5-(p-lo+pad)/(hi-lo+pad*2)*(h-10),step=w/items.length;
@@ -143,7 +143,7 @@ function detail(){if(!activeType)return;const d=CANNONS[activeType],c=game.canno
  $('detail-category').textContent=c?'DEPLOYED / LEVEL '+level:owned?'RESERVE / LEVEL '+level:'NEW DEFENSE UNIT';$('detail-title').textContent=d.name;$('detail-role').textContent=d.role;renderShopIcon($('detail-icon'),activeType,level);
  const fields=[['공격력',activeType==='totem'?'지원 전용':(st.damage*game.power).toFixed(1)],['공격 속도',activeType==='totem'?'지원 전용':(st.rate*(1+buff)).toFixed(2)+' / 초'],['사정거리',Math.round(st.range)],['특수 효과',special(st,activeType)],['장벽 보너스','Lv.'+game.wallLevel+' · ×'+game.power.toFixed(2)]];$('detail-stats').innerHTML=fields.map(([k,v])=>'<div class="stat"><span>'+k+'</span><strong>'+v+'</strong></div>').join('');
  $('detail-next').textContent=!owned?'카드 뽑기로 얻을 수 있어요.':level===40?'최종 강화 완료':'같은 카드를 더 모으면 타워 모습과 힘이 강해져요.';
- const price=owned?upgradeCost(activeType,level):d.cost;$('detail-action').disabled=!!owned&&level===40||game.gold<price;$('detail-action').textContent=owned&&level===40?'MAX LEVEL':(owned?'강화 ':'구매 ')+cash(price);$('move-action').hidden=!c;$('detail-install').hidden=!owned||!!c;$('detail-install').disabled=game.cannons.length>=game.slotLimit;$('detail-install').textContent=game.cannons.length>=game.slotLimit?'설치 한도 '+game.slotLimit+'기 · 타워를 눌러 교체':'보관 타워 설치';
+ const price=owned?upgradeCost(activeType,level):d.cost;$('detail-action').disabled=!!owned&&level===40||game.gold<price;$('detail-action').textContent=owned&&level===40?'MAX LEVEL':(owned?'강화 ':'구매 ')+cash(price);$('move-action').hidden=!c;$('detail-install').hidden=!owned||!!c;$('detail-install').disabled=game.full(activeType);$('detail-install').textContent=game.full(activeType)&&game.slotLimit?'설치 한도 '+game.slotLimit+'기 · 타워를 눌러 교체':'보관 타워 설치';
 }
 $('detail-action').onclick=()=>{shopAction(activeType);if(modal==='detail-panel')detail();if(modal==='swap-panel')renderTowerMenu();};
 $('detail-install').onclick=()=>{if(game.beginPlacement(activeType)){closePanel();updatePlacement();}};
@@ -165,7 +165,7 @@ function slotAtScreen(s){let best=null,bd=1e9;for(const sx of SLOT_XS){const a=s
 function slotY(sx){return sx===216?game.wallAt(216)-250:game.wallAt(sx);}
 function towerInSlot(sx){return game.cannons.find(c=>c.type!=='drone'&&Math.abs(c.x-sx)<.5);}
 function putInSlot(type,sx){const placed=game.cannons.find(c=>c.type===type);if(placed){if(placed.type==='drone')return false;const ok=game.moveCannon(placed,sx,slotY(sx));if(ok){save();updateUI();toast(CANNONS[type].name+' 자리 이동');}return ok;}
- if(game.cannons.length>=game.slotLimit){toast('타워는 최대 '+game.slotLimit+'기까지예요');return false;}if(!game.beginPlacement(type))return false;const ok=game.place(sx,slotY(sx));game.placement=null;if(ok){save();updateUI();toast(CANNONS[type].name+' 설치 완료');}return ok;}
+ if(game.full(type)){toast('타워는 최대 '+game.slotLimit+'기까지예요');return false;}if(!game.beginPlacement(type))return false;const ok=game.place(sx,slotY(sx));game.placement=null;if(ok){save();updateUI();toast(CANNONS[type].name+' 설치 완료');}return ok;}
 function openSlotPicker(sx,current=null){closeTowerInfo();const w=document.createElement('div');w.className='tower-info';w.id='tower-info';const card=document.createElement('div');card.className='ti-card slot-picker';
  const title=current?`${CANNONS[current.type].name} 교체`:sx===216?'전진 자리에 설치':'빈 자리에 설치';card.innerHTML=`<h3 class="sp-title">${title}</h3><p class="sp-sub">${current?'고른 타워와 자리를 바꿔요 · 배치 중인 타워도 고를 수 있어요':'보관 중이거나 배치 중인 타워를 골라요'}</p><div class="sp-list"></div>`;
  const list=card.querySelector('.sp-list');const items=game.inventory.filter(v=>v.type!=='drone'&&v.type!==current?.type);
@@ -176,6 +176,7 @@ function openSlotPicker(sx,current=null){closeTowerInfo();const w=document.creat
 canvas.addEventListener('pointerdown',e=>{if(modal)return;e.preventDefault();drag={id:e.pointerId,start:point(e,null).screen};});
 canvas.addEventListener('pointermove',()=>{});
 canvas.addEventListener('pointerup',e=>{if(!drag||drag.id!==e.pointerId)return;const d=drag;drag=null;renderer.ghost=null;const s=point(e,null).screen;if(Math.hypot(s.x-d.start.x,s.y-d.start.y)>14)return;if(document.getElementById('tower-info')?.classList.contains('field-info'))closeTowerInfo();
+ if(droneMove){const dr=droneMove;droneMove=null;const p=point(e,'drone');if(game.cannons.includes(dr)&&validDronePlacement(p.x,p.y,game.height)){dr.x=p.x;dr.y=p.y;game.dirty=true;game.burst(p.x,p.y,CANNONS.drone.color);save();toast('드론 위치를 옮겼어요');}else toast('전투 공간 안을 눌러 주세요');return;}
  if(game.placement){const type=game.placement;if(type==='drone'){const p=point(e,'drone');if(!p.inBounds&&p.inBounds!==undefined||!game.place(p.x,p.y))toast('전투 공간 안을 눌러 주세요');else{save();updateUI();toast('설치 완료');}}else{const sx=slotAtScreen(s);if(sx==null)toast('빈 자리를 눌러 주세요');else if(towerInSlot(sx))toast('빈 자리를 눌러 주세요');else{game.placement=null;putInSlot(type,sx);}}game.placement=null;updatePlacement();return;}
  if(replaceType){const c=towerAtScreen(s);if(c&&game.replaceTower(c,replaceType)){toast(CANNONS[replaceType].name+' 교체 완료');replaceType=null;save();updateUI();}else toast('성벽 위 타워를 눌러 교체하세요');updatePlacement();return;}
  const drone=game.cannons.find(c=>c.type==='drone'&&(()=>{const a=renderer.cannonAnchor(c);return Math.hypot(a.x-s.x,a.y-s.y)<26;})());if(drone){openTowerInfo(drone);return;}
@@ -212,9 +213,9 @@ function updateUI(){
 
  setGoldDigits($('gold'),cash(game.gold));$('shop-gold').textContent=cash(game.gold);$('power').textContent='장벽 화력 ×'+game.power.toFixed(2);$('population').textContent=`음봉 ${game.enemies.filter(e=>e.alive).length}`;$('fps').textContent=`${fps} FPS`;
  $('scenario-label').textContent=provider instanceof CampaignDataProvider?'정복 코스 · 가상 장세':provider instanceof LiveMarketDataProvider?(game.marketCode==='KR'?'확정 1분봉 · 양방향 추정':'직전 1분봉 · 양방향 추정'):provider instanceof AlpacaMarketDataProvider?'거래량 SIP · 약 16분 지연':(provider.manual!==null?'성벽 이동 실험':SCENARIOS.find(s=>s[0]===provider.scenario)?.[1])+` · ${provider.speed}×`;
- $('player-status').textContent='Lv.'+game.playerLevel;$('user-level').textContent=String(game.playerLevel);{const L=game.playerLevel,t=L>=50?5:L>=35?4:L>=20?3:L>=10?2:L>=5?1:0,pf=$('user-portrait');if(pf&&pf.dataset.tier!==String(t)){pf.dataset.tier=t;pf.className='user-portrait pf-t'+t;pf.dataset.tierClass='pf-t'+t;}}$('player-status').title='유저 XP '+Math.floor(game.playerXP)+' / 다음 '+playerXPAt(game.playerLevel+1);$('slot-status').textContent=game.cannons.length+' / '+game.slotLimit+' 기';const nextSlot=SLOT_LEVELS.find(level=>level>game.playerLevel);const reserveCount=game.inventory.filter(v=>!game.cannons.some(c=>c.type===v.type)).length;$('slot-guide').textContent='성벽 타워 '+game.cannons.length+' / '+game.slotLimit+'기 · 다섯 자리를 어떤 조합으로 채울지가 전략이에요';
+ $('player-status').textContent='Lv.'+game.playerLevel;$('user-level').textContent=String(game.playerLevel);{const L=game.playerLevel,t=L>=50?5:L>=35?4:L>=20?3:L>=10?2:L>=5?1:0,pf=$('user-portrait');if(pf&&pf.dataset.tier!==String(t)){pf.dataset.tier=t;pf.className='user-portrait pf-t'+t;pf.dataset.tierClass='pf-t'+t;}}$('player-status').title='유저 XP '+Math.floor(game.playerXP)+' / 다음 '+playerXPAt(game.playerLevel+1);$('slot-status').textContent=game.towerCount+' / '+game.slotLimit+' 기';const nextSlot=SLOT_LEVELS.find(level=>level>game.playerLevel);const reserveCount=game.inventory.filter(v=>!game.cannons.some(c=>c.type===v.type)).length;$('slot-guide').textContent='성벽 타워 '+game.towerCount+' / '+game.slotLimit+'기 · 다섯 자리를 어떤 조합으로 채울지가 전략이에요';
  const signature=game.inventory.map(c=>c.type+c.level+':'+(c.xp||0)).join('|')+'|'+game.cannons.map(c=>c.type).join('|')+'|'+Math.floor(game.gold)+'|'+game.freePack+'|'+game.marketCode;
- if(modal==='shop-panel'&&signature!==lastShop){lastShop=signature;renderCollection($('shop'),game,{onPack:buyPack,onCard:onCollectionCard,slotText:'설치 '+game.cannons.length+' / '+game.slotLimit+'기 · 카드를 눌러 배치·교체'});}
+ if(modal==='shop-panel'&&signature!==lastShop){lastShop=signature;renderCollection($('shop'),game,{onPack:buyPack,onCard:onCollectionCard,slotText:'설치 '+game.towerCount+' / '+game.slotLimit+'기 · 카드를 눌러 배치·교체'});}
  refreshTowerInfo();
  const msg=game.messages.at(-1);$('toast').classList.toggle('visible',!!msg);if(msg)$('toast').textContent=msg.text;
  if(modal==='detail-panel')detail();if(modal==='settings-panel')$('diagnostics').textContent=`처치 ${game.metrics.kills} · 음봉 압사 ${game.metrics.crushedEnemies} · 보급 압사 ${game.metrics.crushedSupplies} · 성벽 이동 ${game.metrics.wallSteps} · ${renderer.quality<.7?'절전':'고화질'}`;

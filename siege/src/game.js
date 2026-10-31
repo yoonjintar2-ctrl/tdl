@@ -1,12 +1,12 @@
-import{campaignProgress}from'./campaign-courses.js?v=34a9740d56';
-import { SETTINGS, CANNONS, ENEMIES, SUPPLIES, WORLD_WIDTH, DRONE, WALL, CAMERA_DEPTH, ACTOR_STYLE, cannonStats, upgradeCost, energyMultiplier, wallYFor, priceBand, validPlacement, snapSlot, FORWARD_X, FORWARD_DY, validDronePlacement, clamp, hasPerk } from './config.js?v=34a9740d56';
-import { wallMountDepth } from './fortification.js?v=34a9740d56';
-import { marketArmy,estimatedArmy } from './market-army.js?v=34a9740d56';
-import {playerLevelFor,towerSlots,wallLevelFor,wallPower,money,WALL_MAX_XP} from './progression.js?v=34a9740d56';
-import{TerrainField}from'./terrain.js?v=34a9740d56';
-import{modeFor}from'./cards.js?v=34a9740d56';
-import{formatDamage}from'./combat-fx.js?v=34a9740d56';
-import{wallXPAt}from'./progression.js?v=34a9740d56';
+import{campaignProgress}from'./campaign-courses.js?v=984ba11a08';
+import { SETTINGS, CANNONS, ENEMIES, SUPPLIES, WORLD_WIDTH, DRONE, WALL, CAMERA_DEPTH, ACTOR_STYLE, cannonStats, upgradeCost, energyMultiplier, wallYFor, priceBand, validPlacement, snapSlot, FORWARD_X, FORWARD_DY, validDronePlacement, clamp, hasPerk } from './config.js?v=984ba11a08';
+import { wallMountDepth } from './fortification.js?v=984ba11a08';
+import { marketArmy,estimatedArmy } from './market-army.js?v=984ba11a08';
+import {playerLevelFor,towerSlots,wallLevelFor,wallPower,money,WALL_MAX_XP} from './progression.js?v=984ba11a08';
+import{TerrainField}from'./terrain.js?v=984ba11a08';
+import{modeFor}from'./cards.js?v=984ba11a08';
+import{formatDamage}from'./combat-fx.js?v=984ba11a08';
+import{wallXPAt}from'./progression.js?v=984ba11a08';
 // Kill gold is scaled down and a steady per-minute battle stipend added, so income stays in a narrow band
 // between a starter and a maxed army (card packs are the only use of gold).
 export const KILL_GOLD=.3,STIPEND_PER_MIN=30;
@@ -20,8 +20,8 @@ export const BOSS=Object.freeze({cooldownMs:3*60*1000,minIntensity:.8,minSellSha
 export const SPECIALS=Object.freeze({ram:Object.freeze({hp:2600,speed:8.5,radius:30,damage:110,interval:2.4,cooldownMs:2*60*1000,minIntensity:.7,chance:.75,goldMul:6}),bomber:Object.freeze({hp:12,speed:92,radius:9,damage:150,cooldownMs:40*1000,minIntensity:.5,chance:.85,goldMul:1.5})});
 const SPECIAL_DEF={ram:{...ENEMIES[3],speed:SPECIALS.ram.speed,damage:SPECIALS.ram.damage,interval:SPECIALS.ram.interval},bomber:{...ENEMIES[4],speed:SPECIALS.bomber.speed,damage:SPECIALS.bomber.damage,interval:9}};
 const BOSS_DEF=Object.freeze({...ENEMIES[3],speed:ENEMIES[3].speed*BOSS.speed,damage:ENEMIES[3].damage*BOSS.damage});
-import{isAIStock}from'./symbols.js?v=34a9740d56';
-import {weaponMuzzle} from './weapon-geometry.js?v=34a9740d56';
+import{isAIStock}from'./symbols.js?v=984ba11a08';
+import {weaponMuzzle} from './weapon-geometry.js?v=984ba11a08';
 export class Game {
   constructor(state, { height = 620, random = Math.random,now=Date.now,rewardMultiplier=1,mode } = {}) {
     this.modeKey=modeFor(mode??state.settings?.mode).key;this.stipendClock=0;this.wallHold=0;
@@ -45,6 +45,9 @@ export class Game {
   get playerLevel(){return playerLevelFor(this.playerXP);}
   // v22: at most 5 towers on the wall at once, regardless of player level (pick your combo).
   get slotLimit(){return MAX_TOWERS;}
+  /* v60: the drone flies separately — it never takes one of the 5 wall slots */
+  get towerCount(){return this.cannons.filter(c=>c.type!=='drone').length;}
+  full(type){return type!=='drone'&&this.towerCount>=this.slotLimit;}
   get power(){return wallPower(this.wallLevel);}
   get mode(){return modeFor(this.modeKey);}
   setMode(key){this.modeKey=modeFor(key).key;this.settings.mode=this.modeKey;this.dirty=true;}
@@ -149,17 +152,17 @@ export class Game {
   creditMarketGold(amount){const total=this.marketGoldRemainder+amount*this.rewardMultiplier*this.mode.gold,whole=Math.floor(total+1e-9);this.marketGoldRemainder=Math.max(0,total-whole);this.gold+=whole;this.metrics.goldEarned+=whole;if(whole)this.dirty=true;return whole;}
   deliverSupply(s){const weight=s.marketWeight??1,amount=SUPPLIES[s.kind].heal*weight;if(this.wallXP>=WALL_MAX_XP){const reward=this.creditMarketGold(Math.max(4,Math.round(SUPPLIES[s.kind].heal*.35))*weight);if(!reward)return;const lane=Math.floor(s.x/30),f=this.effects.find(v=>v.type==='wall-gold'&&v.lane===lane&&v.life>.5);if(f){f.amount+=reward;f.life=.9;}else this.effect('wall-gold',s.x,this.wallAt(s.x),'#ffe5a2',reward,.9,{lane,sourceAltitude:WALL.elevation+10});}else this.heal(amount,s.x);}
   buyTower(type){if(!CANNONS[type]||this.owned(type)||this.gold<CANNONS[type].cost)return false;this.gold-=CANNONS[type].cost;this.inventory.push({type,level:1});this.dirty=true;return true;}
-  beginPlacement(type){if(!this.owned(type)||this.cannons.some(c=>c.type===type)||this.cannons.length>=this.slotLimit)return false;this.placement=type;return true;}
+  beginPlacement(type){if(!this.owned(type)||this.cannons.some(c=>c.type===type)||this.full(type))return false;this.placement=type;return true;}
   beginPurchase(type) {
     if (!CANNONS[type] || this.owned(type)) return false;
-    if(this.cannons.length>=this.slotLimit){this.notify(`타워는 최대 ${this.slotLimit}기까지 · 다른 타워와 교체해 조합을 바꿔 보세요`);return false;}
+    if(this.full(type)){this.notify(`타워는 최대 ${this.slotLimit}기까지 · 다른 타워와 교체해 조합을 바꿔 보세요`);return false;}
     if (this.gold < CANNONS[type].cost) { this.notify('자금이 부족합니다'); return false; }
     this.placement = type; return true;
   }
   place(x, y) {
     const type = this.placement;
     if (type && type !== 'drone') { const sx = snapSlot(x, this.cannons, null, this.wallAt(x) - y); if (sx == null) return false; x = sx; }
-    const owned=this.owned(type);if (!type || this.cannons.length>=this.slotLimit || !(type === 'drone' ? validDronePlacement(x, y, this.height) : validPlacement(x, this.cannons)) || (!owned&&this.gold<CANNONS[type].cost) || this.cannons.some(c => c.type === type)) return false;
+    const owned=this.owned(type);if (!type || this.full(type) || !(type === 'drone' ? validDronePlacement(x, y, this.height) : validPlacement(x, this.cannons)) || (!owned&&this.gold<CANNONS[type].cost) || this.cannons.some(c => c.type === type)) return false;
     if(!owned&&!this.buyTower(type))return false;const c = { type, x, ...(type === 'drone' ? { y } : {}), level: this.owned(type).level, cooldown: .25, recoil: 0, angle: -Math.PI / 2, targetId: null, targetLock: 0 }; this.cannons.push(c); this.placement = null; this.selected = c; this.dirty = true; this.burst(x, type === 'drone' ? y : this.wallAt(x), CANNONS[type].color); return true;
   }
   swapPlan(a,b){
@@ -208,7 +211,7 @@ export class Game {
     this.effect('muzzle',muzzle.x,muzzle.y,c.type==='machine'?'#ffdf8c':stats.color,'',c.type==='machine'?.065:.12,{sourceAltitude:muzzle.z,weapon:c.type});
     if(c.type==='drone'){this.effect('beam',muzzle.x,muzzle.y,stats.color,'',.12,{tx:target.x,ty:target.y,width:1.1,sourceAltitude:muzzle.z,targetAltitude:8});this.damage(target,stats.damage,{cannonType:'drone'});return;}
     if(c.type==='laser'){
-      const ex=pos.x+dx/len*stats.range,ey=pos.y+dy/len*stats.range;this.effect('beam',muzzle.x,muzzle.y,stats.color,'',.20,{tx:ex,ty:ey,width:2.2,sourceAltitude:muzzle.z,targetAltitude:8});
+      const ex=pos.x+dx/len*stats.range,ey=pos.y+dy/len*stats.range;this.effect('beam',muzzle.x,muzzle.y,stats.color,'',.62,{tx:ex,ty:ey,width:6.5,laser:true,sourceAltitude:muzzle.z,targetAltitude:8});
       this.enemies.filter(e=>{const vx=e.x-pos.x,vy=e.y-pos.y,dot=(vx*dx+vy*dy)/len;return e.alive&&dot>=0&&dot<=stats.range&&Math.abs(vx*dy-vy*dx)/len<=e.radius+4;}).sort((a,b)=>Math.hypot(a.x-pos.x,a.y-pos.y)-Math.hypot(b.x-pos.x,b.y-pos.y)).slice(0,stats.pierce).forEach(e=>this.damage(e,stats.damage,{cannonType:'laser'}));return;
     }
     if(c.type==='musk'){c.shots=(c.shots||0)+1;const rocket=this.random()<(stats.rocketChance||0);if(rocket&&this.onCutin&&!this._cutinBusy){/* v53: ultimate — comic cut-in first, then launch */this._cutinBusy=true;const fireNow=()=>{this._cutinBusy=false;if(!this.cannons.includes(c))return;const p2=this.cannonPosition(c);this.sweeps.push({kind:'rocket',big:true,x:p2.x,y:p2.y-6,dx:0,dy:-1,speed:430,width:stats.width*3.4,damage:stats.damage*.9,traveled:0,max:1600,hit:new Set(),weapon:'musk',age:0});this.shake=Math.max(this.shake||0,.6);};this.onCutin('musk',c,fireNow);return;}this.sweeps.push({kind:rocket?'rocket':'truck',x:pos.x,y:pos.y-6,dx:dx/len,dy:dy/len,speed:rocket?520:300,width:rocket?stats.width*2.6:stats.width,damage:rocket?stats.damage*.6:stats.damage,traveled:0,max:rocket?1400:stats.range,hit:new Set(),weapon:'musk'});return;}
