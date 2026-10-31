@@ -1,12 +1,12 @@
-import{campaignProgress}from'./campaign-courses.js?v=28a29cab2a';
-import { SETTINGS, CANNONS, ENEMIES, SUPPLIES, WORLD_WIDTH, DRONE, WALL, CAMERA_DEPTH, ACTOR_STYLE, cannonStats, upgradeCost, energyMultiplier, wallYFor, priceBand, validPlacement, snapSlot, FORWARD_X, FORWARD_DY, validDronePlacement, clamp, hasPerk } from './config.js?v=28a29cab2a';
-import { wallMountDepth } from './fortification.js?v=28a29cab2a';
-import { marketArmy,estimatedArmy } from './market-army.js?v=28a29cab2a';
-import {playerLevelFor,towerSlots,wallLevelFor,wallPower,money,WALL_MAX_XP} from './progression.js?v=28a29cab2a';
-import{TerrainField}from'./terrain.js?v=28a29cab2a';
-import{modeFor}from'./cards.js?v=28a29cab2a';
-import{formatDamage}from'./combat-fx.js?v=28a29cab2a';
-import{wallXPAt}from'./progression.js?v=28a29cab2a';
+import{campaignProgress}from'./campaign-courses.js?v=1423192855';
+import { SETTINGS, CANNONS, ENEMIES, SUPPLIES, WORLD_WIDTH, DRONE, WALL, CAMERA_DEPTH, ACTOR_STYLE, cannonStats, upgradeCost, energyMultiplier, wallYFor, priceBand, validPlacement, snapSlot, FORWARD_X, FORWARD_DY, validDronePlacement, clamp, hasPerk } from './config.js?v=1423192855';
+import { wallMountDepth } from './fortification.js?v=1423192855';
+import { marketArmy,estimatedArmy } from './market-army.js?v=1423192855';
+import {playerLevelFor,towerSlots,wallLevelFor,wallPower,money,WALL_MAX_XP} from './progression.js?v=1423192855';
+import{TerrainField}from'./terrain.js?v=1423192855';
+import{modeFor}from'./cards.js?v=1423192855';
+import{formatDamage}from'./combat-fx.js?v=1423192855';
+import{wallXPAt}from'./progression.js?v=1423192855';
 // Kill gold is scaled down and a steady per-minute battle stipend added, so income stays in a narrow band
 // between a starter and a maxed army (card packs are the only use of gold).
 export const KILL_GOLD=.3,STIPEND_PER_MIN=30;
@@ -15,13 +15,13 @@ export const MAX_TOWERS=5;
 // v24: crowd actors carry a fraction of a 'unit' of volume, but never drop below half a unit of HP — towers no longer one-shot everything.
 export const HP_WEIGHT_FLOOR=.2;
 // v24: the giant is a rare boss — about one per five minutes at most, only on a heavy sell-off minute.
-export const BOSS=Object.freeze({cooldownMs:3*60*1000,minIntensity:.8,minSellShare:.5,chance:.85,hp:15,scale:6.5,radius:56,speed:.6,damage:.7});
+export const BOSS=Object.freeze({cooldownMs:3*60*1000,minIntensity:.8,minSellShare:.5,chance:.85,hp:15,scale:3.4,radius:40,speed:.6,damage:.7});
 // v32: special attackers — a six-candle siege ram (shared HP, slow, heavy) and fast kamikaze bombers. Both aim at the wall centre.
 export const SPECIALS=Object.freeze({ram:Object.freeze({hp:2600,speed:8.5,radius:30,damage:110,interval:2.4,cooldownMs:2*60*1000,minIntensity:.7,chance:.75,goldMul:6}),bomber:Object.freeze({hp:12,speed:92,radius:9,damage:150,cooldownMs:40*1000,minIntensity:.5,chance:.85,goldMul:1.5})});
 const SPECIAL_DEF={ram:{...ENEMIES[3],speed:SPECIALS.ram.speed,damage:SPECIALS.ram.damage,interval:SPECIALS.ram.interval},bomber:{...ENEMIES[4],speed:SPECIALS.bomber.speed,damage:SPECIALS.bomber.damage,interval:9}};
 const BOSS_DEF=Object.freeze({...ENEMIES[3],speed:ENEMIES[3].speed*BOSS.speed,damage:ENEMIES[3].damage*BOSS.damage});
-import{isAIStock}from'./symbols.js?v=28a29cab2a';
-import {weaponMuzzle} from './weapon-geometry.js?v=28a29cab2a';
+import{isAIStock}from'./symbols.js?v=1423192855';
+import {weaponMuzzle} from './weapon-geometry.js?v=1423192855';
 export class Game {
   constructor(state, { height = 620, random = Math.random,now=Date.now,rewardMultiplier=1,mode } = {}) {
     this.modeKey=modeFor(mode??state.settings?.mode).key;this.stipendClock=0;this.wallHold=0;
@@ -64,7 +64,7 @@ export class Game {
   // Billboards must stop at the VISIBLE north silhouette, not the facade's
   // ground baseline. Otherwise small enemies appear inside/below the wall.
   wallAttackAt(x) { return this.wallBackAt(x) - WALL.elevation / CAMERA_DEPTH; }
-  enemyStopAt(e) { return this.wallAttackAt(e.x) - e.radius; }
+  enemyStopAt(e) { const base=this.wallAttackAt(e.x) - e.radius; if(e.boss){/* v54: a giant can't climb over the forward outpost — it stops in front and pounds it */const R=18+e.radius*1.2;if(Math.abs(e.x-FORWARD_X)<R-10){const oy=this.wallAt(FORWARD_X)+WALL.deck+WALL.mountOffset-FORWARD_DY;return Math.min(base,oy-R*.55);}} return base; }
   // Wall-front occupancy in 8px buckets. Approaching enemies reserve the least crowded
   // reachable slot (inside the painted corridor at wall depth) so attacks spread along the wall.
   wallLoad() { const load = new Float32Array(Math.ceil(WORLD_WIDTH / WALL_SLOT)); for (const e of this.enemies) if (e.alive && Number.isFinite(e.wallSlot)) load[clamp(Math.floor(e.wallSlot / WALL_SLOT), 0, load.length - 1)] += e.radius * 2; return load; }
@@ -272,12 +272,12 @@ export class Game {
           }
         }
         // v30: the forward outpost is solid — candles approaching it slide around its sides.
-        {const big=e.special||e.boss,ox=FORWARD_X,oy=this.wallAt(ox)+WALL.deck+WALL.mountOffset-FORWARD_DY,R=20+e.radius*(big?.7:1),dx=e.x-ox,dy=e.y-oy;if(dy>-R-(big?60:22)&&dy<R*.6&&Math.abs(dx)<R+2){const dir=Math.abs(dx)<8?(e.id%2?1:-1):Math.sign(dx);e.x=clamp(e.x+dir*Math.max(big?60:22,def.speed)*dt*(big?4:2.2),e.radius*.5,WORLD_WIDTH-e.radius*.5);if(Math.abs(dx)<R*.9&&dy>-R*.8)factor*=big?.35:.1;}}
+        {const big=e.special||e.boss,ox=FORWARD_X,oy=this.wallAt(ox)+WALL.deck+WALL.mountOffset-FORWARD_DY,R=20+e.radius*(e.boss?1.4:big?.7:1),dx=e.x-ox,dy=e.y-oy;if(dy>-R-(big?60:22)&&dy<R*.6&&Math.abs(dx)<R+2){const dir=Math.abs(dx)<8?(e.id%2?1:-1):Math.sign(dx);e.x=clamp(e.x+dir*Math.max(big?60:22,def.speed)*dt*(big?4:2.2),e.radius*.5,WORLD_WIDTH-e.radius*.5);if(Math.abs(dx)<R*.9&&dy>-R*.8)factor*=big?.35:.1;}}
         // v30: black-hole towers drag nearby candles toward themselves (they still get through eventually).
         for(const bh of this.cannons){if(bh.type!=='blackhole')continue;const st=cannonStats('blackhole',bh.level),p=this.cannonPosition(bh),dx=p.x-e.x,dy=p.y-e.y,d=Math.hypot(dx,dy);if(d<st.range&&d>8){const pull=st.pull*(1-d/st.range)*dt;e.x=clamp(e.x+dx/d*pull,e.radius,WORLD_WIDTH-e.radius);e.y-=Math.max(0,-dy/d)*pull*.0;factor*=1-st.drag*(1-d/st.range);this.damage(e,st.damage*dt,{cannonType:'blackhole'});}}
         const lane = Math.floor(e.x / 12), prev = lanes.get(lane);
         if (prev && Math.abs(prev.y - e.y) < prev.radius + e.radius + 3) { const dir = e.x <= prev.x ? -1 : 1; e.x = clamp(e.x + dir*13*dt,e.radius,WORLD_WIDTH-e.radius); factor *= .8; }
-        lanes.set(lane,e);{const cb=this.terrain.bounds(e.y+e.radius,e.x,e.radius);if(cb.right>cb.left)e.x=clamp(e.x,cb.left,cb.right);}this.terrain.move(e,def.speed*factor*dt,def.speed,dt);e.y=Math.min(this.enemyStopAt(e),e.y);{/* v49: hard collision with the forward outpost for everyone (giants slide around it) */const ox=FORWARD_X,oy=this.wallAt(ox)+WALL.deck+WALL.mountOffset-FORWARD_DY,R=18+e.radius,dx=e.x-ox,dy=e.y-oy;if(Math.abs(dy)<R*.45&&Math.abs(dx)<R){e.x=clamp(ox+(Math.abs(dx)<1?(e.id%2?1:-1):Math.sign(dx))*R,e.radius,WORLD_WIDTH-e.radius);}}
+        lanes.set(lane,e);{const cb=this.terrain.bounds(e.y+e.radius,e.x,e.radius);if(cb.right>cb.left)e.x=clamp(e.x,cb.left,cb.right);}this.terrain.move(e,def.speed*factor*dt,def.speed,dt);e.y=Math.min(this.enemyStopAt(e),e.y);{/* v49: hard collision with the forward outpost for everyone (giants slide around it) */const ox=FORWARD_X,oy=this.wallAt(ox)+WALL.deck+WALL.mountOffset-FORWARD_DY,R=18+e.radius*(e.boss?1.2:1),dx=e.x-ox,dy=e.y-oy;if(Math.abs(dy)<R*.45&&Math.abs(dx)<R){e.x=clamp(ox+(Math.abs(dx)<1?(e.id%2?1:-1):Math.sign(dx))*R,e.radius,WORLD_WIDTH-e.radius);}}
       }
     }
     for (const s of this.supplies) {

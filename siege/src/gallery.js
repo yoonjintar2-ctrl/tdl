@@ -1,5 +1,5 @@
-import{loadClayAssets,drawClayMortarIcon,drawClayMortar}from'./clay-assets.js?v=28a29cab2a';
-import{CLAY_CATALOG,drawClayPreview}from'./clay-runtime.js?v=28a29cab2a';
+import{loadClayAssets,drawClayMortarIcon,drawClayMortar}from'./clay-assets.js?v=1423192855';
+import{CLAY_CATALOG,drawClayPreview}from'./clay-runtime.js?v=1423192855';
 const $=id=>document.getElementById(id),all=[{key:'mortar',name:'박격포',group:'tower'},...CLAY_CATALOG],cv=$('preview');
 let selected=all.find(v=>v.key===new URLSearchParams(location.search).get('unit'))||all[0],frame=1,animated=false,last=0;
 const groups={tower:'DEFENSE / 8 CLAY TOWERS',enemy:'BEARISH / 4 CANDLE CREATURES',supply:'BULLISH / SEMICONDUCTORS + GREEN CANDLE',wall:'MEDIEVAL / 8 WALLS + 8 BASTIONS'};

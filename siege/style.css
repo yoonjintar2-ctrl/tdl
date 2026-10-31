@@ -865,3 +865,18 @@ body .scrim:not([hidden]){z-index:44}
 @keyframes ciLines{to{transform:translateX(-60px)}}
 @keyframes ciHero{from{transform:rotate(8deg) translateX(-60vw) scale(1.15)}}
 @keyframes ciPop{from{transform:rotate(8deg) scale(0);opacity:0}}
+/* v54: compact wall card docked at the bottom, battle stays visible */
+.tower-info.wall-pop{background:transparent!important;pointer-events:none;place-items:end center}
+.wall-pop .ti-card.wall-info{pointer-events:auto;width:min(420px,calc(100vw - 16px));margin-bottom:max(8px,env(safe-area-inset-bottom));padding:10px 14px 10px!important;gap:0;max-height:34vh}
+.wall-pop .wi-head{display:flex;align-items:center;gap:8px;width:100%;margin-bottom:6px}
+.wall-pop .wi-title{margin:0!important;font-size:19px!important;white-space:nowrap}
+.wall-pop .wi-steps{flex:1;gap:3px!important}.wall-pop .wi-steps i{width:auto!important;flex:1;max-width:16px;height:7px!important}
+.wall-pop .wi-grade{margin:0!important;font:400 13px var(--gk-font);color:#6a4510}
+.wall-pop .wi-x{width:28px;height:28px;flex:none;border-radius:50%;border:2px solid #2b1a0b;background:#fff3d0;color:#4a2804;font:700 13px/1 sans-serif;cursor:pointer;box-shadow:0 2px 0 #2b1a0b}
+.wall-pop .wi-gauge-wrap{margin-bottom:6px!important}
+.wall-pop .wi-gauge-label{font-size:12px!important;margin-bottom:3px!important}.wall-pop .wi-gauge-label b{font-size:15px!important}
+.wall-pop .wi-gauge{height:14px!important}.wall-pop .wi-gauge-num{margin-top:2px!important;font-size:11px!important}
+.wall-pop .wi-grid{gap:6px!important}.wall-pop .wi-grid>div{flex-direction:row!important;justify-content:center;gap:6px!important;padding:4px 6px!important}
+.wall-pop .wi-grid b{font-size:14px!important}
+.wall-pop .wi-hint{margin:6px 0 0;font:400 11px var(--gk-font);color:#7a5420}
+.wall-pop .wi-hint .up{color:#2f7a2a;font-weight:400}.wall-pop .wi-hint .down{color:#b8402a;font-weight:400}

@@ -1,11 +1,11 @@
-import { WORLD_WIDTH as W,CANNONS,ENEMIES,SUPPLIES,WALL_STAGES,DRONE,WALL,cannonStats,validPlacement,validDronePlacement,snapSlot,ALL_SLOTS,FORWARD_X,FORWARD_DY,clamp } from './config.js?v=28a29cab2a';
-import{WALL_MAX_LEVEL,WALL_MAX_XP}from'./progression.js?v=28a29cab2a';
-import{isAIStock}from'./symbols.js?v=28a29cab2a';
-import { QuarterCamera, DEPTH_SCALE, WALL_ELEVATION } from './camera.js?v=28a29cab2a';
-import { drawClayMortar, drawClayMortarIcon, clayBattlefield } from './clay-assets.js?v=28a29cab2a';
-import{drawProjectile,drawEffect}from'./combat-fx.js?v=28a29cab2a';
-import{artCrop}from'./terrain.js?v=28a29cab2a';
-import { drawClayTower, drawClayUnit, drawClayWall, drawClayPreview, drawForwardPad, hasKeep, drawClaySprite, clayReady, metaOf, drawClayTowerIcon, wallOutline, tierOf, tierTint, drawTierBack, drawTierFront } from './clay-runtime.js?v=28a29cab2a';
+import { WORLD_WIDTH as W,CANNONS,ENEMIES,SUPPLIES,WALL_STAGES,DRONE,WALL,cannonStats,validPlacement,validDronePlacement,snapSlot,ALL_SLOTS,FORWARD_X,FORWARD_DY,clamp } from './config.js?v=1423192855';
+import{WALL_MAX_LEVEL,WALL_MAX_XP}from'./progression.js?v=1423192855';
+import{isAIStock}from'./symbols.js?v=1423192855';
+import { QuarterCamera, DEPTH_SCALE, WALL_ELEVATION } from './camera.js?v=1423192855';
+import { drawClayMortar, drawClayMortarIcon, clayBattlefield } from './clay-assets.js?v=1423192855';
+import{drawProjectile,drawEffect}from'./combat-fx.js?v=1423192855';
+import{artCrop}from'./terrain.js?v=1423192855';
+import { drawClayTower, drawClayUnit, drawClayWall, drawClayPreview, drawForwardPad, hasKeep, drawClaySprite, clayReady, metaOf, drawClayTowerIcon, wallOutline, tierOf, tierTint, drawTierBack, drawTierFront } from './clay-runtime.js?v=1423192855';
 const BAND=215;
 const TAU=Math.PI*2;
 function box(c,x,y,w,h,r,fill,stroke){c.beginPath();c.roundRect(x,y,w,h,r);if(fill){c.fillStyle=fill;c.fill();}if(stroke){c.lineWidth=1;c.strokeStyle=stroke;c.stroke();}}
@@ -138,7 +138,7 @@ export class Renderer{
    drawClayUnit(c,{kind:4,radius:7,phase:e.id,age:1,hit:e.hit},p.x,p.y+2,t,true);
    c.fillStyle='#22262b';c.beginPath();c.arc(p.x,p.y+8,4.5,0,TAU);c.fill();c.fillStyle=Math.sin(t*30)>0?'#ffe08a':'#ff7a3a';c.beginPath();c.arc(p.x+3,p.y+4,1.6,0,TAU);c.fill();
    c.restore();return;}}
- enemy(c,e){if(e.special){this.specialEnemy(c,e);return;}const clayFoot=this.point(e.x,e.y+e.radius);if(drawClayUnit(c,e,clayFoot.x,clayFoot.y,this.game.time,true))return;const d=ENEMIES[e.kind],t=this.game.time,run=Math.sin(t*(e.kind===3?6:12)+e.phase),bob=e.attacking?Math.sin(t*8):Math.abs(run)*2;
+ enemy(c,e){/* v54: perspective — far candles (top) are smaller */e._depth=clamp(.6+.4*(e.y/Math.max(1,this.game.wallY)),.6,1);if(e.special){this.specialEnemy(c,e);return;}const clayFoot=this.point(e.x,e.y+(e.boss?e.radius*.35:e.radius));if(drawClayUnit(c,e,clayFoot.x,clayFoot.y,this.game.time,true))return;const d=ENEMIES[e.kind],t=this.game.time,run=Math.sin(t*(e.kind===3?6:12)+e.phase),bob=e.attacking?Math.sin(t*8):Math.abs(run)*2;
  const foot=this.point(e.x,e.y+e.radius),pulse=e.attackPulse||0,bodyY=foot.y-(d.height/2+6)*.84-bob+pulse*2;
  c.save();c.translate(foot.x,bodyY);c.scale(.84,.84);c.globalAlpha=clamp(Math.min(e.age*3,(35-e.age)*2,(20-e.contact)*2),0,1);c.lineCap='round';shadow(c,2,d.height/2+7,d.width*.7,4);
  for(const side of [-1,1]){
@@ -271,7 +271,7 @@ export class Renderer{
    c.setLineDash([]);const r=22+Math.sin(g.time*6)*2;c.strokeStyle='#ff5a4a';c.lineWidth=2;c.beginPath();c.ellipse(p.x,p.y,r,r*.45,0,0,TAU);c.stroke();for(let i=0;i<4;i++){const ang=i*Math.PI/2+g.time;const x1=p.x+Math.cos(ang)*(r+6),y1=p.y+Math.sin(ang)*(r+6)*.45,x2=p.x+Math.cos(ang)*(r-6),y2=p.y+Math.sin(ang)*(r-6)*.45;line(c,[[x1,y1],[x2,y2]],'#ff8a7a',2.4);}c.restore();}
   if(g.selected){const u=g.selected,st=cannonStats(u.type,u.level),pos=g.cannonPosition(u);if(u.type==='totem')this.totemLinks(c,u.x,u.level,u);else{this.range(c,pos.x,pos.y,st.range,u.type==='drone'?'#8be2fa':'#f0f6b8');if(st.minRange)this.range(c,pos.x,pos.y,st.minRange,'#ff8a7a');}}
   this.effects(c,false);
-  {const list=g.enemies.filter(e=>e.alive).sort((a,b)=>this.point(a.x,a.y+a.radius).y-this.point(b.x,b.y+b.radius).y),fwdY=this.point(216,g.wallAt(216)+WALL.deck+WALL.mountOffset-FORWARD_DY,0).y;let done=false;const outpost=()=>{const fwd=g.cannons.find(u=>u.type!=='drone'&&Math.abs(u.x-216)<.5);drawForwardPad(c,g,(x,y,z)=>this.point(x,y,z),!!fwd);if(fwd){const p=this.cannonAnchor(fwd);c.save();if(this.ghost?.cannon===fwd)c.globalAlpha=.2;buffAura(c,p.x,p.y,t,g.wallLevel);drawCannon(c,{...fwd,angle:this.screenAngle(fwd)},p.x,p.y,t,g.power,fwd===g.selected);buffAura(c,p.x,p.y,t,g.wallLevel,true);c.restore();}};for(const e of list){if(!done&&this.point(e.x,e.y+e.radius).y>fwdY){outpost();done=true;}this.enemy(c,e);}if(!done)outpost();}
+  {const list=g.enemies.filter(e=>e.alive).sort((a,b)=>this.point(a.x,a.y+Math.min(a.radius,14)).y-this.point(b.x,b.y+Math.min(b.radius,14)).y),fwdY=this.point(216,g.wallAt(216)+WALL.deck+WALL.mountOffset-FORWARD_DY,0).y;let done=false;const outpost=()=>{const fwd=g.cannons.find(u=>u.type!=='drone'&&Math.abs(u.x-216)<.5);drawForwardPad(c,g,(x,y,z)=>this.point(x,y,z),!!fwd);if(fwd){const p=this.cannonAnchor(fwd);c.save();if(this.ghost?.cannon===fwd)c.globalAlpha=.2;buffAura(c,p.x,p.y,t,g.wallLevel);drawCannon(c,{...fwd,angle:this.screenAngle(fwd)},p.x,p.y,t,g.power,fwd===g.selected);buffAura(c,p.x,p.y,t,g.wallLevel,true);c.restore();}};for(const e of list){if(!done&&this.point(e.x,e.y+Math.min(e.radius,14)).y>fwdY){outpost();done=true;}this.enemy(c,e);}if(!done)outpost();}
   for(const bh of g.cannons.filter(u=>u.type==='blackhole')){const st=cannonStats('blackhole',bh.level),pp=g.cannonPosition(bh),p=this.point(pp.x,pp.y,0);c.save();for(let i=0;i<4;i++){const q=((t*.5+i/4)%1),r=st.range*(1-q);c.globalAlpha=q*.35;c.strokeStyle='#b28cff';c.lineWidth=2;c.beginPath();c.ellipse(p.x,p.y,r,r*DEPTH_SCALE,0,0,TAU);c.stroke();}const gr=c.createRadialGradient(p.x,p.y,0,p.x,p.y,st.range*.5);gr.addColorStop(0,'rgba(40,10,70,.35)');gr.addColorStop(1,'rgba(40,10,70,0)');c.globalAlpha=1;c.fillStyle=gr;c.beginPath();c.ellipse(p.x,p.y,st.range*.5,st.range*.5*DEPTH_SCALE,0,0,TAU);c.fill();c.restore();}
   this.knightsAndSweeps(c,t);
   this.wallGround(c);this.wall(c);this.wallLevelFX(c);
@@ -279,7 +279,7 @@ export class Renderer{
   for(const u of g.cannons.filter(u=>u.type!=='drone'&&Math.abs(u.x-216)>=.5)){const p=this.cannonAnchor(u);c.save();if(this.ghost?.cannon===u)c.globalAlpha=.2;buffAura(c,p.x,p.y,t,g.wallLevel);drawCannon(c,{...u,angle:this.screenAngle(u)},p.x,p.y,t,g.power,u===g.selected);buffAura(c,p.x,p.y,t,g.wallLevel,true);c.restore();}
   // Attackers stop at the north upper silhouette; masonry covers only their
   // south-facing contact edge. Supply units approach from the foreground.
-  for(const s of g.supplies.filter(s=>s.alive).sort((a,b)=>this.point(a.x,a.y+a.radius).y-this.point(b.x,b.y+b.radius).y))this.supply(c,s);
+  for(const s of g.supplies.filter(s=>s.alive).sort((a,b)=>this.point(a.x,a.y+Math.min(a.radius,14)).y-this.point(b.x,b.y+Math.min(b.radius,14)).y))this.supply(c,s);
   for(const p of g.projectiles)this.projectile(c,p);
   for(const u of g.cannons.filter(u=>u.type==='drone')){const p=this.cannonAnchor(u);c.save();if(this.ghost?.cannon===u)c.globalAlpha=.2;drawDrone(c,{...u,angle:this.screenAngle(u)},p.x,p.y,t,g.power,u===g.selected);c.restore();}
   this.effects(c,true);this.wallLevelBanner(c);

@@ -1,23 +1,23 @@
-import{CampaignView}from'./campaign-view.js?v=28a29cab2a';
-import{CampaignDataProvider,newCourseRun,readCourseRun,checkpointCourse,storeCourseRun,removeCourseRun,restoreCourseCombat,settleCourse}from'./campaign.js?v=28a29cab2a';
-import{courseFor,courseTime,CAMPAIGN_REWARD_RATE,campaignProgress}from'./campaign-courses.js?v=28a29cab2a';
-import{stockFor}from'./symbols.js?v=28a29cab2a';
-import{StockPicker}from'./stock-picker.js?v=28a29cab2a';
-import{drawSessionChart}from'./session-chart.js?v=28a29cab2a';
-import{WALL_MAX_XP}from'./progression.js?v=28a29cab2a';
-import { CANNONS,SCENARIOS,SETTINGS,ENEMIES,SUPPLIES,WORLD_WIDTH,DRONE,WALL,WALL_STAGES,cannonStats,upgradeCost,validPlacement,clamp } from './config.js?v=28a29cab2a';
-import { DemoMarketDataProvider, LiveMarketDataProvider, AlpacaMarketDataProvider, MARKET_ERRORS } from './market.js?v=28a29cab2a';
-import { Game } from './game.js?v=28a29cab2a';
-import { Renderer,renderShopIcon } from './renderer.js?v=28a29cab2a';
-import { initialState,readSave,writeSave,snapshotGame,safeStorage,readRawSave,writeRawSave } from './storage.js?v=28a29cab2a';
-import{cloudConfigured,currentUser,signUpEmail,signInEmail,signOut,pull,push,EMAIL_RULE,idOf,claimSession,sessionState,SESSION_ID,pullGrant}from'./cloud.js?v=28a29cab2a';
-import{recentSymbols}from'./stock-picker.js?v=28a29cab2a';
-import { loadClayAssets,useBattlefield } from './clay-assets.js?v=28a29cab2a';
-import{THEMES,themeFor}from'./themes.js?v=28a29cab2a';
-import { drawClayPreview } from './clay-runtime.js?v=28a29cab2a';
-import{money,playerXPAt,SLOT_LEVELS,wallXPAt,WALL_MAX_LEVEL,wallPower}from'./progression.js?v=28a29cab2a';
-import{openPack,applyCard,PACKS,MODES,MODE_ORDER,modeFor,RARITIES,TOWER_RARITY}from'./cards.js?v=28a29cab2a';
-import{CardStage,renderCollection,towerCard,statLines,nextLevelLines}from'./card-ui.js?v=28a29cab2a';
+import{CampaignView}from'./campaign-view.js?v=1423192855';
+import{CampaignDataProvider,newCourseRun,readCourseRun,checkpointCourse,storeCourseRun,removeCourseRun,restoreCourseCombat,settleCourse}from'./campaign.js?v=1423192855';
+import{courseFor,courseTime,CAMPAIGN_REWARD_RATE,campaignProgress}from'./campaign-courses.js?v=1423192855';
+import{stockFor}from'./symbols.js?v=1423192855';
+import{StockPicker}from'./stock-picker.js?v=1423192855';
+import{drawSessionChart}from'./session-chart.js?v=1423192855';
+import{WALL_MAX_XP}from'./progression.js?v=1423192855';
+import { CANNONS,SCENARIOS,SETTINGS,ENEMIES,SUPPLIES,WORLD_WIDTH,DRONE,WALL,WALL_STAGES,cannonStats,upgradeCost,validPlacement,clamp } from './config.js?v=1423192855';
+import { DemoMarketDataProvider, LiveMarketDataProvider, AlpacaMarketDataProvider, MARKET_ERRORS } from './market.js?v=1423192855';
+import { Game } from './game.js?v=1423192855';
+import { Renderer,renderShopIcon } from './renderer.js?v=1423192855';
+import { initialState,readSave,writeSave,snapshotGame,safeStorage,readRawSave,writeRawSave } from './storage.js?v=1423192855';
+import{cloudConfigured,currentUser,signUpEmail,signInEmail,signOut,pull,push,EMAIL_RULE,idOf,claimSession,sessionState,SESSION_ID,pullGrant}from'./cloud.js?v=1423192855';
+import{recentSymbols}from'./stock-picker.js?v=1423192855';
+import { loadClayAssets,useBattlefield } from './clay-assets.js?v=1423192855';
+import{THEMES,themeFor}from'./themes.js?v=1423192855';
+import { drawClayPreview } from './clay-runtime.js?v=1423192855';
+import{money,playerXPAt,SLOT_LEVELS,wallXPAt,WALL_MAX_LEVEL,wallPower}from'./progression.js?v=1423192855';
+import{openPack,applyCard,PACKS,MODES,MODE_ORDER,modeFor,RARITIES,TOWER_RARITY}from'./cards.js?v=1423192855';
+import{CardStage,renderCollection,towerCard,statLines,nextLevelLines}from'./card-ui.js?v=1423192855';
 const $=id=>document.getElementById(id),fmt=new Intl.NumberFormat('ko-KR'),nyTime=new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',hour12:false,hour:'2-digit',minute:'2-digit',second:'2-digit'});
 async function prepareArt(){const started=performance.now();
  $('asset-retry').hidden=true;$('asset-loading-message').textContent='클레이 전장을 준비하고 있어요.';
@@ -61,12 +61,11 @@ function openTowerInfo(c,{fromShop=false}={}){closeTowerInfo();infoTower=c;if(!c
 function refreshTowerInfo(){const box=document.querySelector('#tower-info .ti-rows');if(!box||!infoTower)return;if(!infoTower.virtual&&!game.cannons.includes(infoTower)){closeTowerInfo();return;}const row=([k,v],cls='ti-row')=>{const r=document.createElement('div');r.className=cls;const a=document.createElement('span');a.textContent=k;const b=document.createElement('b');b.textContent=v;r.append(a,b);return r;};const head=document.createElement('div');head.className='ti-next-head';head.textContent='다음 레벨이 되면';/* v43: next-level details live in the ? codex */box.replaceChildren(...statLines(game,infoTower).map(l=>row(l)));}
 // v26: tap the command post → current wall grade, gauge to the next grade and what the grade does.
 function openWallInfo(){closeTowerInfo();const g=game,L=g.wallLevel,cur=wallXPAt(L),next=L>=WALL_MAX_LEVEL?null:wallXPAt(L+1),pct=next?Math.max(0,Math.min(100,(g.wallXP-cur)/(next-cur)*100)):100,stage=n=>WALL_STAGES[Math.max(0,Math.min(WALL_STAGES.length-1,n-1))]?.name||'',mult=n=>(wallPower(n)/wallPower(1)).toFixed(2);
- const w=document.createElement('div');w.className='tower-info';w.id='tower-info';const card=document.createElement('div');card.className='ti-card wall-info';
- card.innerHTML=`<canvas width="220" height="190" class="wi-art"></canvas><small class="wi-kicker">성벽 지휘본부</small><h3 class="wi-title">${stage(L)} 성벽</h3><div class="wi-steps">${Array.from({length:WALL_MAX_LEVEL},(_,i)=>`<i class="${i<L?'on':''}"></i>`).join('')}</div><p class="wi-grade">${L} / ${WALL_MAX_LEVEL} 단계</p>
+ const w=document.createElement('div');w.className='tower-info wall-pop';w.id='tower-info';const card=document.createElement('div');card.className='ti-card wall-info';
+ card.innerHTML=`<div class="wi-head"><h3 class="wi-title">${stage(L)} 성벽</h3><div class="wi-steps">${Array.from({length:WALL_MAX_LEVEL},(_,i)=>`<i class="${i<L?'on':''}"></i>`).join('')}</div><span class="wi-grade">${L}/${WALL_MAX_LEVEL}</span><button type="button" class="wi-x" aria-label="닫기">✕</button></div>
  <div class="wi-gauge-wrap"><div class="wi-gauge-label"><span>${next?`다음 · ${stage(L+1)} 성벽`:'최고 등급 달성'}</span><b>${next?Math.round(pct)+'%':'MAX'}</b></div><div class="wi-gauge"><i style="width:${pct.toFixed(1)}%"></i></div><small class="wi-gauge-num">${next?`${Math.floor(g.wallXP-cur).toLocaleString()} / ${(next-cur).toLocaleString()}`:'모든 단계를 정복했어요'}</small></div>
- <div class="wi-grid"><div><span>타워 공격력</span><b>×${mult(L)}</b></div>${next?`<div class="up"><span>다음 단계</span><b>×${mult(L+1)}</b></div>`:''}<div><span>올라가요</span><b>양봉이 성벽에 닿으면</b></div><div class="down"><span>내려가요</span><b>음봉이 성벽을 때리면</b></div></div>`;
- const act=document.createElement('div');act.className='ti-actions';const b=document.createElement('button');b.type='button';b.className='primary';b.textContent='닫기';b.onclick=closeTowerInfo;act.append(b);card.append(act);w.append(card);const at=performance.now();w.onclick=e=>{if(e.target===w&&performance.now()-at>450)closeTowerInfo();};document.body.append(w);
- requestAnimationFrame(()=>{const cv=card.querySelector('.wi-art');if(cv)drawClayPreview(cv,'command');});
+ <div class="wi-grid"><div><span>타워 공격력</span><b>×${mult(L)}</b></div>${next?`<div class="up"><span>다음 단계</span><b>×${mult(L+1)}</b></div>`:''}</div><p class="wi-hint"><b class="up">▲ 양봉이 성벽에 닿으면</b> · <b class="down">▼ 음봉이 성벽을 때리면</b></p>`;
+ card.querySelector('.wi-x').onclick=closeTowerInfo;w.append(card);const at=performance.now();w.onclick=e=>{if(e.target===w&&performance.now()-at>450)closeTowerInfo();};document.body.append(w);
  // v53: live gauge — refresh while the card is open
  let lastKey='';const tick=()=>{if(!w.isConnected)return;const g2=game,L2=g2.wallLevel;if(L2!==L){openWallInfo();return;}const key=Math.floor(g2.wallXP);if(key!==lastKey){lastKey=key;const pc=next?Math.max(0,Math.min(100,(g2.wallXP-cur)/(next-cur)*100)):100;const bar=card.querySelector('.wi-gauge i');if(bar)bar.style.width=pc.toFixed(1)+'%';const pb=card.querySelector('.wi-gauge-label b');if(pb&&next)pb.textContent=Math.round(pc)+'%';const nm=card.querySelector('.wi-gauge-num');if(nm&&next)nm.textContent=`${Math.max(0,Math.floor(g2.wallXP-cur)).toLocaleString()} / ${(next-cur).toLocaleString()}`;}requestAnimationFrame(tick);};requestAnimationFrame(tick);}
 function closeTowerInfo(){document.getElementById('tower-info')?.remove();infoTower=null;if(game)game.selected=null;}

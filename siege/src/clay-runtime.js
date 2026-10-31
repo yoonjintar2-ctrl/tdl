@@ -1,4 +1,4 @@
-import {CANNONS,ENEMIES,SUPPLIES,WALL,WORLD_WIDTH,ACTOR_STYLE,WALL_SLOTS,COMMAND_X,towerTier} from './config.js?v=28a29cab2a';
+import {CANNONS,ENEMIES,SUPPLIES,WALL,WORLD_WIDTH,ACTOR_STYLE,WALL_SLOTS,COMMAND_X,towerTier} from './config.js?v=1423192855';
 export const ENEMY_ART=['enemy-small','enemy-tall','enemy-fat','enemy-giant'];
 // Kind 4 (초미니 음봉) reuses the small candle art at a much smaller size.
 const ENEMY_KIND_ART=[...ENEMY_ART,'enemy-small'];
@@ -64,8 +64,8 @@ export function drawClayUnit(c,e,x,y,t=0,enemy=true,forcedFrame){
  const wk=enemy?WALK_ART[e.kind]:null,walk=wk&&clayReady(wk);if(walk)key=wk;if(!clayReady(key))return false;let flip=false;
  let frame;if(forcedFrame!=null)frame=forcedFrame;else if(walk){const n=metadata[wk].cols||6,vx=e.vx||0,sp=Math.max(1,ENEMIES[e.kind].speed),k=Math.abs(vx)/sp,row=k>.7?2:k>.25?1:0;flip=row>0&&vx<0;frame=row*n+Math.floor(t*(9+(e.phase||0)%2)+(e.phase||0)*2)%n;if(e.attacking&&clayReady('attack-all')){key='attack-all';flip=false;frame=[0,1,2,3,0][e.kind]*6+Math.min(5,Math.floor((1-Math.max(0,e.attackPulse||0))*6));}}
  else frame=enemy&&e.attacking?(e.attackPulse>.2?3:2):Math.floor(t*(enemy?7:9)+(e.phase||0))%(enemy?2:3);
- const size=(enemy?ENEMIES[e.kind].height+28:SUPPLIES[e.kind].radius*2+30)*ACTOR_STYLE.unitScale*(e.scale||1),bob=enemy&&e.attacking?0:Math.sin(t*8+(e.phase||0))*.5;
- c.save();c.globalAlpha*=Math.max(0,Math.min(1,(e.age??1)*3,(35-(e.age??1))*2,enemy?(20-(e.contact||0))*2:1));
+ const size=(enemy?ENEMIES[e.kind].height+28:SUPPLIES[e.kind].radius*2+30)*ACTOR_STYLE.unitScale*(e.scale||1)*(enemy?(e._depth||1):1),bob=enemy&&e.attacking?0:Math.sin(t*8+(e.phase||0))*.5;
+ c.save();{const big=e.boss||e.special,life=big?160:35,cl=big?60:20;c.globalAlpha*=Math.max(0,Math.min(1,(e.age??1)*3,(life-(e.age??1))*2,enemy?(cl-(e.contact||0))*2:1));}
  c.fillStyle='#26382625';c.beginPath();c.ellipse(x+1,y+1,e.radius*.8,2.3,0,0,Math.PI*2);c.fill();
  if(e.hit>0)c.filter='brightness(1.5)';else if(e.poisons?.length)c.filter='hue-rotate(320deg) saturate(.85)';
  // The impact pose anchors the hands to the cap; the wall masks the feet.
