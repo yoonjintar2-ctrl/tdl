@@ -13,5 +13,7 @@ export const THEMES={
  hell:{file:'battlefield-hell-v1.webp',aspect:1024/1536,corridor:[[0, 0.35, 0.65], [0.12, 0.352, 0.652], [0.25, 0.352, 0.652], [0.375, 0.35, 0.665], [0.5, 0.35, 0.68], [0.625, 0.34, 0.66], [0.75, 0.335, 0.68], [0.875, 0.32, 0.665], [1, 0.33, 0.675]]},
 };
 const BY_SYMBOL={QQQ:'nasdaq',TQQQ:'nasdaq',SNDK:'sandisk',MU:'sandisk','005930':'korea','000660':'korea','TSLA':'tesla','NVDA':'nvidia','SOXL':'nvidia','SOXS':'nvidia','AMD':'nvidia','AVGO':'nvidia','TSM':'nvidia','ARM':'nvidia','ASML':'nvidia','IONQ':'quantum','PLTR':'quantum','373220':'battery','005380':'battery','000270':'battery'};
+// v38: every mission has its own battlefield (by concept).
+const COURSE_THEMES=["default", "nasdaq", "korea", "sandisk", "battery", "nvidia", "tesla", "quantum", "nightmare", "hell", "korea", "nasdaq", "nvidia", "battery", "quantum", "sandisk", "tesla", "default", "hell", "nightmare"];COURSE_THEMES.forEach((k,i)=>{BY_SYMBOL['COURSE-'+(i+1)]=k;});BY_SYMBOL['COURSE-21']='hell';
 export const themeFor=symbol=>THEMES[BY_SYMBOL[symbol]]?BY_SYMBOL[symbol]:'default';
 export function registerTheme(key,theme,symbols=[]){THEMES[key]=theme;for(const s of symbols)BY_SYMBOL[s]=key;}

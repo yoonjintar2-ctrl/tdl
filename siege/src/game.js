@@ -1,12 +1,12 @@
-import{campaignProgress}from'./campaign-courses.js?v=e2d618256e';
-import { SETTINGS, CANNONS, ENEMIES, SUPPLIES, WORLD_WIDTH, DRONE, WALL, CAMERA_DEPTH, ACTOR_STYLE, cannonStats, upgradeCost, energyMultiplier, wallYFor, priceBand, validPlacement, snapSlot, FORWARD_X, FORWARD_DY, validDronePlacement, clamp } from './config.js?v=e2d618256e';
-import { wallMountDepth } from './fortification.js?v=e2d618256e';
-import { marketArmy,estimatedArmy } from './market-army.js?v=e2d618256e';
-import {playerLevelFor,towerSlots,wallLevelFor,wallPower,money,WALL_MAX_XP} from './progression.js?v=e2d618256e';
-import{TerrainField}from'./terrain.js?v=e2d618256e';
-import{modeFor}from'./cards.js?v=e2d618256e';
-import{formatDamage}from'./combat-fx.js?v=e2d618256e';
-import{wallXPAt}from'./progression.js?v=e2d618256e';
+import{campaignProgress}from'./campaign-courses.js?v=0856bae0dc';
+import { SETTINGS, CANNONS, ENEMIES, SUPPLIES, WORLD_WIDTH, DRONE, WALL, CAMERA_DEPTH, ACTOR_STYLE, cannonStats, upgradeCost, energyMultiplier, wallYFor, priceBand, validPlacement, snapSlot, FORWARD_X, FORWARD_DY, validDronePlacement, clamp } from './config.js?v=0856bae0dc';
+import { wallMountDepth } from './fortification.js?v=0856bae0dc';
+import { marketArmy,estimatedArmy } from './market-army.js?v=0856bae0dc';
+import {playerLevelFor,towerSlots,wallLevelFor,wallPower,money,WALL_MAX_XP} from './progression.js?v=0856bae0dc';
+import{TerrainField}from'./terrain.js?v=0856bae0dc';
+import{modeFor}from'./cards.js?v=0856bae0dc';
+import{formatDamage}from'./combat-fx.js?v=0856bae0dc';
+import{wallXPAt}from'./progression.js?v=0856bae0dc';
 // Kill gold is scaled down and a steady per-minute battle stipend added, so income stays in a narrow band
 // between a starter and a maxed army (card packs are the only use of gold).
 export const KILL_GOLD=.3,STIPEND_PER_MIN=30;
@@ -20,8 +20,8 @@ export const BOSS=Object.freeze({cooldownMs:3*60*1000,minIntensity:.8,minSellSha
 export const SPECIALS=Object.freeze({ram:Object.freeze({hp:2600,speed:8.5,radius:30,damage:110,interval:2.4,cooldownMs:2*60*1000,minIntensity:.7,chance:.75,goldMul:6}),bomber:Object.freeze({hp:12,speed:92,radius:9,damage:150,cooldownMs:40*1000,minIntensity:.5,chance:.85,goldMul:1.5})});
 const SPECIAL_DEF={ram:{...ENEMIES[3],speed:SPECIALS.ram.speed,damage:SPECIALS.ram.damage,interval:SPECIALS.ram.interval},bomber:{...ENEMIES[4],speed:SPECIALS.bomber.speed,damage:SPECIALS.bomber.damage,interval:9}};
 const BOSS_DEF=Object.freeze({...ENEMIES[3],speed:ENEMIES[3].speed*BOSS.speed,damage:ENEMIES[3].damage*BOSS.damage});
-import{isAIStock}from'./symbols.js?v=e2d618256e';
-import {weaponMuzzle} from './weapon-geometry.js?v=e2d618256e';
+import{isAIStock}from'./symbols.js?v=0856bae0dc';
+import {weaponMuzzle} from './weapon-geometry.js?v=0856bae0dc';
 export class Game {
   constructor(state, { height = 620, random = Math.random,now=Date.now,rewardMultiplier=1,mode } = {}) {
     this.modeKey=modeFor(mode??state.settings?.mode).key;this.stipendClock=0;this.wallHold=0;
@@ -231,7 +231,7 @@ return;/* v26: slime only slows (movement and attack speed) — no damage */}thi
   }
   update(dt) {
     dt = Math.min(dt, .05); this.time += dt; this.wallUpdate(dt);this.flushDamage(dt);this.stipend(dt,!!this.market&&['minute','live','last_trade','last_bar','course'].includes(this.market.priceStatus));
-    const epoch=this.now();this.marketWaves=this.marketWaves.filter(w=>{if(w.expiresAt&&epoch>=w.expiresAt)return false;if(w.spawnAt!=null){if(w.spawnAt>epoch)return true;if(epoch-w.spawnAt>2000)return false;}else if(w.at>this.time)return true;if(w.side==='sell')this.spawnEnemy(w.kind,w.x,w.y,{marketWeight:w.weight??1});else this.spawnSupply(w.kind,w.x,w.y,{marketWeight:w.weight??1});return false;});
+    const epoch=this.now();this.marketWaves=this.marketWaves.filter(w=>{if(w.expiresAt&&epoch>=w.expiresAt)return false;if(w.spawnAt!=null){if(w.spawnAt>epoch)return true;if(epoch-w.spawnAt>2000)return false;}else if(w.at>this.time)return true;if(w.side==='sell')this.spawnEnemy(w.kind,w.x,w.y,{marketWeight:w.weight??1});else{/* v38: bulls arrive as supply-cart teams — one cart carries three crowd units */this.supplyTick=(this.supplyTick||0)+1;if(this.supplyTick%3===0)this.spawnSupply(w.kind,w.x,w.y,{marketWeight:(w.weight??1)*3});}return false;});
     this.zones.forEach(z => z.life -= dt); this.zones = this.zones.filter(z => z.life > 0);
     // Spatial crowd lanes avoid quadratic separation and stop dense armies stacking.
     const lanes = new Map(), wallLoad = this.wallLoad();
@@ -264,17 +264,17 @@ return;/* v26: slime only slows (movement and attack speed) — no damage */}thi
           }
         }
         // v30: the forward outpost is solid — candles approaching it slide around its sides.
-        {const ox=FORWARD_X,oy=this.wallAt(ox)+WALL.deck+WALL.mountOffset-FORWARD_DY,R=30+e.radius,dx=e.x-ox,dy=e.y-oy;if(dy>-R-90&&dy<R&&Math.abs(dx)<R+4){const dir=Math.abs(dx)<8?(e.id%2?1:-1):Math.sign(dx);e.x=clamp(e.x+dir*Math.max(22,def.speed)*dt*2.2,e.radius,WORLD_WIDTH-e.radius);if(Math.abs(dx)<R*.9&&dy>-R*.8)factor*=.1;}}
+        {const ox=FORWARD_X,oy=this.wallAt(ox)+WALL.deck+WALL.mountOffset-FORWARD_DY,R=20+e.radius,dx=e.x-ox,dy=e.y-oy;if(dy>-R-22&&dy<R*.6&&Math.abs(dx)<R+2){const dir=Math.abs(dx)<8?(e.id%2?1:-1):Math.sign(dx);e.x=clamp(e.x+dir*Math.max(22,def.speed)*dt*2.2,e.radius,WORLD_WIDTH-e.radius);if(Math.abs(dx)<R*.9&&dy>-R*.8)factor*=.1;}}
         // v30: black-hole towers drag nearby candles toward themselves (they still get through eventually).
         for(const bh of this.cannons){if(bh.type!=='blackhole')continue;const st=cannonStats('blackhole',bh.level),p=this.cannonPosition(bh),dx=p.x-e.x,dy=p.y-e.y,d=Math.hypot(dx,dy);if(d<st.range&&d>8){const pull=st.pull*(1-d/st.range)*dt;e.x=clamp(e.x+dx/d*pull,e.radius,WORLD_WIDTH-e.radius);e.y-=Math.max(0,-dy/d)*pull*.0;factor*=1-st.drag*(1-d/st.range);this.damage(e,st.damage*dt,{cannonType:'blackhole'});}}
         const lane = Math.floor(e.x / 12), prev = lanes.get(lane);
         if (prev && Math.abs(prev.y - e.y) < prev.radius + e.radius + 3) { const dir = e.x <= prev.x ? -1 : 1; e.x = clamp(e.x + dir*13*dt,e.radius,WORLD_WIDTH-e.radius); factor *= .8; }
-        lanes.set(lane,e);{const cb=this.terrain.bounds(e.y+e.radius,e.x,e.radius);if(cb.right>cb.left)e.x=clamp(e.x,cb.left,cb.right);}this.terrain.move(e,def.speed*factor*dt,def.speed,dt);e.y=Math.min(this.enemyStopAt(e),e.y);{/* v32: hard collision with the forward outpost — nobody walks through it, however crowded */const ox=FORWARD_X,oy=this.wallAt(ox)+WALL.deck+WALL.mountOffset-FORWARD_DY,R=26+e.radius,dx=e.x-ox,dy=e.y-oy;if(Math.abs(dy)<R*.8&&Math.abs(dx)<R){e.x=clamp(ox+(Math.abs(dx)<1?(e.id%2?1:-1):Math.sign(dx))*R,e.radius,WORLD_WIDTH-e.radius);}}
+        lanes.set(lane,e);{const cb=this.terrain.bounds(e.y+e.radius,e.x,e.radius);if(cb.right>cb.left)e.x=clamp(e.x,cb.left,cb.right);}this.terrain.move(e,def.speed*factor*dt,def.speed,dt);e.y=Math.min(this.enemyStopAt(e),e.y);{/* v32: hard collision with the forward outpost — nobody walks through it, however crowded */const ox=FORWARD_X,oy=this.wallAt(ox)+WALL.deck+WALL.mountOffset-FORWARD_DY,R=18+e.radius,dx=e.x-ox,dy=e.y-oy;if(Math.abs(dy)<R*.45&&Math.abs(dx)<R){e.x=clamp(ox+(Math.abs(dx)<1?(e.id%2?1:-1):Math.sign(dx))*R,e.radius,WORLD_WIDTH-e.radius);}}
       }
     }
     for (const s of this.supplies) {
       if (!s.alive) continue; s.age += dt; if (s.age >= 35) { this.remove(s,'expire'); continue; }
-      this.terrain.move(s,-SUPPLIES[s.kind].speed*dt,SUPPLIES[s.kind].speed,dt);
+      { const ox=s.x; this.terrain.move(s,-SUPPLIES[s.kind].speed*dt,SUPPLIES[s.kind].speed,dt); s.vx=(s.vx||0)*.85+((s.x-ox)/Math.max(dt,1e-3))*.15; }
       if (s.y-s.radius <= this.wallAt(s.x)+13) { this.deliverSupply(s); this.effect('supply-deliver',s.x,s.y+s.radius,'#bcefb0','',.7,{kind:s.kind,radius:s.radius,art:s.art});this.remove(s,'heal'); }
     }
     this.enemies = this.enemies.filter(e => e.alive); this.supplies = this.supplies.filter(s => s.alive);

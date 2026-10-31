@@ -62,7 +62,7 @@ export const priceBand = pct => { const value = clamp(pct, -30, 30), nearest = M
 // v26: fixed layout — four wall slots (two left, two right), the command post in the centre,
 // and one forward slot north of the centre (stored as x = FORWARD_X).
 export const WALL_SLOTS = Object.freeze([60, 138, 294, 372]);
-export const FORWARD_X = 216, FORWARD_DY = 175, COMMAND_X = 216;
+export const FORWARD_X = 216, FORWARD_DY = 250, COMMAND_X = 216;
 export const ALL_SLOTS = Object.freeze([...WALL_SLOTS, FORWARD_X]);
 export const isSlotX = x => ALL_SLOTS.some(s => Math.abs(s - x) < .5);
 export function validPlacement(x, cannons, exclude = null) { return Number.isFinite(x) && isSlotX(x) && cannons.every(c => c.type === 'drone' || c === exclude || Math.abs(c.x - x) >= .5); }
