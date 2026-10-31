@@ -880,3 +880,23 @@ body .scrim:not([hidden]){z-index:44}
 .wall-pop .wi-grid b{font-size:14px!important}
 .wall-pop .wi-hint{margin:6px 0 0;font:400 11px var(--gk-font);color:#7a5420}
 .wall-pop .wi-hint .up{color:#2f7a2a;font-weight:400}.wall-pop .wi-hint .down{color:#b8402a;font-weight:400}
+/* v56: GPT logo replaces the text brand plate */
+.picker-brand.logo-brand{background:none!important;box-shadow:none!important;padding:0!important;margin:0 auto -4px!important;width:auto!important;border:0!important}
+.picker-brand.logo-brand h1{margin:0;line-height:0;font-size:0!important}
+.picker-brand.logo-brand .game-logo{display:block;width:min(64vw,250px);height:auto;filter:drop-shadow(0 6px 10px #0007);animation:logoIn .6s cubic-bezier(.2,1.4,.4,1) both}
+.splash-logo{margin:0 0 10px!important;line-height:0}.splash-logo .game-logo{width:min(78vw,340px);height:auto;filter:drop-shadow(0 8px 14px #0008);animation:logoIn .7s cubic-bezier(.2,1.4,.4,1) both}
+@keyframes logoIn{from{transform:scale(.6) translateY(-10px);opacity:0}}
+/* v56: money readout — GPT gold digit sprites, no pill background */
+.battle-dock .gold{background:none!important;border:0!important;box-shadow:none!important;backdrop-filter:none!important;padding:0 4px!important;flex-direction:column;align-items:flex-start!important;gap:0!important}
+.battle-dock .gold small{font:400 12px var(--gk-font);color:#fff3c4;-webkit-text-stroke:3px #2b1a0b;paint-order:stroke fill;letter-spacing:1px;margin:0 0 -3px 2px}
+#gold{display:flex;align-items:flex-end;height:30px;filter:drop-shadow(0 3px 2px #0009);transform-origin:left bottom}
+#gold .dg{display:block;height:30px;margin-right:-2px;background:url(assets/clay/digits-v1.webp) no-repeat}
+#gold .dg-gap{width:4px}
+#gold.bump{animation:goldBump .38s cubic-bezier(.2,1.8,.4,1)}
+@keyframes goldBump{30%{transform:scale(1.18) translateY(-3px)}}
+.sr-only{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+/* v56: GPT card-draw button (normal / pressed images) */
+.battle-dock .shop-toggle{width:156px!important;height:51px!important;min-width:0!important;padding:0!important;border:0!important;border-radius:0!important;background:url(assets/clay/btn-draw-v1.webp) center bottom/100% auto no-repeat!important;box-shadow:none!important;color:transparent!important;font-size:0!important;text-shadow:none!important;filter:drop-shadow(0 4px 3px #0007);animation:none!important}
+.battle-dock .shop-toggle::before,.battle-dock .shop-toggle::after{display:none!important}
+.battle-dock .shop-toggle>*{display:none!important}
+.battle-dock .shop-toggle:active,.battle-dock .shop-toggle[aria-expanded="true"]{background-image:url(assets/clay/btn-draw-press-v1.webp)!important;transform:none!important}

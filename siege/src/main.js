@@ -1,23 +1,25 @@
-import{CampaignView}from'./campaign-view.js?v=1423192855';
-import{CampaignDataProvider,newCourseRun,readCourseRun,checkpointCourse,storeCourseRun,removeCourseRun,restoreCourseCombat,settleCourse}from'./campaign.js?v=1423192855';
-import{courseFor,courseTime,CAMPAIGN_REWARD_RATE,campaignProgress}from'./campaign-courses.js?v=1423192855';
-import{stockFor}from'./symbols.js?v=1423192855';
-import{StockPicker}from'./stock-picker.js?v=1423192855';
-import{drawSessionChart}from'./session-chart.js?v=1423192855';
-import{WALL_MAX_XP}from'./progression.js?v=1423192855';
-import { CANNONS,SCENARIOS,SETTINGS,ENEMIES,SUPPLIES,WORLD_WIDTH,DRONE,WALL,WALL_STAGES,cannonStats,upgradeCost,validPlacement,clamp } from './config.js?v=1423192855';
-import { DemoMarketDataProvider, LiveMarketDataProvider, AlpacaMarketDataProvider, MARKET_ERRORS } from './market.js?v=1423192855';
-import { Game } from './game.js?v=1423192855';
-import { Renderer,renderShopIcon } from './renderer.js?v=1423192855';
-import { initialState,readSave,writeSave,snapshotGame,safeStorage,readRawSave,writeRawSave } from './storage.js?v=1423192855';
-import{cloudConfigured,currentUser,signUpEmail,signInEmail,signOut,pull,push,EMAIL_RULE,idOf,claimSession,sessionState,SESSION_ID,pullGrant}from'./cloud.js?v=1423192855';
-import{recentSymbols}from'./stock-picker.js?v=1423192855';
-import { loadClayAssets,useBattlefield } from './clay-assets.js?v=1423192855';
-import{THEMES,themeFor}from'./themes.js?v=1423192855';
-import { drawClayPreview } from './clay-runtime.js?v=1423192855';
-import{money,playerXPAt,SLOT_LEVELS,wallXPAt,WALL_MAX_LEVEL,wallPower}from'./progression.js?v=1423192855';
-import{openPack,applyCard,PACKS,MODES,MODE_ORDER,modeFor,RARITIES,TOWER_RARITY}from'./cards.js?v=1423192855';
-import{CardStage,renderCollection,towerCard,statLines,nextLevelLines}from'./card-ui.js?v=1423192855';
+import{CampaignView}from'./campaign-view.js?v=bb55dcaf4d';
+import{CampaignDataProvider,newCourseRun,readCourseRun,checkpointCourse,storeCourseRun,removeCourseRun,restoreCourseCombat,settleCourse}from'./campaign.js?v=bb55dcaf4d';
+import{courseFor,courseTime,CAMPAIGN_REWARD_RATE,campaignProgress}from'./campaign-courses.js?v=bb55dcaf4d';
+import{stockFor}from'./symbols.js?v=bb55dcaf4d';
+import{StockPicker}from'./stock-picker.js?v=bb55dcaf4d';
+import{drawSessionChart}from'./session-chart.js?v=bb55dcaf4d';
+import{WALL_MAX_XP}from'./progression.js?v=bb55dcaf4d';
+import { CANNONS,SCENARIOS,SETTINGS,ENEMIES,SUPPLIES,WORLD_WIDTH,DRONE,WALL,WALL_STAGES,cannonStats,upgradeCost,validPlacement,clamp } from './config.js?v=bb55dcaf4d';
+import { DemoMarketDataProvider, LiveMarketDataProvider, AlpacaMarketDataProvider, MARKET_ERRORS } from './market.js?v=bb55dcaf4d';
+import { Game } from './game.js?v=bb55dcaf4d';
+import { DIGITS, DIGIT_H, DIGIT_W } from './digit-sprites.js?v=bb55dcaf4d';
+var goldShown='',goldNum=0;
+import { Renderer,renderShopIcon } from './renderer.js?v=bb55dcaf4d';
+import { initialState,readSave,writeSave,snapshotGame,safeStorage,readRawSave,writeRawSave } from './storage.js?v=bb55dcaf4d';
+import{cloudConfigured,currentUser,signUpEmail,signInEmail,signOut,pull,push,EMAIL_RULE,idOf,claimSession,sessionState,SESSION_ID,pullGrant}from'./cloud.js?v=bb55dcaf4d';
+import{recentSymbols}from'./stock-picker.js?v=bb55dcaf4d';
+import { loadClayAssets,useBattlefield } from './clay-assets.js?v=bb55dcaf4d';
+import{THEMES,themeFor}from'./themes.js?v=bb55dcaf4d';
+import { drawClayPreview } from './clay-runtime.js?v=bb55dcaf4d';
+import{money,playerXPAt,SLOT_LEVELS,wallXPAt,WALL_MAX_LEVEL,wallPower}from'./progression.js?v=bb55dcaf4d';
+import{openPack,applyCard,PACKS,MODES,MODE_ORDER,modeFor,RARITIES,TOWER_RARITY}from'./cards.js?v=bb55dcaf4d';
+import{CardStage,renderCollection,towerCard,statLines,nextLevelLines}from'./card-ui.js?v=bb55dcaf4d';
 const $=id=>document.getElementById(id),fmt=new Intl.NumberFormat('ko-KR'),nyTime=new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',hour12:false,hour:'2-digit',minute:'2-digit',second:'2-digit'});
 async function prepareArt(){const started=performance.now();
  $('asset-retry').hidden=true;$('asset-loading-message').textContent='클레이 전장을 준비하고 있어요.';
@@ -208,7 +210,7 @@ $('test-buy').addEventListener('click',()=>{for(let i=0;i<160;i++){const s=game.
 function updateUI(){
  {const mg=$('mission-goal');if(mg){mg.hidden=!courseRun;if(courseRun){const c=courseFor(courseRun.courseId);$('mg-kicker').textContent=c.infinite?'∞ 인피니티 전장':'미션 '+(Math.max(0,MODE_ORDER.indexOf(courseRun.mode||'normal'))+1)+'-'+c.id+' · '+c.concept;$('mg-title').textContent=c.infinite?'🎯 성벽이 무너질 때까지 최대한 버티기':'🎯 '+c.minutes+'분 동안 성벽을 지켜내기';$('mg-desc').textContent=c.description;$('mg-time').textContent=c.infinite?'생존 '+courseTime(provider.elapsed):'남은 시간 '+courseTime(Math.ceil(c.duration-provider.elapsed));}}}if(courseRun){const c=courseFor(courseRun.courseId),dur=Math.max(0,Math.min(1,game.wallXP/wallXPAt(2)));$('course-stage').textContent=c.infinite?'∞ 인피니티 · 보상 20%':'STAGE '+String(c.id).padStart(2,'0')+' · 보상 20%';$('course-name').textContent=c.title;$('course-countdown').textContent=c.infinite?'생존 '+courseTime(provider.elapsed):courseTime(Math.ceil(c.duration-provider.elapsed));$('course-clock-fill').style.width=(c.infinite?Math.min(100,provider.elapsed%600/6):provider.elapsed/c.duration*100)+'%';const wf=$('course-wall-fill');if(wf){wf.style.width=(game.wallLevel>1?100:dur*100).toFixed(1)+'%';$('course-wall').classList.toggle('low',game.wallLevel<=1&&dur<.3);$('course-wall-label').textContent=game.wallLevel>1?'성벽 '+game.wallLevel+'단계':'성벽 내구도 '+Math.round(dur*100)+'%';}$('course-hud').classList.toggle('critical',game.wallLevel<=1&&dur<.3);}
 
- $('gold').textContent=cash(game.gold);$('shop-gold').textContent=$('gold').textContent;$('power').textContent='장벽 화력 ×'+game.power.toFixed(2);$('population').textContent=`음봉 ${game.enemies.filter(e=>e.alive).length}`;$('fps').textContent=`${fps} FPS`;
+ setGoldDigits($('gold'),cash(game.gold));$('shop-gold').textContent=cash(game.gold);$('power').textContent='장벽 화력 ×'+game.power.toFixed(2);$('population').textContent=`음봉 ${game.enemies.filter(e=>e.alive).length}`;$('fps').textContent=`${fps} FPS`;
  $('scenario-label').textContent=provider instanceof CampaignDataProvider?'정복 코스 · 가상 장세':provider instanceof LiveMarketDataProvider?(game.marketCode==='KR'?'확정 1분봉 · 양방향 추정':'직전 1분봉 · 양방향 추정'):provider instanceof AlpacaMarketDataProvider?'거래량 SIP · 약 16분 지연':(provider.manual!==null?'성벽 이동 실험':SCENARIOS.find(s=>s[0]===provider.scenario)?.[1])+` · ${provider.speed}×`;
  $('player-status').textContent='Lv.'+game.playerLevel;$('user-level').textContent=String(game.playerLevel);{const L=game.playerLevel,t=L>=50?5:L>=35?4:L>=20?3:L>=10?2:L>=5?1:0,pf=$('user-portrait');if(pf&&pf.dataset.tier!==String(t)){pf.dataset.tier=t;pf.className='user-portrait pf-t'+t;pf.dataset.tierClass='pf-t'+t;}}$('player-status').title='유저 XP '+Math.floor(game.playerXP)+' / 다음 '+playerXPAt(game.playerLevel+1);$('slot-status').textContent=game.cannons.length+' / '+game.slotLimit+' 기';const nextSlot=SLOT_LEVELS.find(level=>level>game.playerLevel);const reserveCount=game.inventory.filter(v=>!game.cannons.some(c=>c.type===v.type)).length;$('slot-guide').textContent='성벽 타워 '+game.cannons.length+' / '+game.slotLimit+'기 · 다섯 자리를 어떤 조합으로 채울지가 전략이에요';
  const signature=game.inventory.map(c=>c.type+c.level+':'+(c.xp||0)).join('|')+'|'+game.cannons.map(c=>c.type).join('|')+'|'+Math.floor(game.gold)+'|'+game.freePack+'|'+game.marketCode;
@@ -353,3 +355,6 @@ let cutinActive=false;const CUTIN_LINES={musk:['화성으로 가즈아!!','풀�
 Game.prototype.onCutin=function(type,c,fire){if(cutinActive||this!==game||document.hidden){fire();return;}cutinActive=true;const w=document.createElement('div');w.className='cutin';const lines=CUTIN_LINES[type]||['필살기!'];
  w.innerHTML=`<div class="cutin-band"><i class="cutin-lines"></i><img class="cutin-hero" src="assets/clay/${type}-clay-v1.webp" alt=""><div class="cutin-bubble">${lines[Math.floor(Math.random()*lines.length)]}</div><b class="cutin-name">${CANNONS[type].name} · 필살기</b></div>`;document.body.append(w);
  setTimeout(()=>w.classList.add('out'),1250);setTimeout(()=>{w.remove();cutinActive=false;last=performance.now();fire();},1550);};
+
+// v56: GPT gold digit sprites for the money readout (keeps the text for screen readers), bounces on increase
+function setGoldDigits(el,text){if(text===goldShown)return;const n=Number(String(text).replace(/[^0-9.-]/g,''))||0,up=n>goldNum&&goldShown!=='';goldShown=text;goldNum=n;const h=30,k=h/DIGIT_H;let html=`<span class="sr-only">${text}</span>`;for(const ch of String(text)){const d=DIGITS[ch];if(!d){html+=`<i class="dg-gap"></i>`;continue;}html+=`<i class="dg" aria-hidden="true" style="width:${(d[1]*k).toFixed(1)}px;background-size:${(DIGIT_W*k).toFixed(1)}px ${h}px;background-position:${(-d[0]*k).toFixed(1)}px 0"></i>`;}el.innerHTML=html;if(up){el.classList.remove('bump');void el.offsetWidth;el.classList.add('bump');}}
