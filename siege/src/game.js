@@ -1,12 +1,12 @@
-import{campaignProgress}from'./campaign-courses.js?v=6dfddecf52';
-import { SETTINGS, CANNONS, ENEMIES, SUPPLIES, WORLD_WIDTH, DRONE, WALL, CAMERA_DEPTH, ACTOR_STYLE, cannonStats, upgradeCost, energyMultiplier, wallYFor, priceBand, validPlacement, snapSlot, FORWARD_X, FORWARD_DY, validDronePlacement, clamp } from './config.js?v=6dfddecf52';
-import { wallMountDepth } from './fortification.js?v=6dfddecf52';
-import { marketArmy,estimatedArmy } from './market-army.js?v=6dfddecf52';
-import {playerLevelFor,towerSlots,wallLevelFor,wallPower,money,WALL_MAX_XP} from './progression.js?v=6dfddecf52';
-import{TerrainField}from'./terrain.js?v=6dfddecf52';
-import{modeFor}from'./cards.js?v=6dfddecf52';
-import{formatDamage}from'./combat-fx.js?v=6dfddecf52';
-import{wallXPAt}from'./progression.js?v=6dfddecf52';
+import{campaignProgress}from'./campaign-courses.js?v=ac24757382';
+import { SETTINGS, CANNONS, ENEMIES, SUPPLIES, WORLD_WIDTH, DRONE, WALL, CAMERA_DEPTH, ACTOR_STYLE, cannonStats, upgradeCost, energyMultiplier, wallYFor, priceBand, validPlacement, snapSlot, FORWARD_X, FORWARD_DY, validDronePlacement, clamp } from './config.js?v=ac24757382';
+import { wallMountDepth } from './fortification.js?v=ac24757382';
+import { marketArmy,estimatedArmy } from './market-army.js?v=ac24757382';
+import {playerLevelFor,towerSlots,wallLevelFor,wallPower,money,WALL_MAX_XP} from './progression.js?v=ac24757382';
+import{TerrainField}from'./terrain.js?v=ac24757382';
+import{modeFor}from'./cards.js?v=ac24757382';
+import{formatDamage}from'./combat-fx.js?v=ac24757382';
+import{wallXPAt}from'./progression.js?v=ac24757382';
 // Kill gold is scaled down and a steady per-minute battle stipend added, so income stays in a narrow band
 // between a starter and a maxed army (card packs are the only use of gold).
 export const KILL_GOLD=.3,STIPEND_PER_MIN=30;
@@ -20,8 +20,8 @@ export const BOSS=Object.freeze({cooldownMs:3*60*1000,minIntensity:.8,minSellSha
 export const SPECIALS=Object.freeze({ram:Object.freeze({hp:2600,speed:8.5,radius:30,damage:110,interval:2.4,cooldownMs:2*60*1000,minIntensity:.7,chance:.75,goldMul:6}),bomber:Object.freeze({hp:12,speed:92,radius:9,damage:150,cooldownMs:40*1000,minIntensity:.5,chance:.85,goldMul:1.5})});
 const SPECIAL_DEF={ram:{...ENEMIES[3],speed:SPECIALS.ram.speed,damage:SPECIALS.ram.damage,interval:SPECIALS.ram.interval},bomber:{...ENEMIES[4],speed:SPECIALS.bomber.speed,damage:SPECIALS.bomber.damage,interval:9}};
 const BOSS_DEF=Object.freeze({...ENEMIES[3],speed:ENEMIES[3].speed*BOSS.speed,damage:ENEMIES[3].damage*BOSS.damage});
-import{isAIStock}from'./symbols.js?v=6dfddecf52';
-import {weaponMuzzle} from './weapon-geometry.js?v=6dfddecf52';
+import{isAIStock}from'./symbols.js?v=ac24757382';
+import {weaponMuzzle} from './weapon-geometry.js?v=ac24757382';
 export class Game {
   constructor(state, { height = 620, random = Math.random,now=Date.now,rewardMultiplier=1,mode } = {}) {
     this.modeKey=modeFor(mode??state.settings?.mode).key;this.stipendClock=0;this.wallHold=0;
@@ -117,7 +117,7 @@ export class Game {
   spawnBoss(x=WORLD_WIDTH/2){const e=this.spawnEnemy(3,x,-60,{marketWeight:1});if(!e)return null;e.boss=true;e.scale=BOSS.scale;e.hp=e.maxHP=ENEMIES[3].hp*BOSS.hp*this.mode.hp;e.radius=BOSS.radius;this.notify('⚠ 대량 매도! 거인 음봉이 나타났어요');return e;}
   spawnSupply(kind = 0, x = 24 + this.random() * (WORLD_WIDTH - 48), y = this.height + 25,{marketWeight=1}={}) {
     if (this.supplies.length >= SETTINGS.supplyCap) return null;
-    const c = SUPPLIES[kind],radius=c.radius*ACTOR_STYLE.footprintScale,e = { id: this.nextId++, kind, x: clamp(x, radius, WORLD_WIDTH - radius), y, radius,marketWeight, alive: true, age: 0, phase: this.random() * 6 };
+    const c = SUPPLIES[kind],radius=c.radius*ACTOR_STYLE.footprintScale,e = { id: this.nextId++, kind, x: clamp(x, radius, WORLD_WIDTH - radius), y, radius,marketWeight, alive: true, age: 0, phase: this.random() * 6, variant: 0 };e.variant=e.id%3;
     e.art=isAIStock(this.market?.symbol||this.settings.symbol||'SOXL')?'semiconductor':'candle';this.terrain.projectSpawn(e);this.supplies.push(e); return e;
   }
   effect(type, x, y, color, amount = '', duration = .55, extra = {}) {
@@ -220,18 +220,18 @@ export class Game {
   resolveProjectile(p){
     const target=this.enemies.find(e=>e.id===p.targetId&&e.alive),st=p.stats;
     if(p.type==='mortar'||p.type==='slime'||p.type==='shell'){
-      this.effect('explosion',p.tx,p.ty,p.color,'',p.type==='slime'?.36:p.type==='shell'?.75:.6,{radius:p.radius});if(p.type!=='slime')for(let i=0;i<3;i++)this.effect('smoke',p.tx+(this.random()-.5)*p.radius*.6,p.ty+(this.random()-.5)*p.radius*.3,'#5a4a3e','',1+this.random()*.6,{vx:(this.random()-.5)*16});this.burst(p.tx,p.ty,p.color,p.type==='slime'?3:p.type==='shell'?10:7);
+      this.effect('explosion',p.tx,p.ty,p.color,'',p.type==='slime'?.36:p.type==='shell'?.75:.6,{radius:p.radius,weapon:p.weapon});if(p.type!=='slime')for(let i=0;i<3;i++)this.effect('smoke',p.tx+(this.random()-.5)*p.radius*.6,p.ty+(this.random()-.5)*p.radius*.3,'#5a4a3e','',1+this.random()*.6,{vx:(this.random()-.5)*16});this.burst(p.tx,p.ty,p.color,p.type==='slime'?3:p.type==='shell'?10:7);
       if(p.type==='slime'){this.zones.push({x:p.tx,y:p.ty,radius:p.radius,life:st.duration,slow:st.slow});if(this.zones.length>22)this.zones.shift();}
       this.enemies.forEach(e=>{if(e.alive&&Math.hypot(e.x-p.tx,e.y-p.ty)<=p.radius+e.radius){if(p.type==='slime'){e.slowUntil=this.time+st.duration;e.slow=st.slow;// Slime is a control tool: one splash never removes more than splashCap of an actor's max HP,
 // so fractional-weight swarm actors survive long enough for the slow to matter.
 return;/* v26: slime only slows (movement and attack speed) — no damage */}this.damage(e,p.damage,{cannonType:p.weapon});}});return;
     }
-    if(p.type==='venom'){/* v26: poison is a splash that only applies slow damage-over-time */const cx=target?.alive?target.x:p.tx,cy=target?.alive?target.y:p.ty,R=st.radius||46;this.effect('explosion',cx,cy,'#a3ed75','',.45,{radius:R*.8});for(const e of this.enemies){if(!e.alive||Math.hypot(e.x-cx,e.y-cy)>R+e.radius)continue;if(e.poisons.length>=3)e.poisons.shift();e.poisons.push({until:this.time+st.duration,dps:st.dot});}return;}
-    if(!target)return;this.damage(target,p.damage,{cannonType:p.weapon});this.effect('bullet-hit',target.x,target.y,p.type==='venom'?'#c093ff':'#ffe4a5','',.16,{sourceAltitude:7,heavy:p.type==='slug'});
+    if(p.type==='venom'){/* v26: poison is a splash that only applies slow damage-over-time */const cx=target?.alive?target.x:p.tx,cy=target?.alive?target.y:p.ty,R=st.radius||46;this.effect('explosion',cx,cy,'#a3ed75','',.45,{radius:R*.8,weapon:'poison'});for(const e of this.enemies){if(!e.alive||Math.hypot(e.x-cx,e.y-cy)>R+e.radius)continue;if(e.poisons.length>=3)e.poisons.shift();e.poisons.push({until:this.time+st.duration,dps:st.dot});}return;}
+    if(!target)return;this.damage(target,p.damage,{cannonType:p.weapon});this.effect('bullet-hit',target.x,target.y,p.type==='venom'?'#c093ff':'#ffe4a5','',.16,{sourceAltitude:7,heavy:p.type==='slug',weapon:p.weapon});
   }
   update(dt) {
     dt = Math.min(dt, .05); this.time += dt; this.wallUpdate(dt);this.flushDamage(dt);this.stipend(dt,!!this.market&&['minute','live','last_trade','last_bar','course'].includes(this.market.priceStatus));
-    const epoch=this.now();this.marketWaves=this.marketWaves.filter(w=>{if(w.expiresAt&&epoch>=w.expiresAt)return false;if(w.spawnAt!=null){if(w.spawnAt>epoch)return true;if(epoch-w.spawnAt>2000)return false;}else if(w.at>this.time)return true;if(w.side==='sell')this.spawnEnemy(w.kind,w.x,w.y,{marketWeight:w.weight??1});else{/* v38: bulls arrive as supply-cart teams — one cart carries three crowd units */this.supplyTick=(this.supplyTick||0)+1;if(this.supplyTick%3===0)this.spawnSupply(w.kind,w.x,w.y,{marketWeight:(w.weight??1)*3});}return false;});
+    const epoch=this.now();this.marketWaves=this.marketWaves.filter(w=>{if(w.expiresAt&&epoch>=w.expiresAt)return false;if(w.spawnAt!=null){if(w.spawnAt>epoch)return true;if(epoch-w.spawnAt>2000)return false;}else if(w.at>this.time)return true;if(w.side==='sell')this.spawnEnemy(w.kind,w.x,w.y,{marketWeight:w.weight??1});else{/* v38: bulls arrive as supply-cart teams — one cart carries three crowd units */this.supplyTick=(this.supplyTick||0)+1;/* v40: fewer, fuller carts — at most 10 on the road; extra supply rides on the newest cart */if((this.supplyTick-1)%5===0){const live=this.supplies.filter(s=>s.alive);if(live.length>=10){const s=live[live.length-1];s.marketWeight=(s.marketWeight??1)+(w.weight??1)*5;}else this.spawnSupply(w.kind,w.x,w.y,{marketWeight:(w.weight??1)*5});}}return false;});
     this.zones.forEach(z => z.life -= dt); this.zones = this.zones.filter(z => z.life > 0);
     // Spatial crowd lanes avoid quadratic separation and stop dense armies stacking.
     const lanes = new Map(), wallLoad = this.wallLoad();
@@ -275,7 +275,7 @@ return;/* v26: slime only slows (movement and attack speed) — no damage */}thi
     for (const s of this.supplies) {
       if (!s.alive) continue; s.age += dt; if (s.age >= 35) { this.remove(s,'expire'); continue; }
       { const ox=s.x; this.terrain.move(s,-SUPPLIES[s.kind].speed*dt,SUPPLIES[s.kind].speed,dt); s.vx=(s.vx||0)*.85+((s.x-ox)/Math.max(dt,1e-3))*.15; }
-      if (s.y-s.radius <= this.wallAt(s.x)+13) { this.deliverSupply(s); this.effect('supply-deliver',s.x,s.y+s.radius,'#bcefb0','',.7,{kind:s.kind,radius:s.radius,art:s.art});this.remove(s,'heal'); }
+      if (s.y-s.radius <= this.wallAt(s.x)+13) { this.deliverSupply(s); this.effect('supply-deliver',s.x,s.y+s.radius,'#bcefb0','',.7,{kind:s.kind,radius:s.radius,art:s.art,variant:s.variant});this.remove(s,'heal'); }
     }
     this.enemies = this.enemies.filter(e => e.alive); this.supplies = this.supplies.filter(s => s.alive);
     for (const c of this.cannons) {

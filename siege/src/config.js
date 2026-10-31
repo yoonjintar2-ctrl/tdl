@@ -70,3 +70,6 @@ export function validPlacement(x, cannons, exclude = null) { return Number.isFin
 export function snapSlot(x, cannons, exclude = null, north = 0) { const free = ALL_SLOTS.filter(s => validPlacement(s, cannons, exclude)); if (!free.length) return null; return free.map(s => ({ s, d: s === FORWARD_X ? Math.hypot(x - s, Math.max(0, FORWARD_DY - north)) : Math.hypot(x - s, Math.max(0, north) * .9 + 8) })).sort((a, b) => a.d - b.d)[0].s; }
 export function validDronePlacement(x, y, height) { return Number.isFinite(x) && Number.isFinite(y) && x >= DRONE.marginX && x <= WORLD_WIDTH - DRONE.marginX && y >= DRONE.marginTop && y <= height - DRONE.marginBottom; }
 
+
+// v40: GPT tier sheets — tier index for an n-tier sheet (5 tiers → every 10 lv, 10 tiers → every 5 lv)
+export const towerTier=(level,n)=>Math.min(n-1,Math.floor(Math.max(1,level||1)*n/50));

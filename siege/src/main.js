@@ -1,23 +1,23 @@
-import{CampaignView}from'./campaign-view.js?v=6dfddecf52';
-import{CampaignDataProvider,newCourseRun,readCourseRun,checkpointCourse,storeCourseRun,removeCourseRun,restoreCourseCombat,settleCourse}from'./campaign.js?v=6dfddecf52';
-import{courseFor,courseTime,CAMPAIGN_REWARD_RATE,campaignProgress}from'./campaign-courses.js?v=6dfddecf52';
-import{stockFor}from'./symbols.js?v=6dfddecf52';
-import{StockPicker}from'./stock-picker.js?v=6dfddecf52';
-import{drawSessionChart}from'./session-chart.js?v=6dfddecf52';
-import{WALL_MAX_XP}from'./progression.js?v=6dfddecf52';
-import { CANNONS,SCENARIOS,SETTINGS,ENEMIES,SUPPLIES,WORLD_WIDTH,DRONE,WALL,WALL_STAGES,cannonStats,upgradeCost,validPlacement,clamp } from './config.js?v=6dfddecf52';
-import { DemoMarketDataProvider, LiveMarketDataProvider, AlpacaMarketDataProvider, MARKET_ERRORS } from './market.js?v=6dfddecf52';
-import { Game } from './game.js?v=6dfddecf52';
-import { Renderer,renderShopIcon } from './renderer.js?v=6dfddecf52';
-import { initialState,readSave,writeSave,snapshotGame,safeStorage,readRawSave,writeRawSave } from './storage.js?v=6dfddecf52';
-import{cloudConfigured,currentUser,signUpEmail,signInEmail,signOut,pull,push,EMAIL_RULE,idOf,claimSession,sessionState,SESSION_ID}from'./cloud.js?v=6dfddecf52';
-import{recentSymbols}from'./stock-picker.js?v=6dfddecf52';
-import { loadClayAssets,useBattlefield } from './clay-assets.js?v=6dfddecf52';
-import{THEMES,themeFor}from'./themes.js?v=6dfddecf52';
-import { drawClayPreview } from './clay-runtime.js?v=6dfddecf52';
-import{money,playerXPAt,SLOT_LEVELS,wallXPAt,WALL_MAX_LEVEL,wallPower}from'./progression.js?v=6dfddecf52';
-import{openPack,applyCard,PACKS,MODES,MODE_ORDER,modeFor,RARITIES,TOWER_RARITY}from'./cards.js?v=6dfddecf52';
-import{CardStage,renderCollection,towerCard,statLines,nextLevelLines}from'./card-ui.js?v=6dfddecf52';
+import{CampaignView}from'./campaign-view.js?v=ac24757382';
+import{CampaignDataProvider,newCourseRun,readCourseRun,checkpointCourse,storeCourseRun,removeCourseRun,restoreCourseCombat,settleCourse}from'./campaign.js?v=ac24757382';
+import{courseFor,courseTime,CAMPAIGN_REWARD_RATE,campaignProgress}from'./campaign-courses.js?v=ac24757382';
+import{stockFor}from'./symbols.js?v=ac24757382';
+import{StockPicker}from'./stock-picker.js?v=ac24757382';
+import{drawSessionChart}from'./session-chart.js?v=ac24757382';
+import{WALL_MAX_XP}from'./progression.js?v=ac24757382';
+import { CANNONS,SCENARIOS,SETTINGS,ENEMIES,SUPPLIES,WORLD_WIDTH,DRONE,WALL,WALL_STAGES,cannonStats,upgradeCost,validPlacement,clamp } from './config.js?v=ac24757382';
+import { DemoMarketDataProvider, LiveMarketDataProvider, AlpacaMarketDataProvider, MARKET_ERRORS } from './market.js?v=ac24757382';
+import { Game } from './game.js?v=ac24757382';
+import { Renderer,renderShopIcon } from './renderer.js?v=ac24757382';
+import { initialState,readSave,writeSave,snapshotGame,safeStorage,readRawSave,writeRawSave } from './storage.js?v=ac24757382';
+import{cloudConfigured,currentUser,signUpEmail,signInEmail,signOut,pull,push,EMAIL_RULE,idOf,claimSession,sessionState,SESSION_ID}from'./cloud.js?v=ac24757382';
+import{recentSymbols}from'./stock-picker.js?v=ac24757382';
+import { loadClayAssets,useBattlefield } from './clay-assets.js?v=ac24757382';
+import{THEMES,themeFor}from'./themes.js?v=ac24757382';
+import { drawClayPreview } from './clay-runtime.js?v=ac24757382';
+import{money,playerXPAt,SLOT_LEVELS,wallXPAt,WALL_MAX_LEVEL,wallPower}from'./progression.js?v=ac24757382';
+import{openPack,applyCard,PACKS,MODES,MODE_ORDER,modeFor,RARITIES,TOWER_RARITY}from'./cards.js?v=ac24757382';
+import{CardStage,renderCollection,towerCard,statLines,nextLevelLines}from'./card-ui.js?v=ac24757382';
 const $=id=>document.getElementById(id),fmt=new Intl.NumberFormat('ko-KR'),nyTime=new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',hour12:false,hour:'2-digit',minute:'2-digit',second:'2-digit'});
 async function prepareArt(){const started=performance.now();
  $('asset-retry').hidden=true;$('asset-loading-message').textContent='클레이 전장을 준비하고 있어요.';
@@ -58,7 +58,7 @@ function openTowerInfo(c,{fromShop=false}={}){closeTowerInfo();infoTower=c;if(!c
  const actions=document.createElement('div');actions.className='ti-actions';const mk=(t,f,cls='')=>{const b=document.createElement('button');b.type='button';b.textContent=t;b.className=cls;b.onclick=f;actions.append(b);return b;};
  if(c.virtual){if(c.owned)mk('성벽에 설치',()=>{closeTowerInfo();installReserve(c.type);},'primary');else{const n=document.createElement('p');n.className='ti-locked';n.textContent='아직 없는 타워예요 · 카드 뽑기로 얻을 수 있어요';actions.append(n);}mk('닫기',closeTowerInfo);card.append(actions);wrap.append(card);const openedAt=performance.now();wrap.onclick=e=>{if(e.target===wrap&&performance.now()-openedAt>450)closeTowerInfo();};document.body.append(wrap);refreshTowerInfo();return;}
  mk('보관',()=>{if(game.storeTower(c)){save();closeTowerInfo();updateUI();toast('타워를 보관했습니다');}});mk('교체',()=>{if(c.type==='drone'){closeTowerInfo();replaceTarget=c;openShop();toast('바꿀 카드를 고르세요');return;}openSlotPicker(c.x,c);}).disabled=game.inventory.length<2;mk('닫기',closeTowerInfo,'primary');card.append(actions);wrap.append(card);const openedAt=performance.now();wrap.onclick=e=>{if(e.target===wrap&&performance.now()-openedAt>450)closeTowerInfo();};document.body.append(wrap);refreshTowerInfo();}
-function refreshTowerInfo(){const box=document.querySelector('#tower-info .ti-rows');if(!box||!infoTower)return;if(!infoTower.virtual&&!game.cannons.includes(infoTower)){closeTowerInfo();return;}const row=([k,v],cls='ti-row')=>{const r=document.createElement('div');r.className=cls;const a=document.createElement('span');a.textContent=k;const b=document.createElement('b');b.textContent=v;r.append(a,b);return r;};const head=document.createElement('div');head.className='ti-next-head';head.textContent='다음 레벨이 되면';box.replaceChildren(...statLines(game,infoTower).map(l=>row(l)),head,...nextLevelLines(infoTower).map(l=>row(l,'ti-row ti-next')));}
+function refreshTowerInfo(){const box=document.querySelector('#tower-info .ti-rows');if(!box||!infoTower)return;if(!infoTower.virtual&&!game.cannons.includes(infoTower)){closeTowerInfo();return;}const row=([k,v],cls='ti-row')=>{const r=document.createElement('div');r.className=cls;const a=document.createElement('span');a.textContent=k;const b=document.createElement('b');b.textContent=v;r.append(a,b);return r;};const head=document.createElement('div');head.className='ti-next-head';head.textContent='다음 레벨이 되면';const owned=!infoTower.virtual||!!game.owned(infoTower.type);/* v40: unowned cards don't preview next level */box.replaceChildren(...statLines(game,infoTower).map(l=>row(l)),...(owned?[head,...nextLevelLines(infoTower).map(l=>row(l,'ti-row ti-next'))]:[]));}
 // v26: tap the command post → current wall grade, gauge to the next grade and what the grade does.
 function openWallInfo(){closeTowerInfo();const g=game,L=g.wallLevel,cur=wallXPAt(L),next=L>=WALL_MAX_LEVEL?null:wallXPAt(L+1),pct=next?Math.max(0,Math.min(100,(g.wallXP-cur)/(next-cur)*100)):100,stage=n=>WALL_STAGES[Math.max(0,Math.min(WALL_STAGES.length-1,n-1))]?.name||'',mult=n=>(wallPower(n)/wallPower(1)).toFixed(2);
  const w=document.createElement('div');w.className='tower-info';w.id='tower-info';const card=document.createElement('div');card.className='ti-card wall-info';

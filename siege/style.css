@@ -763,3 +763,7 @@ body.gacha-open .mission-goal,.tower-info~.mission-goal{display:none}
 .course-card.cleared .course-emblem canvas{filter:grayscale(.7) opacity(.75)}
 .course-card.cleared::after{border-color:#6a665c!important;color:#6a665c!important;background:#f4f2ecaa!important;box-shadow:none!important}
 .course-card.cleared .course-card-bottom span:first-child{color:#6a7a5a!important}
+
+/* v40: mission info lives in the centre banner only */
+.course-hud{display:none!important}
+.mission-goal .course-wall{position:static;margin:8px auto 0;width:min(86%,320px)}
