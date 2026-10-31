@@ -1,11 +1,11 @@
-import { WORLD_WIDTH as W,CANNONS,ENEMIES,SUPPLIES,WALL_STAGES,DRONE,WALL,cannonStats,validPlacement,validDronePlacement,snapSlot,ALL_SLOTS,FORWARD_X,FORWARD_DY,clamp } from './config.js?v=0856bae0dc';
-import{WALL_MAX_LEVEL,WALL_MAX_XP}from'./progression.js?v=0856bae0dc';
-import{isAIStock}from'./symbols.js?v=0856bae0dc';
-import { QuarterCamera, DEPTH_SCALE, WALL_ELEVATION } from './camera.js?v=0856bae0dc';
-import { drawClayMortar, drawClayMortarIcon, clayBattlefield } from './clay-assets.js?v=0856bae0dc';
-import{drawProjectile,drawEffect}from'./combat-fx.js?v=0856bae0dc';
-import{artCrop}from'./terrain.js?v=0856bae0dc';
-import { drawClayTower, drawClayUnit, drawClayWall, drawClayPreview, drawForwardPad, hasKeep, drawClaySprite, clayReady, wallOutline, tierOf, tierTint, drawTierBack, drawTierFront } from './clay-runtime.js?v=0856bae0dc';
+import { WORLD_WIDTH as W,CANNONS,ENEMIES,SUPPLIES,WALL_STAGES,DRONE,WALL,cannonStats,validPlacement,validDronePlacement,snapSlot,ALL_SLOTS,FORWARD_X,FORWARD_DY,clamp } from './config.js?v=6dfddecf52';
+import{WALL_MAX_LEVEL,WALL_MAX_XP}from'./progression.js?v=6dfddecf52';
+import{isAIStock}from'./symbols.js?v=6dfddecf52';
+import { QuarterCamera, DEPTH_SCALE, WALL_ELEVATION } from './camera.js?v=6dfddecf52';
+import { drawClayMortar, drawClayMortarIcon, clayBattlefield } from './clay-assets.js?v=6dfddecf52';
+import{drawProjectile,drawEffect}from'./combat-fx.js?v=6dfddecf52';
+import{artCrop}from'./terrain.js?v=6dfddecf52';
+import { drawClayTower, drawClayUnit, drawClayWall, drawClayPreview, drawForwardPad, hasKeep, drawClaySprite, clayReady, drawClayTowerIcon, wallOutline, tierOf, tierTint, drawTierBack, drawTierFront } from './clay-runtime.js?v=6dfddecf52';
 const BAND=215;
 const TAU=Math.PI*2;
 function box(c,x,y,w,h,r,fill,stroke){c.beginPath();c.roundRect(x,y,w,h,r);if(fill){c.fillStyle=fill;c.fill();}if(stroke){c.lineWidth=1;c.strokeStyle=stroke;c.stroke();}}
@@ -53,7 +53,7 @@ export function buffAura(c,x,y,t,lv,front=false){if(lv<2)return;const k=(lv-1)/7
   if(lv>=8&&ph>.45&&ph<.5){c.strokeStyle=`rgba(255,250,230,${a})`;c.lineWidth=.8;c.beginPath();c.moveTo(mx-5,my);c.lineTo(mx+5,my);c.moveTo(mx,my-5);c.lineTo(mx,my+5);c.stroke();}}}
  c.restore();}
 export function drawCannon(c,u,x,y,t=0,power=1,selected=false,icon=false){
- if(u.type==='mortar'&&drawClayMortar(c,u,x,y,power,selected,icon))return;
+ if(u.type==='mortar'&&!clayReady('mortar')&&drawClayMortar(c,u,x,y,power,selected,icon))return;
  if(drawClayTower(c,u,x,y,t,power,selected,icon))return;
  if(u.type==='drone'){drawDrone(c,u,x,y,t,power,selected,icon);return;}
  const d=CANNONS[u.type],tier=u.level>=40?8:Math.floor(u.level/5),col=d.color;
@@ -292,6 +292,6 @@ export class Renderer{
 function sampleGround(art,crop){try{const k=document.createElement('canvas');k.width=k.height=8;const x=k.getContext('2d',{willReadFrequently:true});const sx=art.naturalWidth*(crop.left+crop.wfrac*.44),sw=art.naturalWidth*crop.wfrac*.12,sy=art.naturalHeight*(crop.top+crop.frac*.35),sh=art.naturalHeight*crop.frac*.3;x.drawImage(art,sx,sy,sw,sh,0,0,8,8);const d=x.getImageData(0,0,8,8).data;let r=0,g=0,b=0;for(let i=0;i<d.length;i+=4){r+=d[i];g+=d[i+1];b+=d[i+2];}const n=d.length/4;return[r/n|0,g/n|0,b/n|0];}catch{return null;}}
 function clayBomber(c,e,p,foot,t){c.save();c.fillStyle='#1d2a1e33';c.beginPath();c.ellipse(foot.x,foot.y,9,3,0,0,TAU);c.fill();for(let i=1;i<6;i++){c.globalAlpha=.25*(1-i/6);c.fillStyle='#6a5a4e';c.beginPath();c.arc(p.x+Math.sin(i+t*9)*2,p.y-6-i*6,3+i,0,TAU);c.fill();}c.globalAlpha=1;const ok=drawClaySprite(c,'bomber',p.x,p.y+14+Math.sin(t*16+e.id)*1.5,40);c.restore();return ok;}
 function tierize(canvas,level){if(!tierOf(level)||typeof document==='undefined')return;const w=canvas.width,h=canvas.height,copy=document.createElement('canvas');copy.width=w;copy.height=h;copy.getContext('2d').drawImage(canvas,0,0);const c=canvas.getContext('2d'),k=w/88;c.clearRect(0,0,w,h);drawTierBack(c,w/2,h*.88,level,k);c.filter=tierTint(level);c.drawImage(copy,0,0);c.filter='none';drawTierFront(c,w/2,h*.16,h*.88,level,0,k);}
-export function renderShopIcon(canvas,type,level=1){if(type==='mortar'&&drawClayMortarIcon(canvas))return;if(drawClayPreview(canvas,type))return;const c=canvas.getContext('2d');c.clearRect(0,0,canvas.width,canvas.height);c.save();c.translate(canvas.width/2,canvas.height*.75);c.scale(.72,.72);drawCannon(c,{type,level,angle:-Math.PI/2},0,0,0,1,false,true);c.restore();}
+export function renderShopIcon(canvas,type,level=1){if(drawClayTowerIcon(canvas,type,level))return;if(type==='mortar'&&drawClayMortarIcon(canvas))return;if(drawClayPreview(canvas,type))return;const c=canvas.getContext('2d');c.clearRect(0,0,canvas.width,canvas.height);c.save();c.translate(canvas.width/2,canvas.height*.75);c.scale(.72,.72);drawCannon(c,{type,level,angle:-Math.PI/2},0,0,0,1,false,true);c.restore();}
 
 

@@ -1,4 +1,4 @@
-import {CANNONS,ENEMIES,SUPPLIES,WALL,WORLD_WIDTH,ACTOR_STYLE,WALL_SLOTS,COMMAND_X} from './config.js?v=0856bae0dc';
+import {CANNONS,ENEMIES,SUPPLIES,WALL,WORLD_WIDTH,ACTOR_STYLE,WALL_SLOTS,COMMAND_X} from './config.js?v=6dfddecf52';
 export const ENEMY_ART=['enemy-small','enemy-tall','enemy-fat','enemy-giant'];
 // Kind 4 (초미니 음봉) reuses the small candle art at a much smaller size.
 const ENEMY_KIND_ART=[...ENEMY_ART,'enemy-small'];
@@ -6,9 +6,9 @@ export const SUPPLY_ART=['supply-dram','supply-processor','supply-wafer','supply
 // Wall levels 1–10: two new shabby tiers (earth, wooden palisade) below the original eight.
 export const WALL_ART=['castle-wall-low-0','castle-wall-low-1',...Array.from({length:8},(_,i)=>'castle-wall-'+i)];
 export const BASTION_ART=['castle-bastion-low-0','castle-bastion-low-1',...Array.from({length:8},(_,i)=>'castle-bastion-'+i)];
-export const TOWER_ART=['machine','sniper','laser','totem','sticky','poison','drone','siege','summoner','musk','command'];
+export const TOWER_ART=['machine','sniper','laser','totem','sticky','poison','drone','siege','summoner','musk','command','mortar','sonic','blackhole'];
 const pictures=new Map(),unitSprites=new Map();let metadata={},pending=null;
-const NAMES={'command':'성벽 지휘본부','siege':'공성 전차','summoner':'소환사','musk':'삼론 머스크','machine':'기관총','mortar':'박격포','sniper':'저격포','laser':'레이저','totem':'토템','sticky':'끈적이포','poison':'독 캐논','drone':'드론','enemy-small':'작은 음봉','enemy-tall':'키 큰 음봉','enemy-fat':'돼지 음봉','enemy-giant':'거인 음봉','supply-dram':'DRAM','supply-processor':'프로세서','supply-wafer':'실리콘 웨이퍼','supply-optical':'광통신 모듈','supply-connector':'광섬유 커넥터','supply-substrate':'반도체 기판','wall-soil':'흙 성벽','wall-wood':'나무 성벽','wall-reinforced-wood':'강화 나무 성벽','wall-mixed':'나무·돌 성벽','wall-stone':'돌 성벽','wall-reinforced-stone':'강화 돌 성벽','wall-iron':'철·돌 성벽','wall-gold':'황금 성벽'};
+const NAMES={'sonic':'소닉 타워','blackhole':'블랙홀','command':'성벽 지휘본부','siege':'공성 전차','summoner':'소환사','musk':'삼론 머스크','machine':'기관총','mortar':'박격포','sniper':'저격포','laser':'레이저','totem':'토템','sticky':'끈적이포','poison':'독 캐논','drone':'드론','enemy-small':'작은 음봉','enemy-tall':'키 큰 음봉','enemy-fat':'돼지 음봉','enemy-giant':'거인 음봉','supply-dram':'DRAM','supply-processor':'프로세서','supply-wafer':'실리콘 웨이퍼','supply-optical':'광통신 모듈','supply-connector':'광섬유 커넥터','supply-substrate':'반도체 기판','wall-soil':'흙 성벽','wall-wood':'나무 성벽','wall-reinforced-wood':'강화 나무 성벽','wall-mixed':'나무·돌 성벽','wall-stone':'돌 성벽','wall-reinforced-stone':'강화 돌 성벽','wall-iron':'철·돌 성벽','wall-gold':'황금 성벽'};
 export const KEEP_ART=Array.from({length:10},(_,i)=>i<2?'castle-keep-low-'+i:'castle-keep-'+(i-2));
 export const hasKeep=g=>clayReady(KEEP_ART[g.stage]);
 export const UNIT_ART=['ram','cart','cart-side','bomber'];
@@ -51,7 +51,7 @@ export function drawClayTower(c,u,x,y,t=0,power=1,selected=false,icon=false){
  if(!air&&!icon){c.fillStyle='#142f2b38';c.beginPath();c.ellipse(x,y-4,16,3,0,0,Math.PI*2);c.fill();}
  if(!icon&&air){c.save();c.globalAlpha=.2;c.fillStyle='#173b32';c.beginPath();c.ellipse(x+2,y+40,16,4,0,0,Math.PI*2);c.fill();c.restore();y+=Math.sin(t*3.1)*2;}
  if(power<.4&&!icon)c.filter='saturate(.6) brightness(.78)';
- sprite(c,u.type,frameForAngle(u.angle??-Math.PI/2),x,y+(u.recoil||0)*2.3,size);c.filter='none';
+ const tiers=metadata[u.type]?.tiers;/* v39: GPT tier sheets — row 1 front (cards), row 2 back (field, facing north) */sprite(c,u.type,tiers?(icon?0:tiers)+Math.min(tiers-1,tierOf(u.level)):frameForAngle(u.angle??-Math.PI/2),x,y+(u.recoil||0)*2.3,size);c.filter='none';
  if(!icon&&u.type!=='command')levelLabel(c,u,x,air?y+44:y);
  if(u.type==='totem'&&!icon){c.save();c.globalAlpha=.1+Math.sin(t*3)*.04;halo(c,x,y-30,21,'#c5f4b9');c.restore();}
  c.restore();return true;
@@ -101,4 +101,5 @@ export function drawClayWall(c,g,point,mask=false){
 export function drawForwardPad(c,g,point,occupied){const bastion=info(BASTION_ART[g.stage]);const x=216,y=g.wallAt(x)+WALL.deck+WALL.mountOffset-250,base=point(x,y,16);c.save();c.fillStyle='#1d2a1e40';c.beginPath();c.ellipse(base.x,base.y+20,30,8,0,0,Math.PI*2);c.fill();if(!occupied)c.globalAlpha=.75;if(bastion){const f=bastion.frame,height=70,width=height*f.w/f.h;c.drawImage(bastion.image,f.x,f.y,f.w,f.h,base.x-width/2,base.y-height*.26,width,height);}
  if(!occupied){c.globalAlpha=1;c.setLineDash([4,4]);c.strokeStyle='#fff3c4cc';c.lineWidth=1.6;c.beginPath();c.ellipse(base.x,base.y+2,15,5,0,0,Math.PI*2);c.stroke();c.setLineDash([]);c.fillStyle='#fff3c4';c.font='800 8px system-ui';c.textAlign='center';c.fillText('전진',base.x,base.y-6);}c.restore();}
 export function drawClayPreview(canvas,key,frame=0){const data=info(key,frame);if(!data)return false;const c=canvas.getContext('2d');c.clearRect(0,0,canvas.width,canvas.height);const f=data.frame,pad=Math.min(canvas.width,canvas.height)*.07,scale=Math.min((canvas.width-pad*2)/f.w,(canvas.height-pad*2)/f.h);c.imageSmoothingEnabled=true;c.imageSmoothingQuality='high';c.drawImage(data.image,f.x,f.y,f.w,f.h,(canvas.width-f.w*scale)/2,(canvas.height-f.h*scale)*.28,f.w*scale,f.h*scale);return true;}
+export function drawClayTowerIcon(canvas,type,level=1){const tiers=clayReady(type)&&metadata[type]?.tiers;if(!tiers)return false;return drawClayPreview(canvas,type,Math.min(tiers-1,tierOf(level)));}
 export function collectionDiagnostics(){return{loaded:pictures.size,expected:CLAY_CATALOG.length,frames:Object.fromEntries(Object.entries(metadata).map(([key,value])=>[key,value.frames.length]))};}
