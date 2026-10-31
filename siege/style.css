@@ -766,4 +766,33 @@ body.gacha-open .mission-goal,.tower-info~.mission-goal{display:none}
 
 /* v40: mission info lives in the centre banner only */
 .course-hud{display:none!important}
-.mission-goal .course-wall{position:static;margin:8px auto 0;width:min(86%,320px)}
+.mission-goal .course-wall{position:relative;margin:8px auto 0;width:min(86%,320px);height:14px}
+/* v43: tower popups — scale the card instead of clipping it; compact 2-col stats; actions never scroll away */
+.ti-card .tcard{width:150px!important;zoom:.78}
+.tower-info.field-info .ti-card{max-height:none!important;overflow:visible!important;grid-template-columns:80px minmax(0,1fr)!important;padding:10px 12px calc(10px + env(safe-area-inset-bottom))!important}
+.tower-info.field-info .ti-card>.tcard{width:150px!important;zoom:.53}
+.tower-info.field-info .ti-stats h3{font-size:18px!important;margin:0!important}
+.tower-info.field-info .ti-role{font-size:12px!important;margin:2px 0 4px!important}
+.tower-info.field-info .ti-rows{display:grid;grid-template-columns:1fr 1fr;column-gap:12px}
+.tower-info.field-info .ti-row{font-size:11.5px!important;padding:2px 0!important;gap:6px}
+.tower-info.field-info .ti-row span{white-space:nowrap}
+.tower-info.field-info .ti-row b{text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tower-info.field-info .ti-actions{margin-top:6px!important}
+.tower-info.field-info .ti-actions button{padding:9px 0!important;min-height:0!important;font-size:15px!important}
+/* v43: conquest-map button — small pill tucked into the corner */
+.stock-picker.mission-mode .picker-campaign{display:inline-flex!important;align-items:center;gap:6px;width:auto!important;align-self:flex-end;margin:0 2px 8px auto!important;padding:5px 12px!important;border-radius:99px!important;min-height:0!important}
+.stock-picker.mission-mode .picker-campaign small,.stock-picker.mission-mode .picker-campaign b{display:none!important}
+.stock-picker.mission-mode .picker-campaign span{font-size:12.5px!important}
+/* v43: tower codex */
+.tc-help{position:absolute;right:5px;top:30px;z-index:5;width:22px;height:22px;border-radius:50%;border:2px solid #4a2e12;background:linear-gradient(#ffe7a4,#e6b84f);color:#4a2804;font:400 13px/1 var(--gk-font);padding:0;box-shadow:0 2px 0 #4a2e12}
+.mini .tc-help{display:none}
+.codex{position:fixed;inset:0;z-index:120;display:grid;place-items:center;padding:18px 14px;background:#0b150fb0;animation:stageIn .2s ease both}
+.codex-box{position:relative;width:min(440px,100%);max-height:calc(100dvh - 36px);display:flex;flex-direction:column;border-radius:22px;padding:16px 14px 10px;background:linear-gradient(#fff6dc,#ecd6a0);border:3px solid #4a2e12;box-shadow:inset 0 0 0 3px #fff3c4,0 12px 40px #000a}
+.codex-head{text-align:center;padding:0 28px 8px}.codex-head small{font:400 11px var(--gk-font);color:#8a6a3a;letter-spacing:2px}.codex-head h3{margin:2px 0;font:400 22px var(--gk-font);color:#4a2804}.codex-head p{margin:0;font:400 12px/1.4 var(--gk-font);color:#6a4a20}
+.codex-close{position:absolute;right:10px;top:10px;width:32px;height:32px;border-radius:50%;border:2px solid #4a2e12;background:#e2523e;color:#fff;font:700 18px/1 system-ui}
+.codex-list{overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding:4px 2px 6px;overscroll-behavior:contain}
+.codex-row{display:grid;grid-template-columns:86px 1fr;gap:10px;align-items:center;padding:6px 10px 6px 4px;border-radius:14px;background:#fffbeb;border:2px solid #d9c38f;opacity:.62;filter:saturate(.6)}
+.codex-row.got{opacity:1;filter:none}.codex-row.now{border-color:#e6a520;box-shadow:0 0 0 3px #ffd56a88}
+.codex-art{width:86px;height:75px}
+.codex-info{display:flex;flex-direction:column;gap:3px;font:400 12px/1.35 var(--gk-font);color:#4a3010}
+.codex-lv{font:400 15px var(--gk-font);color:#2e4a2a}.codex-perk{color:#a3460c}

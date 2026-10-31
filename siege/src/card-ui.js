@@ -1,7 +1,7 @@
-import { CANNONS, cannonStats } from './config.js?v=f8a85aa38f';
-import { RARITIES, TOWER_RARITY, xpForNext, MAX_CARD_LEVEL, cardOdds, PACKS } from './cards.js?v=f8a85aa38f';
-import { renderShopIcon } from './renderer.js?v=f8a85aa38f';
-import { FX } from './fx.js?v=f8a85aa38f';
+import { CANNONS, cannonStats, PERKS, towerTier } from './config.js?v=00e69c5e5b';
+import { RARITIES, TOWER_RARITY, xpForNext, MAX_CARD_LEVEL, cardOdds, PACKS } from './cards.js?v=00e69c5e5b';
+import { renderShopIcon } from './renderer.js?v=00e69c5e5b';
+import { FX } from './fx.js?v=00e69c5e5b';
 
 const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
 const wait = ms => new Promise(r => setTimeout(r, ms));
@@ -23,6 +23,7 @@ export function towerCard(type, item, { mini = false, faceDown = false } = {}) {
     bar.title = '눌러서 경험치 보기'; bar.addEventListener('click', e => { if (!item) return; e.stopPropagation(); card.classList.toggle('show-xp'); clearTimeout(card._xpT); card._xpT = setTimeout(() => card.classList.remove('show-xp'), 2500); });
     front.append(bar);
   }
+  if (!mini) { const q = el('button', 'tc-help', '?'); q.type = 'button'; q.setAttribute('aria-label', CANNONS[type].name + ' 도감'); q.addEventListener('click', e => { e.stopPropagation(); openCodex(type, item); }); front.append(q); }
   front.append(el('i', 'tc-sheen'), el('i', 'tc-pearl'));
   const emblem = el('div', 'tc-emblem'); emblem.innerHTML = '<i></i><i></i><i></i>'; back.append(emblem, el('i', 'tc-backshine'));
   inner.append(front, back); card.append(inner);
@@ -150,4 +151,30 @@ export function nextLevelLines(c) {
   if (b.pierce > a.pierce) out.push(['관통', `+${b.pierce - a.pierce}`]);
   if ((c.level + 1) % 10 === 0) out.push(['외형', '다음 레벨에 디자인이 바뀌어요 ✨']);
   return out;
+}
+
+// v43: tower codex — every upgrade tier with its art, numbers and unlocked abilities.
+export function openCodex(type, item) {
+  document.getElementById('codex')?.remove();
+  const d = CANNONS[type], wrap = el('div', 'codex'); wrap.id = 'codex';
+  const box = el('div', 'codex-box gk-panel'), head = el('div', 'codex-head'), list = el('div', 'codex-list'), close = el('button', 'codex-close', '×');
+  close.type = 'button'; close.setAttribute('aria-label', '닫기');
+  head.append(el('small', '', 'TOWER CODEX'), el('h3', '', d.name + ' 도감'), el('p', '', d.role)); box.append(close, head, list); wrap.append(box);
+  const cur = item?.level || 0, perks = PERKS[type] || [], seen = new Set();
+  for (let lv = 1; lv <= MAX_CARD_LEVEL; lv++) {
+    const tier = towerTier(lv, 10), newPerks = perks.filter(p => p.lv === lv), tierStart = towerTier(lv - 1 || 1, 10) !== tier || lv === 1;
+    if (!tierStart && !newPerks.length && lv !== MAX_CARD_LEVEL) continue;
+    const st = cannonStats(type, lv), row = el('div', 'codex-row' + (cur >= lv ? ' got' : '') + (cur && towerTier(cur, 10) === tier && tierStart ? ' now' : ''));
+    const art = el('canvas', 'codex-art'); art.width = 150; art.height = 130;
+    const info = el('div', 'codex-info'); info.append(el('b', 'codex-lv', 'Lv.' + lv + (tierStart && !seen.has(tier) ? ` · ${tier + 1}단계 외형` : '')));
+    seen.add(tier);
+    const nums = []; if (st.damage) nums.push('공격력 ' + st.damage.toFixed(1)); if (st.rate) nums.push((1 / st.rate).toFixed(2) + '초마다'); if (st.range) nums.push('사거리 ' + Math.round(st.range)); if (st.knights) nums.push('기사 ' + st.knights + (st.archers ? ' · 궁수 ' + st.archers : ''));
+    info.append(el('span', 'codex-nums', nums.join(' · ')));
+    for (const p of newPerks) info.append(el('span', 'codex-perk', '✨ ' + p.text));
+    row.append(art, info); list.append(row);
+    requestAnimationFrame(() => renderShopIcon(art, type, lv));
+  }
+  const shut = () => wrap.remove(); close.onclick = shut; wrap.addEventListener('click', e => { if (e.target === wrap) shut(); });
+  document.body.append(wrap);
+  requestAnimationFrame(() => list.querySelector('.now')?.scrollIntoView({ block: 'center' }));
 }

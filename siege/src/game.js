@@ -1,12 +1,12 @@
-import{campaignProgress}from'./campaign-courses.js?v=f8a85aa38f';
-import { SETTINGS, CANNONS, ENEMIES, SUPPLIES, WORLD_WIDTH, DRONE, WALL, CAMERA_DEPTH, ACTOR_STYLE, cannonStats, upgradeCost, energyMultiplier, wallYFor, priceBand, validPlacement, snapSlot, FORWARD_X, FORWARD_DY, validDronePlacement, clamp } from './config.js?v=f8a85aa38f';
-import { wallMountDepth } from './fortification.js?v=f8a85aa38f';
-import { marketArmy,estimatedArmy } from './market-army.js?v=f8a85aa38f';
-import {playerLevelFor,towerSlots,wallLevelFor,wallPower,money,WALL_MAX_XP} from './progression.js?v=f8a85aa38f';
-import{TerrainField}from'./terrain.js?v=f8a85aa38f';
-import{modeFor}from'./cards.js?v=f8a85aa38f';
-import{formatDamage}from'./combat-fx.js?v=f8a85aa38f';
-import{wallXPAt}from'./progression.js?v=f8a85aa38f';
+import{campaignProgress}from'./campaign-courses.js?v=00e69c5e5b';
+import { SETTINGS, CANNONS, ENEMIES, SUPPLIES, WORLD_WIDTH, DRONE, WALL, CAMERA_DEPTH, ACTOR_STYLE, cannonStats, upgradeCost, energyMultiplier, wallYFor, priceBand, validPlacement, snapSlot, FORWARD_X, FORWARD_DY, validDronePlacement, clamp, hasPerk } from './config.js?v=00e69c5e5b';
+import { wallMountDepth } from './fortification.js?v=00e69c5e5b';
+import { marketArmy,estimatedArmy } from './market-army.js?v=00e69c5e5b';
+import {playerLevelFor,towerSlots,wallLevelFor,wallPower,money,WALL_MAX_XP} from './progression.js?v=00e69c5e5b';
+import{TerrainField}from'./terrain.js?v=00e69c5e5b';
+import{modeFor}from'./cards.js?v=00e69c5e5b';
+import{formatDamage}from'./combat-fx.js?v=00e69c5e5b';
+import{wallXPAt}from'./progression.js?v=00e69c5e5b';
 // Kill gold is scaled down and a steady per-minute battle stipend added, so income stays in a narrow band
 // between a starter and a maxed army (card packs are the only use of gold).
 export const KILL_GOLD=.3,STIPEND_PER_MIN=30;
@@ -20,8 +20,8 @@ export const BOSS=Object.freeze({cooldownMs:3*60*1000,minIntensity:.8,minSellSha
 export const SPECIALS=Object.freeze({ram:Object.freeze({hp:2600,speed:8.5,radius:30,damage:110,interval:2.4,cooldownMs:2*60*1000,minIntensity:.7,chance:.75,goldMul:6}),bomber:Object.freeze({hp:12,speed:92,radius:9,damage:150,cooldownMs:40*1000,minIntensity:.5,chance:.85,goldMul:1.5})});
 const SPECIAL_DEF={ram:{...ENEMIES[3],speed:SPECIALS.ram.speed,damage:SPECIALS.ram.damage,interval:SPECIALS.ram.interval},bomber:{...ENEMIES[4],speed:SPECIALS.bomber.speed,damage:SPECIALS.bomber.damage,interval:9}};
 const BOSS_DEF=Object.freeze({...ENEMIES[3],speed:ENEMIES[3].speed*BOSS.speed,damage:ENEMIES[3].damage*BOSS.damage});
-import{isAIStock}from'./symbols.js?v=f8a85aa38f';
-import {weaponMuzzle} from './weapon-geometry.js?v=f8a85aa38f';
+import{isAIStock}from'./symbols.js?v=00e69c5e5b';
+import {weaponMuzzle} from './weapon-geometry.js?v=00e69c5e5b';
 export class Game {
   constructor(state, { height = 620, random = Math.random,now=Date.now,rewardMultiplier=1,mode } = {}) {
     this.modeKey=modeFor(mode??state.settings?.mode).key;this.stipendClock=0;this.wallHold=0;
@@ -29,7 +29,7 @@ export class Game {
     this.cannons = state.cannons.map(c => ({ ...c, ...(c.type === 'drone' ? { y: clamp(Number.isFinite(c.yRatio) ? c.yRatio * height : c.y ?? height * .35, DRONE.marginTop, height - DRONE.marginBottom) } : {}), cooldown: .2, recoil: 0, angle: -Math.PI / 2, targetId: null, targetLock: 0 }));
     this.playerXP=Math.max(0,state.playerXP||0);this.wallXP=clamp(state.wallXP??360,0,WALL_MAX_XP);this.wallLevel=wallLevelFor(this.wallXP);this.wallTransition=null;
     this.inventory=[];for(const item of [...(state.inventory||[]),...this.cannons]){if(!CANNONS[item.type])continue;const owned=this.inventory.find(v=>v.type===item.type);if(owned){if((item.level||1)>owned.level){owned.level=item.level||1;owned.xp=item.xp||0;}}else this.inventory.push({type:item.type,level:item.level||1,xp:Math.max(0,item.xp||0)});}
-    this.enemies = []; this.supplies = []; this.effects = []; this.projectiles = []; this.zones = []; this.knights = []; this.sweeps = [];
+    this.delayed = []; this.enemies = []; this.supplies = []; this.effects = []; this.projectiles = []; this.zones = []; this.knights = []; this.sweeps = [];
     this.dmgAcc={};this.time = 0; this.wallY = height / 2; this.band = 0; this.targetBand = 0; this.move = null; this.stage = Math.min(9,this.wallLevel-1);
     this.terrain=new TerrainField(height);this.pricePlaced=false;this.market = null; this.selected = null; this.placement = null; this.dirty = false; this.nextId = 1; this.autoTimer = 0; this.messages = []; this.marketWaves=[];
     this.marketGoldRemainder=0;
@@ -118,7 +118,7 @@ export class Game {
   spawnSupply(kind = 0, x = 24 + this.random() * (WORLD_WIDTH - 48), y = this.height + 25,{marketWeight=1}={}) {
     if (this.supplies.length >= SETTINGS.supplyCap) return null;
     const c = SUPPLIES[kind],radius=c.radius*ACTOR_STYLE.footprintScale,e = { id: this.nextId++, kind, x: clamp(x, radius, WORLD_WIDTH - radius), y, radius,marketWeight, alive: true, age: 0, phase: this.random() * 6, variant: 0 };e.variant=e.id%3;
-    e.art=isAIStock(this.market?.symbol||this.settings.symbol||'SOXL')?'semiconductor':'candle';this.terrain.projectSpawn(e);this.supplies.push(e); return e;
+    e.art='candle';/* v43: every stock is supplied by green bulls */this.terrain.projectSpawn(e);this.supplies.push(e); return e;
   }
   effect(type, x, y, color, amount = '', duration = .55, extra = {}) {
     if (this.effects.length >= SETTINGS.effectCap) this.effects.shift();
@@ -195,7 +195,14 @@ export class Game {
     if (this.wallY > oldY) for (const s of this.supplies) if (s.alive && s.y - s.radius < this.wallAt(s.x) + 13) this.remove(s, 'crush');
     if (u >= 1) { this.band = m.next; this.move = null; }
   }
-  fire(c,stats,target){
+  extraTargets(c,stats,target,n){const pos=this.cannonPosition(c);return this.enemies.filter(e=>e.alive&&e!==target&&Math.hypot(e.x-pos.x,e.y-pos.y)<=stats.range&&Math.hypot(e.x-pos.x,e.y-pos.y)>=(stats.minRange||0)).sort((a,b)=>Math.hypot(a.x-pos.x,a.y-pos.y)-Math.hypot(b.x-pos.x,b.y-pos.y)).slice(0,n);}
+  fire(c,stats,target,extra=true){
+    /* v43 perks: multi-barrel / salvo / split beams */
+    if(extra){const P=k=>hasPerk(c.type,c.level,k);let more=0;if(c.type==='machine')more=P('triple')?2:P('twin')?1:0;else if(c.type==='drone')more=P('swarm')?2:P('twin')?1:0;else if(c.type==='laser'&&P('split'))more=1;
+      if(more)for(const e of this.extraTargets(c,stats,target,more))this.fire(c,stats,e,false);
+      if(((c.type==='mortar'||c.type==='siege')&&P('salvo'))||(c.type==='sniper'&&P('double'))){const t2=target;this.delayed.push({at:this.time+.18,run:()=>{if(this.cannons.includes(c))this.fire(c,stats,t2.alive?t2:(this.extraTargets(c,stats,null,1)[0]||t2),false);}});}
+      if(c.type==='sniper'&&P('crit')&&this.random()<.25){stats={...stats,damage:stats.damage*2.5};this.effect('text',target.x,target.y-16,'#ffd34f','헤드샷!',.8,{sourceAltitude:20});}
+    }
     const pos=this.cannonPosition(c),dx=target.x-pos.x,dy=target.y-pos.y,len=Math.hypot(dx,dy)||1;if(c.type!=='drone')c.angle=Math.atan2(dy,dx);c.recoil=1;this.metrics.shots[c.type]=(this.metrics.shots[c.type]||0)+1;
     const muzzle=weaponMuzzle(this,c),base={x:muzzle.x,y:muzzle.y,sourceAltitude:muzzle.z,tx:target.x,ty:target.y,targetId:target.id,elapsed:0,damage:stats.damage,color:stats.color,stats:{...stats},targetAltitude:8};
     this.effect('muzzle',muzzle.x,muzzle.y,c.type==='machine'?'#ffdf8c':stats.color,'',c.type==='machine'?.065:.12,{sourceAltitude:muzzle.z,weapon:c.type});
@@ -209,8 +216,9 @@ export class Game {
     if(type){const burst=type==='bullet'?3:1;for(let i=0;i<burst;i++)this.projectiles.push({...base,type,weapon:c.type,elapsed:-i*.032,damage:stats.damage/burst,duration:type==='mortar'?.62:type==='shell'?.95:type==='slime'?.38:type==='venom'?.30:Math.max(.055,Math.min(.24,len/(type==='slug'?2000:1200))),radius:stats.radius});if(this.projectiles.length>450)this.projectiles.splice(0,this.projectiles.length-450);}
   }
   // Summoner: knights spawn on the wall's north face and march north, cutting the nearest candle in reach.
-  summonKnights(c,stats){const y=this.wallAt(c.x)-14;for(let i=0;i<stats.knights;i++){this.knights.push({x:clamp(c.x+(i-(stats.knights-1)/2)*16,12,WORLD_WIDTH-12),y:y-this.random()*6,hits:stats.hits,damage:stats.damage,cool:.2+i*.15,phase:this.random()*6,age:0,level:c.level});}this.effect('summon',c.x,this.cannonPosition(c).y,'#9be064','',1.1,{radius:30,sourceAltitude:30});for(const k of this.knights.slice(-stats.knights))this.effect('summon-gate',k.x,k.y,'#c8ff9a','',.9,{radius:14});if(this.knights.length>60)this.knights.splice(0,this.knights.length-60);}
+  summonKnights(c,stats){const y=this.wallAt(c.x)-14;for(let i=0;i<stats.knights;i++){this.knights.push({x:clamp(c.x+(i-(stats.knights-1)/2)*16,12,WORLD_WIDTH-12),y:y-this.random()*6,hits:stats.hits,damage:stats.damage,cool:.2+i*.15,phase:this.random()*6,age:0,level:c.level});}for(let i=0;i<(stats.archers||0);i++)this.knights.push({archer:true,x:clamp(c.x+(i?18:-18),12,WORLD_WIDTH-12),y:y+4,hits:stats.hits,damage:stats.damage,cool:.5+i*.3,phase:this.random()*6,age:0,level:c.level});this.effect('summon',c.x,this.cannonPosition(c).y,'#9be064','',1.1,{radius:30,sourceAltitude:30});for(const k of this.knights.slice(-stats.knights))this.effect('summon-gate',k.x,k.y,'#c8ff9a','',.9,{radius:14});if(this.knights.length>60)this.knights.splice(0,this.knights.length-60);}
   updateKnights(dt){for(const k of this.knights){k.age+=dt;k.cool-=dt;let best=null,bd=1e9;for(const e of this.enemies){if(!e.alive)continue;const d=Math.hypot(e.x-k.x,e.y-k.y);if(d<bd){bd=d;best=e;}}
+    if(k.archer){/* v43: archer bulls hold back and shoot arrows */k.vx=0;if(best&&bd<=175){k.attacking=true;k.aim=Math.atan2(best.y-k.y,best.x-k.x);if(k.cool<=0){k.cool=.9;k.shot=.25;this.projectiles.push({type:'arrow',weapon:'summoner',x:k.x,y:k.y-6,sourceAltitude:10,tx:best.x,ty:best.y,targetId:best.id,elapsed:0,duration:Math.max(.12,bd/520),damage:k.damage*1.1,color:'#d8ffb0',stats:{},targetAltitude:8});k.hits-=.5;}}else{k.attacking=false;const ty=best?Math.max(best.y+150,k.y-40):k.y-30;k.y+=Math.sign(ty-k.y)*Math.min(Math.abs(ty-k.y),40*dt);}k.shot=Math.max(0,(k.shot||0)-dt);continue;}
     if(best&&bd<=18+best.radius){k.attacking=true;if(k.cool<=0){k.cool=.55;this.damage(best,k.damage,{cannonType:'summoner'});this.effect('bullet-hit',best.x,best.y,'#d8ffb0','',.14,{sourceAltitude:6});k.hits--;}}
     else{k.attacking=false;const tx=best&&bd<120?best.x:k.x,ty=best&&bd<120?best.y:k.y-50,len=Math.hypot(tx-k.x,ty-k.y)||1;k.x+=(tx-k.x)/len*58*dt;k.y+=(ty-k.y)/len*58*dt;}}
     this.knights=this.knights.filter(k=>k.hits>0&&k.y>-20&&k.age<25);}
@@ -224,10 +232,10 @@ export class Game {
       if(p.type==='slime'){this.zones.push({x:p.tx,y:p.ty,radius:p.radius,life:st.duration,slow:st.slow});if(this.zones.length>22)this.zones.shift();}
       this.enemies.forEach(e=>{if(e.alive&&Math.hypot(e.x-p.tx,e.y-p.ty)<=p.radius+e.radius){if(p.type==='slime'){e.slowUntil=this.time+st.duration;e.slow=st.slow;// Slime is a control tool: one splash never removes more than splashCap of an actor's max HP,
 // so fractional-weight swarm actors survive long enough for the slow to matter.
-return;/* v26: slime only slows (movement and attack speed) — no damage */}this.damage(e,p.damage,{cannonType:p.weapon});}});return;
+/* v43: slime slows and deals a light splash */if(p.damage>0)this.damage(e,p.damage,{cannonType:p.weapon});return;}this.damage(e,p.damage,{cannonType:p.weapon});}});return;
     }
-    if(p.type==='venom'){/* v26: poison is a splash that only applies slow damage-over-time */const cx=target?.alive?target.x:p.tx,cy=target?.alive?target.y:p.ty,R=st.radius||46;this.effect('explosion',cx,cy,'#a3ed75','',.45,{radius:R*.8,weapon:'poison'});for(const e of this.enemies){if(!e.alive||Math.hypot(e.x-cx,e.y-cy)>R+e.radius)continue;if(e.poisons.length>=3)e.poisons.shift();e.poisons.push({until:this.time+st.duration,dps:st.dot});}return;}
-    if(!target)return;this.damage(target,p.damage,{cannonType:p.weapon});this.effect('bullet-hit',target.x,target.y,p.type==='venom'?'#c093ff':'#ffe4a5','',.16,{sourceAltitude:7,heavy:p.type==='slug',weapon:p.weapon});
+    if(p.type==='venom'){/* v26: poison is a splash that only applies slow damage-over-time */const cx=target?.alive?target.x:p.tx,cy=target?.alive?target.y:p.ty,R=st.radius||46;this.effect('explosion',cx,cy,'#a3ed75','',.45,{radius:R*.8,weapon:'poison'});for(const e of this.enemies){if(!e.alive||Math.hypot(e.x-cx,e.y-cy)>R+e.radius)continue;if(p.damage>0)this.damage(e,p.damage,{cannonType:'poison'});if(!e.alive)continue;if(e.poisons.length>=(st.stacks||3))e.poisons.shift();e.poisons.push({until:this.time+st.duration,dps:st.dot});}return;}
+    if(!target)return;{const lv=(this.cannons.find(t=>t.type===p.weapon)||{}).level||1;let dmg=p.damage;if(p.weapon==='machine'&&(target.special||target.boss)&&hasPerk('machine',lv,'shred'))dmg*=1.5;this.damage(target,dmg,{cannonType:p.weapon});if(p.weapon==='sniper'&&hasPerk('sniper',lv,'pierce')){const nx=this.enemies.find(e=>e.alive&&e!==target&&Math.hypot(e.x-target.x,e.y-target.y)<42&&e.y<target.y);if(nx)this.damage(nx,p.damage*.7,{cannonType:'sniper'});}}if(false)this.damage(target,p.damage,{cannonType:p.weapon});this.effect('bullet-hit',target.x,target.y,p.type==='venom'?'#c093ff':'#ffe4a5','',.16,{sourceAltitude:7,heavy:p.type==='slug',weapon:p.weapon});
   }
   update(dt) {
     dt = Math.min(dt, .05); this.time += dt; this.wallUpdate(dt);this.flushDamage(dt);this.stipend(dt,!!this.market&&['minute','live','last_trade','last_bar','course'].includes(this.market.priceStatus));
@@ -236,7 +244,7 @@ return;/* v26: slime only slows (movement and attack speed) — no damage */}thi
     // Spatial crowd lanes avoid quadratic separation and stop dense armies stacking.
     const lanes = new Map(), wallLoad = this.wallLoad();
     for (const e of this.enemies) {
-      if (!e.alive) continue; e.age += dt; e.hit = Math.max(0, e.hit - dt); e.attackPulse = Math.max(0, (e.attackPulse || 0) - dt * 5);
+      if (!e.alive) continue; if(e._px!=null&&dt>0)e.vx=(e.vx||0)*.82+((e.x-e._px)/dt)*.18;e._px=e.x; e.age += dt; e.hit = Math.max(0, e.hit - dt); e.attackPulse = Math.max(0, (e.attackPulse || 0) - dt * 5);
       if (e.age >= (e.special || e.boss ? 160 : 35) || e.contact >= (e.special || e.boss ? 60 : 20)) { this.remove(e, 'expire'); continue; }
       e.poisons = e.poisons.filter(p => p.until > this.time);
       if (e.poisons.length) this.damage(e, e.poisons.reduce((v,p) => v + p.dps * dt, 0), { cannonType: 'poison' });
@@ -251,7 +259,7 @@ return;/* v26: slime only slows (movement and attack speed) — no damage */}thi
         const sb = this.terrain.bounds(stop + e.radius, e.x, e.radius), step = def.speed * (e.slowUntil > this.time ? 1 - e.slow : 1) * dt, nx = clamp(e.x + clamp(e.wallSlot - e.x, -step, step), Math.min(e.x, sb.left), Math.max(e.x, sb.right));
         if (Math.abs(nx - e.x) < 1e-4) e.wallSlot = e.x; e.x = nx; e.y = this.enemyStopAt(e);
       }
-      else if (e.attacking) { e.y = stop; e.contact += dt; e.attack -= dt * (e.slowUntil > this.time ? 1 - e.slow : 1); if (e.attack <= 0) { e.attack += def.interval; e.attackPulse = 1; this.addWallXP(-def.damage*(e.marketWeight??1)*this.mode.damage,e.x); this.effect('impact', e.x, this.wallBackAt(e.x), '#ffb582', '', .25, { sourceAltitude: WALL.hitHeight }); } }
+      else if (e.attacking) { e.y = stop; e.contact += dt; e.attack -= dt * (e.slowUntil > this.time ? 1 - e.slow : 1); if (e.attack <= 0) { e.attack += def.interval; e.attackPulse = 1; this.addWallXP(-def.damage*(e.marketWeight??1)*this.mode.damage,e.x); {const dmg=def.damage*(e.marketWeight??1)*this.mode.damage,tier=e.boss||dmg>=60?3:e.special||dmg>=18?2:dmg>=5?1:0;/* v43: wall-hit effect scales with damage */this.effect('impact', e.x, this.wallBackAt(e.x), '#ffb582', '', [.28,.36,.5,.7][tier], { sourceAltitude: WALL.hitHeight, tier, amount:dmg });} } }
       else {
         let factor = e.slowUntil > this.time ? 1 - e.slow : 1;
         for (const z of this.zones) {
@@ -264,12 +272,12 @@ return;/* v26: slime only slows (movement and attack speed) — no damage */}thi
           }
         }
         // v30: the forward outpost is solid — candles approaching it slide around its sides.
-        {const ox=FORWARD_X,oy=this.wallAt(ox)+WALL.deck+WALL.mountOffset-FORWARD_DY,R=20+e.radius,dx=e.x-ox,dy=e.y-oy;if(dy>-R-22&&dy<R*.6&&Math.abs(dx)<R+2){const dir=Math.abs(dx)<8?(e.id%2?1:-1):Math.sign(dx);e.x=clamp(e.x+dir*Math.max(22,def.speed)*dt*2.2,e.radius,WORLD_WIDTH-e.radius);if(Math.abs(dx)<R*.9&&dy>-R*.8)factor*=.1;}}
+        if(!e.special&&!e.boss){const ox=FORWARD_X,oy=this.wallAt(ox)+WALL.deck+WALL.mountOffset-FORWARD_DY,R=20+e.radius,dx=e.x-ox,dy=e.y-oy;if(dy>-R-22&&dy<R*.6&&Math.abs(dx)<R+2){const dir=Math.abs(dx)<8?(e.id%2?1:-1):Math.sign(dx);e.x=clamp(e.x+dir*Math.max(22,def.speed)*dt*2.2,e.radius,WORLD_WIDTH-e.radius);if(Math.abs(dx)<R*.9&&dy>-R*.8)factor*=.1;}}
         // v30: black-hole towers drag nearby candles toward themselves (they still get through eventually).
         for(const bh of this.cannons){if(bh.type!=='blackhole')continue;const st=cannonStats('blackhole',bh.level),p=this.cannonPosition(bh),dx=p.x-e.x,dy=p.y-e.y,d=Math.hypot(dx,dy);if(d<st.range&&d>8){const pull=st.pull*(1-d/st.range)*dt;e.x=clamp(e.x+dx/d*pull,e.radius,WORLD_WIDTH-e.radius);e.y-=Math.max(0,-dy/d)*pull*.0;factor*=1-st.drag*(1-d/st.range);this.damage(e,st.damage*dt,{cannonType:'blackhole'});}}
         const lane = Math.floor(e.x / 12), prev = lanes.get(lane);
         if (prev && Math.abs(prev.y - e.y) < prev.radius + e.radius + 3) { const dir = e.x <= prev.x ? -1 : 1; e.x = clamp(e.x + dir*13*dt,e.radius,WORLD_WIDTH-e.radius); factor *= .8; }
-        lanes.set(lane,e);{const cb=this.terrain.bounds(e.y+e.radius,e.x,e.radius);if(cb.right>cb.left)e.x=clamp(e.x,cb.left,cb.right);}this.terrain.move(e,def.speed*factor*dt,def.speed,dt);e.y=Math.min(this.enemyStopAt(e),e.y);{/* v32: hard collision with the forward outpost — nobody walks through it, however crowded */const ox=FORWARD_X,oy=this.wallAt(ox)+WALL.deck+WALL.mountOffset-FORWARD_DY,R=18+e.radius,dx=e.x-ox,dy=e.y-oy;if(Math.abs(dy)<R*.45&&Math.abs(dx)<R){e.x=clamp(ox+(Math.abs(dx)<1?(e.id%2?1:-1):Math.sign(dx))*R,e.radius,WORLD_WIDTH-e.radius);}}
+        lanes.set(lane,e);{const cb=this.terrain.bounds(e.y+e.radius,e.x,e.radius);if(cb.right>cb.left)e.x=clamp(e.x,cb.left,cb.right);}this.terrain.move(e,def.speed*factor*dt,def.speed,dt);e.y=Math.min(this.enemyStopAt(e),e.y);if(!e.special&&!e.boss){/* v32/v43: hard collision with the forward outpost — giants and rams trample past it */const ox=FORWARD_X,oy=this.wallAt(ox)+WALL.deck+WALL.mountOffset-FORWARD_DY,R=18+e.radius,dx=e.x-ox,dy=e.y-oy;if(Math.abs(dy)<R*.45&&Math.abs(dx)<R){e.x=clamp(ox+(Math.abs(dx)<1?(e.id%2?1:-1):Math.sign(dx))*R,e.radius,WORLD_WIDTH-e.radius);}}
       }
     }
     for (const s of this.supplies) {
@@ -294,6 +302,7 @@ return;/* v26: slime only slows (movement and attack speed) — no damage */}thi
       this.fire(c,stats,targets[0]); c.cooldown = 1/(stats.rate*(1+this.attackBuff(c)));
     }
     for(const p of this.projectiles){p.elapsed+=dt;if(p.elapsed>=p.duration)this.resolveProjectile(p);}
+    if(this.delayed.length){const due=this.delayed.filter(d=>d.at<=this.time);this.delayed=this.delayed.filter(d=>d.at>this.time);for(const d of due)d.run();}
     this.updateKnights(dt);this.updateSweeps(dt);
     if(this.focus){const f=this.focus;if(f.until<=this.time||(this.time-f.at>.5&&!this.enemies.some(e=>e.alive&&Math.hypot(e.x-f.x,e.y-f.y)<=80))){this.effect('attack-marker',f.x,f.y,'#ff8a7a','',.35,{radius:16});this.focus=null;}}
     this.projectiles=this.projectiles.filter(p=>p.elapsed<p.duration);

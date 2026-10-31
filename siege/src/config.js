@@ -28,10 +28,10 @@ export const CANNONS = {
   sniper: { name: '스나이퍼', short: '저격', icon: 'SR', cost: 250, damage: 90, rate: .45, range: 530, color: '#85beff', role: '현재 HP가 가장 높은 적 우선' },
   laser: { name: '레이저', short: '레이저', icon: 'LS', cost: 280, damage: 4.5, rate: 1.1, range: 360, pierce: 9, color: '#58efd9', role: '직선 관통 · 다중 타격' },
   totem: { name: '토템', short: '토템', icon: 'TT', cost: 300, damage: 0, rate: 0, range: 165, buff: .2, color: '#ffda7a', role: '주변 캐논 연사력 지원 · 자신 제외' },
-  sticky: { name: '끈적이', short: '끈적이', icon: 'GL', cost: 210, damage: 0, rate: 1, range: 235, radius: 34, slow: .55, duration: 3, color: '#a3ed75', role: '피해 없이 범위 안 음봉의 이동·공격 속도를 크게 낮춤' },
-  poison: { name: '독 캐논', short: '독', icon: 'TX', cost: 240, damage: 0, rate: .9, range: 750, minRange: 170, radius: 46, dot: 1.4, duration: 6, color: '#c093ff', role: '먼 곳에 독 웅덩이 · 범위 안 음봉의 체력을 서서히 깎음 · 최대 3중첩 · 가까운 적은 못 맞힘' },
+  sticky: { name: '끈적이', short: '끈적이', icon: 'GL', cost: 210, damage: 1.5, rate: 1, range: 235, radius: 34, slow: .55, duration: 3, color: '#a3ed75', role: '끈적한 점액으로 약한 범위 피해 · 음봉의 이동·공격 속도를 크게 낮춤' },
+  poison: { name: '독 캐논', short: '독', icon: 'TX', cost: 240, damage: 3, rate: .9, range: 750, minRange: 170, radius: 46, dot: 1.4, duration: 6, color: '#c093ff', role: '먼 곳에 독 폭발 · 즉시 피해 후 체력을 서서히 깎음(최대 3중첩) · 가까운 적은 못 맞힘' },
   siege: { name: '공성 전차', short: '공성전차', icon: 'ST', cost: 260, damage: 4.5, rate: .32, range: 1150, minRange: 230, radius: 72, color: '#ffb35a', role: '아주 먼 적에게 광역 포격 · 가까운 적은 못 맞힘' },
-  summoner: { name: '소환사', short: '소환사', icon: 'SM', cost: 240, damage: 7, rate: .16, range: 70, knights: 3, hits: 6, color: '#9be064', role: '양봉 기사 3명을 주기적으로 소환 · 기사는 가까운 음봉부터 베며 북진' },
+  summoner: { name: '소환사', short: '소환사', icon: 'SM', cost: 240, damage: 7, rate: .16, range: 70, knights: 3, hits: 6, color: '#9be064', role: '양봉 기사를 주기적으로 소환 · 레벨이 오르면 기사 수가 늘고 Lv.14부터 궁수 양봉도 소환' },
   sonic: { name: '소닉 타워', short: '소닉', icon: 'SO', cost: 260, damage: 2.2, rate: .8, range: 105, color: '#9fe8ff', role: '주변으로 둥글게 퍼지는 음파 · 약하지만 넓은 범위를 한꺼번에 · 전진 자리에 딱' },
   blackhole: { name: '블랙홀', short: '블랙홀', icon: 'BH', cost: 300, damage: 1.2, rate: 0, range: 150, pull: 38, drag: .45, color: '#b28cff', role: '주변 음봉을 끌어당기고 느리게 함 · 약한 지속 피해' },
   musk: { name: '삼론 머스크', short: '삼론머스크', icon: 'EM', cost: 320, damage: 3.5, rate: .24, range: 900, width: 30, rocketChance: .12, color: '#d9e3ec', role: '사이버트럭 발사 · 관통 광역 피해 · 가끔 초광역 로켓' },
@@ -48,6 +48,19 @@ export const WALL_STAGES = [
 ];
 export const SCENARIOS = [ ['rise', '완만한 상승'], ['fall', '완만한 하락'], ['flat', '횡보'], ['sell', '매도세 폭발'], ['buy', '매수세 폭발'], ['pump', '급등 후 급락'], ['rebound', '급락 후 급반등'] ];
 export function cannonStats(type, level = 1) {
+  const st=baseStats(type,level),P=k=>hasPerk(type,level,k);
+  if(P('wide'))st.radius*=type==='siege'?1.25:1.3,st.width*=type==='sonic'?1.3:1;
+  if(type==='laser'&&P('focus'))st.pierce+=2;
+  if(type==='sticky'){if(P('glue'))st.slow=Math.min(.75,st.slow+.1);if(P('acid'))st.damage*=3;}
+  if(type==='poison'){st.stacks=P('stack')?4:3;if(P('plague'))st.dot*=1.6;}
+  if(type==='drone'&&P('fast'))st.rate*=1.25;
+  if(type==='summoner'){st.knights+=(P('more')?1:0)+(P('more2')?1:0);st.archers=(P('archer')?1:0)+(P('archer2')?1:0);if(P('captain')){st.damage*=1.5;st.hits=Math.ceil(st.hits*1.5);}}
+  if(type==='totem'&&P('aura'))st.range*=1.25;
+  if(type==='blackhole'&&P('pull'))st.pull*=1.3;
+  if(type==='musk'&&P('rocket'))st.rocketChance=(st.rocketChance||0)+.15;
+  return st;
+}
+function baseStats(type, level = 1) {
   const c = CANNONS[type], n = clamp(level, 1, 40) - 1;
   return { ...c, damage: c.damage * (1 + n * .12), rate: c.rate * (1 + n * (type === 'machine' ? .016 : .012)), pull: (c.pull || 0) * (1 + n * .03), drag: c.drag ? Math.min(.75, c.drag + n * .006) : 0,
     targetSwitch: c.targetSwitch ? c.targetSwitch / (1 + n * .045) : 0,
@@ -72,4 +85,23 @@ export function validDronePlacement(x, y, height) { return Number.isFinite(x) &&
 
 
 // v40: GPT tier sheets — tier index for an n-tier sheet (5 tiers → every 10 lv, 10 tiers → every 5 lv)
-export const towerTier=(level,n)=>Math.min(n-1,Math.floor(Math.max(1,level||1)*n/50));
+export const towerTier=(level,n)=>Math.min(n-1,Math.floor((clamp(level||1,1,40)-1)*n/40));
+
+// v43: every tower unlocks new abilities as it levels, not just bigger numbers.
+export const PERKS={
+ machine:[{lv:12,key:'twin',text:'총열 2갈래 — 두 적을 동시에 사격'},{lv:24,key:'triple',text:'총열 3갈래 — 세 적을 동시에 사격'},{lv:36,key:'shred',text:'철갑탄 — 거인·공성 피해 +50%'}],
+ sniper:[{lv:12,key:'pierce',text:'관통탄 — 뒤의 적 1명까지 꿰뚫음'},{lv:24,key:'crit',text:'헤드샷 — 25% 확률로 피해 ×2.5'},{lv:36,key:'double',text:'2연속 저격'}],
+ mortar:[{lv:12,key:'wide',text:'대구경 — 폭발 반경 +30%'},{lv:24,key:'salvo',text:'2연발 포격'},{lv:36,key:'cluster',text:'집속탄 — 폭발 후 작은 폭발 3개'}],
+ laser:[{lv:12,key:'focus',text:'집속 렌즈 — 관통 +2'},{lv:24,key:'split',text:'분광 — 빔 2줄 발사'},{lv:36,key:'burn',text:'열선 — 맞은 적에 화상 피해'}],
+ totem:[{lv:12,key:'aura',text:'오라 확장 — 버프 범위 +25%'},{lv:24,key:'haste',text:'신속 — 버프 받은 타워 공속 +10% 추가'},{lv:36,key:'bless',text:'축복 — 버프 받은 타워 피해 +15%'}],
+ sticky:[{lv:12,key:'wide',text:'넓은 점액 — 범위 +30%'},{lv:24,key:'glue',text:'강력 접착 — 감속 최대치 상승'},{lv:36,key:'acid',text:'산성 점액 — 피해 ×3'}],
+ poison:[{lv:12,key:'stack',text:'맹독 — 최대 4중첩'},{lv:24,key:'wide',text:'독구름 — 범위 +30%'},{lv:36,key:'plague',text:'역병 — 독 지속 피해 ×1.6'}],
+ siege:[{lv:12,key:'wide',text:'고폭탄 — 포격 반경 +25%'},{lv:24,key:'salvo',text:'2연발 포격'},{lv:36,key:'quake',text:'지진탄 — 맞은 적 1초 감속'}],
+ summoner:[{lv:8,key:'more',text:'기사 +1명'},{lv:14,key:'archer',text:'궁수 양봉 소환 시작 — 멀리서 화살 사격'},{lv:22,key:'more2',text:'기사 +1명'},{lv:30,key:'archer2',text:'궁수 양봉 +1명'},{lv:38,key:'captain',text:'기사단장 — 기사 체력·피해 ×1.5'}],
+ sonic:[{lv:12,key:'wide',text:'공명 — 음파 폭 +30%'},{lv:24,key:'stun',text:'충격파 — 맞은 적 0.4초 기절'},{lv:36,key:'double',text:'2연속 음파'}],
+ blackhole:[{lv:12,key:'pull',text:'중력 강화 — 끌어당김 +30%'},{lv:24,key:'crush',text:'압착 — 중심부 피해 ×2'},{lv:36,key:'twin',text:'쌍블랙홀'}],
+ musk:[{lv:12,key:'rocket',text:'로켓 확률 +15%'},{lv:24,key:'fleet',text:'트럭 2대 동시 출격'},{lv:36,key:'mars',text:'화성 로켓 — 로켓 피해 ×2'}],
+ drone:[{lv:12,key:'twin',text:'쌍발 — 두 적 동시 공격'},{lv:24,key:'fast',text:'과급 모터 — 공속 +25%'},{lv:36,key:'swarm',text:'세 적 동시 공격'}],
+};
+export const hasPerk=(type,level,key)=>(PERKS[type]||[]).some(p=>p.key===key&&(level||1)>=p.lv);
+export const perksAt=(type,level)=>(PERKS[type]||[]).filter(p=>(level||1)>=p.lv);

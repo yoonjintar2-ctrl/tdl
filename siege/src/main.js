@@ -1,23 +1,23 @@
-import{CampaignView}from'./campaign-view.js?v=f8a85aa38f';
-import{CampaignDataProvider,newCourseRun,readCourseRun,checkpointCourse,storeCourseRun,removeCourseRun,restoreCourseCombat,settleCourse}from'./campaign.js?v=f8a85aa38f';
-import{courseFor,courseTime,CAMPAIGN_REWARD_RATE,campaignProgress}from'./campaign-courses.js?v=f8a85aa38f';
-import{stockFor}from'./symbols.js?v=f8a85aa38f';
-import{StockPicker}from'./stock-picker.js?v=f8a85aa38f';
-import{drawSessionChart}from'./session-chart.js?v=f8a85aa38f';
-import{WALL_MAX_XP}from'./progression.js?v=f8a85aa38f';
-import { CANNONS,SCENARIOS,SETTINGS,ENEMIES,SUPPLIES,WORLD_WIDTH,DRONE,WALL,WALL_STAGES,cannonStats,upgradeCost,validPlacement,clamp } from './config.js?v=f8a85aa38f';
-import { DemoMarketDataProvider, LiveMarketDataProvider, AlpacaMarketDataProvider, MARKET_ERRORS } from './market.js?v=f8a85aa38f';
-import { Game } from './game.js?v=f8a85aa38f';
-import { Renderer,renderShopIcon } from './renderer.js?v=f8a85aa38f';
-import { initialState,readSave,writeSave,snapshotGame,safeStorage,readRawSave,writeRawSave } from './storage.js?v=f8a85aa38f';
-import{cloudConfigured,currentUser,signUpEmail,signInEmail,signOut,pull,push,EMAIL_RULE,idOf,claimSession,sessionState,SESSION_ID}from'./cloud.js?v=f8a85aa38f';
-import{recentSymbols}from'./stock-picker.js?v=f8a85aa38f';
-import { loadClayAssets,useBattlefield } from './clay-assets.js?v=f8a85aa38f';
-import{THEMES,themeFor}from'./themes.js?v=f8a85aa38f';
-import { drawClayPreview } from './clay-runtime.js?v=f8a85aa38f';
-import{money,playerXPAt,SLOT_LEVELS,wallXPAt,WALL_MAX_LEVEL,wallPower}from'./progression.js?v=f8a85aa38f';
-import{openPack,applyCard,PACKS,MODES,MODE_ORDER,modeFor,RARITIES,TOWER_RARITY}from'./cards.js?v=f8a85aa38f';
-import{CardStage,renderCollection,towerCard,statLines,nextLevelLines}from'./card-ui.js?v=f8a85aa38f';
+import{CampaignView}from'./campaign-view.js?v=00e69c5e5b';
+import{CampaignDataProvider,newCourseRun,readCourseRun,checkpointCourse,storeCourseRun,removeCourseRun,restoreCourseCombat,settleCourse}from'./campaign.js?v=00e69c5e5b';
+import{courseFor,courseTime,CAMPAIGN_REWARD_RATE,campaignProgress}from'./campaign-courses.js?v=00e69c5e5b';
+import{stockFor}from'./symbols.js?v=00e69c5e5b';
+import{StockPicker}from'./stock-picker.js?v=00e69c5e5b';
+import{drawSessionChart}from'./session-chart.js?v=00e69c5e5b';
+import{WALL_MAX_XP}from'./progression.js?v=00e69c5e5b';
+import { CANNONS,SCENARIOS,SETTINGS,ENEMIES,SUPPLIES,WORLD_WIDTH,DRONE,WALL,WALL_STAGES,cannonStats,upgradeCost,validPlacement,clamp } from './config.js?v=00e69c5e5b';
+import { DemoMarketDataProvider, LiveMarketDataProvider, AlpacaMarketDataProvider, MARKET_ERRORS } from './market.js?v=00e69c5e5b';
+import { Game } from './game.js?v=00e69c5e5b';
+import { Renderer,renderShopIcon } from './renderer.js?v=00e69c5e5b';
+import { initialState,readSave,writeSave,snapshotGame,safeStorage,readRawSave,writeRawSave } from './storage.js?v=00e69c5e5b';
+import{cloudConfigured,currentUser,signUpEmail,signInEmail,signOut,pull,push,EMAIL_RULE,idOf,claimSession,sessionState,SESSION_ID}from'./cloud.js?v=00e69c5e5b';
+import{recentSymbols}from'./stock-picker.js?v=00e69c5e5b';
+import { loadClayAssets,useBattlefield } from './clay-assets.js?v=00e69c5e5b';
+import{THEMES,themeFor}from'./themes.js?v=00e69c5e5b';
+import { drawClayPreview } from './clay-runtime.js?v=00e69c5e5b';
+import{money,playerXPAt,SLOT_LEVELS,wallXPAt,WALL_MAX_LEVEL,wallPower}from'./progression.js?v=00e69c5e5b';
+import{openPack,applyCard,PACKS,MODES,MODE_ORDER,modeFor,RARITIES,TOWER_RARITY}from'./cards.js?v=00e69c5e5b';
+import{CardStage,renderCollection,towerCard,statLines,nextLevelLines}from'./card-ui.js?v=00e69c5e5b';
 const $=id=>document.getElementById(id),fmt=new Intl.NumberFormat('ko-KR'),nyTime=new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',hour12:false,hour:'2-digit',minute:'2-digit',second:'2-digit'});
 async function prepareArt(){const started=performance.now();
  $('asset-retry').hidden=true;$('asset-loading-message').textContent='클레이 전장을 준비하고 있어요.';
@@ -58,7 +58,7 @@ function openTowerInfo(c,{fromShop=false}={}){closeTowerInfo();infoTower=c;if(!c
  const actions=document.createElement('div');actions.className='ti-actions';const mk=(t,f,cls='')=>{const b=document.createElement('button');b.type='button';b.textContent=t;b.className=cls;b.onclick=f;actions.append(b);return b;};
  if(c.virtual){if(c.owned)mk('성벽에 설치',()=>{closeTowerInfo();installReserve(c.type);},'primary');else{const n=document.createElement('p');n.className='ti-locked';n.textContent='아직 없는 타워예요 · 카드 뽑기로 얻을 수 있어요';actions.append(n);}mk('닫기',closeTowerInfo);card.append(actions);wrap.append(card);const openedAt=performance.now();wrap.onclick=e=>{if(e.target===wrap&&performance.now()-openedAt>450)closeTowerInfo();};document.body.append(wrap);refreshTowerInfo();return;}
  mk('보관',()=>{if(game.storeTower(c)){save();closeTowerInfo();updateUI();toast('타워를 보관했습니다');}});mk('교체',()=>{if(c.type==='drone'){closeTowerInfo();replaceTarget=c;openShop();toast('바꿀 카드를 고르세요');return;}openSlotPicker(c.x,c);}).disabled=game.inventory.length<2;mk('닫기',closeTowerInfo,'primary');card.append(actions);wrap.append(card);const openedAt=performance.now();wrap.onclick=e=>{if(e.target===wrap&&performance.now()-openedAt>450)closeTowerInfo();};document.body.append(wrap);refreshTowerInfo();}
-function refreshTowerInfo(){const box=document.querySelector('#tower-info .ti-rows');if(!box||!infoTower)return;if(!infoTower.virtual&&!game.cannons.includes(infoTower)){closeTowerInfo();return;}const row=([k,v],cls='ti-row')=>{const r=document.createElement('div');r.className=cls;const a=document.createElement('span');a.textContent=k;const b=document.createElement('b');b.textContent=v;r.append(a,b);return r;};const head=document.createElement('div');head.className='ti-next-head';head.textContent='다음 레벨이 되면';const owned=!infoTower.virtual||!!game.owned(infoTower.type);/* v40: unowned cards don't preview next level */box.replaceChildren(...statLines(game,infoTower).map(l=>row(l)),...(owned?[head,...nextLevelLines(infoTower).map(l=>row(l,'ti-row ti-next'))]:[]));}
+function refreshTowerInfo(){const box=document.querySelector('#tower-info .ti-rows');if(!box||!infoTower)return;if(!infoTower.virtual&&!game.cannons.includes(infoTower)){closeTowerInfo();return;}const row=([k,v],cls='ti-row')=>{const r=document.createElement('div');r.className=cls;const a=document.createElement('span');a.textContent=k;const b=document.createElement('b');b.textContent=v;r.append(a,b);return r;};const head=document.createElement('div');head.className='ti-next-head';head.textContent='다음 레벨이 되면';/* v43: next-level details live in the ? codex */box.replaceChildren(...statLines(game,infoTower).map(l=>row(l)));}
 // v26: tap the command post → current wall grade, gauge to the next grade and what the grade does.
 function openWallInfo(){closeTowerInfo();const g=game,L=g.wallLevel,cur=wallXPAt(L),next=L>=WALL_MAX_LEVEL?null:wallXPAt(L+1),pct=next?Math.max(0,Math.min(100,(g.wallXP-cur)/(next-cur)*100)):100,stage=n=>WALL_STAGES[Math.max(0,Math.min(WALL_STAGES.length-1,n-1))]?.name||'',mult=n=>(wallPower(n)/wallPower(1)).toFixed(2);
  const w=document.createElement('div');w.className='tower-info';w.id='tower-info';const card=document.createElement('div');card.className='ti-card wall-info';
@@ -110,7 +110,7 @@ $('stock-select').onclick=()=>{if(courseRun)openCampaignMap();};
 $('market-provider').value=game.settings.marketProvider||'yahoo';$('market-provider').addEventListener('change',e=>{provider.destroy();game.settings.marketProvider=e.target.value==='alpaca'?'alpaca':'yahoo';game.resetMarket();provider=makeProvider();$('data-mode').value='live';$('simulation-controls').hidden=true;bindProvider();game.dirty=true;save();updateUI();});
 bindProvider();
 if(!clayLoaded)game.notify('클레이 이미지를 불러오지 못했습니다. 새로고침해 주세요.');
-function save(){const ok=courseRun?storeCourseRun(checkpointCourse(courseRun,game,provider),courseStorage):qaMode||writeSave(game);if(ok&&!courseRun)scheduleCloudPush();$('save-status').textContent=ok?'저장 완료':'저장 불가';$('save-status').title=ok?'자금·배치·강화·설정이 이 브라우저에 저장되었습니다.':'브라우저 저장소가 차단되었거나 가득 찼습니다.';if(ok)game.dirty=false;return ok;}
+function save(){const ok=courseRun?storeCourseRun(checkpointCourse(courseRun,game,provider),courseStorage):qaMode||writeSave(game);if(ok&&!courseRun){markDirty();scheduleCloudPush();}$('save-status').textContent=ok?'저장 완료':'저장 불가';$('save-status').title=ok?'자금·배치·강화·설정이 이 브라우저에 저장되었습니다.':'브라우저 저장소가 차단되었거나 가득 찼습니다.';if(ok)game.dirty=false;return ok;}
 function toast(s){game.notify(s);}
 $('user-portrait').onclick=()=>{if($('profile-pop'))closeProfile();else openProfile();};
 // v23: tap the portrait for a profile summary. Player level only changes the frame, never balance.
@@ -243,15 +243,17 @@ $('float-pause').onclick=pauseCourse;
 // ---- account & cloud save (guest first; Google sign-in syncs across devices) ----
 let cloudUser=null,cloudTimer=null,cloudState='guest',playClock=0,promptShown=false;
 // Throttle (not debounce): frequent local saves must not keep postponing the cloud push.
-function scheduleCloudPush(delay=12000){if(!cloudUser||qaMode||cloudKicked||cloudTimer)return;cloudTimer=setTimeout(()=>{cloudTimer=null;pushNow();},delay);}
+function scheduleCloudPush(delay=5000){if(!cloudUser||qaMode||cloudKicked||cloudTimer)return;cloudTimer=setTimeout(()=>{cloudTimer=null;pushNow();},delay);}
 // v23 account sync: the account is the source of truth. One active device per account —
 // a newer login claims the session; the old device flushes its progress once and stops.
 const OWNER_KEY='stock-siege-cloud-owner';let cloudKicked=false,handoffUntil=0,sessionWatch=null;
 const ownerOf=()=>{try{return localStorage.getItem(OWNER_KEY)||'';}catch{return'';}},setOwner=id=>{try{localStorage.setItem(OWNER_KEY,id);}catch{}};
+/* v43: cross-device sync by server version, not device clocks. base = server version this device last saw. */
+const BASE_KEY='stock-siege-cloud-base',DIRTY_KEY='stock-siege-cloud-dirty';const getBase=()=>{try{return Number(localStorage.getItem(BASE_KEY)||0);}catch{return 0;}},setBase=v=>{try{localStorage.setItem(BASE_KEY,String(v));localStorage.removeItem(DIRTY_KEY);}catch{}},isDirty=()=>{try{return localStorage.getItem(DIRTY_KEY)==='1';}catch{return false;}},markDirty=()=>{try{localStorage.setItem(DIRTY_KEY,'1');}catch{}};const progressScore=d=>d?(d.campaign?.cleared||0)*1e9+(d.playerXP||0)*10+(d.wallXP||0)/1e6:0;
 function cloudPayload(){const raw=readRawSave();return raw?{...raw,by:SESSION_ID,recent:recentSymbols()}:null;}
-function applyRemote(remote,note){writeRawSave({...remote.data,savedAt:remote.updatedAt});try{if(Array.isArray(remote.data?.recent))localStorage.setItem('stock-siege-recent',JSON.stringify(remote.data.recent.slice(0,5)));sessionStorage.setItem('siege-cloud-applied',String(remote.updatedAt));if(note)sessionStorage.setItem('siege-cloud-note',note);}catch{}setOwner(cloudUser.id);location.reload();}
+function applyRemote(remote,note){writeRawSave({...remote.data,savedAt:Date.now()});setBase(remote.updatedAt);try{if(Array.isArray(remote.data?.recent))localStorage.setItem('stock-siege-recent',JSON.stringify(remote.data.recent.slice(0,5)));sessionStorage.setItem('siege-cloud-applied',String(remote.updatedAt));if(note)sessionStorage.setItem('siege-cloud-note',note);}catch{}setOwner(cloudUser.id);location.reload();}
 async function pushNow(force=false){clearTimeout(cloudTimer);cloudTimer=null;if(!cloudUser||cloudKicked)return;if(!force&&Date.now()<handoffUntil){scheduleCloudPush(handoffUntil-Date.now()+500);return;}const raw=cloudPayload();if(!raw)return;
- try{const st=await sessionState(cloudUser);if(st&&st.sessionId&&st.sessionId!==SESSION_ID){await kicked(st);return;}await push(cloudUser,raw);cloudState='synced';}catch{cloudState='error';}renderAccount();}
+ try{const st=await sessionState(cloudUser);if(st&&st.sessionId&&st.sessionId!==SESSION_ID){await kicked(st);return;}const v=Date.now();await push(cloudUser,{...raw,savedAt:v});setBase(v);cloudState='synced';}catch{cloudState='error';}renderAccount();}
 async function kicked(st){if(cloudKicked)return;cloudKicked=true;clearTimeout(cloudTimer);save();
  // flush this device's progress once, but only right after the takeover (so a long-asleep tab can't overwrite newer play)
  let flushed=false;if(Date.now()-(st?.sessionAt||0)<30000){const raw=cloudPayload();if(raw){try{await push(cloudUser,raw);flushed=true;}catch{}}}
@@ -260,10 +262,10 @@ async function kicked(st){if(cloudKicked)return;cloudKicked=true;clearTimeout(cl
 function watchSession(){clearInterval(sessionWatch);sessionWatch=setInterval(async()=>{if(!cloudUser||cloudKicked||document.hidden)return;try{const st=await sessionState(cloudUser);if(st&&st.sessionId&&st.sessionId!==SESSION_ID)await kicked(st);}catch{}},9000);}
 async function startCloud(fromLogin=false){if(qaMode||!cloudConfigured())return;if(!fromLogin)cloudUser=await currentUser();if(!cloudUser){renderAccount();return;}cloudState='syncing';renderAccount();
  try{const remote=await pull(cloudUser),local=readRawSave(),hasRemote=!!(remote&&remote.data&&Object.keys(remote.data).length),boundHere=ownerOf()===cloudUser.id;let applied=false;try{applied=sessionStorage.getItem('siege-cloud-applied')===String(remote?.updatedAt);}catch{}
-  // A device that has never synced this account always takes the account's save (never pushes its blank local game over it).
-  if(hasRemote&&!applied&&!courseRun&&(!boundHere||!local||remote.updatedAt>(local.savedAt||0)+3000)){await claimSession(cloudUser);applyRemote(remote,'계정의 진행 상황을 이어받았어요');return;}
+  // Remote changed since this device last synced → another device played. Take it unless this device has strictly more progress.
+  if(hasRemote&&!applied&&!courseRun&&remote.updatedAt!==getBase()&&!(local&&isDirty()&&progressScore(local)>progressScore(remote.data))){await claimSession(cloudUser);applyRemote(remote,'계정의 진행 상황을 이어받았어요');return;}
   const takeover=!!(remote?.sessionId&&remote.sessionId!==SESSION_ID);await claimSession(cloudUser,cloudPayload());setOwner(cloudUser.id);
-  if(takeover){handoffUntil=Date.now()+20000;const claimAt=Date.now();setTimeout(async()=>{try{const r=await pull(cloudUser);if(r&&r.data?.by&&r.data.by!==SESSION_ID&&r.updatedAt>claimAt-2000){applyRemote(r,'다른 기기의 마지막 진행 상황까지 이어받았어요');return;}}catch{}handoffUntil=0;pushNow(true);},18000);}
+  if(takeover){handoffUntil=Date.now()+20000;const claimAt=Date.now();setTimeout(async()=>{try{const r=await pull(cloudUser);if(r&&r.data?.by&&r.data.by!==SESSION_ID&&r.updatedAt!==getBase()&&progressScore(r.data)>=progressScore(readRawSave())){applyRemote(r,'다른 기기의 마지막 진행 상황까지 이어받았어요');return;}}catch{}handoffUntil=0;pushNow(true);},18000);}
   else if(local)await pushNow(true);
   cloudState='synced';let note='';try{note=sessionStorage.getItem('siege-cloud-note')||'';sessionStorage.removeItem('siege-cloud-note');}catch{}toast(note?'☁ '+note:'☁ '+idOf(cloudUser)+' · 계정 저장 연결됨');watchSession();}
  catch{cloudState='error';}renderAccount();}
@@ -287,7 +289,9 @@ function openAccountForm(mode='signup',reason=''){document.getElementById('accou
  render();w.append(card);w.onclick=e=>{if(e.target===w)w.remove();};document.body.append(w);}
 {const sp=$('settings-panel'),acc=document.createElement('section');acc.id='account-box';acc.className='account-box';const anchor=sp.querySelector('h2');(anchor?.parentNode===sp?anchor.nextSibling:null)?sp.insertBefore(acc,anchor.nextSibling):sp.prepend(acc);renderAccount();}
 setInterval(()=>{if(marketChosen&&!document.hidden){playClock+=10;if(playClock>=300)promptSignup('5분 넘게 플레이했어요!');}},10000);
-window.addEventListener('pagehide',()=>{if(cloudUser)pushNow();});
+window.addEventListener('pagehide',()=>{if(cloudUser&&!cloudKicked)pushNow(true);});
+/* v43: alternate devices freely — leaving pushes now; coming back adopts the other device's play and reclaims the session */
+document.addEventListener('visibilitychange',async()=>{if(!cloudUser||qaMode)return;if(document.hidden){if(!cloudKicked)pushNow(true);return;}try{const st=await sessionState(cloudUser);if(st&&st.sessionId&&st.sessionId!==SESSION_ID){cloudKicked=true;await claimSession(cloudUser);const r=await pull(cloudUser);if(r&&r.data&&Object.keys(r.data).length&&r.updatedAt!==getBase()&&!(isDirty()&&progressScore(readRawSave())>progressScore(r.data))){applyRemote(r,'다른 기기에서 하던 진행 상황을 이어받았어요');return;}cloudKicked=false;document.getElementById('kicked-overlay')?.remove();pushNow(true);}}catch{}});
 startCloud();
 // Current time (KST) at the top of the battlefield.
 {const f=new Intl.DateTimeFormat('ko-KR',{timeZone:'Asia/Seoul',hour:'2-digit',minute:'2-digit',hour12:false});}

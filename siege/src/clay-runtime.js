@@ -1,7 +1,8 @@
-import {CANNONS,ENEMIES,SUPPLIES,WALL,WORLD_WIDTH,ACTOR_STYLE,WALL_SLOTS,COMMAND_X,towerTier} from './config.js?v=f8a85aa38f';
+import {CANNONS,ENEMIES,SUPPLIES,WALL,WORLD_WIDTH,ACTOR_STYLE,WALL_SLOTS,COMMAND_X,towerTier} from './config.js?v=00e69c5e5b';
 export const ENEMY_ART=['enemy-small','enemy-tall','enemy-fat','enemy-giant'];
 // Kind 4 (초미니 음봉) reuses the small candle art at a much smaller size.
 const ENEMY_KIND_ART=[...ENEMY_ART,'enemy-small'];
+const WALK_ART=['walk-small','walk-tall','walk-fat','walk-giant','walk-small'];
 export const SUPPLY_ART=['supply-dram','supply-processor','supply-wafer','supply-optical','supply-connector','supply-substrate'];
 // Wall levels 1–10: two new shabby tiers (earth, wooden palisade) below the original eight.
 export const WALL_ART=['castle-wall-low-0','castle-wall-low-1',...Array.from({length:8},(_,i)=>'castle-wall-'+i)];
@@ -11,7 +12,7 @@ const pictures=new Map(),unitSprites=new Map();let metadata={},pending=null;
 const NAMES={'sonic':'소닉 타워','blackhole':'블랙홀','command':'성벽 지휘본부','siege':'공성 전차','summoner':'소환사','musk':'삼론 머스크','machine':'기관총','mortar':'박격포','sniper':'저격포','laser':'레이저','totem':'토템','sticky':'끈적이포','poison':'독 캐논','drone':'드론','enemy-small':'작은 음봉','enemy-tall':'키 큰 음봉','enemy-fat':'돼지 음봉','enemy-giant':'거인 음봉','supply-dram':'DRAM','supply-processor':'프로세서','supply-wafer':'실리콘 웨이퍼','supply-optical':'광통신 모듈','supply-connector':'광섬유 커넥터','supply-substrate':'반도체 기판','wall-soil':'흙 성벽','wall-wood':'나무 성벽','wall-reinforced-wood':'강화 나무 성벽','wall-mixed':'나무·돌 성벽','wall-stone':'돌 성벽','wall-reinforced-stone':'강화 돌 성벽','wall-iron':'철·돌 성벽','wall-gold':'황금 성벽'};
 export const KEEP_ART=Array.from({length:10},(_,i)=>i<2?'castle-keep-low-'+i:'castle-keep-'+(i-2));
 export const hasKeep=g=>clayReady(KEEP_ART[g.stage]);
-export const UNIT_ART=['ram','cart','cart-small','cart-big','chip-cart','chip-cart-small','chip-cart-big','bomber','knight','fx-shots','fx-flash','musk-shots'];
+export const UNIT_ART=['ram','cart','cart-small','cart-big','bomber','knight','archer','archer-arrow','ram-walk','fx-wallhit','walk-small','walk-tall','walk-fat','walk-giant','attack-all','portrait-frames','fx-shots','fx-flash','musk-shots'];
 export function drawClaySprite(c,key,x,y,size,frame=0){if(!clayReady(key))return false;return sprite(c,key,frame,x,y,size);}
 export const CLAY_CATALOG=[...TOWER_ART.map(key=>({key,name:NAMES[key],group:'tower'})),...ENEMY_ART.map(key=>({key,name:NAMES[key],group:'enemy'})),...SUPPLY_ART.map(key=>({key,name:NAMES[key],group:'supply'})),...WALL_ART.map((key,i)=>({key,name:['흙 토성','나무 목책','사암 성벽','이끼 낀 성벽','풍화석 성벽','목석 성벽','석회암 성벽','강화 화강암 성벽','철띠 성벽','황금 성벽'][i],group:'wall'})),...BASTION_ART.map((key,i)=>({key,name:'원형 보루 '+(i+1),group:'wall'})),{key:'bull-candle',name:'녹색 양봉',group:'supply'},...KEEP_ART.map((key,i)=>({key,name:'지휘본부 '+(i+1),group:'keep',optional:true})),...UNIT_ART.map(key=>({key,name:key,group:'unit',optional:true}))];
 export async function loadClayCollection(onProgress=()=>{}){
@@ -20,6 +21,7 @@ export async function loadClayCollection(onProgress=()=>{}){
  let next=0,done=0,ok=true;const worker=async()=>{while(next<CLAY_CATALOG.length){const item=CLAY_CATALOG[next++];if(!pictures.has(item.key)){const image=new Image();image.decoding='async';image.src=new URL(`../assets/clay/${metadata[item.key]?.file||item.key+'-clay-v1.webp'}`,import.meta.url).href;try{await image.decode();if(!metadata[item.key]?.frames?.length)throw Error('Missing frames');pictures.set(item.key,image);}catch{if(!item.optional)ok=false;}}done++;onProgress(done,CLAY_CATALOG.length,ok?null:item.key);}};
  await Promise.all(Array.from({length:4},worker));return ok;})();const ok=await pending;if(!ok)pending=null;return ok;
 }
+export const metaOf=key=>metadata[key];
 export function clayReady(key){return pictures.has(key)&&!!metadata[key];}
 export function frameForAngle(angle){return ((Math.round((angle+Math.PI/2)/(Math.PI/2))%4)+4)%4;}
 function info(key,frame=0){const entry=metadata[key],image=pictures.get(key);if(!entry||!image)return null;return{entry,image,frame:entry.frames[((frame%entry.frames.length)+entry.frames.length)%entry.frames.length]};}
@@ -57,15 +59,18 @@ export function drawClayTower(c,u,x,y,t=0,power=1,selected=false,icon=false){
  c.restore();return true;
 }
 export function drawClayUnit(c,e,x,y,t=0,enemy=true,forcedFrame){
- const key=!enemy&&e.art==='candle'?'bull-candle':(enemy?ENEMY_KIND_ART:SUPPLY_ART)[e.kind];if(!clayReady(key))return false;
- const frame=forcedFrame??(enemy&&e.attacking?(e.attackPulse>.2?3:2):Math.floor(t*(enemy?7:9)+(e.phase||0))%(enemy?2:3));
+ let key=!enemy&&e.art==='candle'?'bull-candle':(enemy?ENEMY_KIND_ART:SUPPLY_ART)[e.kind];
+ /* v43: GPT walk sheets — rows: 0 front, 1 3/4, 2 side, 3 wall attack; 6 frames each */
+ const wk=enemy?WALK_ART[e.kind]:null,walk=wk&&clayReady(wk);if(walk)key=wk;if(!clayReady(key))return false;let flip=false;
+ let frame;if(forcedFrame!=null)frame=forcedFrame;else if(walk){const n=metadata[wk].cols||6,vx=e.vx||0,sp=Math.max(1,ENEMIES[e.kind].speed),k=Math.abs(vx)/sp,row=k>.7?2:k>.25?1:0;flip=row>0&&vx<0;frame=row*n+Math.floor(t*(9+(e.phase||0)%2)+(e.phase||0)*2)%n;if(e.attacking&&clayReady('attack-all')){key='attack-all';flip=false;frame=[0,1,2,3,0][e.kind]*6+Math.min(5,Math.floor((1-Math.max(0,e.attackPulse||0))*6));}}
+ else frame=enemy&&e.attacking?(e.attackPulse>.2?3:2):Math.floor(t*(enemy?7:9)+(e.phase||0))%(enemy?2:3);
  const size=(enemy?ENEMIES[e.kind].height+28:SUPPLIES[e.kind].radius*2+30)*ACTOR_STYLE.unitScale*(e.scale||1),bob=enemy&&e.attacking?0:Math.sin(t*8+(e.phase||0))*.5;
  c.save();c.globalAlpha*=Math.max(0,Math.min(1,(e.age??1)*3,(35-(e.age??1))*2,enemy?(20-(e.contact||0))*2:1));
  c.fillStyle='#26382625';c.beginPath();c.ellipse(x+1,y+1,e.radius*.8,2.3,0,0,Math.PI*2);c.fill();
  if(e.hit>0)c.filter='brightness(1.5)';else if(e.poisons?.length)c.filter='hue-rotate(320deg) saturate(.85)';
  // The impact pose anchors the hands to the cap; the wall masks the feet.
- const contactOffset=enemy&&e.attacking&&frame===3?[6,2,2,2,4][e.kind]*ACTOR_STYLE.unitScale:0;
- unitSprite(c,key,frame,x,y+bob+contactOffset,size);c.filter='none';
+ const contactOffset=!walk&&enemy&&e.attacking&&frame===3?[6,2,2,2,4][e.kind]*ACTOR_STYLE.unitScale:0;
+ if(flip){c.translate(x,0);c.scale(-1,1);c.translate(-x,0);}unitSprite(c,key,frame,x,y+bob+contactOffset,size*(walk?1.12:1));if(flip){c.translate(x,0);c.scale(-1,1);c.translate(-x,0);}c.filter='none';
  if(enemy&&e.showHealth!==false&&(e.hp<e.maxHP||e.kind===3)){
   const f=info(key,frame).frame,top=y+(f.y-f.anchorY)*size/f.cellW-5,w=Math.max(12,ENEMIES[e.kind].width*.8*ACTOR_STYLE.unitScale*(e.scale?e.scale*.7:1));c.fillStyle='#3d463add';c.beginPath();c.roundRect(x-w/2-1,top-1,w+2,4,2);c.fill();c.fillStyle='#ed8e76';c.fillRect(x-w/2,top,Math.max(0,w*e.hp/e.maxHP),2);
  }

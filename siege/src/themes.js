@@ -56,5 +56,6 @@ const BY_SYMBOL={QQQ:'nasdaq',TQQQ:'nasdaq',SNDK:'sandisk',MU:'sandisk','005930'
 // v38: every mission has its own battlefield (by concept).
 const COURSE_THEMES=["default", "nasdaq", "korea", "sandisk", "battery", "nvidia", "tesla", "quantum", "nightmare", "hell", "korea", "nasdaq", "nvidia", "battery", "quantum", "sandisk", "tesla", "default", "hell", "nightmare"];COURSE_THEMES.forEach((k,i)=>{if(!BY_SYMBOL['COURSE-'+(i+1)])BY_SYMBOL['COURSE-'+(i+1)]=k;});BY_SYMBOL['COURSE-21']='hell';
 Object.assign(BY_SYMBOL,{"AAPL": "aapl", "MSFT": "msft", "GOOGL": "googl", "AMZN": "amzn", "META": "meta", "PLTR": "pltr", "AMD": "amd", "SOXL": "soxl", "SOXS": "soxl", "NVDA": "nvda2", "TSLA": "tsla2", "005930": "samsung", "000660": "hynix", "005380": "hyundai", "000270": "kia", "035420": "naver", "035720": "kakao", "373220": "lges", "207940": "samsungbio", "068270": "celltrion", "105560": "kb"});/* v42: every top-10 stock has its own GPT battlefield */
+/* v43: roads were traced tight to the painted edge — give the swarm more room */for(const t of Object.values(THEMES))if(t.corridor)t.corridor=t.corridor.map(([y,l,r])=>[y,Math.max(.1,l-.07),Math.min(.9,r+.07)]);
 export const themeFor=symbol=>THEMES[BY_SYMBOL[symbol]]?BY_SYMBOL[symbol]:'default';
 export function registerTheme(key,theme,symbols=[]){THEMES[key]=theme;for(const s of symbols)BY_SYMBOL[s]=key;}
