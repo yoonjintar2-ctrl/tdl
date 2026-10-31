@@ -1,8 +1,8 @@
-import{campaignProgress}from'./campaign-courses.js?v=703d700c91';
-import{SETTINGS,CANNONS,DRONE,WORLD_WIDTH,validPlacement,snapSlot,clamp}from'./config.js?v=703d700c91';
-import{validSymbol}from'./symbols.js?v=703d700c91';
-import{legacySlotXP,playerLevelFor,towerSlots,WALL_MAX_XP}from'./progression.js?v=703d700c91';
-import{MODE_ORDER,MAX_CARD_LEVEL}from'./cards.js?v=703d700c91';
+import{campaignProgress}from'./campaign-courses.js?v=089e42b087';
+import{SETTINGS,CANNONS,DRONE,WORLD_WIDTH,validPlacement,snapSlot,clamp}from'./config.js?v=089e42b087';
+import{validSymbol}from'./symbols.js?v=089e42b087';
+import{legacySlotXP,playerLevelFor,towerSlots,WALL_MAX_XP}from'./progression.js?v=089e42b087';
+import{MODE_ORDER,MAX_CARD_LEVEL}from'./cards.js?v=089e42b087';
 export const campaignModes=raw=>({nightmare:campaignProgress(raw?.nightmare),hell:campaignProgress(raw?.hell)});
 // Some hosts throw on localStorage access itself (private windows, sandboxed frames).
 const memoryStore=new Map();export const memoryStorage={getItem:k=>memoryStore.get(k)??null,setItem:(k,v)=>memoryStore.set(k,String(v)),removeItem:k=>memoryStore.delete(k)};
