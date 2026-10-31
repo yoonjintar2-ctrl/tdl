@@ -1,4 +1,4 @@
-import{WORLD_WIDTH,SETTINGS,clamp}from'./config.js?v=c9c4c728f9';
+import{WORLD_WIDTH,SETTINGS,clamp}from'./config.js?v=f8a85aa38f';
 // Actors visualize normalized volume, never individual shares. Keep a visible
 // crowd in quiet traded minutes, then increase the size and frequency of surges.
 export function swarmCount(intensity){return Math.round(clamp(1200*Math.pow(intensity,.4),480,SETTINGS.swarmMinuteCap));}
