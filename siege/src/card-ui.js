@@ -1,7 +1,7 @@
-import { CANNONS, cannonStats, PERKS, towerTier } from './config.js?v=12f2a369ef';
-import { RARITIES, TOWER_RARITY, xpForNext, MAX_CARD_LEVEL, cardOdds, PACKS } from './cards.js?v=12f2a369ef';
-import { renderShopIcon } from './renderer.js?v=12f2a369ef';
-import { FX } from './fx.js?v=12f2a369ef';
+import { CANNONS, cannonStats, PERKS, towerTier } from './config.js?v=9594514f5f';
+import { RARITIES, TOWER_RARITY, xpForNext, MAX_CARD_LEVEL, cardOdds, PACKS } from './cards.js?v=9594514f5f';
+import { renderShopIcon } from './renderer.js?v=9594514f5f';
+import { FX } from './fx.js?v=9594514f5f';
 
 const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
 const wait = ms => new Promise(r => setTimeout(r, ms));
@@ -20,10 +20,9 @@ export function towerCard(type, item, { mini = false, faceDown = false } = {}) {
     const bar = el('div', 'tc-bar'), fill = el('i'), need = item ? xpForNext(item.level) : 1;
     fill.style.width = item ? (item.level >= MAX_CARD_LEVEL ? 100 : Math.min(100, (item.xp || 0) / need * 100)) + '%' : '0%';
     bar.append(fill, el('b', 'tc-exp', item ? (item.level >= MAX_CARD_LEVEL ? 'MAX' : 'EXP') : ''), el('small', '', item ? (item.level >= MAX_CARD_LEVEL ? 'MAX' : `EXP ${item.xp || 0} / ${need}`) : '뽑기로 획득'));
-    bar.title = '눌러서 경험치 보기'; bar.addEventListener('click', e => { if (!item) return; e.stopPropagation(); card.classList.toggle('show-xp'); clearTimeout(card._xpT); card._xpT = setTimeout(() => card.classList.remove('show-xp'), 2500); });
     front.append(bar);
   }
-  if (!mini) { const q = el('button', 'tc-help', '?'); q.type = 'button'; q.setAttribute('aria-label', CANNONS[type].name + ' 도감'); q.addEventListener('click', e => { e.stopPropagation(); openCodex(type, item); }); front.append(q); }
+  if (false) { const q = el('button', 'tc-help', '?'); q.type = 'button'; q.setAttribute('aria-label', CANNONS[type].name + ' 도감'); q.addEventListener('click', e => { e.stopPropagation(); openCodex(type, item); }); front.append(q); }
   front.append(el('i', 'tc-sheen'), el('i', 'tc-pearl'));
   const emblem = el('div', 'tc-emblem'); emblem.innerHTML = '<i></i><i></i><i></i>'; back.append(emblem, el('i', 'tc-backshine'));
   inner.append(front, back); card.append(inner);

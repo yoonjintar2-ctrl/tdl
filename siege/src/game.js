@@ -1,12 +1,12 @@
-import{campaignProgress}from'./campaign-courses.js?v=12f2a369ef';
-import { SETTINGS, CANNONS, ENEMIES, SUPPLIES, WORLD_WIDTH, DRONE, WALL, CAMERA_DEPTH, ACTOR_STYLE, cannonStats, upgradeCost, energyMultiplier, wallYFor, priceBand, validPlacement, snapSlot, FORWARD_X, FORWARD_DY, validDronePlacement, clamp, hasPerk } from './config.js?v=12f2a369ef';
-import { wallMountDepth } from './fortification.js?v=12f2a369ef';
-import { marketArmy,estimatedArmy } from './market-army.js?v=12f2a369ef';
-import {playerLevelFor,towerSlots,wallLevelFor,wallPower,money,WALL_MAX_XP} from './progression.js?v=12f2a369ef';
-import{TerrainField}from'./terrain.js?v=12f2a369ef';
-import{modeFor}from'./cards.js?v=12f2a369ef';
-import{formatDamage}from'./combat-fx.js?v=12f2a369ef';
-import{wallXPAt}from'./progression.js?v=12f2a369ef';
+import{campaignProgress}from'./campaign-courses.js?v=9594514f5f';
+import { SETTINGS, CANNONS, ENEMIES, SUPPLIES, WORLD_WIDTH, DRONE, WALL, CAMERA_DEPTH, ACTOR_STYLE, cannonStats, upgradeCost, energyMultiplier, wallYFor, priceBand, validPlacement, snapSlot, FORWARD_X, FORWARD_DY, validDronePlacement, clamp, hasPerk } from './config.js?v=9594514f5f';
+import { wallMountDepth } from './fortification.js?v=9594514f5f';
+import { marketArmy,estimatedArmy } from './market-army.js?v=9594514f5f';
+import {playerLevelFor,towerSlots,wallLevelFor,wallPower,money,WALL_MAX_XP} from './progression.js?v=9594514f5f';
+import{TerrainField}from'./terrain.js?v=9594514f5f';
+import{modeFor}from'./cards.js?v=9594514f5f';
+import{formatDamage}from'./combat-fx.js?v=9594514f5f';
+import{wallXPAt}from'./progression.js?v=9594514f5f';
 // Kill gold is scaled down and a steady per-minute battle stipend added, so income stays in a narrow band
 // between a starter and a maxed army (card packs are the only use of gold).
 export const KILL_GOLD=.3,STIPEND_PER_MIN=30;
@@ -15,13 +15,14 @@ export const MAX_TOWERS=5;
 // v24: crowd actors carry a fraction of a 'unit' of volume, but never drop below half a unit of HP — towers no longer one-shot everything.
 export const HP_WEIGHT_FLOOR=.2;
 // v24: the giant is a rare boss — about one per five minutes at most, only on a heavy sell-off minute.
+export const WALL_SAG=38;
 export const BOSS=Object.freeze({cooldownMs:3*60*1000,minIntensity:.8,minSellShare:.5,chance:.85,hp:15,scale:3.4,radius:40,speed:.6,damage:.7});
 // v32: special attackers — a six-candle siege ram (shared HP, slow, heavy) and fast kamikaze bombers. Both aim at the wall centre.
 export const SPECIALS=Object.freeze({ram:Object.freeze({hp:2600,speed:8.5,radius:30,damage:110,interval:2.4,cooldownMs:2*60*1000,minIntensity:.7,chance:.75,goldMul:6}),bomber:Object.freeze({hp:12,speed:92,radius:9,damage:150,cooldownMs:40*1000,minIntensity:.5,chance:.85,goldMul:1.5})});
 const SPECIAL_DEF={ram:{...ENEMIES[3],speed:SPECIALS.ram.speed,damage:SPECIALS.ram.damage,interval:SPECIALS.ram.interval},bomber:{...ENEMIES[4],speed:SPECIALS.bomber.speed,damage:SPECIALS.bomber.damage,interval:9}};
 const BOSS_DEF=Object.freeze({...ENEMIES[3],speed:ENEMIES[3].speed*BOSS.speed,damage:ENEMIES[3].damage*BOSS.damage});
-import{isAIStock}from'./symbols.js?v=12f2a369ef';
-import {weaponMuzzle} from './weapon-geometry.js?v=12f2a369ef';
+import{isAIStock}from'./symbols.js?v=9594514f5f';
+import {weaponMuzzle} from './weapon-geometry.js?v=9594514f5f';
 export class Game {
   constructor(state, { height = 620, random = Math.random,now=Date.now,rewardMultiplier=1,mode } = {}) {
     this.modeKey=modeFor(mode??state.settings?.mode).key;this.stipendClock=0;this.wallHold=0;
@@ -30,13 +31,13 @@ export class Game {
     this.playerXP=Math.max(0,state.playerXP||0);this.wallXP=clamp(state.wallXP??360,0,WALL_MAX_XP);this.wallLevel=wallLevelFor(this.wallXP);this.wallTransition=null;
     this.inventory=[];for(const item of [...(state.inventory||[]),...this.cannons]){if(!CANNONS[item.type])continue;const owned=this.inventory.find(v=>v.type===item.type);if(owned){if((item.level||1)>owned.level){owned.level=item.level||1;owned.xp=item.xp||0;}}else this.inventory.push({type:item.type,level:item.level||1,xp:Math.max(0,item.xp||0)});}
     this.delayed = []; this.enemies = []; this.supplies = []; this.effects = []; this.projectiles = []; this.zones = []; this.knights = []; this.sweeps = [];
-    this.dmgAcc={};this.time = 0; this.wallY = height / 2; this.band = 0; this.targetBand = 0; this.move = null; this.stage = Math.min(9,this.wallLevel-1);
+    this.dmgAcc={};this.time = 0; this.wallY = height * .56; this.band = 0; this.targetBand = 0; this.move = null; this.stage = Math.min(9,this.wallLevel-1);
     this.terrain=new TerrainField(height);this.pricePlaced=false;this.market = null; this.selected = null; this.placement = null; this.dirty = false; this.nextId = 1; this.autoTimer = 0; this.messages = []; this.marketWaves=[];
     this.marketGoldRemainder=0;
     this.lifetimeKills = Math.max(0, state.lifetimeKills || 0); this.playerName = state.playerName || ''; this.grantsApplied = Array.isArray(state.grantsApplied) ? [...state.grantsApplied] : [];
     this.metrics = { killsByType: {}, kills: 0, crushedEnemies: 0, crushedSupplies: 0, healed: 0, goldEarned: 0, shots: {}, wallSteps: 0, expired: 0 };
   }
-  wallAt(x, y = this.wallY) { return y + Math.sin(x / WORLD_WIDTH * Math.PI * 2 - .4) * 5 + Math.sin(x / WORLD_WIDTH * Math.PI * 4) * 1.5; }
+  wallAt(x, y = this.wallY) { const u=(x-WORLD_WIDTH/2)/(WORLD_WIDTH/2); /* v62: U-shaped wall — the centre sags toward the player so the field above stays visible */ return y + WALL_SAG*(1-u*u) + Math.sin(x / WORLD_WIDTH * Math.PI * 2 - .4) * 3 + Math.sin(x / WORLD_WIDTH * Math.PI * 4) * 1; }
   wallFaceAt(x) { return this.wallAt(x) + WALL.north + wallMountDepth(this.cannons,x)/2; }
   wallBackAt(x) { return this.wallAt(x) + WALL.back - wallMountDepth(this.cannons,x)/2; }
   // Legacy fixture aliases. The game uses uncapped wall XP and levels.

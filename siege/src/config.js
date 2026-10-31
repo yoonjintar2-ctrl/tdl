@@ -26,7 +26,7 @@ export const CANNONS = {
   machine: { name: '기관총', short: '기관총', icon: 'MG', cost: 100, damage: 6, rate: 5, range: 205, color: '#b4d4e2', role: '가까운 적에게 고속 단일 사격' },
   mortar: { name: '박격포', short: '박격포', icon: 'MR', cost: 180, damage: 4, rate: .55, range: 265, radius: 55, color: '#ffc478', role: '포물선 포탄 · 범위 폭발' },
   sniper: { name: '스나이퍼', short: '저격', icon: 'SR', cost: 250, damage: 90, rate: .45, range: 530, color: '#85beff', role: '현재 HP가 가장 높은 적 우선' },
-  laser: { name: '레이저', short: '레이저', icon: 'LS', cost: 280, damage: 4.5, rate: 1.1, range: 360, pierce: 9, color: '#58efd9', role: '직선 관통 · 다중 타격' },
+  laser: { name: '레이저', short: '레이저', icon: 'LS', cost: 280, damage: 6.2, rate: 1.1, range: 430, pierce: 9, color: '#58efd9', role: '직선 관통 · 다중 타격' },
   totem: { name: '토템', short: '토템', icon: 'TT', cost: 300, damage: 0, rate: 0, range: 165, buff: .2, color: '#ffda7a', role: '주변 캐논 연사력 지원 · 자신 제외' },
   sticky: { name: '끈적이', short: '끈적이', icon: 'GL', cost: 210, damage: 1.5, rate: 1, range: 235, radius: 34, slow: .55, duration: 3, color: '#a3ed75', role: '끈적한 점액으로 약한 범위 피해 · 음봉의 이동·공격 속도를 크게 낮춤' },
   poison: { name: '독 캐논', short: '독', icon: 'TX', cost: 240, damage: 3, rate: .9, range: 750, minRange: 170, radius: 46, dot: 1.4, duration: 6, color: '#c093ff', role: '먼 곳에 독 폭발 · 즉시 피해 후 체력을 서서히 깎음(최대 3중첩) · 가까운 적은 못 맞힘' },
@@ -70,7 +70,7 @@ function baseStats(type, level = 1) {
 }
 export const upgradeCost = (type, level) => Math.ceil(CANNONS[type].cost * .8 * 1.17 ** (level - 1));
 export const energyMultiplier = (hp, maxHP = SETTINGS.maxHP) => .25 + .75 * clamp(hp / maxHP, 0, 1);
-export const wallYFor = (pct, height) => height * (.5 - .2 * clamp(pct, -30, 30) / 30);
+export const wallYFor = (pct, height) => height * (.56 - .2 * clamp(pct, -30, 30) / 30);
 export const priceBand = pct => { const value = clamp(pct, -30, 30), nearest = Math.round(value); return Math.trunc(Math.abs(value - nearest) < 1e-9 ? nearest : value); };
 // v26: fixed layout — four wall slots (two left, two right), the command post in the centre,
 // and one forward slot north of the centre (stored as x = FORWARD_X).

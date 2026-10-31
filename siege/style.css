@@ -990,3 +990,25 @@ button.primary:disabled,.course-primary:disabled,button.secondary:disabled{filte
 .tower-info .ti-row b{font:700 14px/1.25 system-ui!important;color:#3a2a12;text-align:left!important;white-space:normal!important;word-break:keep-all;overflow-wrap:anywhere}
 .tower-info .ti-row.ti-next b{color:#2f7a2a}
 .tower-info.field-info .ti-card{padding-top:30px!important}.tower-info .ti-stats h3{margin:0 0 2px!important}
+/* v62: top-left quote — plain outlined text, no plate, no source badge, change % under the price */
+.compact-hud .compact-quote{background:none!important;border:0!important;box-shadow:none!important;backdrop-filter:none!important;padding:0 2px!important;border-radius:0!important}
+.compact-hud .compact-quote::before,.compact-hud .compact-quote::after{display:none!important}
+.compact-hud .demo-badge,#data-badge{display:none!important}
+.compact-hud button#stock-select{background:none!important;border:0!important;box-shadow:none!important;padding:0!important;color:#fff8e0!important;font:400 17px/1.1 var(--gk-font)!important;-webkit-text-stroke:3.5px #2b1a0b;paint-order:stroke fill;text-shadow:0 2px 2px #0006!important}
+.compact-hud .price-row{display:flex!important;flex-direction:column!important;align-items:flex-start!important;gap:0!important;margin-top:1px}
+.compact-hud .price-row strong{color:#fff3c4!important;font:400 27px/1.05 var(--gk-font)!important;-webkit-text-stroke:4px #2b1a0b;paint-order:stroke fill;text-shadow:0 3px 2px #0007!important}
+.compact-hud .price-row>span{font:400 12px/1.2 var(--gk-font)!important;-webkit-text-stroke:3px #2b1a0b;paint-order:stroke fill;text-shadow:none!important;margin-left:2px}
+.compact-hud .price-row>span{color:#ff8a78!important}.compact-hud .price-row>span.positive{color:#9dff7a!important}
+/* v62: content sits inside the wood frame (frame band = 30px) */
+.ti-card:not(.wall-info){position:relative;padding:36px 36px max(34px,calc(env(safe-area-inset-bottom) + 26px))!important}
+.tower-info.field-info .ti-card{padding:36px 36px max(34px,calc(env(safe-area-inset-bottom) + 26px))!important}
+.ti-actions{gap:8px!important}
+.ti-actions button{flex:1;min-width:0}
+.exit-card{padding:36px 34px 32px!important}
+.sheet{padding-left:36px!important;padding-right:36px!important}
+.ti-help{position:absolute;top:34px;right:36px;z-index:3;width:30px;height:30px;padding:0;border-radius:50%;border:2px solid #4a2e12;background:radial-gradient(circle at 40% 35%,#fff4c2,#e8a92a);color:#4a2804;font:400 17px/26px var(--gk-font);box-shadow:0 2px 0 #4a2e12;cursor:pointer}
+.ti-help:active{transform:translateY(2px);box-shadow:none}
+.ti-stats h3{padding-right:34px}
+.codex-box{border-image-source:url(assets/clay/ui-panel-v1.webp)!important;border-image-slice:86 fill!important;border-image-width:30px!important;border-image-repeat:stretch round!important;background:transparent!important;border-radius:0!important;padding:34px 34px 26px!important}
+.codex-close{top:30px!important;right:30px!important;width:32px!important;height:32px!important;border:0!important;background:url(assets/clay/ui-close-v1.webp) center/100% 100% no-repeat!important;color:transparent!important;font-size:0!important;box-shadow:none!important}
+.compact-hud button#stock-select{outline:none!important}

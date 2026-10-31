@@ -1,25 +1,26 @@
-import{CampaignView}from'./campaign-view.js?v=12f2a369ef';
-import{CampaignDataProvider,newCourseRun,readCourseRun,checkpointCourse,storeCourseRun,removeCourseRun,restoreCourseCombat,settleCourse}from'./campaign.js?v=12f2a369ef';
-import{courseFor,courseTime,CAMPAIGN_REWARD_RATE,campaignProgress}from'./campaign-courses.js?v=12f2a369ef';
-import{stockFor}from'./symbols.js?v=12f2a369ef';
-import{StockPicker}from'./stock-picker.js?v=12f2a369ef';
-import{drawSessionChart}from'./session-chart.js?v=12f2a369ef';
-import{WALL_MAX_XP}from'./progression.js?v=12f2a369ef';
-import { CANNONS,SCENARIOS,SETTINGS,ENEMIES,SUPPLIES,WORLD_WIDTH,DRONE,WALL,WALL_STAGES,cannonStats,upgradeCost,validPlacement,validDronePlacement,clamp } from './config.js?v=12f2a369ef';
-import { DemoMarketDataProvider, LiveMarketDataProvider, AlpacaMarketDataProvider, MARKET_ERRORS } from './market.js?v=12f2a369ef';
-import { Game } from './game.js?v=12f2a369ef';
-import { DIGITS, DIGIT_H, DIGIT_W } from './digit-sprites.js?v=12f2a369ef';
+import{CampaignView}from'./campaign-view.js?v=9594514f5f';
+import{CampaignDataProvider,newCourseRun,readCourseRun,checkpointCourse,storeCourseRun,removeCourseRun,restoreCourseCombat,settleCourse}from'./campaign.js?v=9594514f5f';
+import{courseFor,courseTime,CAMPAIGN_REWARD_RATE,campaignProgress}from'./campaign-courses.js?v=9594514f5f';
+import{stockFor}from'./symbols.js?v=9594514f5f';
+import{StockPicker}from'./stock-picker.js?v=9594514f5f';
+import{drawSessionChart}from'./session-chart.js?v=9594514f5f';
+import{WALL_MAX_XP}from'./progression.js?v=9594514f5f';
+import { CANNONS,SCENARIOS,SETTINGS,ENEMIES,SUPPLIES,WORLD_WIDTH,DRONE,WALL,WALL_STAGES,cannonStats,upgradeCost,validPlacement,validDronePlacement,clamp } from './config.js?v=9594514f5f';
+import { DemoMarketDataProvider, LiveMarketDataProvider, AlpacaMarketDataProvider, MARKET_ERRORS } from './market.js?v=9594514f5f';
+import { Game } from './game.js?v=9594514f5f';
+import { DIGITS, DIGIT_H, DIGIT_W } from './digit-sprites.js?v=9594514f5f';
 var goldShown='',goldNum=0;
-import { Renderer,renderShopIcon } from './renderer.js?v=12f2a369ef';
-import { initialState,readSave,writeSave,snapshotGame,safeStorage,readRawSave,writeRawSave } from './storage.js?v=12f2a369ef';
-import{cloudConfigured,currentUser,signUpEmail,signInEmail,signOut,pull,push,EMAIL_RULE,idOf,claimSession,sessionState,SESSION_ID,pullGrant}from'./cloud.js?v=12f2a369ef';
-import{recentSymbols}from'./stock-picker.js?v=12f2a369ef';
-import { loadClayAssets,useBattlefield } from './clay-assets.js?v=12f2a369ef';
-import{THEMES,themeFor}from'./themes.js?v=12f2a369ef';
-import { drawClayPreview } from './clay-runtime.js?v=12f2a369ef';
-import{money,playerXPAt,SLOT_LEVELS,wallXPAt,WALL_MAX_LEVEL,wallPower}from'./progression.js?v=12f2a369ef';
-import{openPack,applyCard,PACKS,MODES,MODE_ORDER,modeFor,RARITIES,TOWER_RARITY}from'./cards.js?v=12f2a369ef';
-import{CardStage,renderCollection,towerCard,statLines,nextLevelLines}from'./card-ui.js?v=12f2a369ef';
+import { Renderer,renderShopIcon } from './renderer.js?v=9594514f5f';
+import { initialState,readSave,writeSave,snapshotGame,safeStorage,readRawSave,writeRawSave } from './storage.js?v=9594514f5f';
+import{cloudConfigured,currentUser,signUpEmail,signInEmail,signOut,pull,push,EMAIL_RULE,idOf,claimSession,sessionState,SESSION_ID,pullGrant}from'./cloud.js?v=9594514f5f';
+import{recentSymbols}from'./stock-picker.js?v=9594514f5f';
+import { loadClayAssets,useBattlefield } from './clay-assets.js?v=9594514f5f';
+import{THEMES,themeFor}from'./themes.js?v=9594514f5f';
+import { drawClayPreview } from './clay-runtime.js?v=9594514f5f';
+import{money,playerXPAt,SLOT_LEVELS,wallXPAt,WALL_MAX_LEVEL,wallPower}from'./progression.js?v=9594514f5f';
+import{openPack,applyCard,PACKS,MODES,MODE_ORDER,modeFor,RARITIES,TOWER_RARITY}from'./cards.js?v=9594514f5f';
+import{CardStage,renderCollection,towerCard,statLines,nextLevelLines,openCodex}from'./card-ui.js?v=9594514f5f';
+import{xpForNext,MAX_CARD_LEVEL}from'./cards.js?v=9594514f5f';
 const $=id=>document.getElementById(id),fmt=new Intl.NumberFormat('ko-KR'),nyTime=new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',hour12:false,hour:'2-digit',minute:'2-digit',second:'2-digit'});
 async function prepareArt(){const started=performance.now();
  $('asset-retry').hidden=true;$('asset-loading-message').textContent='클레이 전장을 준비하고 있어요.';
@@ -56,11 +57,11 @@ function openShop(){lastShop='';showPanel('shop-panel');updateUI();}
 function onCollectionCard(type){const c=game.cannons.find(v=>v.type===type);if(replaceTarget&&game.cannons.includes(replaceTarget)){const target=replaceTarget;replaceTarget=null;if(c){toast('이미 배치된 타워예요');return;}if(game.replaceTower(target,type)){save();closePanel();updateUI();toast(CANNONS[type].name+' 교체 완료');}else toast('이 위치에는 설치할 수 없습니다');return;}if(c){openTowerInfo(c,{fromShop:true});return;}const own=game.owned(type);openTowerInfo({type,level:own?.level||1,x:216,virtual:true,owned:!!own},{fromShop:true});}
 // ---- tower info card (tap a tower on the wall) ----
 let infoTower=null;
-function openTowerInfo(c,{fromShop=false}={}){closeTowerInfo();infoTower=c;if(!c.virtual)game.selected=c;const wrap=document.createElement('div');wrap.className='tower-info'+(!c.virtual&&!fromShop?' field-info':'');wrap.id='tower-info';const card=document.createElement('div');card.className='ti-card';const item=game.inventory.find(v=>v.type===c.type)||(c.virtual?null:{level:c.level,xp:0});if(!c.virtual&&!fromShop){/* v61: in battle show the tower itself, not the card */const hero=document.createElement('div');hero.className='ti-hero';const cv=document.createElement('canvas');cv.width=220;cv.height=220;hero.append(cv);const lv=document.createElement('b');lv.textContent='Lv.'+c.level;hero.append(lv);card.append(hero);requestAnimationFrame(()=>renderShopIcon(cv,c.type,c.level));}else card.append(towerCard(c.type,item));const stats=document.createElement('div');stats.className='ti-stats';const h=document.createElement('h3');h.textContent=CANNONS[c.type].name;stats.append(h);{const r=document.createElement('p');r.className='ti-role';r.textContent=CANNONS[c.type].role;stats.append(r);}const rows=document.createElement('div');rows.className='ti-rows';stats.append(rows);card.append(stats);
+function openTowerInfo(c,{fromShop=false}={}){closeTowerInfo();infoTower=c;if(!c.virtual)game.selected=c;const wrap=document.createElement('div');wrap.className='tower-info'+(!c.virtual&&!fromShop?' field-info':'');wrap.id='tower-info';const card=document.createElement('div');card.className='ti-card';const item=game.inventory.find(v=>v.type===c.type)||(c.virtual?null:{level:c.level,xp:0});if(!c.virtual&&!fromShop){/* v61: in battle show the tower itself, not the card */const hero=document.createElement('div');hero.className='ti-hero';const cv=document.createElement('canvas');cv.width=220;cv.height=220;hero.append(cv);const lv=document.createElement('b');lv.textContent='Lv.'+c.level;hero.append(lv);card.append(hero);requestAnimationFrame(()=>renderShopIcon(cv,c.type,c.level));}else card.append(towerCard(c.type,item));{/* v62: codex ? lives on the info popup, top-right */const q=document.createElement('button');q.type='button';q.className='ti-help';q.textContent='?';q.setAttribute('aria-label',CANNONS[c.type].name+' 도감');q.onclick=e=>{e.stopPropagation();openCodex(c.type,game.inventory.find(v=>v.type===c.type)||null);};card.append(q);}const stats=document.createElement('div');stats.className='ti-stats';const h=document.createElement('h3');h.textContent=CANNONS[c.type].name;stats.append(h);{const r=document.createElement('p');r.className='ti-role';r.textContent=CANNONS[c.type].role;stats.append(r);}const rows=document.createElement('div');rows.className='ti-rows';stats.append(rows);card.append(stats);
  const actions=document.createElement('div');actions.className='ti-actions';const mk=(t,f,cls='')=>{const b=document.createElement('button');b.type='button';b.textContent=t;b.className=cls;b.onclick=f;actions.append(b);return b;};
  if(c.virtual){if(c.owned)mk('성벽에 설치',()=>{closeTowerInfo();installReserve(c.type);},'primary');else{const n=document.createElement('p');n.className='ti-locked';n.textContent='아직 없는 타워예요 · 카드 뽑기로 얻을 수 있어요';actions.append(n);}mk('닫기',closeTowerInfo);card.append(actions);wrap.append(card);const openedAt=performance.now();wrap.onclick=e=>{if(e.target===wrap&&performance.now()-openedAt>450)closeTowerInfo();};document.body.append(wrap);refreshTowerInfo();return;}
  if(c.type==='drone')mk('위치 이동',()=>{closeTowerInfo();droneMove=c;toast('드론을 옮길 곳을 눌러 주세요');});mk('보관',()=>{if(game.storeTower(c)){save();closeTowerInfo();updateUI();toast('타워를 보관했습니다');}});mk('교체',()=>{if(c.type==='drone'){closeTowerInfo();replaceTarget=c;openShop();toast('바꿀 카드를 고르세요');return;}openSlotPicker(c.x,c);}).disabled=game.inventory.length<2;mk('닫기',closeTowerInfo,'primary');card.append(actions);wrap.append(card);const openedAt=performance.now();wrap.onclick=e=>{if(e.target===wrap&&performance.now()-openedAt>450)closeTowerInfo();};document.body.append(wrap);refreshTowerInfo();}
-function refreshTowerInfo(){const box=document.querySelector('#tower-info .ti-rows');if(!box||!infoTower)return;if(!infoTower.virtual&&!game.cannons.includes(infoTower)){closeTowerInfo();return;}const row=([k,v],cls='ti-row')=>{const r=document.createElement('div');r.className=cls;const a=document.createElement('span');a.textContent=k;const b=document.createElement('b');b.textContent=v;r.append(a,b);return r;};const head=document.createElement('div');head.className='ti-next-head';head.textContent='다음 레벨이 되면';/* v43: next-level details live in the ? codex */box.replaceChildren(...statLines(game,infoTower).map(l=>row(l)));}
+function refreshTowerInfo(){const box=document.querySelector('#tower-info .ti-rows');if(!box||!infoTower)return;if(!infoTower.virtual&&!game.cannons.includes(infoTower)){closeTowerInfo();return;}const row=([k,v],cls='ti-row')=>{const r=document.createElement('div');r.className=cls;const a=document.createElement('span');a.textContent=k;const b=document.createElement('b');b.textContent=v;r.append(a,b);return r;};const head=document.createElement('div');head.className='ti-next-head';head.textContent='다음 레벨이 되면';/* v43: next-level details live in the ? codex */const it=game.inventory.find(v=>v.type===infoTower.type);const lines=statLines(game,infoTower);if(it)lines.push(['카드 경험치',it.level>=MAX_CARD_LEVEL?'MAX':`${it.xp||0} / ${xpForNext(it.level)}`]);box.replaceChildren(...lines.map(l=>row(l)));}
 // v26: tap the command post → current wall grade, gauge to the next grade and what the grade does.
 function openWallInfo(){closeTowerInfo();const g=game,L=g.wallLevel,cur=wallXPAt(L),next=L>=WALL_MAX_LEVEL?null:wallXPAt(L+1),pct=next?Math.max(0,Math.min(100,(g.wallXP-cur)/(next-cur)*100)):100,stage=n=>WALL_STAGES[Math.max(0,Math.min(WALL_STAGES.length-1,n-1))]?.name||'',mult=n=>(wallPower(n)/wallPower(1)).toFixed(2);
  const w=document.createElement('div');w.className='tower-info wall-pop';w.id='tower-info';const card=document.createElement('div');card.className='ti-card wall-info';
