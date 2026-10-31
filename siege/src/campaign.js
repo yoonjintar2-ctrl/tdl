@@ -1,9 +1,9 @@
-import{MarketDataProvider}from'./market.js?v=d9a0933b62';
-import{courseFor,courseChange,courseUnlocked,campaignProgress,CAMPAIGN_REWARD_RATE}from'./campaign-courses.js?v=d9a0933b62';import{infiniteActivity}from'./campaign-courses.js?v=d9a0933b62';
-import{estimateCandleFlow}from'./candle-flow.js?v=d9a0933b62';
-import{snapshotGame,readSave,safeStorage}from'./storage.js?v=d9a0933b62';
-import{SETTINGS,ENEMIES,SUPPLIES,validPlacement}from'./config.js?v=d9a0933b62';
-import{playerLevelFor,towerSlots}from'./progression.js?v=d9a0933b62';
+import{MarketDataProvider}from'./market.js?v=f49daceb71';
+import{courseFor,courseChange,courseUnlocked,campaignProgress,CAMPAIGN_REWARD_RATE}from'./campaign-courses.js?v=f49daceb71';import{infiniteActivity}from'./campaign-courses.js?v=f49daceb71';
+import{estimateCandleFlow}from'./candle-flow.js?v=f49daceb71';
+import{snapshotGame,readSave,safeStorage}from'./storage.js?v=f49daceb71';
+import{SETTINGS,ENEMIES,SUPPLIES,validPlacement}from'./config.js?v=f49daceb71';
+import{playerLevelFor,towerSlots}from'./progression.js?v=f49daceb71';
 export const CAMPAIGN_SAVE_KEY=SETTINGS.saveKey+':course-v1';
 const EPOCH=Date.UTC(2026,0,5,14,30),BASE_VOLUME=40000;
 export class CampaignDataProvider extends MarketDataProvider{

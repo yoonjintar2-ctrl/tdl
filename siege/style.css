@@ -847,3 +847,6 @@ body .scrim:not([hidden]){z-index:44}
 @keyframes lvIn{from{transform:scale(.6);opacity:0}}
 @keyframes lvPop{40%{transform:scale(1.35)}}
 @keyframes lvGlow{50%{transform:translate(-50%,-50%) scale(1.15);opacity:.75}}
+.sync-info{display:block;margin-top:8px;font:400 12px/1.4 var(--gk-font);color:#e8dfbf}
+.sync-row{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px}
+.sync-row button{padding:9px 4px;border-radius:12px;border:2px solid #4a2e12;background:linear-gradient(#fff6dc,#e7c46a);color:#4a2804;font:400 13px var(--gk-font)}
