@@ -62,13 +62,13 @@ export function cannonStats(type, level = 1) {
 }
 function baseStats(type, level = 1) {
   const c = CANNONS[type], n = clamp(level, 1, 40) - 1;
-  return { ...c, damage: c.damage * (1 + n * .12), rate: c.rate * (1 + n * (type === 'machine' ? .016 : .012)), pull: (c.pull || 0) * (1 + n * .03), drag: c.drag ? Math.min(.75, c.drag + n * .006) : 0,
+  return { ...c, damage: c.damage * (1 + n * .07), rate: c.rate * (1 + n * (type === 'machine' ? .009 : .007)),/* v50: gentler growth */ pull: (c.pull || 0) * (1 + n * .03), drag: c.drag ? Math.min(.75, c.drag + n * .006) : 0,
     targetSwitch: c.targetSwitch ? c.targetSwitch / (1 + n * .045) : 0,
     range: c.range + n * (type === 'sniper' || type === 'siege' ? 4 : type === 'totem' || type === 'drone' ? 2 : .45), radius: (c.radius || 0) + n * (type === 'mortar' ? .65 : type === 'poison' ? .5 : .35),
     pierce: c.pierce ? Math.min(12, c.pierce + Math.floor(n / 6)) : 0, buff: c.buff ? Math.min(.5, c.buff + n * .008) : 0,
     minRange: c.minRange || 0, width: (c.width || 0) + n * .4, knights: c.knights ? c.knights + Math.floor(n / 13) : 0, hits: c.hits ? c.hits + Math.floor(n / 8) : 0, slow: c.slow ? Math.min(.65, c.slow + n * .008) : 0, splashCap: c.splashCap ? Math.min(.52, c.splashCap + n * .006) : 0, duration: (c.duration || 0) + n * .045, dot: (c.dot || 0) * (1 + n * .055) };
 }
-export const upgradeCost = (type, level) => Math.ceil(CANNONS[type].cost * .45 * 1.13 ** (level - 1));
+export const upgradeCost = (type, level) => Math.ceil(CANNONS[type].cost * .8 * 1.17 ** (level - 1));
 export const energyMultiplier = (hp, maxHP = SETTINGS.maxHP) => .25 + .75 * clamp(hp / maxHP, 0, 1);
 export const wallYFor = (pct, height) => height * (.5 - .2 * clamp(pct, -30, 30) / 30);
 export const priceBand = pct => { const value = clamp(pct, -30, 30), nearest = Math.round(value); return Math.trunc(Math.abs(value - nearest) < 1e-9 ? nearest : value); };
@@ -89,7 +89,7 @@ export const towerTier=(level,n)=>Math.min(n-1,Math.floor((clamp(level||1,1,40)-
 
 // v43: every tower unlocks new abilities as it levels, not just bigger numbers.
 export const PERKS={
- machine:[{lv:12,key:'twin',text:'총열 2갈래 — 두 적을 동시에 사격'},{lv:24,key:'triple',text:'총열 3갈래 — 세 적을 동시에 사격'},{lv:36,key:'shred',text:'철갑탄 — 거인·공성 피해 +50%'}],
+ machine:[{lv:18,key:'twin',text:'총열 2갈래 — 두 적을 동시에 사격'},{lv:30,key:'triple',text:'총열 3갈래 — 세 적을 동시에 사격'},{lv:36,key:'shred',text:'철갑탄 — 거인·공성 피해 +50%'}],
  sniper:[{lv:12,key:'pierce',text:'관통탄 — 뒤의 적 1명까지 꿰뚫음'},{lv:24,key:'crit',text:'헤드샷 — 25% 확률로 피해 ×2.5'},{lv:36,key:'double',text:'2연속 저격'}],
  mortar:[{lv:12,key:'wide',text:'대구경 — 폭발 반경 +30%'},{lv:24,key:'salvo',text:'2연발 포격'},{lv:36,key:'cluster',text:'집속탄 — 폭발 후 작은 폭발 3개'}],
  laser:[{lv:12,key:'focus',text:'집속 렌즈 — 관통 +2'},{lv:24,key:'split',text:'분광 — 빔 2줄 발사'},{lv:36,key:'burn',text:'열선 — 맞은 적에 화상 피해'}],
@@ -101,7 +101,7 @@ export const PERKS={
  sonic:[{lv:12,key:'wide',text:'공명 — 음파 폭 +30%'},{lv:24,key:'stun',text:'충격파 — 맞은 적 0.4초 기절'},{lv:36,key:'double',text:'2연속 음파'}],
  blackhole:[{lv:12,key:'pull',text:'중력 강화 — 끌어당김 +30%'},{lv:24,key:'crush',text:'압착 — 중심부 피해 ×2'},{lv:36,key:'twin',text:'쌍블랙홀'}],
  musk:[{lv:12,key:'rocket',text:'로켓 확률 +15%'},{lv:24,key:'fleet',text:'트럭 2대 동시 출격'},{lv:36,key:'mars',text:'화성 로켓 — 로켓 피해 ×2'}],
- drone:[{lv:12,key:'twin',text:'쌍발 — 두 적 동시 공격'},{lv:24,key:'fast',text:'과급 모터 — 공속 +25%'},{lv:36,key:'swarm',text:'세 적 동시 공격'}],
+ drone:[{lv:18,key:'twin',text:'쌍발 — 두 적 동시 공격'},{lv:26,key:'fast',text:'과급 모터 — 공속 +25%'},{lv:36,key:'swarm',text:'세 적 동시 공격'}],
 };
 export const hasPerk=(type,level,key)=>(PERKS[type]||[]).some(p=>p.key===key&&(level||1)>=p.lv);
 export const perksAt=(type,level)=>(PERKS[type]||[]).filter(p=>(level||1)>=p.lv);

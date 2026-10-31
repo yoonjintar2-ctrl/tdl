@@ -1,12 +1,12 @@
-import{campaignProgress}from'./campaign-courses.js?v=9d52056809';
-import { SETTINGS, CANNONS, ENEMIES, SUPPLIES, WORLD_WIDTH, DRONE, WALL, CAMERA_DEPTH, ACTOR_STYLE, cannonStats, upgradeCost, energyMultiplier, wallYFor, priceBand, validPlacement, snapSlot, FORWARD_X, FORWARD_DY, validDronePlacement, clamp, hasPerk } from './config.js?v=9d52056809';
-import { wallMountDepth } from './fortification.js?v=9d52056809';
-import { marketArmy,estimatedArmy } from './market-army.js?v=9d52056809';
-import {playerLevelFor,towerSlots,wallLevelFor,wallPower,money,WALL_MAX_XP} from './progression.js?v=9d52056809';
-import{TerrainField}from'./terrain.js?v=9d52056809';
-import{modeFor}from'./cards.js?v=9d52056809';
-import{formatDamage}from'./combat-fx.js?v=9d52056809';
-import{wallXPAt}from'./progression.js?v=9d52056809';
+import{campaignProgress}from'./campaign-courses.js?v=cffd2f6728';
+import { SETTINGS, CANNONS, ENEMIES, SUPPLIES, WORLD_WIDTH, DRONE, WALL, CAMERA_DEPTH, ACTOR_STYLE, cannonStats, upgradeCost, energyMultiplier, wallYFor, priceBand, validPlacement, snapSlot, FORWARD_X, FORWARD_DY, validDronePlacement, clamp, hasPerk } from './config.js?v=cffd2f6728';
+import { wallMountDepth } from './fortification.js?v=cffd2f6728';
+import { marketArmy,estimatedArmy } from './market-army.js?v=cffd2f6728';
+import {playerLevelFor,towerSlots,wallLevelFor,wallPower,money,WALL_MAX_XP} from './progression.js?v=cffd2f6728';
+import{TerrainField}from'./terrain.js?v=cffd2f6728';
+import{modeFor}from'./cards.js?v=cffd2f6728';
+import{formatDamage}from'./combat-fx.js?v=cffd2f6728';
+import{wallXPAt}from'./progression.js?v=cffd2f6728';
 // Kill gold is scaled down and a steady per-minute battle stipend added, so income stays in a narrow band
 // between a starter and a maxed army (card packs are the only use of gold).
 export const KILL_GOLD=.3,STIPEND_PER_MIN=30;
@@ -20,8 +20,8 @@ export const BOSS=Object.freeze({cooldownMs:3*60*1000,minIntensity:.8,minSellSha
 export const SPECIALS=Object.freeze({ram:Object.freeze({hp:2600,speed:8.5,radius:30,damage:110,interval:2.4,cooldownMs:2*60*1000,minIntensity:.7,chance:.75,goldMul:6}),bomber:Object.freeze({hp:12,speed:92,radius:9,damage:150,cooldownMs:40*1000,minIntensity:.5,chance:.85,goldMul:1.5})});
 const SPECIAL_DEF={ram:{...ENEMIES[3],speed:SPECIALS.ram.speed,damage:SPECIALS.ram.damage,interval:SPECIALS.ram.interval},bomber:{...ENEMIES[4],speed:SPECIALS.bomber.speed,damage:SPECIALS.bomber.damage,interval:9}};
 const BOSS_DEF=Object.freeze({...ENEMIES[3],speed:ENEMIES[3].speed*BOSS.speed,damage:ENEMIES[3].damage*BOSS.damage});
-import{isAIStock}from'./symbols.js?v=9d52056809';
-import {weaponMuzzle} from './weapon-geometry.js?v=9d52056809';
+import{isAIStock}from'./symbols.js?v=cffd2f6728';
+import {weaponMuzzle} from './weapon-geometry.js?v=cffd2f6728';
 export class Game {
   constructor(state, { height = 620, random = Math.random,now=Date.now,rewardMultiplier=1,mode } = {}) {
     this.modeKey=modeFor(mode??state.settings?.mode).key;this.stipendClock=0;this.wallHold=0;
@@ -199,7 +199,7 @@ export class Game {
   fire(c,stats,target,extra=true){
     /* v43 perks: multi-barrel / salvo / split beams */
     if(extra){const P=k=>hasPerk(c.type,c.level,k);let more=0;if(c.type==='machine')more=P('triple')?2:P('twin')?1:0;else if(c.type==='drone')more=P('swarm')?2:P('twin')?1:0;else if(c.type==='laser'&&P('split'))more=1;
-      if(more)for(const e of this.extraTargets(c,stats,target,more))this.fire(c,stats,e,false);
+      if(more){const side={...stats,damage:stats.damage*.6};/* v50: extra barrels hit at 60% */for(const e of this.extraTargets(c,stats,target,more))this.fire(c,side,e,false);}
       if(((c.type==='mortar'||c.type==='siege')&&P('salvo'))||(c.type==='sniper'&&P('double'))){const t2=target;this.delayed.push({at:this.time+.18,run:()=>{if(this.cannons.includes(c))this.fire(c,stats,t2.alive?t2:(this.extraTargets(c,stats,null,1)[0]||t2),false);}});}
       if(c.type==='sniper'&&P('crit')&&this.random()<.25){stats={...stats,damage:stats.damage*2.5};this.effect('text',target.x,target.y-16,'#ffd34f','헤드샷!',.8,{sourceAltitude:20});}
     }
