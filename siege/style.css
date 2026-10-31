@@ -689,3 +689,45 @@ html,body{overflow:hidden;overscroll-behavior:none}
 @keyframes resumeBtn{50%{transform:scale(1.05)}}
 .course-resume{box-shadow:0 0 0 3px #2b1a0b,inset 0 0 0 3px #ffd34f,0 0 20px #ffcf6a88!important}
 .course-resume button{font:400 17px var(--gk-font)!important;min-height:46px}
+/* ============ v37 CAMPAIGN / MISSION SKIN ============ */
+.picker-list,.course-track{overflow:visible}
+.picker-list{padding-top:14px!important}
+.mission-resume{margin-top:6px}
+.campaign-heading h2{font-family:var(--gk-font)!important;font-weight:400!important;color:#ffe9a8!important;text-shadow:0 2px 0 #3d250f,0 0 14px #ffcf6a44;font-size:24px!important}
+.campaign-kicker{font-family:var(--gk-font)!important;color:#e8c277!important;letter-spacing:2px}
+.campaign-back{width:40px!important;height:40px!important;border-radius:50%!important;border:2px solid #2b1a0b!important;background:var(--gk-gloss),linear-gradient(180deg,#f8edcf,#d9c08a)!important;color:#4a3414!important;font:400 24px/1 var(--gk-font)!important;box-shadow:inset 0 -3px 0 #b39256,0 3px 0 #3d2c10!important}
+/* course cards */
+.course-card{position:relative;border-radius:18px!important;border:3px solid #2b1a0b!important;padding:10px 12px!important;text-align:left;font-family:var(--gk-font);transition:transform .1s}
+.course-card:not(:disabled):active{transform:translateY(3px)}
+.course-card strong{font-family:var(--gk-font)!important;font-weight:400!important;font-size:16px!important}
+.course-card small,.course-card .course-card-bottom span{font-family:var(--gk-font)!important;font-weight:400!important}
+.course-emblem{border-radius:16px!important;border:2px solid #2b1a0b!important;box-shadow:inset 0 0 0 2px #ffffff55,0 2px 0 #0006}
+.course-emblem b{font-family:var(--gk-font)!important;font-weight:400!important}
+.course-card.cleared{background:linear-gradient(160deg,#fff4c8,#e8c46a 70%,#c99a2f)!important;color:#4a2804!important;box-shadow:inset 0 0 0 2px #fff3c4,0 4px 0 #3a2208,0 6px 12px #0006!important}
+.course-card.cleared .course-emblem{background:radial-gradient(circle at 50% 35%,#fff8d8,#e8b84a)!important}
+.course-card.cleared::after{content:"정복";position:absolute;right:10px;top:8px;padding:3px 9px;border-radius:8px;transform:rotate(8deg);border:2px solid #8a1c0c;color:#b8261a;background:#fff3e0cc;font:400 14px var(--gk-font);letter-spacing:2px;box-shadow:inset 0 0 0 1px #b8261a55}
+.course-card.cleared .course-card-bottom span:first-child{color:#2f7a2a!important}
+.course-card.available{background:linear-gradient(160deg,#e6ffc2,#9be064 70%,#5fa636)!important;color:#173a10!important;box-shadow:inset 0 0 0 2px #f2ffd8,0 4px 0 #183812,0 0 18px #9be06499!important;animation:availPulse 1.6s ease-in-out infinite}
+.course-card.available::after{content:"▶ 도전";position:absolute;right:10px;top:8px;padding:3px 10px;border-radius:99px;background:linear-gradient(#ff9a6a,#d84a26);color:#fff;border:2px solid #5a1508;font:400 12px var(--gk-font);box-shadow:0 2px 0 #3a0a02}
+@keyframes availPulse{50%{box-shadow:inset 0 0 0 2px #f2ffd8,0 4px 0 #183812,0 0 30px #c8ff9acc}}
+.course-card.locked{background:linear-gradient(160deg,#4a5a4c,#2c3a30)!important;color:#9aa89a!important;filter:saturate(.4);box-shadow:inset 0 0 0 2px #ffffff14,0 3px 0 #0b1a12!important}
+.course-card.locked .course-emblem canvas{filter:grayscale(1) brightness(.55)}
+.course-card.locked::after{content:"🔒";position:absolute;right:12px;top:8px;font-size:16px;filter:grayscale(1)}
+.course-card.infinite{border-color:#1a0838!important}
+.course-card.infinite.available{background:linear-gradient(160deg,#e8d8ff,#a97cff 60%,#5a2a9a)!important;color:#1e0838!important;box-shadow:inset 0 0 0 2px #f4ecff,0 4px 0 #1a0838,0 0 22px #b28cffaa!important;animation:infPulse 2s ease-in-out infinite}
+.course-card.infinite.available::after{content:"∞ 무한 도전";background:linear-gradient(#c78bff,#6a2ab8);border-color:#2a0a4a}
+.course-card.infinite .course-emblem b{font-size:22px!important}
+@keyframes infPulse{50%{box-shadow:inset 0 0 0 2px #f4ecff,0 4px 0 #1a0838,0 0 36px #c78bffdd}}
+/* course map path between cards */
+.course-step{position:relative}
+.course-track .course-step+.course-step::before{content:"";position:absolute;left:44px;top:-14px;width:6px;height:16px;border-radius:3px;background:repeating-linear-gradient(#e8c277 0 4px,transparent 4px 8px)}
+.course-resume,.course-summary,.course-result-hero,.course-pause-hero{border-radius:20px!important;background:linear-gradient(180deg,#fff7e0,#f0dfb2)!important;color:#3a2a12!important;box-shadow:0 0 0 3px #2b1a0b,inset 0 0 0 3px #b07a3a,inset 0 0 0 5px #fff3c4,0 10px 26px #000a!important;font-family:var(--gk-font)}
+.course-resume strong,.course-result-hero strong,.course-pause-hero strong,.course-summary strong{font-family:var(--gk-font)!important;font-weight:400!important;color:#4a2804!important}
+.course-button-row button{font-family:var(--gk-font)!important}
+/* mission HUD wall durability */
+.course-wall{position:relative;height:14px;margin-top:6px;border-radius:99px;background:#2b1a0b88;border:2px solid #2b1a0b;overflow:hidden;grid-column:1/-1}
+.course-wall i{position:absolute;inset:0 auto 0 0;background:linear-gradient(180deg,#e6ffc2,#8fd05a 50%,#4f9a2c);transition:width .3s}
+.course-wall.low i{background:linear-gradient(180deg,#ffc0a8,#ff6a42 50%,#b8261a);animation:wallLow .6s ease-in-out infinite}
+.course-wall span{position:relative;display:block;text-align:center;font:400 10px/10px var(--gk-font);color:#fff;text-shadow:0 1px 0 #000}
+@keyframes wallLow{50%{filter:brightness(1.4)}}
+.course-hud{flex-wrap:wrap!important}.course-wall{flex:1 1 100%;order:9}

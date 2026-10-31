@@ -1,11 +1,12 @@
-import { WORLD_WIDTH as W,CANNONS,ENEMIES,SUPPLIES,WALL_STAGES,DRONE,WALL,cannonStats,validPlacement,validDronePlacement,snapSlot,ALL_SLOTS,FORWARD_X,FORWARD_DY,clamp } from './config.js?v=f1363d7233';
-import{WALL_MAX_LEVEL,WALL_MAX_XP}from'./progression.js?v=f1363d7233';
-import{isAIStock}from'./symbols.js?v=f1363d7233';
-import { QuarterCamera, DEPTH_SCALE, WALL_ELEVATION } from './camera.js?v=f1363d7233';
-import { drawClayMortar, drawClayMortarIcon, clayBattlefield } from './clay-assets.js?v=f1363d7233';
-import{drawProjectile,drawEffect}from'./combat-fx.js?v=f1363d7233';
-import{artCrop}from'./terrain.js?v=f1363d7233';
-import { drawClayTower, drawClayUnit, drawClayWall, drawClayPreview, drawForwardPad, hasKeep, wallOutline, tierOf, tierTint, drawTierBack, drawTierFront } from './clay-runtime.js?v=f1363d7233';
+import { WORLD_WIDTH as W,CANNONS,ENEMIES,SUPPLIES,WALL_STAGES,DRONE,WALL,cannonStats,validPlacement,validDronePlacement,snapSlot,ALL_SLOTS,FORWARD_X,FORWARD_DY,clamp } from './config.js?v=e2d618256e';
+import{WALL_MAX_LEVEL,WALL_MAX_XP}from'./progression.js?v=e2d618256e';
+import{isAIStock}from'./symbols.js?v=e2d618256e';
+import { QuarterCamera, DEPTH_SCALE, WALL_ELEVATION } from './camera.js?v=e2d618256e';
+import { drawClayMortar, drawClayMortarIcon, clayBattlefield } from './clay-assets.js?v=e2d618256e';
+import{drawProjectile,drawEffect}from'./combat-fx.js?v=e2d618256e';
+import{artCrop}from'./terrain.js?v=e2d618256e';
+import { drawClayTower, drawClayUnit, drawClayWall, drawClayPreview, drawForwardPad, hasKeep, wallOutline, tierOf, tierTint, drawTierBack, drawTierFront } from './clay-runtime.js?v=e2d618256e';
+const BAND=215;
 const TAU=Math.PI*2;
 function box(c,x,y,w,h,r,fill,stroke){c.beginPath();c.roundRect(x,y,w,h,r);if(fill){c.fillStyle=fill;c.fill();}if(stroke){c.lineWidth=1;c.strokeStyle=stroke;c.stroke();}}
 function line(c,pts,col,w=1){c.beginPath();c.lineWidth=w;c.strokeStyle=col;pts.forEach(([x,y],i)=>i?c.lineTo(x,y):c.moveTo(x,y));c.stroke();}
@@ -164,9 +165,9 @@ export class Renderer{
  box(c,-6,-2,12,11,4,'#b8db9e');dot(c,-3,1,1.4,'#304c38');dot(c,3,1,1.4,'#304c38');c.beginPath();c.arc(0,3,3,0,Math.PI);c.strokeStyle='#426040';c.lineWidth=1.2;c.stroke();c.restore();}
  wall(c){
   const current=this.game,key=[current.stage,current.wallY,current.height,...current.cannons.filter(t=>t.type!=='drone').map(t=>t.x)].join('|');
-  if(this.clayWallCache?.key===key){const layer=this.clayWallCache;c.drawImage(layer.canvas,0,layer.top,W,142);return;}
-  const layer=document.createElement('canvas'),top=Math.floor(this.point(216,current.wallY).y-90);layer.width=W*2;layer.height=284;const lc=layer.getContext('2d');lc.setTransform(2,0,0,2,0,-top*2);
-  if(drawClayWall(lc,current,(x,y,z)=>this.point(x,y,z))){this.clayWallCache={key,canvas:layer,top};c.drawImage(layer,0,top,W,142);return;}
+  if(this.clayWallCache?.key===key){const layer=this.clayWallCache;c.drawImage(layer.canvas,0,layer.top,W,BAND);return;}
+  const layer=document.createElement('canvas'),top=Math.floor(this.point(216,current.wallY).y-150),bk=Math.max(2,Math.min(3,this.width*this.dpr/W));layer.width=Math.round(W*bk);layer.height=Math.round(BAND*bk);const lc=layer.getContext('2d');lc.imageSmoothingQuality='high';lc.setTransform(bk,0,0,bk,0,-top*bk);
+  if(drawClayWall(lc,current,(x,y,z)=>this.point(x,y,z))){this.clayWallCache={key,canvas:layer,top};c.drawImage(layer,0,top,W,BAND);return;}
   const g=this.game,k=Math.max(0,g.stage-2),pal=[['#af9462','#d5bb82'],['#92754c','#c4a46a'],['#8d754f','#c6ab76'],['#96917b','#d8cba4'],['#a4aa96','#e2ddbf'],['#909e91','#dbe3c8'],['#7f918a','#d4e2d4'],['#bd9c53','#ffe9a4']][k];
   const north=(x,z=0)=>this.point(x,g.wallFaceAt(x),z),back=(x)=>this.point(x,g.wallAt(x)+WALL.south,WALL_ELEVATION);
   c.save();c.lineJoin='round';

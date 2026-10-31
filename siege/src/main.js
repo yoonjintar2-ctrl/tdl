@@ -1,23 +1,23 @@
-import{CampaignView}from'./campaign-view.js?v=f1363d7233';
-import{CampaignDataProvider,newCourseRun,readCourseRun,checkpointCourse,storeCourseRun,removeCourseRun,restoreCourseCombat,settleCourse}from'./campaign.js?v=f1363d7233';
-import{courseFor,courseTime,CAMPAIGN_REWARD_RATE,campaignProgress}from'./campaign-courses.js?v=f1363d7233';
-import{stockFor}from'./symbols.js?v=f1363d7233';
-import{StockPicker}from'./stock-picker.js?v=f1363d7233';
-import{drawSessionChart}from'./session-chart.js?v=f1363d7233';
-import{WALL_MAX_XP}from'./progression.js?v=f1363d7233';
-import { CANNONS,SCENARIOS,SETTINGS,ENEMIES,SUPPLIES,WORLD_WIDTH,DRONE,WALL,WALL_STAGES,cannonStats,upgradeCost,validPlacement,clamp } from './config.js?v=f1363d7233';
-import { DemoMarketDataProvider, LiveMarketDataProvider, AlpacaMarketDataProvider, MARKET_ERRORS } from './market.js?v=f1363d7233';
-import { Game } from './game.js?v=f1363d7233';
-import { Renderer,renderShopIcon } from './renderer.js?v=f1363d7233';
-import { initialState,readSave,writeSave,snapshotGame,safeStorage,readRawSave,writeRawSave } from './storage.js?v=f1363d7233';
-import{cloudConfigured,currentUser,signUpEmail,signInEmail,signOut,pull,push,EMAIL_RULE,idOf,claimSession,sessionState,SESSION_ID}from'./cloud.js?v=f1363d7233';
-import{recentSymbols}from'./stock-picker.js?v=f1363d7233';
-import { loadClayAssets,useBattlefield } from './clay-assets.js?v=f1363d7233';
-import{THEMES,themeFor}from'./themes.js?v=f1363d7233';
-import { drawClayPreview } from './clay-runtime.js?v=f1363d7233';
-import{money,playerXPAt,SLOT_LEVELS,wallXPAt,WALL_MAX_LEVEL,wallPower}from'./progression.js?v=f1363d7233';
-import{openPack,applyCard,PACKS,MODES,MODE_ORDER,modeFor,RARITIES,TOWER_RARITY}from'./cards.js?v=f1363d7233';
-import{CardStage,renderCollection,towerCard,statLines,nextLevelLines}from'./card-ui.js?v=f1363d7233';
+import{CampaignView}from'./campaign-view.js?v=e2d618256e';
+import{CampaignDataProvider,newCourseRun,readCourseRun,checkpointCourse,storeCourseRun,removeCourseRun,restoreCourseCombat,settleCourse}from'./campaign.js?v=e2d618256e';
+import{courseFor,courseTime,CAMPAIGN_REWARD_RATE,campaignProgress}from'./campaign-courses.js?v=e2d618256e';
+import{stockFor}from'./symbols.js?v=e2d618256e';
+import{StockPicker}from'./stock-picker.js?v=e2d618256e';
+import{drawSessionChart}from'./session-chart.js?v=e2d618256e';
+import{WALL_MAX_XP}from'./progression.js?v=e2d618256e';
+import { CANNONS,SCENARIOS,SETTINGS,ENEMIES,SUPPLIES,WORLD_WIDTH,DRONE,WALL,WALL_STAGES,cannonStats,upgradeCost,validPlacement,clamp } from './config.js?v=e2d618256e';
+import { DemoMarketDataProvider, LiveMarketDataProvider, AlpacaMarketDataProvider, MARKET_ERRORS } from './market.js?v=e2d618256e';
+import { Game } from './game.js?v=e2d618256e';
+import { Renderer,renderShopIcon } from './renderer.js?v=e2d618256e';
+import { initialState,readSave,writeSave,snapshotGame,safeStorage,readRawSave,writeRawSave } from './storage.js?v=e2d618256e';
+import{cloudConfigured,currentUser,signUpEmail,signInEmail,signOut,pull,push,EMAIL_RULE,idOf,claimSession,sessionState,SESSION_ID}from'./cloud.js?v=e2d618256e';
+import{recentSymbols}from'./stock-picker.js?v=e2d618256e';
+import { loadClayAssets,useBattlefield } from './clay-assets.js?v=e2d618256e';
+import{THEMES,themeFor}from'./themes.js?v=e2d618256e';
+import { drawClayPreview } from './clay-runtime.js?v=e2d618256e';
+import{money,playerXPAt,SLOT_LEVELS,wallXPAt,WALL_MAX_LEVEL,wallPower}from'./progression.js?v=e2d618256e';
+import{openPack,applyCard,PACKS,MODES,MODE_ORDER,modeFor,RARITIES,TOWER_RARITY}from'./cards.js?v=e2d618256e';
+import{CardStage,renderCollection,towerCard,statLines,nextLevelLines}from'./card-ui.js?v=e2d618256e';
 const $=id=>document.getElementById(id),fmt=new Intl.NumberFormat('ko-KR'),nyTime=new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',hour12:false,hour:'2-digit',minute:'2-digit',second:'2-digit'});
 async function prepareArt(){const started=performance.now();
  $('asset-retry').hidden=true;$('asset-loading-message').textContent='클레이 전장을 준비하고 있어요.';
@@ -205,7 +205,7 @@ $('test-energy').addEventListener('input',e=>{game.wallXP=Math.min(WALL_MAX_XP,N
 $('test-sell').addEventListener('click',()=>{for(let i=0;i<240;i++){const x=18+(i%22)*18.8,e=game.spawnEnemy(i%13===0?3:i%6===0?2:i%4===0?1:0,x,game.wallAttackAt(x)-25-Math.floor(i/22)*27);if(e)e.age=1;}toast('가상 음봉 240마리 군집 생성');});
 $('test-buy').addEventListener('click',()=>{for(let i=0;i<160;i++){const s=game.spawnSupply(i%6,20+(i%20)*20.5,game.wallY+75+Math.floor(i/20)*30);if(s)s.age=1;}toast('가상 양봉 160마리 군집 생성');});
 function updateUI(){
- if(courseRun){const c=courseFor(courseRun.courseId);$('course-stage').textContent='STAGE '+String(c.id).padStart(2,'0')+' · 보상 20%';$('course-name').textContent=courseRun.zeroSeconds>0?'장벽 복구! '+Math.ceil(45-courseRun.zeroSeconds)+'초':c.title;$('course-countdown').textContent=courseTime(Math.ceil(c.duration-provider.elapsed));$('course-clock-fill').style.width=provider.elapsed/c.duration*100+'%';$('course-hud').classList.toggle('critical',courseRun.zeroSeconds>0);}
+ if(courseRun){const c=courseFor(courseRun.courseId),dur=Math.max(0,Math.min(1,game.wallXP/wallXPAt(2)));$('course-stage').textContent=c.infinite?'∞ 인피니티 · 보상 20%':'STAGE '+String(c.id).padStart(2,'0')+' · 보상 20%';$('course-name').textContent=c.title;$('course-countdown').textContent=c.infinite?'생존 '+courseTime(provider.elapsed):courseTime(Math.ceil(c.duration-provider.elapsed));$('course-clock-fill').style.width=(c.infinite?Math.min(100,provider.elapsed%600/6):provider.elapsed/c.duration*100)+'%';const wf=$('course-wall-fill');if(wf){wf.style.width=(game.wallLevel>1?100:dur*100).toFixed(1)+'%';$('course-wall').classList.toggle('low',game.wallLevel<=1&&dur<.3);$('course-wall-label').textContent=game.wallLevel>1?'성벽 '+game.wallLevel+'단계':'성벽 내구도 '+Math.round(dur*100)+'%';}$('course-hud').classList.toggle('critical',game.wallLevel<=1&&dur<.3);}
 
  $('gold').textContent=cash(game.gold);$('shop-gold').textContent=$('gold').textContent;$('power').textContent='장벽 화력 ×'+game.power.toFixed(2);$('population').textContent=`음봉 ${game.enemies.filter(e=>e.alive).length}`;$('fps').textContent=`${fps} FPS`;
  $('scenario-label').textContent=provider instanceof CampaignDataProvider?'정복 코스 · 가상 장세':provider instanceof LiveMarketDataProvider?(game.marketCode==='KR'?'확정 1분봉 · 양방향 추정':'직전 1분봉 · 양방향 추정'):provider instanceof AlpacaMarketDataProvider?'거래량 SIP · 약 16분 지연':(provider.manual!==null?'성벽 이동 실험':SCENARIOS.find(s=>s[0]===provider.scenario)?.[1])+` · ${provider.speed}×`;
@@ -224,12 +224,12 @@ function beginCourse(id,resume=false){try{
  if(courseRun&&resume&&courseRun.courseId===id){resumeCourse();return;}
  const home=homeGame||game,mode=home.modeKey,view=campaignView_(snapshotGame(home),mode),run=resume?readCourseRun(view,courseStorage):newCourseRun(view,id);if(!run||run.courseId!==id)throw Error('invalid_course');run.mode=run.mode||mode;if(resume){run.state.gold=home.gold+run.earnedGold;for(const it of home.inventory){const r=run.state.inventory.find(v=>v.type===it.type);if(!r)run.state.inventory.push({...it});else if(it.level>r.level){r.level=it.level;r.xp=it.xp||0;}}for(const c of run.state.cannons){const it=run.state.inventory.find(v=>v.type===c.type);if(it)c.level=it.level;}}
  provider.destroy();closePanel();picker.close(true);campaignView.hide();homeGame=home;courseRun=run;courseRun.paused=false;courseRun.ending=false;courseRun.baseXP=home.playerXP;run.state.playerXP=home.playerXP+run.earnedXP;
- game=new Game(run.state,{height:run.height||620,rewardMultiplier:CAMPAIGN_REWARD_RATE,mode:run.mode});provider=new CampaignDataProvider({courseId:id,elapsed:run.elapsed,resume});game.now=()=>provider.wallNow();renderer.game=game;renderer.clayWallCache=null;marketChosen=true;applyTheme('COURSE');courseModeUI(true);$('stock-select').textContent='미션 '+(Math.max(0,MODE_ORDER.indexOf(run.mode||'normal'))+1)+'-'+id;$('stock-select').title=(MODES[run.mode||'normal']?.name||'노말')+' 미션 '+id+' · '+courseFor(id).title;bindProvider();if(resume)restoreCourseCombat(game,run);quality();last=performance.now();acc=0;saveTime=0;save();updateUI();game.notify(`${courseFor(id).minutes}분 완주 · 장벽 XP 0이 45초 지속되면 실패`);
+ game=new Game(run.state,{height:run.height||620,rewardMultiplier:CAMPAIGN_REWARD_RATE,mode:run.mode});provider=new CampaignDataProvider({courseId:id,elapsed:run.elapsed,resume});game.now=()=>provider.wallNow();renderer.game=game;renderer.clayWallCache=null;marketChosen=true;applyTheme('COURSE');courseModeUI(true);$('stock-select').textContent=courseFor(id).infinite?'∞ 인피니티':'미션 '+(Math.max(0,MODE_ORDER.indexOf(run.mode||'normal'))+1)+'-'+id;$('stock-select').title=(MODES[run.mode||'normal']?.name||'노말')+' 미션 '+id+' · '+courseFor(id).title;bindProvider();if(resume)restoreCourseCombat(game,run);quality();last=performance.now();acc=0;saveTime=0;save();updateUI();game.notify(`${courseFor(id).minutes}분 완주 · 성벽이 1단계 아래로 무너지면 패배`);
  }catch{toast('이전 단계를 정복한 뒤 시작할 수 있습니다.');openCampaignMap();}}
 function bankCourse(run,outcome){const base=homeGame||game,mode=run.mode||'normal',original=qaMode?snapshotGame(base):readSave(),settlement=settleCourse(campaignView_(original,mode),run,outcome),finalState=campaignUnview(settlement.state,mode,original);if(courseRun&&game!==base){const owned=new Set(finalState.inventory.map(v=>v.type));finalState.cannons=snapshotGame(game).cannons.filter(c=>owned.has(c.type)).map(c=>({...c,level:finalState.inventory.find(v=>v.type===c.type).level}));}const nextHome=new Game(finalState);if(!qaMode&&!writeSave(nextHome)){campaignView.saveError(()=>bankCourse(run,outcome));return;}
  removeCourseRun(courseStorage);provider.destroy();game=nextHome;homeGame=null;courseRun=null;renderer.game=game;renderer.clayWallCache=null;game.resetMarket();marketChosen=false;provider=makeProvider();courseModeUI(false);$('stock-select').textContent='종목';bindProvider();quality();updateUI();campaignView.result(settlement.result);}
 function finishCourse(outcome){if(!courseRun||courseRun.ending)return;courseRun.ending=true;const run=checkpointCourse(courseRun,game,provider);storeCourseRun(run,courseStorage);bankCourse(run,outcome);}
-function updateCourse(dt){if(!courseRun||courseRun.ending)return;courseRun.elapsed=provider.elapsed;courseRun.zeroSeconds=game.wallXP<=0?courseRun.zeroSeconds+dt:0;if(courseRun.zeroSeconds>=45)finishCourse('failed');else if(provider.elapsed>=courseFor(courseRun.courseId).duration)finishCourse('clear');}
+function updateCourse(dt){if(!courseRun||courseRun.ending)return;courseRun.elapsed=provider.elapsed;courseRun.zeroSeconds=game.wallXP<=0?courseRun.zeroSeconds+dt:0;if(courseRun.zeroSeconds>=.6){if(courseFor(courseRun.courseId).infinite){try{const b=JSON.parse(localStorage.getItem('stock-siege-infinite-best')||'null'),kills=game.metrics.kills||0;if(!b||provider.elapsed>b.sec)localStorage.setItem('stock-siege-infinite-best',JSON.stringify({sec:Math.floor(provider.elapsed),kills}));}catch{}}toast('성벽이 무너졌어요!');finishCourse('failed');}else if(provider.elapsed>=courseFor(courseRun.courseId).duration)finishCourse('clear');}
 campaignView=new CampaignView($('campaign-panel'),{start:beginCourse,back:backToStocks,map:openCampaignMap,resume:resumeCourse,quit:()=>finishCourse('quit'),quitPending:()=>{if(courseRun)finishCourse('quit');else{const pending=readCourseRun(campaignView_(snapshotGame(game),game.modeKey),courseStorage);if(pending)bankCourse(pending,'quit');}}});
 $('course-map-button').onclick=openCampaignMap;
 // Floating back (with in-page confirm) and mission-only pause.

@@ -22,7 +22,11 @@ const rows=[
  ['마지막 종이 울릴 때',30,'최종 전장','폭락·반등·조정이 이어지는 마지막 코스입니다.',[0,8,-13,5,-24,-6,15,-8,9],'mortar']
 ];
 export const COURSES=rows.map(([title,minutes,concept,description,anchors,art],index)=>Object.freeze({id:index+1,title,minutes,duration:minutes*60,concept,description,anchors:Object.freeze(anchors),art,symbol:'SOXL',activity:.3+index*.065,bonusGold:minutes*30,bonusXP:minutes*3}));
-export const courseFor=id=>COURSES.find(c=>c.id===Number(id));
+// v37: the endless battlefield, unlocked after all 20 courses. A long seeded random walk whose volume keeps rising.
+const walk=(()=>{let v=0,seed=7;const out=[0];for(let i=0;i<360;i++){seed=(seed*16807)%2147483647;const r=seed/2147483647-.5;v=Math.max(-24,Math.min(24,v*.92+r*9));out.push(Math.round(v*10)/10);}return Object.freeze(out);})();
+export const INFINITE=Object.freeze({id:21,infinite:true,title:'인피니티 전장',minutes:360,duration:360*60,concept:'끝없는 전장',description:'시간이 갈수록 거세지는 끝없는 장세. 성벽이 무너질 때까지 버티세요.',anchors:walk,art:'enemy-giant',symbol:'SOXL',activity:.9,bonusGold:0,bonusXP:0});
+export const infiniteActivity=minute=>Math.min(4.5,.9+minute*.035);
+export const courseFor=id=>Number(id)===21?INFINITE:COURSES.find(c=>c.id===Number(id));
 export function campaignProgress(raw){const cleared=Math.max(0,Math.min(20,Math.floor(Number(raw?.cleared)||0))),settled=Array.isArray(raw?.settled)?raw.settled.filter(v=>typeof v==='string'&&/^[a-zA-Z0-9_-]{8,100}$/.test(v)).slice(-64):[];return{cleared,settled};}
 export const courseUnlocked=(progress,id)=>!!courseFor(id)&&Number(id)<=campaignProgress(progress).cleared+1;
 export function courseChange(course,seconds){const t=Math.max(0,Math.min(1,seconds/course.duration)),p=t*(course.anchors.length-1),i=Math.min(course.anchors.length-2,Math.floor(p)),u=p-i,s=u*u*(3-2*u),base=course.anchors[i]+(course.anchors[i+1]-course.anchors[i])*s;return Math.max(-28,Math.min(28,base+Math.sin(seconds*.13+course.id)*Math.sin(Math.PI*t)*.09));}

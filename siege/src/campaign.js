@@ -1,15 +1,15 @@
-import{MarketDataProvider}from'./market.js?v=f1363d7233';
-import{courseFor,courseChange,courseUnlocked,campaignProgress,CAMPAIGN_REWARD_RATE}from'./campaign-courses.js?v=f1363d7233';
-import{estimateCandleFlow}from'./candle-flow.js?v=f1363d7233';
-import{snapshotGame,readSave,safeStorage}from'./storage.js?v=f1363d7233';
-import{SETTINGS,ENEMIES,SUPPLIES,validPlacement}from'./config.js?v=f1363d7233';
-import{playerLevelFor,towerSlots}from'./progression.js?v=f1363d7233';
+import{MarketDataProvider}from'./market.js?v=e2d618256e';
+import{courseFor,courseChange,courseUnlocked,campaignProgress,CAMPAIGN_REWARD_RATE}from'./campaign-courses.js?v=e2d618256e';import{infiniteActivity}from'./campaign-courses.js?v=e2d618256e';
+import{estimateCandleFlow}from'./candle-flow.js?v=e2d618256e';
+import{snapshotGame,readSave,safeStorage}from'./storage.js?v=e2d618256e';
+import{SETTINGS,ENEMIES,SUPPLIES,validPlacement}from'./config.js?v=e2d618256e';
+import{playerLevelFor,towerSlots}from'./progression.js?v=e2d618256e';
 export const CAMPAIGN_SAVE_KEY=SETTINGS.saveKey+':course-v1';
 const EPOCH=Date.UTC(2026,0,5,14,30),BASE_VOLUME=40000;
 export class CampaignDataProvider extends MarketDataProvider{
  constructor({courseId,elapsed=0,resume=false}={}){super();this.course=courseFor(courseId);if(!this.course)throw Error('invalid_course');this.elapsed=Math.max(0,Math.min(this.course.duration,elapsed));this.emittedMinute=resume?Math.floor(this.elapsed/60):-1;this.emittedSecond=-1;this.destroyed=false;this.last=this.snapshot(false);}
  wallNow(){return EPOCH+this.elapsed*1000;}
- bar(minute){const start=minute*60,open=100+courseChange(this.course,start),close=100+courseChange(this.course,start+60),samples=Array.from({length:11},(_,i)=>100+courseChange(this.course,start+i*6)),wick=.1+Math.abs(Math.sin(minute*2.7+this.course.id))*.14,volume=Math.round(BASE_VOLUME*this.course.activity*(1+Math.abs(close-open)*.7)*(1.05+Math.sin(minute*1.41+this.course.id)*.2));return{time:EPOCH+start*1000,open,close,high:Math.max(open,close,...samples)+wick,low:Math.min(open,close,...samples)-wick,volume};}
+ bar(minute){const start=minute*60,open=100+courseChange(this.course,start),close=100+courseChange(this.course,start+60),samples=Array.from({length:11},(_,i)=>100+courseChange(this.course,start+i*6)),wick=.1+Math.abs(Math.sin(minute*2.7+this.course.id))*.14,volume=Math.round(BASE_VOLUME*(this.course.infinite?infiniteActivity(minute):this.course.activity)*(1+Math.abs(close-open)*.7)*(1.05+Math.sin(minute*1.41+this.course.id)*.2));return{time:EPOCH+start*1000,open,close,high:Math.max(open,close,...samples)+wick,low:Math.min(open,close,...samples)-wick,volume};}
  snapshot(withEvent){const minute=Math.floor(this.elapsed/60),candle=this.bar(minute-1),previous=this.bar(minute-2),flow=estimateCandleFlow(candle,previous),time=this.wallNow(),playbackStart=EPOCH+minute*60000,playbackEnd=playbackStart+60000,candles=Array.from({length:Math.min(minute+1,40)},(_,i)=>this.bar(minute-Math.min(minute+1,40)+i));
   const event=withEvent?{time:candle.time,volume:candle.volume,buyVolume:flow.buyVolume,sellVolume:flow.sellVolume,baselineVolume:BASE_VOLUME,playbackStart,playbackEnd,receivedAt:time,estimated:true}:null;
   return{source:'CAMPAIGN_SIMULATED',status:'course',priceStatus:'course',volumeStatus:'course',symbol:this.course.symbol,market:'US',price:100+courseChange(this.course,this.elapsed),previousClose:100,changePct:courseChange(this.course,this.elapsed),time,priceTime:time,volumeTime:candle.time,receivedAt:time,candle,candles,baselineVolume:BASE_VOLUME,buyVolume:flow.buyVolume,sellVolume:flow.sellVolume,tradeClassification:'estimated-candle-flow',playbackStart,playbackEnd,barEvent:event,barEvents:event?[event]:[],courseId:this.course.id,courseElapsed:this.elapsed,courseDuration:this.course.duration,attribution:'가상 시나리오 · 실제 시세 또는 과거 거래일 재현 아님'};

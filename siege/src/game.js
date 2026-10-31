@@ -1,12 +1,12 @@
-import{campaignProgress}from'./campaign-courses.js?v=f1363d7233';
-import { SETTINGS, CANNONS, ENEMIES, SUPPLIES, WORLD_WIDTH, DRONE, WALL, CAMERA_DEPTH, ACTOR_STYLE, cannonStats, upgradeCost, energyMultiplier, wallYFor, priceBand, validPlacement, snapSlot, FORWARD_X, FORWARD_DY, validDronePlacement, clamp } from './config.js?v=f1363d7233';
-import { wallMountDepth } from './fortification.js?v=f1363d7233';
-import { marketArmy,estimatedArmy } from './market-army.js?v=f1363d7233';
-import {playerLevelFor,towerSlots,wallLevelFor,wallPower,money,WALL_MAX_XP} from './progression.js?v=f1363d7233';
-import{TerrainField}from'./terrain.js?v=f1363d7233';
-import{modeFor}from'./cards.js?v=f1363d7233';
-import{formatDamage}from'./combat-fx.js?v=f1363d7233';
-import{wallXPAt}from'./progression.js?v=f1363d7233';
+import{campaignProgress}from'./campaign-courses.js?v=e2d618256e';
+import { SETTINGS, CANNONS, ENEMIES, SUPPLIES, WORLD_WIDTH, DRONE, WALL, CAMERA_DEPTH, ACTOR_STYLE, cannonStats, upgradeCost, energyMultiplier, wallYFor, priceBand, validPlacement, snapSlot, FORWARD_X, FORWARD_DY, validDronePlacement, clamp } from './config.js?v=e2d618256e';
+import { wallMountDepth } from './fortification.js?v=e2d618256e';
+import { marketArmy,estimatedArmy } from './market-army.js?v=e2d618256e';
+import {playerLevelFor,towerSlots,wallLevelFor,wallPower,money,WALL_MAX_XP} from './progression.js?v=e2d618256e';
+import{TerrainField}from'./terrain.js?v=e2d618256e';
+import{modeFor}from'./cards.js?v=e2d618256e';
+import{formatDamage}from'./combat-fx.js?v=e2d618256e';
+import{wallXPAt}from'./progression.js?v=e2d618256e';
 // Kill gold is scaled down and a steady per-minute battle stipend added, so income stays in a narrow band
 // between a starter and a maxed army (card packs are the only use of gold).
 export const KILL_GOLD=.3,STIPEND_PER_MIN=30;
@@ -20,8 +20,8 @@ export const BOSS=Object.freeze({cooldownMs:3*60*1000,minIntensity:.8,minSellSha
 export const SPECIALS=Object.freeze({ram:Object.freeze({hp:2600,speed:8.5,radius:30,damage:110,interval:2.4,cooldownMs:2*60*1000,minIntensity:.7,chance:.75,goldMul:6}),bomber:Object.freeze({hp:12,speed:92,radius:9,damage:150,cooldownMs:40*1000,minIntensity:.5,chance:.85,goldMul:1.5})});
 const SPECIAL_DEF={ram:{...ENEMIES[3],speed:SPECIALS.ram.speed,damage:SPECIALS.ram.damage,interval:SPECIALS.ram.interval},bomber:{...ENEMIES[4],speed:SPECIALS.bomber.speed,damage:SPECIALS.bomber.damage,interval:9}};
 const BOSS_DEF=Object.freeze({...ENEMIES[3],speed:ENEMIES[3].speed*BOSS.speed,damage:ENEMIES[3].damage*BOSS.damage});
-import{isAIStock}from'./symbols.js?v=f1363d7233';
-import {weaponMuzzle} from './weapon-geometry.js?v=f1363d7233';
+import{isAIStock}from'./symbols.js?v=e2d618256e';
+import {weaponMuzzle} from './weapon-geometry.js?v=e2d618256e';
 export class Game {
   constructor(state, { height = 620, random = Math.random,now=Date.now,rewardMultiplier=1,mode } = {}) {
     this.modeKey=modeFor(mode??state.settings?.mode).key;this.stipendClock=0;this.wallHold=0;
