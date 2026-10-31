@@ -1,8 +1,8 @@
-// Optional account sync (Supabase project 'stock-siege'). Guests play on local storage;
+// Optional account sync — v54: Supabase project jiaqobfriamuxtvxhrls ("yoonjintar0@gmail.com's Project", org of yoonjintar0@gmail.com; login via ChatGPT or GitHub yoonjintar0-commits), table public.siege_saves. Guests play on local storage;
 // signing in with email + password keeps one save per account and syncs it across devices.
-const SUPABASE_URL = 'https://lbfnbthwaapbldynnttm.supabase.co';
+const SUPABASE_URL = 'https://jiaqobfriamuxtvxhrls.supabase.co';
 // Public publishable key (row-level security limits every row to its owner).
-const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxiZm5idGh3YWFwYmxkeW5udHRtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMzNTk5MDQsImV4cCI6MjEwODkzNTkwNH0.jOmdh4pLz1xNYH0uEkWTe9HYhuqMjpK6jZRoGqz2c_Q';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImppYXFvYmZyaWFtdXh0dnhocmxzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg5NDA4NzEsImV4cCI6MjEwNDUxNjg3MX0.qKNNDca85rAxM4vnS4eQ0xQ4IyggJesIMyp_s3zYomI';
 const SDK = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.58.0/dist/umd/supabase.min.js';
 const HINT = 'stock-siege-cloud-hint';
 let client = null, loading = null;
@@ -10,7 +10,7 @@ const hint = v => { try { if (v === undefined) return localStorage.getItem(HINT)
 async function sdk() {
   if (client) return client; if (loading) return loading;
   loading = new Promise((resolve, reject) => { if (window.supabase) return resolve(); const s = document.createElement('script'); s.src = SDK; s.async = true; s.onload = resolve; s.onerror = () => reject(new Error('sdk_unavailable')); document.head.append(s); })
-    .then(() => { client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON, { auth: { persistSession: true, detectSessionInUrl: true, flowType: 'pkce', storageKey: 'stock-siege-auth' } }); return client; })
+    .then(() => { client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON, { auth: { persistSession: true, detectSessionInUrl: true, flowType: 'pkce', storageKey: 'stock-siege-auth-v2' } }); return client; })
     .finally(() => { loading = null; });
   return loading;
 }
