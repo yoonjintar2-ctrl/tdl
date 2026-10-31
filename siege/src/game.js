@@ -1,12 +1,12 @@
-import{campaignProgress}from'./campaign-courses.js?v=d0cefd899d';
-import { SETTINGS, CANNONS, ENEMIES, SUPPLIES, WORLD_WIDTH, DRONE, WALL, CAMERA_DEPTH, ACTOR_STYLE, cannonStats, upgradeCost, energyMultiplier, wallYFor, priceBand, validPlacement, snapSlot, FORWARD_X, FORWARD_DY, validDronePlacement, clamp, hasPerk } from './config.js?v=d0cefd899d';
-import { wallMountDepth } from './fortification.js?v=d0cefd899d';
-import { marketArmy,estimatedArmy } from './market-army.js?v=d0cefd899d';
-import {playerLevelFor,towerSlots,wallLevelFor,wallPower,money,WALL_MAX_XP} from './progression.js?v=d0cefd899d';
-import{TerrainField}from'./terrain.js?v=d0cefd899d';
-import{modeFor}from'./cards.js?v=d0cefd899d';
-import{formatDamage}from'./combat-fx.js?v=d0cefd899d';
-import{wallXPAt}from'./progression.js?v=d0cefd899d';
+import{campaignProgress}from'./campaign-courses.js?v=703d700c91';
+import { SETTINGS, CANNONS, ENEMIES, SUPPLIES, WORLD_WIDTH, DRONE, WALL, CAMERA_DEPTH, ACTOR_STYLE, cannonStats, upgradeCost, energyMultiplier, wallYFor, priceBand, validPlacement, snapSlot, FORWARD_X, FORWARD_DY, validDronePlacement, clamp, hasPerk } from './config.js?v=703d700c91';
+import { wallMountDepth } from './fortification.js?v=703d700c91';
+import { marketArmy,estimatedArmy } from './market-army.js?v=703d700c91';
+import {playerLevelFor,towerSlots,wallLevelFor,wallPower,money,WALL_MAX_XP} from './progression.js?v=703d700c91';
+import{TerrainField}from'./terrain.js?v=703d700c91';
+import{modeFor}from'./cards.js?v=703d700c91';
+import{formatDamage}from'./combat-fx.js?v=703d700c91';
+import{wallXPAt}from'./progression.js?v=703d700c91';
 // Kill gold is scaled down and a steady per-minute battle stipend added, so income stays in a narrow band
 // between a starter and a maxed army (card packs are the only use of gold).
 export const KILL_GOLD=.3,STIPEND_PER_MIN=30;
@@ -20,8 +20,8 @@ export const BOSS=Object.freeze({cooldownMs:3*60*1000,minIntensity:.8,minSellSha
 export const SPECIALS=Object.freeze({ram:Object.freeze({hp:2600,speed:8.5,radius:30,damage:110,interval:2.4,cooldownMs:2*60*1000,minIntensity:.7,chance:.75,goldMul:6}),bomber:Object.freeze({hp:12,speed:92,radius:9,damage:150,cooldownMs:40*1000,minIntensity:.5,chance:.85,goldMul:1.5})});
 const SPECIAL_DEF={ram:{...ENEMIES[3],speed:SPECIALS.ram.speed,damage:SPECIALS.ram.damage,interval:SPECIALS.ram.interval},bomber:{...ENEMIES[4],speed:SPECIALS.bomber.speed,damage:SPECIALS.bomber.damage,interval:9}};
 const BOSS_DEF=Object.freeze({...ENEMIES[3],speed:ENEMIES[3].speed*BOSS.speed,damage:ENEMIES[3].damage*BOSS.damage});
-import{isAIStock}from'./symbols.js?v=d0cefd899d';
-import {weaponMuzzle} from './weapon-geometry.js?v=d0cefd899d';
+import{isAIStock}from'./symbols.js?v=703d700c91';
+import {weaponMuzzle} from './weapon-geometry.js?v=703d700c91';
 export class Game {
   constructor(state, { height = 620, random = Math.random,now=Date.now,rewardMultiplier=1,mode } = {}) {
     this.modeKey=modeFor(mode??state.settings?.mode).key;this.stipendClock=0;this.wallHold=0;
@@ -33,7 +33,7 @@ export class Game {
     this.dmgAcc={};this.time = 0; this.wallY = height / 2; this.band = 0; this.targetBand = 0; this.move = null; this.stage = Math.min(9,this.wallLevel-1);
     this.terrain=new TerrainField(height);this.pricePlaced=false;this.market = null; this.selected = null; this.placement = null; this.dirty = false; this.nextId = 1; this.autoTimer = 0; this.messages = []; this.marketWaves=[];
     this.marketGoldRemainder=0;
-    this.lifetimeKills = Math.max(0, state.lifetimeKills || 0); this.playerName = state.playerName || '';
+    this.lifetimeKills = Math.max(0, state.lifetimeKills || 0); this.playerName = state.playerName || ''; this.grantsApplied = Array.isArray(state.grantsApplied) ? [...state.grantsApplied] : [];
     this.metrics = { killsByType: {}, kills: 0, crushedEnemies: 0, crushedSupplies: 0, healed: 0, goldEarned: 0, shots: {}, wallSteps: 0, expired: 0 };
   }
   wallAt(x, y = this.wallY) { return y + Math.sin(x / WORLD_WIDTH * Math.PI * 2 - .4) * 5 + Math.sin(x / WORLD_WIDTH * Math.PI * 4) * 1.5; }

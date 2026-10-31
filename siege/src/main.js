@@ -1,23 +1,23 @@
-import{CampaignView}from'./campaign-view.js?v=d0cefd899d';
-import{CampaignDataProvider,newCourseRun,readCourseRun,checkpointCourse,storeCourseRun,removeCourseRun,restoreCourseCombat,settleCourse}from'./campaign.js?v=d0cefd899d';
-import{courseFor,courseTime,CAMPAIGN_REWARD_RATE,campaignProgress}from'./campaign-courses.js?v=d0cefd899d';
-import{stockFor}from'./symbols.js?v=d0cefd899d';
-import{StockPicker}from'./stock-picker.js?v=d0cefd899d';
-import{drawSessionChart}from'./session-chart.js?v=d0cefd899d';
-import{WALL_MAX_XP}from'./progression.js?v=d0cefd899d';
-import { CANNONS,SCENARIOS,SETTINGS,ENEMIES,SUPPLIES,WORLD_WIDTH,DRONE,WALL,WALL_STAGES,cannonStats,upgradeCost,validPlacement,clamp } from './config.js?v=d0cefd899d';
-import { DemoMarketDataProvider, LiveMarketDataProvider, AlpacaMarketDataProvider, MARKET_ERRORS } from './market.js?v=d0cefd899d';
-import { Game } from './game.js?v=d0cefd899d';
-import { Renderer,renderShopIcon } from './renderer.js?v=d0cefd899d';
-import { initialState,readSave,writeSave,snapshotGame,safeStorage,readRawSave,writeRawSave } from './storage.js?v=d0cefd899d';
-import{cloudConfigured,currentUser,signUpEmail,signInEmail,signOut,pull,push,EMAIL_RULE,idOf,claimSession,sessionState,SESSION_ID}from'./cloud.js?v=d0cefd899d';
-import{recentSymbols}from'./stock-picker.js?v=d0cefd899d';
-import { loadClayAssets,useBattlefield } from './clay-assets.js?v=d0cefd899d';
-import{THEMES,themeFor}from'./themes.js?v=d0cefd899d';
-import { drawClayPreview } from './clay-runtime.js?v=d0cefd899d';
-import{money,playerXPAt,SLOT_LEVELS,wallXPAt,WALL_MAX_LEVEL,wallPower}from'./progression.js?v=d0cefd899d';
-import{openPack,applyCard,PACKS,MODES,MODE_ORDER,modeFor,RARITIES,TOWER_RARITY}from'./cards.js?v=d0cefd899d';
-import{CardStage,renderCollection,towerCard,statLines,nextLevelLines}from'./card-ui.js?v=d0cefd899d';
+import{CampaignView}from'./campaign-view.js?v=703d700c91';
+import{CampaignDataProvider,newCourseRun,readCourseRun,checkpointCourse,storeCourseRun,removeCourseRun,restoreCourseCombat,settleCourse}from'./campaign.js?v=703d700c91';
+import{courseFor,courseTime,CAMPAIGN_REWARD_RATE,campaignProgress}from'./campaign-courses.js?v=703d700c91';
+import{stockFor}from'./symbols.js?v=703d700c91';
+import{StockPicker}from'./stock-picker.js?v=703d700c91';
+import{drawSessionChart}from'./session-chart.js?v=703d700c91';
+import{WALL_MAX_XP}from'./progression.js?v=703d700c91';
+import { CANNONS,SCENARIOS,SETTINGS,ENEMIES,SUPPLIES,WORLD_WIDTH,DRONE,WALL,WALL_STAGES,cannonStats,upgradeCost,validPlacement,clamp } from './config.js?v=703d700c91';
+import { DemoMarketDataProvider, LiveMarketDataProvider, AlpacaMarketDataProvider, MARKET_ERRORS } from './market.js?v=703d700c91';
+import { Game } from './game.js?v=703d700c91';
+import { Renderer,renderShopIcon } from './renderer.js?v=703d700c91';
+import { initialState,readSave,writeSave,snapshotGame,safeStorage,readRawSave,writeRawSave } from './storage.js?v=703d700c91';
+import{cloudConfigured,currentUser,signUpEmail,signInEmail,signOut,pull,push,EMAIL_RULE,idOf,claimSession,sessionState,SESSION_ID,pullGrant}from'./cloud.js?v=703d700c91';
+import{recentSymbols}from'./stock-picker.js?v=703d700c91';
+import { loadClayAssets,useBattlefield } from './clay-assets.js?v=703d700c91';
+import{THEMES,themeFor}from'./themes.js?v=703d700c91';
+import { drawClayPreview } from './clay-runtime.js?v=703d700c91';
+import{money,playerXPAt,SLOT_LEVELS,wallXPAt,WALL_MAX_LEVEL,wallPower}from'./progression.js?v=703d700c91';
+import{openPack,applyCard,PACKS,MODES,MODE_ORDER,modeFor,RARITIES,TOWER_RARITY}from'./cards.js?v=703d700c91';
+import{CardStage,renderCollection,towerCard,statLines,nextLevelLines}from'./card-ui.js?v=703d700c91';
 const $=id=>document.getElementById(id),fmt=new Intl.NumberFormat('ko-KR'),nyTime=new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',hour12:false,hour:'2-digit',minute:'2-digit',second:'2-digit'});
 async function prepareArt(){const started=performance.now();
  $('asset-retry').hidden=true;$('asset-loading-message').textContent='클레이 전장을 준비하고 있어요.';
@@ -271,7 +271,7 @@ async function startCloud(fromLogin=false){if(qaMode||!cloudConfigured())return;
   if(takeover){handoffUntil=Date.now()+20000;const claimAt=Date.now();setTimeout(async()=>{try{const r=await pull(cloudUser);if(r&&r.data?.by&&r.data.by!==SESSION_ID&&r.updatedAt!==getBase()&&progressScore(r.data)>progressScore(readRawSave())){applyRemote(r,'다른 기기의 마지막 진행 상황까지 이어받았어요');return;}}catch{}handoffUntil=0;pushNow(true);},18000);}
   else if(local)await pushNow(true);
   if(fromLogin){await pushNow(true);try{sessionStorage.setItem('siege-cloud-note','계정 진행 상황 불러오기 완료!');}catch{}location.reload();return;}
-  cloudState='synced';let note='';try{note=sessionStorage.getItem('siege-cloud-note')||'';sessionStorage.removeItem('siege-cloud-note');}catch{}toast(note?'☁ '+note:'☁ '+idOf(cloudUser)+' · 계정 저장 연결됨');watchSession();}
+  cloudState='synced';let note='';try{note=sessionStorage.getItem('siege-cloud-note')||'';sessionStorage.removeItem('siege-cloud-note');}catch{}toast(note?'☁ '+note:'☁ '+idOf(cloudUser)+' · 계정 저장 연결됨');watchSession();setTimeout(applyGrant,1500);}
  catch{cloudState='error';}renderAccount();}
 function renderAccount(){const box=document.getElementById('account-box');if(!box)return;box.replaceChildren();const t=document.createElement('strong');const p=document.createElement('p');const b=document.createElement('button');b.type='button';b.className='primary';
  if(!cloudConfigured()){t.textContent='계정 저장';p.textContent='준비 중입니다.';box.append(t,p);return;}
@@ -329,3 +329,6 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden)holdWake()
 /* v45: main-screen corner — portrait (profile) and settings above the picker */
 {const root=document.getElementById('stock-picker');root?.querySelector('.pc-portrait')?.addEventListener('click',e=>{e.stopPropagation();$('user-portrait').click();});root?.querySelector('.pc-settings')?.addEventListener('click',e=>{e.stopPropagation();$('settings-button').click();});
  setInterval(()=>{const lv=root?.querySelector('.pc-lv'),pp=root?.querySelector('.pc-portrait');if(lv)lv.textContent=String(game.playerLevel);if(pp)pp.className='pc-portrait '+($('user-portrait').dataset.tierClass||'pf-t0');},1000);}
+
+async function applyGrant(){if(!cloudUser||cloudKicked)return;try{const g=await pullGrant(cloudUser);if(!g||game.grantsApplied.includes(g.id))return;game.gold+=g.gold;game.grantsApplied.push(g.id);save();pushNow(true);toast('🎁 운영자 지급: '+game.cash(g.gold)+' 이 계정에 들어왔어요!');}catch{}}
+setInterval(applyGrant,30000);
