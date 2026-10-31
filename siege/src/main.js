@@ -1,26 +1,26 @@
-import{CampaignView}from'./campaign-view.js?v=9594514f5f';
-import{CampaignDataProvider,newCourseRun,readCourseRun,checkpointCourse,storeCourseRun,removeCourseRun,restoreCourseCombat,settleCourse}from'./campaign.js?v=9594514f5f';
-import{courseFor,courseTime,CAMPAIGN_REWARD_RATE,campaignProgress}from'./campaign-courses.js?v=9594514f5f';
-import{stockFor}from'./symbols.js?v=9594514f5f';
-import{StockPicker}from'./stock-picker.js?v=9594514f5f';
-import{drawSessionChart}from'./session-chart.js?v=9594514f5f';
-import{WALL_MAX_XP}from'./progression.js?v=9594514f5f';
-import { CANNONS,SCENARIOS,SETTINGS,ENEMIES,SUPPLIES,WORLD_WIDTH,DRONE,WALL,WALL_STAGES,cannonStats,upgradeCost,validPlacement,validDronePlacement,clamp } from './config.js?v=9594514f5f';
-import { DemoMarketDataProvider, LiveMarketDataProvider, AlpacaMarketDataProvider, MARKET_ERRORS } from './market.js?v=9594514f5f';
-import { Game } from './game.js?v=9594514f5f';
-import { DIGITS, DIGIT_H, DIGIT_W } from './digit-sprites.js?v=9594514f5f';
+import{CampaignView}from'./campaign-view.js?v=dcdc5554e3';
+import{CampaignDataProvider,newCourseRun,readCourseRun,checkpointCourse,storeCourseRun,removeCourseRun,restoreCourseCombat,settleCourse}from'./campaign.js?v=dcdc5554e3';
+import{courseFor,courseTime,CAMPAIGN_REWARD_RATE,campaignProgress}from'./campaign-courses.js?v=dcdc5554e3';
+import{stockFor}from'./symbols.js?v=dcdc5554e3';
+import{StockPicker}from'./stock-picker.js?v=dcdc5554e3';
+import{drawSessionChart}from'./session-chart.js?v=dcdc5554e3';
+import{WALL_MAX_XP}from'./progression.js?v=dcdc5554e3';
+import { CANNONS,SCENARIOS,SETTINGS,ENEMIES,SUPPLIES,WORLD_WIDTH,DRONE,WALL,WALL_STAGES,cannonStats,upgradeCost,validPlacement,validDronePlacement,clamp } from './config.js?v=dcdc5554e3';
+import { DemoMarketDataProvider, LiveMarketDataProvider, AlpacaMarketDataProvider, MARKET_ERRORS } from './market.js?v=dcdc5554e3';
+import { Game } from './game.js?v=dcdc5554e3';
+import { DIGITS, DIGIT_H, DIGIT_W } from './digit-sprites.js?v=dcdc5554e3';
 var goldShown='',goldNum=0;
-import { Renderer,renderShopIcon } from './renderer.js?v=9594514f5f';
-import { initialState,readSave,writeSave,snapshotGame,safeStorage,readRawSave,writeRawSave } from './storage.js?v=9594514f5f';
-import{cloudConfigured,currentUser,signUpEmail,signInEmail,signOut,pull,push,EMAIL_RULE,idOf,claimSession,sessionState,SESSION_ID,pullGrant}from'./cloud.js?v=9594514f5f';
-import{recentSymbols}from'./stock-picker.js?v=9594514f5f';
-import { loadClayAssets,useBattlefield } from './clay-assets.js?v=9594514f5f';
-import{THEMES,themeFor}from'./themes.js?v=9594514f5f';
-import { drawClayPreview } from './clay-runtime.js?v=9594514f5f';
-import{money,playerXPAt,SLOT_LEVELS,wallXPAt,WALL_MAX_LEVEL,wallPower}from'./progression.js?v=9594514f5f';
-import{openPack,applyCard,PACKS,MODES,MODE_ORDER,modeFor,RARITIES,TOWER_RARITY}from'./cards.js?v=9594514f5f';
-import{CardStage,renderCollection,towerCard,statLines,nextLevelLines,openCodex}from'./card-ui.js?v=9594514f5f';
-import{xpForNext,MAX_CARD_LEVEL}from'./cards.js?v=9594514f5f';
+import { Renderer,renderShopIcon } from './renderer.js?v=dcdc5554e3';
+import { initialState,readSave,writeSave,snapshotGame,safeStorage,readRawSave,writeRawSave } from './storage.js?v=dcdc5554e3';
+import{cloudConfigured,currentUser,signUpEmail,signInEmail,signOut,pull,push,EMAIL_RULE,idOf,claimSession,sessionState,SESSION_ID,pullGrant}from'./cloud.js?v=dcdc5554e3';
+import{recentSymbols}from'./stock-picker.js?v=dcdc5554e3';
+import { loadClayAssets,useBattlefield } from './clay-assets.js?v=dcdc5554e3';
+import{THEMES,themeFor}from'./themes.js?v=dcdc5554e3';
+import { drawClayPreview } from './clay-runtime.js?v=dcdc5554e3';
+import{money,playerXPAt,SLOT_LEVELS,wallXPAt,WALL_MAX_LEVEL,wallPower}from'./progression.js?v=dcdc5554e3';
+import{openPack,applyCard,PACKS,MODES,MODE_ORDER,modeFor,RARITIES,TOWER_RARITY}from'./cards.js?v=dcdc5554e3';
+import{CardStage,renderCollection,towerCard,statLines,nextLevelLines,openCodex}from'./card-ui.js?v=dcdc5554e3';
+import{xpForNext,MAX_CARD_LEVEL}from'./cards.js?v=dcdc5554e3';
 const $=id=>document.getElementById(id),fmt=new Intl.NumberFormat('ko-KR'),nyTime=new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',hour12:false,hour:'2-digit',minute:'2-digit',second:'2-digit'});
 async function prepareArt(){const started=performance.now();
  $('asset-retry').hidden=true;$('asset-loading-message').textContent='클레이 전장을 준비하고 있어요.';
@@ -353,9 +353,9 @@ function startMission(id){const home=homeGame||game,view=campaignView_(snapshotG
 setInterval(()=>{if(cloudUser&&!cloudKicked&&!qaMode&&!document.hidden&&isDirty())pushNow(true);},15000);
 
 /* v53: ultimate cut-in — comic panel over the whole screen, hero shouts, then the launch */
-let cutinActive=false;const CUTIN_LINES={musk:['화성으로 가즈아!!','풀매수 로켓 발사!','떡상 엔진 점화!!']};
+let cutinActive=false;const CUTIN_LINES={musk:['화성으로 가즈아!!','풀매수 로켓 발사!','떡상 엔진 점화!!'],laser:['궤도 레이저, 조준 완료!','차트를 갈라버려라!','전 구간 소각 개시!'],blackhole:['모든 매도세를 삼켜라!','특이점 전개!!','중력이 너를 부른다!'],totem:['양봉의 축복을!!','모두 힘을 내라!','상승의 기운이여!'],drone:['드론 편대, 폭격 개시!','공중 지원 도착!','좌표 확인, 투하!']};const ULT_NAMES={musk:'떡상 로켓',laser:'궤도 레이저',blackhole:'특이점 붕괴',totem:'양봉의 대축복',drone:'편대 융단폭격'};
 Game.prototype.onCutin=function(type,c,fire){if(cutinActive||this!==game||document.hidden){fire();return;}cutinActive=true;const w=document.createElement('div');w.className='cutin';const lines=CUTIN_LINES[type]||['필살기!'];
- w.innerHTML=`<div class="cutin-band"><i class="cutin-lines"></i><img class="cutin-hero" src="assets/clay/cutin-${type}-v1.webp" alt=""><div class="cutin-bubble">${lines[Math.floor(Math.random()*lines.length)]}</div><b class="cutin-name">${CANNONS[type].name} · 필살기</b></div>`;document.body.append(w);
+ w.innerHTML=`<div class="cutin-band"><i class="cutin-lines"></i><img class="cutin-hero" src="assets/clay/cutin-${type}-v1.webp" onerror="this.onerror=null;this.src='assets/clay/${type}-clay-v1.webp'" alt=""><div class="cutin-bubble">${lines[Math.floor(Math.random()*lines.length)]}</div><b class="cutin-name">${CANNONS[type].name} · ${ULT_NAMES[type]||'필살기'}</b></div>`;document.body.append(w);
  setTimeout(()=>w.classList.add('out'),1250);setTimeout(()=>{w.remove();cutinActive=false;last=performance.now();fire();},1550);};
 
 // v56: GPT gold digit sprites for the money readout (keeps the text for screen readers), bounces on increase

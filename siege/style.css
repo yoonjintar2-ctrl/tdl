@@ -1012,3 +1012,6 @@ button.primary:disabled,.course-primary:disabled,button.secondary:disabled{filte
 .codex-box{border-image-source:url(assets/clay/ui-panel-v1.webp)!important;border-image-slice:86 fill!important;border-image-width:30px!important;border-image-repeat:stretch round!important;background:transparent!important;border-radius:0!important;padding:34px 34px 26px!important}
 .codex-close{top:30px!important;right:30px!important;width:32px!important;height:32px!important;border:0!important;background:url(assets/clay/ui-close-v1.webp) center/100% 100% no-repeat!important;color:transparent!important;font-size:0!important;box-shadow:none!important}
 .compact-hud button#stock-select{outline:none!important}
+/* v63: cut-in bubble always fits inside the band */
+.cutin-bubble{right:7%!important;top:10%!important;max-width:38%!important;padding:10px 14px!important;font-size:clamp(15px,4.4vw,28px)!important;white-space:normal!important;word-break:keep-all;line-height:1.15!important}
+.cutin-name{right:7%!important;bottom:9%!important;font-size:clamp(12px,3.2vw,18px)!important}

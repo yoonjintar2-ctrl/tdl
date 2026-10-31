@@ -1,11 +1,11 @@
-import { WORLD_WIDTH as W,CANNONS,ENEMIES,SUPPLIES,WALL_STAGES,DRONE,WALL,cannonStats,validPlacement,validDronePlacement,snapSlot,ALL_SLOTS,FORWARD_X,FORWARD_DY,clamp } from './config.js?v=9594514f5f';
-import{WALL_MAX_LEVEL,WALL_MAX_XP}from'./progression.js?v=9594514f5f';
-import{isAIStock}from'./symbols.js?v=9594514f5f';
-import { QuarterCamera, DEPTH_SCALE, WALL_ELEVATION } from './camera.js?v=9594514f5f';
-import { drawClayMortar, drawClayMortarIcon, clayBattlefield } from './clay-assets.js?v=9594514f5f';
-import{drawProjectile,drawEffect}from'./combat-fx.js?v=9594514f5f';
-import{artCrop}from'./terrain.js?v=9594514f5f';
-import { drawClayTower, drawClayUnit, drawClayWall, drawClayPreview, drawForwardPad, hasKeep, drawClaySprite, clayReady, metaOf, drawClayTowerIcon, wallOutline, tierOf, tierTint, drawTierBack, drawTierFront } from './clay-runtime.js?v=9594514f5f';
+import { WORLD_WIDTH as W,CANNONS,ENEMIES,SUPPLIES,WALL_STAGES,DRONE,WALL,cannonStats,validPlacement,validDronePlacement,snapSlot,ALL_SLOTS,FORWARD_X,FORWARD_DY,clamp } from './config.js?v=dcdc5554e3';
+import{WALL_MAX_LEVEL,WALL_MAX_XP}from'./progression.js?v=dcdc5554e3';
+import{isAIStock}from'./symbols.js?v=dcdc5554e3';
+import { QuarterCamera, DEPTH_SCALE, WALL_ELEVATION } from './camera.js?v=dcdc5554e3';
+import { drawClayMortar, drawClayMortarIcon, clayBattlefield } from './clay-assets.js?v=dcdc5554e3';
+import{drawProjectile,drawEffect}from'./combat-fx.js?v=dcdc5554e3';
+import{artCrop}from'./terrain.js?v=dcdc5554e3';
+import { drawClayTower, drawClayUnit, drawClayWall, drawClayPreview, drawForwardPad, hasKeep, drawClaySprite, clayReady, metaOf, drawClayTowerIcon, wallOutline, tierOf, tierTint, drawTierBack, drawTierFront } from './clay-runtime.js?v=dcdc5554e3';
 const BAND=270;
 const TAU=Math.PI*2;
 function box(c,x,y,w,h,r,fill,stroke){c.beginPath();c.roundRect(x,y,w,h,r);if(fill){c.fillStyle=fill;c.fill();}if(stroke){c.lineWidth=1;c.strokeStyle=stroke;c.stroke();}}
@@ -225,10 +225,26 @@ export class Renderer{
   c.beginPath();ring(r,false);c.setLineDash([8,6]);c.lineDashOffset=-t*18;c.strokeStyle=color+'e6';c.lineWidth=2.2;c.stroke();
   if(minR>0){c.beginPath();ring(minR,false);c.fillStyle='#ff5a4a26';c.fill();c.setLineDash([5,5]);c.strokeStyle='#ff7a6ad0';c.lineWidth=1.8;c.stroke();const p=this.point(x,y-minR*.55,altitude);c.setLineDash([]);c.font='400 11px Jua,sans-serif';c.textAlign='center';c.lineWidth=3;c.strokeStyle='#2b1a0b';c.strokeText('사각지대',p.x,p.y);c.fillStyle='#ffb0a4';c.fillText('사각지대',p.x,p.y);}
   c.restore();}
+ /* v63: ultimate effects (GPT sprites 'ult-fx' when ready, procedural glow otherwise) */
+ ultFx(c){const g=this.game,t=g.time;for(const u of g.ults||[]){const k=u.t/u.dur;c.save();
+  if(u.kind==='laser'){const x=-30+k*492,a=this.point(x,u.y0,0),b=this.point(x,u.y1,0),fade=Math.min(1,u.t*5,(u.dur-u.t)*4),w=46+Math.sin(t*40)*6;c.globalCompositeOperation='lighter';
+   if(clayReady('ult-fx')){c.save();c.globalAlpha=fade;const L=b.y-a.y+80;c.translate(b.x,b.y);drawClaySprite(c,'ult-fx',0,0,L*1.05,0);c.restore();}
+   for(const [m,col,al] of [[2.2,'#58efd9',.18],[1.3,'#58efd9',.4],[.6,'#e8fffb',.9]]){c.globalAlpha=fade*al;c.fillStyle=col;c.fillRect(b.x-w*m/2,a.y-40,w*m,b.y-a.y+40);}
+   c.globalAlpha=fade*.8;const gr=c.createRadialGradient(b.x,b.y,0,b.x,b.y,90);gr.addColorStop(0,'#ffffff');gr.addColorStop(.4,'#58efd9');gr.addColorStop(1,'#0000');c.fillStyle=gr;c.beginPath();c.ellipse(b.x,b.y,90,34,0,0,TAU);c.fill();}
+  else if(u.kind==='blackhole'){const p=this.point(u.x,u.y,0),grow=Math.min(1,u.t/.5),collapse=u.t>u.dur-.35?1-(u.t-(u.dur-.35))/.35:1,R=(70+Math.sin(t*6)*6)*grow*collapse;
+   c.globalAlpha=.35*grow;const ring=c.createRadialGradient(p.x,p.y,R*.6,p.x,p.y,R*3.4);ring.addColorStop(0,'#7a3cff99');ring.addColorStop(1,'#0000');c.fillStyle=ring;c.beginPath();c.arc(p.x,p.y,R*3.4,0,TAU);c.fill();c.globalAlpha=1;
+   if(clayReady('ult-fx')){c.save();c.translate(p.x,p.y);c.rotate(t*2.4);{const f=metaOf('ult-fx').frames[1],sz=R*3.4,k=sz/f.cellW;drawClaySprite(c,'ult-fx',-(f.x+f.w/2-f.anchorX)*k,-(f.y+f.h/2-f.anchorY)*k,sz,1);}c.restore();}
+   else{for(let i=0;i<5;i++){c.strokeStyle=['#c49bff','#8a4ad8','#ffffff','#b28cff','#5a2aa0'][i];c.lineWidth=4-i*.5;c.beginPath();for(let j=0;j<60;j++){const a=j/60*TAU*1.6+t*3+i,rr=R*(.3+j/60*1.4);const q={x:p.x+Math.cos(a)*rr,y:p.y+Math.sin(a)*rr*.5};j?c.lineTo(q.x,q.y):c.moveTo(q.x,q.y);}c.stroke();}}
+   c.fillStyle='#0a0418';c.beginPath();c.ellipse(p.x,p.y,R*.45,R*.25,0,0,TAU);c.fill();}
+  else if(u.kind==='totem'){const fade=Math.min(1,u.t*3,(u.dur-u.t)*2);c.globalCompositeOperation='lighter';for(const tw of g.cannons){if(tw.type==='drone')continue;const a=this.cannonAnchor(tw);c.globalAlpha=fade*(.55+Math.sin(t*6+tw.x)*.15);
+    if(clayReady('ult-fx')){c.save();c.translate(a.x,a.y+10);drawClaySprite(c,'ult-fx',0,0,150,2);c.restore();}else{const gr=c.createLinearGradient(0,a.y-140,0,a.y+10);gr.addColorStop(0,'#fff6c000');gr.addColorStop(.6,'#ffe27a88');gr.addColorStop(1,'#fff6c0');c.fillStyle=gr;c.fillRect(a.x-18,a.y-140,36,150);}}
+   c.globalAlpha=fade*.18;c.fillStyle='#ffe27a';c.fillRect(0,0,W,this.viewHeight);}
+  else if(u.kind==='drone'){const fly=Math.min(1,u.t/u.dur*1.15);for(let i=0;i<5;i++){const yy=60+i*26,xx=-60+fly*(W+120)+(i%2)*30;c.globalAlpha=1;if(clayReady('ult-fx')){c.save();c.translate(xx,yy);drawClaySprite(c,'ult-fx',0,20,58,3);c.restore();}else{c.fillStyle='#2a3440';c.beginPath();c.ellipse(xx,yy,16,6,0,0,TAU);c.fill();}}}
+  c.restore();}}
  range(c,x,y,r,color='#a3f2ea',altitude=0){
   c.save();c.beginPath();for(let i=0;i<=80;i++){const a=i/80*TAU,p=this.point(x+Math.cos(a)*r,y+Math.sin(a)*r,altitude);i?c.lineTo(p.x,p.y):c.moveTo(p.x,p.y);}c.closePath();c.fillStyle=color+'12';c.fill();c.setLineDash([5,4]);c.strokeStyle=color+'b0';c.lineWidth=1.2;c.stroke();c.restore();
  }
- effects(c,front){for(const f of this.game.effects){const isFront=['summon','summon-gate','text','wall-xp','wall-gold','player-level','impact','bullet-hit','beam','muzzle','supply-deliver','dmg'].includes(f.type);if(isFront!==front)continue;const p=1-f.life/f.maxLife,pos=this.point(f.x,f.y,f.sourceAltitude||0);c.save();c.globalAlpha=Math.min(1,f.life/f.maxLife*1.8);
+ effects(c,front){for(const f of this.game.effects){const isFront=['ult-hit','summon','summon-gate','text','wall-xp','wall-gold','player-level','impact','bullet-hit','beam','muzzle','supply-deliver','dmg'].includes(f.type);if(isFront!==front)continue;const p=1-f.life/f.maxLife,pos=this.point(f.x,f.y,f.sourceAltitude||0);c.save();c.globalAlpha=Math.min(1,f.life/f.maxLife*1.8);
   /* v40: GPT muzzle flashes & impact bursts */if(clayReady('fx-flash')){const MZ={machine:0,drone:0,sniper:1,laser:2,sonic:2,blackhole:2,sticky:3,poison:4,mortar:1,siege:1},HT={machine:5,drone:5,summoner:5,sniper:5,mortar:6,siege:6,laser:7,sticky:8,poison:9};
    if(f.type==='muzzle'&&MZ[f.weapon]!=null){const k=1-p;c.globalAlpha=Math.min(1,k*1.6);c.translate(pos.x,pos.y);c.scale(.7+p*.5,.7+p*.5);drawClaySprite(c,'fx-flash',0,2,f.weapon==='machine'?22:f.weapon==='sniper'?30:28,MZ[f.weapon]);c.restore();continue;}
    if(f.type==='impact'&&clayReady('fx-wallhit')){const tr=f.tier||0,n=metaOf('fx-wallhit')?.cols||4,fr=tr*n+Math.min(n-1,Math.floor(p*n));c.globalAlpha=1;c.translate(pos.x,pos.y);drawClaySprite(c,'fx-wallhit',0,0,[26,36,52,84][tr],fr);c.restore();continue;}
@@ -244,6 +260,7 @@ export class Renderer{
   if(f.type==='bullet-hit'){const rr=(f.heavy?8:4)*p;for(let i=0;i<4;i++){const a=i*TAU/4;line(c,[[pos.x+Math.cos(a)*2,pos.y+Math.sin(a)*2],[pos.x+Math.cos(a)*rr,pos.y+Math.sin(a)*rr]],f.color,1.1);}dot(c,pos.x,pos.y,1.5,'#fff2c4');}
   if(f.type==='player-level'){const yy=60-p*12;box(c,121,yy,190,f.unlocked?56:44,12,'#304c37f2','#e6cf8b');text(c,'PLAYER LEVEL UP',216,yy+13,9,'#e8d69b');text(c,`Lv.${f.amount}`,216,yy+30,16,'#f6efcd');if(f.unlocked)text(c,'설치 슬롯 +1 · 최대 '+f.slots+'기',216,yy+46,8,'#e3e9b7');}
   if(f.type==='text'){c.shadowColor='#183622';c.shadowBlur=3;text(c,f.amount,pos.x,pos.y-p*28,14,f.color);}
+  if(f.type==='ult-hit'){const row={laser:0,blackhole:1,totem:2,drone:3}[f.ult]??0;if(clayReady('ult-hits')){const n=4,fr=row*n+Math.min(n-1,Math.floor(p*n));c.globalAlpha=1;c.translate(pos.x,pos.y);drawClaySprite(c,'ult-hits',0,10,f.ult==='drone'?70:46,fr);}else{c.globalCompositeOperation='lighter';c.fillStyle=f.color;c.globalAlpha=1-p;c.beginPath();c.arc(pos.x,pos.y,8+p*22,0,TAU);c.fill();}c.restore();continue;}
   if(f.type==='beam'&&f.laser){/* v60: thick, slower laser — charge → sweep out → pulsing core with travelling rings → fade */const end=this.point(f.tx,f.ty,f.targetAltitude||0),t=this.game.time,grow=Math.min(1,p/.14),ex=pos.x+(end.x-pos.x)*grow,ey=pos.y+(end.y-pos.y)*grow,fade=p<.7?1:1-(p-.7)/.3,w=f.width*(p<.28?.55+grow*.45:1)*(1+Math.sin(t*46)*.12);c.globalAlpha=fade;c.globalCompositeOperation='lighter';c.lineCap='round';
    for(const [mul,col,a] of [[3.4,f.color,.18],[2.2,f.color,.35],[1.3,f.color,.75],[.55,'#f4fff8',1]]){c.globalAlpha=fade*a;c.strokeStyle=col;c.lineWidth=w*mul;c.beginPath();c.moveTo(pos.x,pos.y);c.lineTo(ex,ey);c.stroke();}
    const L=Math.hypot(ex-pos.x,ey-pos.y)||1,ux=(ex-pos.x)/L,uy=(ey-pos.y)/L;for(let i=0;i<7;i++){const ph=((t*1.4+i/7)%1);if(ph*L>L)continue;const bx=pos.x+ux*ph*L,by=pos.y+uy*ph*L;c.globalAlpha=fade*.7*(1-ph*.5);c.fillStyle='#e8fff6';c.beginPath();c.ellipse(bx,by,w*.9,w*.45,Math.atan2(uy,ux),0,TAU);c.fill();}
@@ -294,7 +311,7 @@ export class Renderer{
   for(const s of g.supplies.filter(s=>s.alive).sort((a,b)=>this.point(a.x,a.y+Math.min(a.radius,14)).y-this.point(b.x,b.y+Math.min(b.radius,14)).y))this.supply(c,s);
   for(const p of g.projectiles)this.projectile(c,p);
   for(const u of g.cannons.filter(u=>u.type==='drone')){const p=this.cannonAnchor(u);c.save();if(this.ghost?.cannon===u)c.globalAlpha=.2;drawDrone(c,{...u,angle:this.screenAngle(u)},p.x,p.y,t,g.power,u===g.selected);c.restore();}
-  this.effects(c,true);this.wallLevelBanner(c);
+  this.effects(c,true);this.ultFx(c);this.wallLevelBanner(c);
   if(g.placement||this.ghost){
    const exclude=this.ghost?.cannon||null,type=g.placement||exclude.type,air=type==='drone',rawX=this.ghost?.x??216,y0=this.ghost?.y??g.height*.35,snapped=air?rawX:(snapSlot(rawX,g.cannons.filter(u=>!(this.ghost?.swapTarget&&u===this.ghost.swapTarget)),exclude,g.wallAt(rawX)-y0)??rawX),x=snapped,y=air?y0:(Math.abs(snapped-FORWARD_X)<.5?g.wallAt(snapped)+WALL.deck+WALL.mountOffset-FORWARD_DY:y0);
    const valid=this.ghost?.inBounds!==false&&(this.ghost?.swapTarget?!!g.swapPlan(exclude,this.ghost.swapTarget):(air?validDronePlacement(x,y,g.height):validPlacement(x,g.cannons,exclude))),col=valid?'#b5ff7b':'#ff6d70';

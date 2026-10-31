@@ -1,4 +1,4 @@
-import {CANNONS,ENEMIES,SUPPLIES,WALL,WORLD_WIDTH,ACTOR_STYLE,WALL_SLOTS,COMMAND_X,towerTier} from './config.js?v=9594514f5f';
+import {CANNONS,ENEMIES,SUPPLIES,WALL,WORLD_WIDTH,ACTOR_STYLE,WALL_SLOTS,COMMAND_X,towerTier} from './config.js?v=dcdc5554e3';
 export const ENEMY_ART=['enemy-small','enemy-tall','enemy-fat','enemy-giant'];
 // Kind 4 (초미니 음봉) reuses the small candle art at a much smaller size.
 const ENEMY_KIND_ART=[...ENEMY_ART,'enemy-small'];
@@ -12,7 +12,7 @@ const pictures=new Map(),unitSprites=new Map();let metadata={},pending=null;
 const NAMES={'sonic':'소닉 타워','blackhole':'블랙홀','command':'성벽 지휘본부','siege':'공성 전차','summoner':'소환사','musk':'삼론 머스크','machine':'기관총','mortar':'박격포','sniper':'저격포','laser':'레이저','totem':'토템','sticky':'끈적이포','poison':'독 캐논','drone':'드론','enemy-small':'작은 음봉','enemy-tall':'키 큰 음봉','enemy-fat':'돼지 음봉','enemy-giant':'거인 음봉','supply-dram':'DRAM','supply-processor':'프로세서','supply-wafer':'실리콘 웨이퍼','supply-optical':'광통신 모듈','supply-connector':'광섬유 커넥터','supply-substrate':'반도체 기판','wall-soil':'흙 성벽','wall-wood':'나무 성벽','wall-reinforced-wood':'강화 나무 성벽','wall-mixed':'나무·돌 성벽','wall-stone':'돌 성벽','wall-reinforced-stone':'강화 돌 성벽','wall-iron':'철·돌 성벽','wall-gold':'황금 성벽'};
 export const KEEP_ART=Array.from({length:10},(_,i)=>i<2?'castle-keep-low-'+i:'castle-keep-'+(i-2));
 export const hasKeep=g=>clayReady(KEEP_ART[g.stage]);
-export const UNIT_ART=['ram','cart','cart-small','cart-big','bomber','knight','archer','archer-arrow','ram-walk','fx-wallhit','walk-small','walk-tall','walk-fat','walk-giant','attack-all','portrait-frames','fx-shots','fx-flash','musk-shots'];
+export const UNIT_ART=['ram','cart','cart-small','cart-big','bomber','knight','archer','archer-arrow','ram-walk','fx-wallhit','walk-small','walk-tall','walk-fat','walk-giant','attack-all','portrait-frames','ult-fx','ult-hits','fx-shots','fx-flash','musk-shots'];
 export function drawClaySprite(c,key,x,y,size,frame=0){if(!clayReady(key))return false;return sprite(c,key,frame,x,y,size);}
 export const CLAY_CATALOG=[...TOWER_ART.map(key=>({key,name:NAMES[key],group:'tower'})),...ENEMY_ART.map(key=>({key,name:NAMES[key],group:'enemy'})),...SUPPLY_ART.map(key=>({key,name:NAMES[key],group:'supply'})),...WALL_ART.map((key,i)=>({key,name:['흙 토성','나무 목책','사암 성벽','이끼 낀 성벽','풍화석 성벽','목석 성벽','석회암 성벽','강화 화강암 성벽','철띠 성벽','황금 성벽'][i],group:'wall'})),...BASTION_ART.map((key,i)=>({key,name:'원형 보루 '+(i+1),group:'wall'})),{key:'bull-candle',name:'녹색 양봉',group:'supply'},...KEEP_ART.map((key,i)=>({key,name:'지휘본부 '+(i+1),group:'keep',optional:true})),...UNIT_ART.map(key=>({key,name:key,group:'unit',optional:true}))];
 export async function loadClayCollection(onProgress=()=>{}){

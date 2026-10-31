@@ -26,15 +26,15 @@ export const CANNONS = {
   machine: { name: '기관총', short: '기관총', icon: 'MG', cost: 100, damage: 6, rate: 5, range: 205, color: '#b4d4e2', role: '가까운 적에게 고속 단일 사격' },
   mortar: { name: '박격포', short: '박격포', icon: 'MR', cost: 180, damage: 4, rate: .55, range: 265, radius: 55, color: '#ffc478', role: '포물선 포탄 · 범위 폭발' },
   sniper: { name: '스나이퍼', short: '저격', icon: 'SR', cost: 250, damage: 90, rate: .45, range: 530, color: '#85beff', role: '현재 HP가 가장 높은 적 우선' },
-  laser: { name: '레이저', short: '레이저', icon: 'LS', cost: 280, damage: 6.2, rate: 1.1, range: 430, pierce: 9, color: '#58efd9', role: '직선 관통 · 다중 타격' },
+  laser: { name: '레이저', short: '레이저', icon: 'LS', cost: 280, damage: 9, rate: 1.2, range: 430, pierce: 9, color: '#58efd9', role: '직선 관통 · 다중 타격' },
   totem: { name: '토템', short: '토템', icon: 'TT', cost: 300, damage: 0, rate: 0, range: 165, buff: .2, color: '#ffda7a', role: '주변 캐논 연사력 지원 · 자신 제외' },
   sticky: { name: '끈적이', short: '끈적이', icon: 'GL', cost: 210, damage: 1.5, rate: 1, range: 235, radius: 34, slow: .55, duration: 3, color: '#a3ed75', role: '끈적한 점액으로 약한 범위 피해 · 음봉의 이동·공격 속도를 크게 낮춤' },
   poison: { name: '독 캐논', short: '독', icon: 'TX', cost: 240, damage: 3, rate: .9, range: 750, minRange: 170, radius: 46, dot: 1.4, duration: 6, color: '#c093ff', role: '먼 곳에 독 폭발 · 즉시 피해 후 체력을 서서히 깎음(최대 3중첩) · 가까운 적은 못 맞힘' },
-  siege: { name: '공성 전차', short: '공성전차', icon: 'ST', cost: 260, damage: 4.5, rate: .32, range: 1150, minRange: 230, radius: 72, color: '#ffb35a', role: '아주 먼 적에게 광역 포격 · 가까운 적은 못 맞힘' },
+  siege: { name: '공성 전차', short: '공성전차', icon: 'ST', cost: 260, damage: 7, rate: .32, range: 1150, minRange: 230, radius: 72, color: '#ffb35a', role: '아주 먼 적에게 광역 포격 · 가까운 적은 못 맞힘' },
   summoner: { name: '소환사', short: '소환사', icon: 'SM', cost: 240, damage: 7, rate: .16, range: 70, knights: 3, hits: 6, color: '#9be064', role: '양봉 기사를 주기적으로 소환 · 레벨이 오르면 기사 수가 늘고 Lv.14부터 궁수 양봉도 소환' },
   sonic: { name: '소닉 타워', short: '소닉', icon: 'SO', cost: 260, damage: 2.2, rate: .8, range: 105, color: '#9fe8ff', role: '주변으로 둥글게 퍼지는 음파 · 약하지만 넓은 범위를 한꺼번에 · 전진 자리에 딱' },
-  blackhole: { name: '블랙홀', short: '블랙홀', icon: 'BH', cost: 300, damage: 1.2, rate: 0, range: 150, pull: 38, drag: .45, color: '#b28cff', role: '주변 음봉을 끌어당기고 느리게 함 · 약한 지속 피해' },
-  musk: { name: '삼론 머스크', short: '삼론머스크', icon: 'EM', cost: 320, damage: 3.5, rate: .24, range: 900, width: 30, rocketChance: .12, color: '#d9e3ec', role: '사이버트럭 발사 · 관통 광역 피해 · 가끔 초광역 로켓' },
+  blackhole: { name: '블랙홀', short: '블랙홀', icon: 'BH', cost: 300, damage: 4, rate: 0, range: 150, pull: 38, drag: .45, color: '#b28cff', role: '주변 음봉을 끌어당기고 느리게 함 · 약한 지속 피해' },
+  musk: { name: '삼론 머스크', short: '삼론머스크', icon: 'EM', cost: 320, damage: 8, rate: .26, range: 900, width: 38, rocketChance: .12, color: '#d9e3ec', role: '사이버트럭 발사 · 관통 광역 피해 · 가끔 초광역 로켓' },
   drone: { name: 'DRONE', short: 'DRONE', icon: 'DR', cost: 350, damage: 14, rate: 3.2, range: 230, targetSwitch: .24, color: '#97e9ff', role: '자유 공중 배치 · 단일 타깃 레이저' }
 };
 export const SHOP_NAMES = { sonic: 'SONIC', blackhole: 'BLACKHOLE', siege: 'SIEGE', summoner: 'SUMMON', musk: 'MUSK', machine: 'MG GUN', mortar: 'MORTAR', sniper: 'SNIPER', laser: 'LASER', totem: 'TOTEM', sticky: 'SLIME', poison: 'POISON', drone: 'DRONE' };

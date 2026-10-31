@@ -1,12 +1,12 @@
-import{campaignProgress}from'./campaign-courses.js?v=9594514f5f';
-import { SETTINGS, CANNONS, ENEMIES, SUPPLIES, WORLD_WIDTH, DRONE, WALL, CAMERA_DEPTH, ACTOR_STYLE, cannonStats, upgradeCost, energyMultiplier, wallYFor, priceBand, validPlacement, snapSlot, FORWARD_X, FORWARD_DY, validDronePlacement, clamp, hasPerk } from './config.js?v=9594514f5f';
-import { wallMountDepth } from './fortification.js?v=9594514f5f';
-import { marketArmy,estimatedArmy } from './market-army.js?v=9594514f5f';
-import {playerLevelFor,towerSlots,wallLevelFor,wallPower,money,WALL_MAX_XP} from './progression.js?v=9594514f5f';
-import{TerrainField}from'./terrain.js?v=9594514f5f';
-import{modeFor}from'./cards.js?v=9594514f5f';
-import{formatDamage}from'./combat-fx.js?v=9594514f5f';
-import{wallXPAt}from'./progression.js?v=9594514f5f';
+import{campaignProgress}from'./campaign-courses.js?v=dcdc5554e3';
+import { SETTINGS, CANNONS, ENEMIES, SUPPLIES, WORLD_WIDTH, DRONE, WALL, CAMERA_DEPTH, ACTOR_STYLE, cannonStats, upgradeCost, energyMultiplier, wallYFor, priceBand, validPlacement, snapSlot, FORWARD_X, FORWARD_DY, validDronePlacement, clamp, hasPerk } from './config.js?v=dcdc5554e3';
+import { wallMountDepth } from './fortification.js?v=dcdc5554e3';
+import { marketArmy,estimatedArmy } from './market-army.js?v=dcdc5554e3';
+import {playerLevelFor,towerSlots,wallLevelFor,wallPower,money,WALL_MAX_XP} from './progression.js?v=dcdc5554e3';
+import{TerrainField}from'./terrain.js?v=dcdc5554e3';
+import{modeFor}from'./cards.js?v=dcdc5554e3';
+import{formatDamage}from'./combat-fx.js?v=dcdc5554e3';
+import{wallXPAt}from'./progression.js?v=dcdc5554e3';
 // Kill gold is scaled down and a steady per-minute battle stipend added, so income stays in a narrow band
 // between a starter and a maxed army (card packs are the only use of gold).
 export const KILL_GOLD=.3,STIPEND_PER_MIN=30;
@@ -16,13 +16,18 @@ export const MAX_TOWERS=5;
 export const HP_WEIGHT_FLOOR=.2;
 // v24: the giant is a rare boss — about one per five minutes at most, only on a heavy sell-off minute.
 export const WALL_SAG=38;
+// v63: ultimates for epic+ towers. Rare at low level, strong when they fire; one at a time (comic cut-in first).
+export const ULT_TYPES=['musk','laser','blackhole','totem','drone'];
+export const ultRate=level=>.0035+.0011*(Math.max(1,Math.min(40,level))-1); // chance per second: Lv1≈0.35% (~5 min), Lv40≈4.6% (~22 s)
+export const ULT_COOLDOWN=20;
+const WALL_BLESS_XP=120;
 export const BOSS=Object.freeze({cooldownMs:3*60*1000,minIntensity:.8,minSellShare:.5,chance:.85,hp:15,scale:3.4,radius:40,speed:.6,damage:.7});
 // v32: special attackers — a six-candle siege ram (shared HP, slow, heavy) and fast kamikaze bombers. Both aim at the wall centre.
 export const SPECIALS=Object.freeze({ram:Object.freeze({hp:2600,speed:8.5,radius:30,damage:110,interval:2.4,cooldownMs:2*60*1000,minIntensity:.7,chance:.75,goldMul:6}),bomber:Object.freeze({hp:12,speed:92,radius:9,damage:150,cooldownMs:40*1000,minIntensity:.5,chance:.85,goldMul:1.5})});
 const SPECIAL_DEF={ram:{...ENEMIES[3],speed:SPECIALS.ram.speed,damage:SPECIALS.ram.damage,interval:SPECIALS.ram.interval},bomber:{...ENEMIES[4],speed:SPECIALS.bomber.speed,damage:SPECIALS.bomber.damage,interval:9}};
 const BOSS_DEF=Object.freeze({...ENEMIES[3],speed:ENEMIES[3].speed*BOSS.speed,damage:ENEMIES[3].damage*BOSS.damage});
-import{isAIStock}from'./symbols.js?v=9594514f5f';
-import {weaponMuzzle} from './weapon-geometry.js?v=9594514f5f';
+import{isAIStock}from'./symbols.js?v=dcdc5554e3';
+import {weaponMuzzle} from './weapon-geometry.js?v=dcdc5554e3';
 export class Game {
   constructor(state, { height = 620, random = Math.random,now=Date.now,rewardMultiplier=1,mode } = {}) {
     this.modeKey=modeFor(mode??state.settings?.mode).key;this.stipendClock=0;this.wallHold=0;
@@ -30,7 +35,7 @@ export class Game {
     this.cannons = state.cannons.map(c => ({ ...c, ...(c.type === 'drone' ? { y: clamp(Number.isFinite(c.yRatio) ? c.yRatio * height : c.y ?? height * .35, DRONE.marginTop, height - DRONE.marginBottom) } : {}), cooldown: .2, recoil: 0, angle: -Math.PI / 2, targetId: null, targetLock: 0 }));
     this.playerXP=Math.max(0,state.playerXP||0);this.wallXP=clamp(state.wallXP??360,0,WALL_MAX_XP);this.wallLevel=wallLevelFor(this.wallXP);this.wallTransition=null;
     this.inventory=[];for(const item of [...(state.inventory||[]),...this.cannons]){if(!CANNONS[item.type])continue;const owned=this.inventory.find(v=>v.type===item.type);if(owned){if((item.level||1)>owned.level){owned.level=item.level||1;owned.xp=item.xp||0;}}else this.inventory.push({type:item.type,level:item.level||1,xp:Math.max(0,item.xp||0)});}
-    this.delayed = []; this.enemies = []; this.supplies = []; this.effects = []; this.projectiles = []; this.zones = []; this.knights = []; this.sweeps = [];
+    this.delayed = []; this.ults = []; this.blessUntil = 0; this.enemies = []; this.supplies = []; this.effects = []; this.projectiles = []; this.zones = []; this.knights = []; this.sweeps = [];
     this.dmgAcc={};this.time = 0; this.wallY = height * .56; this.band = 0; this.targetBand = 0; this.move = null; this.stage = Math.min(9,this.wallLevel-1);
     this.terrain=new TerrainField(height);this.pricePlaced=false;this.market = null; this.selected = null; this.placement = null; this.dirty = false; this.nextId = 1; this.autoTimer = 0; this.messages = []; this.marketWaves=[];
     this.marketGoldRemainder=0;
@@ -83,7 +88,7 @@ export class Game {
   resize(height) { const ratio = height / this.height; this.wallY *= ratio; if (this.move) { this.move.from *= ratio; this.move.to *= ratio; } this.enemies.forEach(e => e.y *= ratio); this.supplies.forEach(e => e.y *= ratio); this.zones.forEach(e => e.y *= ratio); this.cannons.filter(c => c.type === 'drone').forEach(c => c.y = clamp(c.y * ratio, DRONE.marginTop, height - DRONE.marginBottom)); this.height = height;const art=this.terrain;this.terrain=new TerrainField(height);if(art?.corridor||art?.aspect)this.terrain.setArt(art.aspect,art.corridor); }
   cannonPosition(c) { if (c.type === 'drone') return { x: c.x, y: c.y }; const y = this.wallAt(c.x) + WALL.deck + WALL.mountOffset; return { x: c.x, y: Math.abs(c.x - FORWARD_X) < .5 && c.type !== 'command' ? y - FORWARD_DY : y }; }
   notify(text) { this.messages.push({ text, until: this.time + 3 }); }
-  resetMarket(){this.marketPrimed=false;this.focus=null;this.market=null;this.marketWaves=[];this.enemies=[];this.supplies=[];this.effects=[];this.projectiles=[];this.zones=[];this.knights=[];this.sweeps=[];this.pricePlaced=false;this.move=null;this.band=0;this.targetBand=0;this.wallY=this.height/2;}
+  resetMarket(){this.ults=[];this.blessUntil=0;this._ultBusy=false;this.marketPrimed=false;this.focus=null;this.market=null;this.marketWaves=[];this.enemies=[];this.supplies=[];this.effects=[];this.projectiles=[];this.zones=[];this.knights=[];this.sweeps=[];this.pricePlaced=false;this.move=null;this.band=0;this.targetBand=0;this.wallY=this.height/2;}
   onMarket(snapshot) {
     // Keep already received finite waves through a temporary provider failure.
     if(snapshot.priceStatus==='connection_required'&&snapshot.volumeStatus==='connection_required')this.marketWaves=[];
@@ -144,6 +149,7 @@ export class Game {
     if (!(base >= 0)) return 0;
     if (target === 'wall') return -this.addWallXP(-base);
     if (!target?.alive) return 0;
+    if (cannonType && this.blessUntil > this.time) base *= 1.5;
     const value = base * (scaled ? 1 : this.power);if(cannonType){target.lastHit=cannonType;const acc=this.dmgAcc[cannonType]||(this.dmgAcc[cannonType]={sum:0,x:0,y:0,t:0});acc.sum+=Math.min(value,Math.max(0,target.hp));acc.x=target.x;acc.y=target.y;}
     target.hp -= value; target.hit = .14;
     if (target.hp <= 0) this.remove(target, source);
@@ -215,7 +221,7 @@ export class Game {
       const ex=pos.x+dx/len*stats.range,ey=pos.y+dy/len*stats.range;this.effect('beam',muzzle.x,muzzle.y,stats.color,'',.62,{tx:ex,ty:ey,width:6.5,laser:true,sourceAltitude:muzzle.z,targetAltitude:8});
       this.enemies.filter(e=>{const vx=e.x-pos.x,vy=e.y-pos.y,dot=(vx*dx+vy*dy)/len;return e.alive&&dot>=0&&dot<=stats.range&&Math.abs(vx*dy-vy*dx)/len<=e.radius+4;}).sort((a,b)=>Math.hypot(a.x-pos.x,a.y-pos.y)-Math.hypot(b.x-pos.x,b.y-pos.y)).slice(0,stats.pierce).forEach(e=>this.damage(e,stats.damage,{cannonType:'laser'}));return;
     }
-    if(c.type==='musk'){c.shots=(c.shots||0)+1;const rocket=this.random()<(stats.rocketChance||0);if(rocket&&this.onCutin&&!this._cutinBusy){/* v53: ultimate — comic cut-in first, then launch */this._cutinBusy=true;const fireNow=()=>{this._cutinBusy=false;if(!this.cannons.includes(c))return;const p2=this.cannonPosition(c);this.sweeps.push({kind:'rocket',big:true,x:p2.x,y:p2.y-6,dx:0,dy:-1,speed:430,width:stats.width*3.4,damage:stats.damage*.9,traveled:0,max:1600,hit:new Set(),weapon:'musk',age:0});this.shake=Math.max(this.shake||0,.6);};this.onCutin('musk',c,fireNow);return;}this.sweeps.push({kind:rocket?'rocket':'truck',x:pos.x,y:pos.y-6,dx:dx/len,dy:dy/len,speed:rocket?520:300,width:rocket?stats.width*2.6:stats.width,damage:rocket?stats.damage*.6:stats.damage,traveled:0,max:rocket?1400:stats.range,hit:new Set(),weapon:'musk'});return;}
+    if(c.type==='musk'){c.shots=(c.shots||0)+1;const rocket=this.random()<(stats.rocketChance||0);this.sweeps.push({kind:rocket?'rocket':'truck',x:pos.x,y:pos.y-6,dx:dx/len,dy:dy/len,speed:rocket?520:300,width:rocket?stats.width*2.6:stats.width,damage:rocket?stats.damage*.6:stats.damage,traveled:0,max:rocket?1400:stats.range,hit:new Set(),weapon:'musk'});return;}
     const type={machine:'bullet',sniper:'slug',mortar:'mortar',siege:'shell',sticky:'slime',poison:'venom'}[c.type];
     if(type){const burst=type==='bullet'?3:1;for(let i=0;i<burst;i++)this.projectiles.push({...base,type,weapon:c.type,elapsed:-i*.032,damage:stats.damage/burst,duration:type==='mortar'?.62:type==='shell'?.95:type==='slime'?.38:type==='venom'?.30:Math.max(.055,Math.min(.24,len/(type==='slug'?2000:1200))),radius:stats.radius});if(this.projectiles.length>450)this.projectiles.splice(0,this.projectiles.length-450);}
   }
@@ -227,7 +233,7 @@ export class Game {
     else{k.attacking=false;const tx=best&&bd<120?best.x:k.x,ty=best&&bd<120?best.y:k.y-50,len=Math.hypot(tx-k.x,ty-k.y)||1;k.x+=(tx-k.x)/len*58*dt;k.y+=(ty-k.y)/len*58*dt;}}
     this.knights=this.knights.filter(k=>k.hits>0&&k.y>-20&&k.age<25);}
   // Piercing sweeps (Cybertruck / rocket): every candle the body passes over takes one hit.
-  updateSweeps(dt){for(const s of this.sweeps){const step=s.speed*dt;s.x+=s.dx*step;s.y+=s.dy*step;s.traveled+=step;if(s.big){s.age=(s.age||0)+dt;s.boom=(s.boom||0)+step;if(s.boom>70){s.boom=0;for(const k of[-1,1])this.effect('explosion',s.x+k*s.width*.32,s.y+18,'#ffb04a','',.7,{radius:55,weapon:'mortar'});this.shake=Math.max(this.shake||0,.25);}}for(const e of this.enemies){if(!e.alive||s.hit.has(e.id))continue;const vx=e.x-s.x,vy=e.y-s.y,along=vx*s.dx+vy*s.dy,side=Math.abs(vx*s.dy-vy*s.dx);if(side<=s.width/2+e.radius&&along>-26&&along<10){s.hit.add(e.id);this.damage(e,s.damage,{cannonType:'musk'});}}}
+  updateSweeps(dt){for(const s of this.sweeps){const step=s.speed*dt;s.x+=s.dx*step;s.y+=s.dy*step;s.traveled+=step;if(s.big){s.age=(s.age||0)+dt;s.boom=(s.boom||0)+step;if(s.boom>70){s.boom=0;for(const k of[-1,1]){const bx=s.x+k*s.width*.32,by=s.y+18;this.effect('explosion',bx,by,'#ffb04a','',.7,{radius:55,weapon:'mortar'});if(s.boomDmg)for(const e of this.enemies)if(e.alive&&Math.hypot(e.x-bx,e.y-by)<55+e.radius)this.damage(e,s.boomDmg,{cannonType:'musk'});}this.shake=Math.max(this.shake||0,.25);}}for(const e of this.enemies){if(!e.alive||s.hit.has(e.id))continue;const vx=e.x-s.x,vy=e.y-s.y,along=vx*s.dx+vy*s.dy,side=Math.abs(vx*s.dy-vy*s.dx);if(side<=s.width/2+e.radius&&along>-26&&along<10){s.hit.add(e.id);this.damage(e,s.damage,{cannonType:'musk'});}}}
     this.sweeps=this.sweeps.filter(s=>s.traveled<s.max&&s.y>-60);}
   resolveProjectile(p){
     const target=this.enemies.find(e=>e.id===p.targetId&&e.alive),st=p.stats;
@@ -290,8 +296,10 @@ export class Game {
       if (s.y-s.radius <= this.wallAt(s.x)+13) { this.deliverSupply(s); this.effect('supply-deliver',s.x,s.y+s.radius,'#bcefb0','',.7,{kind:s.kind,radius:s.radius,art:s.art,variant:s.variant});this.remove(s,'heal'); }
     }
     this.enemies = this.enemies.filter(e => e.alive); this.supplies = this.supplies.filter(s => s.alive);
+    this.updateUlts(dt);
     for (const c of this.cannons) {
-      c.recoil = Math.max(0,c.recoil-dt*6); if (c.type === 'totem') continue;
+      c.recoil = Math.max(0,c.recoil-dt*6); this.rollUlt(c,dt); if (c.type === 'totem') continue;
+      if (this.blessUntil > this.time) c.cooldown -= dt;
       if (c.type === 'drone') { this.updateDrone(c, dt); continue; }
       c.cooldown -= dt; if (c.cooldown > 0) continue;
       const stats = cannonStats(c.type,c.level), y = this.cannonPosition(c).y;
@@ -317,6 +325,19 @@ export class Game {
     this.autoTimer += dt;
     if (this.settings.autoUpgrade && this.autoTimer >= 1) { this.autoTimer = 0; const list = this.cannons.filter(c=>c.level<40).sort((a,b)=>upgradeCost(a.type,a.level)-upgradeCost(b.type,b.level)); const c=list[0]; if (c) this.upgrade(c); }
   }
+  rollUlt(c,dt){if(!ULT_TYPES.includes(c.type))return;c.ultCd=Math.max(0,(c.ultCd??ULT_COOLDOWN*.5)-dt);if(c.ultCd>0||this._ultBusy||!this.enemies.some(e=>e.alive))return;if(this.random()>=ultRate(c.level)*dt)return;this.triggerUlt(c);}
+  triggerUlt(c){c.ultCd=ULT_COOLDOWN;this._ultBusy=true;const go=()=>{this._ultBusy=false;if(this.cannons.includes(c))this.fireUlt(c);};if(this.onCutin)this.onCutin(c.type,c,go);else go();}
+  fireUlt(c){const st=cannonStats(c.type,c.level),pos=this.cannonPosition(c),top=Math.min(...[60,216,372].map(x=>this.wallAt(x)));this.metrics.ults=(this.metrics.ults||0)+1;this.shake=Math.max(this.shake||0,.6);
+    if(c.type==='musk'){this.sweeps.push({kind:'rocket',big:true,x:pos.x,y:pos.y-6,dx:0,dy:-1,speed:430,width:st.width*3.6,damage:st.damage*30,traveled:0,max:1600,hit:new Set(),weapon:'musk',age:0,boomDmg:st.damage*6});return;}
+    if(c.type==='laser'){this.ults.push({kind:'laser',t:0,dur:1.7,dmg:st.damage*28,hit:new Set(),y0:-40,y1:top-10});return;}
+    if(c.type==='blackhole'){const cy=Math.max(140,top-260);this.ults.push({kind:'blackhole',t:0,dur:3.2,x:216,y:cy,r:330,dmg:120+st.damage*45,done:false});return;}
+    if(c.type==='totem'){this.blessUntil=this.time+8;this.addWallXP(Math.max(60,WALL_BLESS_XP));this.ults.push({kind:'totem',t:0,dur:8});return;}
+    if(c.type==='drone'){const bombs=[];const alive=this.enemies.filter(e=>e.alive&&e.y<this.wallAt(e.x));for(let i=0;i<12;i++){const e=alive.length?alive[Math.floor(this.random()*alive.length)]:null;bombs.push({at:.35+i*.14,x:e?e.x:40+this.random()*352,y:e?e.y:80+this.random()*(top-160),done:false});}this.ults.push({kind:'drone',t:0,dur:2.6,bombs,dmg:st.damage*8});}}
+  updateUlts(dt){if(!this.ults)this.ults=[];for(const u of this.ults){u.t+=dt;const k=u.t/u.dur;
+    if(u.kind==='laser'){const x=-30+k*492;for(const e of this.enemies){if(!e.alive||u.hit.has(e.id)||e.y>this.wallAt(e.x))continue;if(Math.abs(e.x-x)<34+e.radius){u.hit.add(e.id);this.damage(e,u.dmg,{cannonType:'laser'});this.effect('ult-hit',e.x,e.y,'#7ff7ff','',.5,{ult:'laser'});}}}
+    else if(u.kind==='blackhole'){if(u.t<u.dur-.35){for(const e of this.enemies){if(!e.alive)continue;const dx=u.x-e.x,dy=u.y-e.y,d=Math.hypot(dx,dy);if(d<u.r&&d>6){const pull=(e.boss?40:150)*dt*(1-d/u.r*.6);e.x+=dx/d*pull;e.y+=dy/d*pull;}}}else if(!u.done){u.done=true;this.shake=.9;for(const e of this.enemies){if(!e.alive)continue;const d=Math.hypot(u.x-e.x,u.y-e.y);if(d<u.r*.62){this.damage(e,u.dmg*(e.boss?.6:1),{cannonType:'blackhole'});this.effect('ult-hit',e.x,e.y,'#c49bff','',.55,{ult:'blackhole'});}}this.effect('explosion',u.x,u.y,'#b28cff','',.9,{radius:120,weapon:'mortar'});}}
+    else if(u.kind==='drone'){for(const b of u.bombs){if(b.done||u.t<b.at)continue;b.done=true;this.shake=Math.max(this.shake||0,.3);this.effect('explosion',b.x,b.y,'#ffb04a','',.75,{radius:70,weapon:'mortar'});this.effect('ult-hit',b.x,b.y,'#ffcf6a','',.6,{ult:'drone'});for(const e of this.enemies)if(e.alive&&Math.hypot(e.x-b.x,e.y-b.y)<70+e.radius)this.damage(e,u.dmg,{cannonType:'drone'});}}}
+   this.ults=this.ults.filter(u=>u.t<u.dur);}
   updateDrone(c, dt) {
     const stats = cannonStats('drone', c.level), pos = this.cannonPosition(c);
     c.cooldown -= dt;
