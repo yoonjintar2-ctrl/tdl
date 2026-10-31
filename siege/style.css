@@ -800,3 +800,14 @@ body.gacha-open .mission-goal,.tower-info~.mission-goal{display:none}
 .gacha-stage{padding:max(18px,env(safe-area-inset-top)) 16px max(18px,env(safe-area-inset-bottom))!important;background:#0b150fd9!important}
 .gacha-stage::before{content:"";position:absolute;inset:max(12px,env(safe-area-inset-top)) 10px max(12px,env(safe-area-inset-bottom));border-radius:26px;border:3px solid #4a2e12;box-shadow:inset 0 0 0 3px #e7c46a,inset 0 0 0 6px #4a2e12,0 14px 40px #000c;background:radial-gradient(120% 80% at 50% 30%,#3b5a3a 0%,#22382a 60%,#15241b 100%);pointer-events:none;z-index:0}
 .gacha-cards{width:min(calc(100% - 24px),540px)!important}
+.alt-restore{display:block;width:100%;margin-top:8px;padding:9px 10px;border-radius:12px;border:2px solid #4a2e12;background:linear-gradient(#fff3c4,#e7c46a);color:#4a2804;font:400 13px var(--gk-font)}
+/* v45: picker corner buttons; sheets & profile above the picker */
+.picker-corner{position:absolute;z-index:5;top:calc(10px + env(safe-area-inset-top));right:12px;display:flex;gap:8px;align-items:center}
+.pc-portrait{position:relative;width:46px;height:46px;border-radius:50%;padding:0;border:3px solid #4a2e12;background:radial-gradient(circle at 50% 40%,#d9f5a8,#7cc35a);box-shadow:0 3px 0 #2b1a0b,inset 0 0 0 2px #fff3c4}
+.pc-portrait .pc-face{position:absolute;inset:4px;border-radius:50%;background:url(assets/portrait-bull.webp) center/cover}
+.pc-portrait .pc-lv{position:absolute;right:-6px;bottom:-6px;min-width:20px;height:20px;padding:0 4px;border-radius:10px;background:#4a2e12;color:#ffe9a8;font:400 12px/20px var(--gk-font)}
+.pc-settings{width:42px;height:42px;border-radius:50%;border:2px solid #3a2a12;background:linear-gradient(180deg,#f8edcf,#d9c08a);color:#4a2804;font-size:20px;box-shadow:inset 0 -3px 0 #b39256,0 3px 0 #2b1a0b}
+.stock-picker:not([hidden])~.scrim,.stock-picker:not([hidden])~* .scrim{z-index:44!important}
+body .sheet:not([hidden]){z-index:45}
+body .scrim:not([hidden]){z-index:44}
+.profile-pop{z-index:46!important}
