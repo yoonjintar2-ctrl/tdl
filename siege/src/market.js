@@ -1,7 +1,7 @@
-import{validSymbol,stockFor}from'./symbols.js?v=f49daceb71';
-import{apiUrl}from'./api.js?v=f49daceb71';
-import{estimateCandleFlow}from'./candle-flow.js?v=f49daceb71';
-import { SYMBOL, SCENARIOS, clamp } from './config.js?v=f49daceb71';
+import{validSymbol,stockFor}from'./symbols.js?v=559374c37a';
+import{apiUrl}from'./api.js?v=559374c37a';
+import{estimateCandleFlow}from'./candle-flow.js?v=559374c37a';
+import { SYMBOL, SCENARIOS, clamp } from './config.js?v=559374c37a';
 /** Provider contract: subscribe(snapshot), update(realSeconds), destroy().
  * Snapshot: source/status/symbol/market/price/previousClose/changePct/time,
  * candle {time,open,high,low,close,volume}, candles[], buyVolume, sellVolume,

@@ -1,23 +1,23 @@
-import{CampaignView}from'./campaign-view.js?v=f49daceb71';
-import{CampaignDataProvider,newCourseRun,readCourseRun,checkpointCourse,storeCourseRun,removeCourseRun,restoreCourseCombat,settleCourse}from'./campaign.js?v=f49daceb71';
-import{courseFor,courseTime,CAMPAIGN_REWARD_RATE,campaignProgress}from'./campaign-courses.js?v=f49daceb71';
-import{stockFor}from'./symbols.js?v=f49daceb71';
-import{StockPicker}from'./stock-picker.js?v=f49daceb71';
-import{drawSessionChart}from'./session-chart.js?v=f49daceb71';
-import{WALL_MAX_XP}from'./progression.js?v=f49daceb71';
-import { CANNONS,SCENARIOS,SETTINGS,ENEMIES,SUPPLIES,WORLD_WIDTH,DRONE,WALL,WALL_STAGES,cannonStats,upgradeCost,validPlacement,clamp } from './config.js?v=f49daceb71';
-import { DemoMarketDataProvider, LiveMarketDataProvider, AlpacaMarketDataProvider, MARKET_ERRORS } from './market.js?v=f49daceb71';
-import { Game } from './game.js?v=f49daceb71';
-import { Renderer,renderShopIcon } from './renderer.js?v=f49daceb71';
-import { initialState,readSave,writeSave,snapshotGame,safeStorage,readRawSave,writeRawSave } from './storage.js?v=f49daceb71';
-import{cloudConfigured,currentUser,signUpEmail,signInEmail,signOut,pull,push,EMAIL_RULE,idOf,claimSession,sessionState,SESSION_ID,pullGrant}from'./cloud.js?v=f49daceb71';
-import{recentSymbols}from'./stock-picker.js?v=f49daceb71';
-import { loadClayAssets,useBattlefield } from './clay-assets.js?v=f49daceb71';
-import{THEMES,themeFor}from'./themes.js?v=f49daceb71';
-import { drawClayPreview } from './clay-runtime.js?v=f49daceb71';
-import{money,playerXPAt,SLOT_LEVELS,wallXPAt,WALL_MAX_LEVEL,wallPower}from'./progression.js?v=f49daceb71';
-import{openPack,applyCard,PACKS,MODES,MODE_ORDER,modeFor,RARITIES,TOWER_RARITY}from'./cards.js?v=f49daceb71';
-import{CardStage,renderCollection,towerCard,statLines,nextLevelLines}from'./card-ui.js?v=f49daceb71';
+import{CampaignView}from'./campaign-view.js?v=559374c37a';
+import{CampaignDataProvider,newCourseRun,readCourseRun,checkpointCourse,storeCourseRun,removeCourseRun,restoreCourseCombat,settleCourse}from'./campaign.js?v=559374c37a';
+import{courseFor,courseTime,CAMPAIGN_REWARD_RATE,campaignProgress}from'./campaign-courses.js?v=559374c37a';
+import{stockFor}from'./symbols.js?v=559374c37a';
+import{StockPicker}from'./stock-picker.js?v=559374c37a';
+import{drawSessionChart}from'./session-chart.js?v=559374c37a';
+import{WALL_MAX_XP}from'./progression.js?v=559374c37a';
+import { CANNONS,SCENARIOS,SETTINGS,ENEMIES,SUPPLIES,WORLD_WIDTH,DRONE,WALL,WALL_STAGES,cannonStats,upgradeCost,validPlacement,clamp } from './config.js?v=559374c37a';
+import { DemoMarketDataProvider, LiveMarketDataProvider, AlpacaMarketDataProvider, MARKET_ERRORS } from './market.js?v=559374c37a';
+import { Game } from './game.js?v=559374c37a';
+import { Renderer,renderShopIcon } from './renderer.js?v=559374c37a';
+import { initialState,readSave,writeSave,snapshotGame,safeStorage,readRawSave,writeRawSave } from './storage.js?v=559374c37a';
+import{cloudConfigured,currentUser,signUpEmail,signInEmail,signOut,pull,push,EMAIL_RULE,idOf,claimSession,sessionState,SESSION_ID,pullGrant}from'./cloud.js?v=559374c37a';
+import{recentSymbols}from'./stock-picker.js?v=559374c37a';
+import { loadClayAssets,useBattlefield } from './clay-assets.js?v=559374c37a';
+import{THEMES,themeFor}from'./themes.js?v=559374c37a';
+import { drawClayPreview } from './clay-runtime.js?v=559374c37a';
+import{money,playerXPAt,SLOT_LEVELS,wallXPAt,WALL_MAX_LEVEL,wallPower}from'./progression.js?v=559374c37a';
+import{openPack,applyCard,PACKS,MODES,MODE_ORDER,modeFor,RARITIES,TOWER_RARITY}from'./cards.js?v=559374c37a';
+import{CardStage,renderCollection,towerCard,statLines,nextLevelLines}from'./card-ui.js?v=559374c37a';
 const $=id=>document.getElementById(id),fmt=new Intl.NumberFormat('ko-KR'),nyTime=new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',hour12:false,hour:'2-digit',minute:'2-digit',second:'2-digit'});
 async function prepareArt(){const started=performance.now();
  $('asset-retry').hidden=true;$('asset-loading-message').textContent='클레이 전장을 준비하고 있어요.';
@@ -66,7 +66,9 @@ function openWallInfo(){closeTowerInfo();const g=game,L=g.wallLevel,cur=wallXPAt
  <div class="wi-gauge-wrap"><div class="wi-gauge-label"><span>${next?`다음 · ${stage(L+1)} 성벽`:'최고 등급 달성'}</span><b>${next?Math.round(pct)+'%':'MAX'}</b></div><div class="wi-gauge"><i style="width:${pct.toFixed(1)}%"></i></div><small class="wi-gauge-num">${next?`${Math.floor(g.wallXP-cur).toLocaleString()} / ${(next-cur).toLocaleString()}`:'모든 단계를 정복했어요'}</small></div>
  <div class="wi-grid"><div><span>타워 공격력</span><b>×${mult(L)}</b></div>${next?`<div class="up"><span>다음 단계</span><b>×${mult(L+1)}</b></div>`:''}<div><span>올라가요</span><b>양봉이 성벽에 닿으면</b></div><div class="down"><span>내려가요</span><b>음봉이 성벽을 때리면</b></div></div>`;
  const act=document.createElement('div');act.className='ti-actions';const b=document.createElement('button');b.type='button';b.className='primary';b.textContent='닫기';b.onclick=closeTowerInfo;act.append(b);card.append(act);w.append(card);const at=performance.now();w.onclick=e=>{if(e.target===w&&performance.now()-at>450)closeTowerInfo();};document.body.append(w);
- requestAnimationFrame(()=>{const cv=card.querySelector('.wi-art');if(cv)drawClayPreview(cv,'command');});}
+ requestAnimationFrame(()=>{const cv=card.querySelector('.wi-art');if(cv)drawClayPreview(cv,'command');});
+ // v53: live gauge — refresh while the card is open
+ let lastKey='';const tick=()=>{if(!w.isConnected)return;const g2=game,L2=g2.wallLevel;if(L2!==L){openWallInfo();return;}const key=Math.floor(g2.wallXP);if(key!==lastKey){lastKey=key;const pc=next?Math.max(0,Math.min(100,(g2.wallXP-cur)/(next-cur)*100)):100;const bar=card.querySelector('.wi-gauge i');if(bar)bar.style.width=pc.toFixed(1)+'%';const pb=card.querySelector('.wi-gauge-label b');if(pb&&next)pb.textContent=Math.round(pc)+'%';const nm=card.querySelector('.wi-gauge-num');if(nm&&next)nm.textContent=`${Math.max(0,Math.floor(g2.wallXP-cur)).toLocaleString()} / ${(next-cur).toLocaleString()}`;}requestAnimationFrame(tick);};requestAnimationFrame(tick);}
 function closeTowerInfo(){document.getElementById('tower-info')?.remove();infoTower=null;if(game)game.selected=null;}
 // ---- difficulty modes ----
 const homeOf=()=>homeGame||game;
@@ -316,7 +318,7 @@ if(qaMode){const b=document.createElement('button');b.className='secondary';b.te
 game.settings.autoUpgrade=false;renderModeToggles();picker.open({mandatory:true});$('stock-select').setAttribute('aria-expanded','true');setInterval(()=>{if(picker.active&&!document.hidden)picker.refresh();},30000);
 new ResizeObserver(resize).observe(document.querySelector('.battle'));quality();updateUI();save();
 window.addEventListener('clay-ready',()=>{lastShop='';quality();if(activeType)detail();});
-function frame(now){const raw=(now-last)/1000;last=now;if(document.hidden||cloudKicked){requestAnimationFrame(frame);return;}if(!marketChosen||picker.active||campaignView?.active||courseRun?.paused||courseRun?.ending){last=now;acc=0;if(!campaignView?.active)renderer.render();requestAnimationFrame(frame);return;}const dt=Math.min(raw,courseRun?1:.1),maxSteps=courseRun?60:7;provider.update(dt);acc+=dt;
+function frame(now){const raw=(now-last)/1000;last=now;if(cutinActive){last=now;acc=0;renderer.render();requestAnimationFrame(frame);return;}if(document.hidden||cloudKicked){requestAnimationFrame(frame);return;}if(!marketChosen||picker.active||campaignView?.active||courseRun?.paused||courseRun?.ending){last=now;acc=0;if(!campaignView?.active)renderer.render();requestAnimationFrame(frame);return;}const dt=Math.min(raw,courseRun?1:.1),maxSteps=courseRun?60:7;provider.update(dt);acc+=dt;
  for(let i=0;acc>=1/60&&i<maxSteps;i++){game.update(1/60);acc-=1/60;}if(courseRun)updateCourse(dt);if(!cardStage.root)renderer.render();frames++;fpsTime+=dt;uiTime+=dt;saveTime+=dt;
  if(fpsTime>=1){fps=Math.round(frames/fpsTime);frames=0;fpsTime=0;if(game.settings.quality==='auto'){slowSamples=fps<43?slowSamples+1:Math.max(0,slowSamples-1);if(slowSamples>=3&&renderer.quality>.6){renderer.quality=.55;resize();}}}
  if(uiTime>=.15){uiTime=0;updateUI();}if(saveTime>=(courseRun?8:2)){saveTime=0;if(courseRun||game.dirty)save();}requestAnimationFrame(frame);
@@ -346,3 +348,9 @@ function startMission(id){const home=homeGame||game,view=campaignView_(snapshotG
 
 /* v52: phones often die before the leave-save finishes — push every 15 s while there are unsynced changes (missions included) */
 setInterval(()=>{if(cloudUser&&!cloudKicked&&!qaMode&&!document.hidden&&isDirty())pushNow(true);},15000);
+
+/* v53: ultimate cut-in — comic panel over the whole screen, hero shouts, then the launch */
+let cutinActive=false;const CUTIN_LINES={musk:['화성으로 가즈아!!','풀매수 로켓 발사!','떡상 엔진 점화!!']};
+Game.prototype.onCutin=function(type,c,fire){if(cutinActive||this!==game||document.hidden){fire();return;}cutinActive=true;const w=document.createElement('div');w.className='cutin';const lines=CUTIN_LINES[type]||['필살기!'];
+ w.innerHTML=`<div class="cutin-band"><i class="cutin-lines"></i><img class="cutin-hero" src="assets/clay/${type}-clay-v1.webp" alt=""><div class="cutin-bubble">${lines[Math.floor(Math.random()*lines.length)]}</div><b class="cutin-name">${CANNONS[type].name} · 필살기</b></div>`;document.body.append(w);
+ setTimeout(()=>w.classList.add('out'),1250);setTimeout(()=>{w.remove();cutinActive=false;last=performance.now();fire();},1550);};

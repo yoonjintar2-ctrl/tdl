@@ -850,3 +850,18 @@ body .scrim:not([hidden]){z-index:44}
 .sync-info{display:block;margin-top:8px;font:400 12px/1.4 var(--gk-font);color:#e8dfbf}
 .sync-row{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px}
 .sync-row button{padding:9px 4px;border-radius:12px;border:2px solid #4a2e12;background:linear-gradient(#fff6dc,#e7c46a);color:#4a2804;font:400 13px var(--gk-font)}
+/* v53: ultimate cut-in (comic panel) — diagonal speed lines, no radial rays */
+.cutin{position:fixed;inset:0;z-index:99999;display:grid;place-items:center;pointer-events:none;background:#0008;animation:ciFade .15s ease both}
+.cutin.out{animation:ciOut .3s ease forwards}
+.cutin-band{position:relative;width:120vw;height:min(46vh,340px);transform:rotate(-8deg);background:linear-gradient(180deg,#ffdd55,#ff9f1a);border-top:8px solid #2b1a0b;border-bottom:8px solid #2b1a0b;overflow:hidden;box-shadow:0 0 0 6px #fff,0 20px 60px #000c;animation:ciSlide .32s cubic-bezier(.2,1.4,.4,1) both}
+.cutin-lines{position:absolute;inset:-20%;background:repeating-linear-gradient(-8deg,#fff0 0 22px,#fff8 22px 26px,#fff0 26px 60px);animation:ciLines .35s linear infinite;opacity:.8}
+.cutin-band::after{content:"";position:absolute;inset:0;background:radial-gradient(#0003 1.2px,#0000 1.5px) 0 0/9px 9px}
+.cutin-hero{position:absolute;left:14%;bottom:-4%;width:min(54vw,340px);height:auto;transform:rotate(8deg) scale(1.15);filter:drop-shadow(6px 6px 0 #2b1a0b);animation:ciHero .4s .05s cubic-bezier(.2,1.5,.4,1) both;z-index:2}
+.cutin-bubble{position:absolute;right:22%;top:14%;z-index:3;max-width:34%;word-break:keep-all;text-align:center;padding:14px 20px;transform:rotate(8deg);background:#fff;border:5px solid #2b1a0b;border-radius:26px;font:400 clamp(20px,5.6vw,38px)/1.15 var(--gk-font);color:#c22a0e;-webkit-text-stroke:1px #2b1a0b;box-shadow:6px 6px 0 #2b1a0b;animation:ciPop .35s .18s cubic-bezier(.2,1.6,.4,1) both}
+.cutin-bubble::after{content:"";position:absolute;left:-26px;bottom:18px;border:14px solid transparent;border-right:26px solid #2b1a0b}
+.cutin-name{position:absolute;right:22%;bottom:12%;z-index:3;transform:rotate(8deg);font:400 clamp(14px,3.6vw,20px) var(--gk-font);color:#fff;-webkit-text-stroke:4px #2b1a0b;paint-order:stroke fill;letter-spacing:1px}
+@keyframes ciFade{from{opacity:0}}@keyframes ciOut{to{opacity:0;transform:scale(1.08)}}
+@keyframes ciSlide{from{transform:rotate(-8deg) translateX(-110%)}}
+@keyframes ciLines{to{transform:translateX(-60px)}}
+@keyframes ciHero{from{transform:rotate(8deg) translateX(-60vw) scale(1.15)}}
+@keyframes ciPop{from{transform:rotate(8deg) scale(0);opacity:0}}

@@ -1,11 +1,11 @@
-import { WORLD_WIDTH as W,CANNONS,ENEMIES,SUPPLIES,WALL_STAGES,DRONE,WALL,cannonStats,validPlacement,validDronePlacement,snapSlot,ALL_SLOTS,FORWARD_X,FORWARD_DY,clamp } from './config.js?v=f49daceb71';
-import{WALL_MAX_LEVEL,WALL_MAX_XP}from'./progression.js?v=f49daceb71';
-import{isAIStock}from'./symbols.js?v=f49daceb71';
-import { QuarterCamera, DEPTH_SCALE, WALL_ELEVATION } from './camera.js?v=f49daceb71';
-import { drawClayMortar, drawClayMortarIcon, clayBattlefield } from './clay-assets.js?v=f49daceb71';
-import{drawProjectile,drawEffect}from'./combat-fx.js?v=f49daceb71';
-import{artCrop}from'./terrain.js?v=f49daceb71';
-import { drawClayTower, drawClayUnit, drawClayWall, drawClayPreview, drawForwardPad, hasKeep, drawClaySprite, clayReady, metaOf, drawClayTowerIcon, wallOutline, tierOf, tierTint, drawTierBack, drawTierFront } from './clay-runtime.js?v=f49daceb71';
+import { WORLD_WIDTH as W,CANNONS,ENEMIES,SUPPLIES,WALL_STAGES,DRONE,WALL,cannonStats,validPlacement,validDronePlacement,snapSlot,ALL_SLOTS,FORWARD_X,FORWARD_DY,clamp } from './config.js?v=559374c37a';
+import{WALL_MAX_LEVEL,WALL_MAX_XP}from'./progression.js?v=559374c37a';
+import{isAIStock}from'./symbols.js?v=559374c37a';
+import { QuarterCamera, DEPTH_SCALE, WALL_ELEVATION } from './camera.js?v=559374c37a';
+import { drawClayMortar, drawClayMortarIcon, clayBattlefield } from './clay-assets.js?v=559374c37a';
+import{drawProjectile,drawEffect}from'./combat-fx.js?v=559374c37a';
+import{artCrop}from'./terrain.js?v=559374c37a';
+import { drawClayTower, drawClayUnit, drawClayWall, drawClayPreview, drawForwardPad, hasKeep, drawClaySprite, clayReady, metaOf, drawClayTowerIcon, wallOutline, tierOf, tierTint, drawTierBack, drawTierFront } from './clay-runtime.js?v=559374c37a';
 const BAND=215;
 const TAU=Math.PI*2;
 function box(c,x,y,w,h,r,fill,stroke){c.beginPath();c.roundRect(x,y,w,h,r);if(fill){c.fillStyle=fill;c.fill();}if(stroke){c.lineWidth=1;c.strokeStyle=stroke;c.stroke();}}
@@ -208,7 +208,8 @@ export class Renderer{
    if(clayReady('knight')){const fr=(k.attacking?4:0)+Math.floor(t*(k.attacking?10:9)+(k.phase||0)*3)%4;c.translate(foot.x,foot.y);c.scale(.4+grow*.6,.4+grow*.6);drawClaySprite(c,'knight',0,2,34,fr);c.restore();continue;}
    const fake={art:'candle',kind:0,radius:8,phase:k.phase,age:Math.max(1,k.age),attacking:k.attacking};c.translate(foot.x,foot.y);c.scale(.4+grow*.6,.4+grow*.6);c.translate(-foot.x,-foot.y);drawClayUnit(c,fake,foot.x,foot.y,t,false);c.restore();}
   for(const s of g.sweeps||[]){const p=this.point(s.x,s.y,8),q=this.point(s.x+s.dx*10,s.y+s.dy*10,8),ang=Math.atan2(q.y-p.y,q.x-p.x);c.save();
-   /* v40: GPT musk rocket / car sprites (row 0 rocket, row 1 car), 4-frame loops */if(clayReady('musk-shots')){const fr=(s.kind==='rocket'?0:4)+Math.floor(t*14+(s.x||0))%4;c.translate(p.x,p.y);c.rotate(ang+Math.PI/2);drawClaySprite(c,'musk-shots',0,0,s.kind==='rocket'?44:Math.max(40,s.width*1.4),fr);c.restore();continue;}
+   /* v40: GPT musk rocket / car sprites (row 0 rocket, row 1 car), 4-frame loops */if(s.big){/* v53: ultimate rocket — huge exhaust plume, shock rings, glow */c.globalCompositeOperation='lighter';for(let i=1;i<26;i++){const b=this.point(s.x-s.dx*i*16,s.y-s.dy*i*16,8),k=1-i/26,w=(s.width*.28+i*2.2)*k+6;c.globalAlpha=.5*k;c.fillStyle=i<6?'#fff3c4':i<14?'#ffb04a':'#ff5a2a';c.beginPath();c.arc(b.x+Math.sin(t*30+i)*3,b.y,w,0,TAU);c.fill();}for(let i=0;i<3;i++){const ph=((t*1.6+i/3)%1),b=this.point(s.x-s.dx*ph*220,s.y-s.dy*ph*220,8);c.globalAlpha=.45*(1-ph);c.strokeStyle='#ffe58a';c.lineWidth=4;c.beginPath();c.ellipse(b.x,b.y,s.width*.4*(.4+ph),s.width*.14*(.4+ph),0,0,TAU);c.stroke();}c.globalCompositeOperation='source-over';c.globalAlpha=1;if(clayReady('musk-shots')){c.translate(p.x,p.y);c.rotate(ang+Math.PI/2);drawClaySprite(c,'musk-shots',0,0,96,Math.floor(t*14)%4);}c.restore();continue;}
+   if(clayReady('musk-shots')){const fr=(s.kind==='rocket'?0:4)+Math.floor(t*14+(s.x||0))%4;c.translate(p.x,p.y);c.rotate(ang+Math.PI/2);drawClaySprite(c,'musk-shots',0,0,s.kind==='rocket'?44:Math.max(40,s.width*1.4),fr);c.restore();continue;}
    if(s.kind==='rocket'){c.globalCompositeOperation='lighter';for(let i=1;i<9;i++){const b=this.point(s.x-s.dx*i*14,s.y-s.dy*i*14,8);c.globalAlpha=.35*(1-i/9);c.fillStyle='#ffb04a';c.beginPath();c.arc(b.x,b.y,s.width*.25*(1-i/12),0,TAU);c.fill();}c.globalCompositeOperation='source-over';c.globalAlpha=1;
     c.translate(p.x,p.y);c.rotate(ang);c.fillStyle='#f4f6f8';c.strokeStyle='#4a4f56';c.lineWidth=1.2;c.beginPath();c.moveTo(16,0);c.lineTo(6,-5);c.lineTo(-14,-5);c.lineTo(-14,5);c.lineTo(6,5);c.closePath();c.fill();c.stroke();c.fillStyle='#d8402a';c.beginPath();c.moveTo(-10,-5);c.lineTo(-17,-10);c.lineTo(-14,-4);c.fill();c.beginPath();c.moveTo(-10,5);c.lineTo(-17,10);c.lineTo(-14,4);c.fill();c.fillStyle='#ffd34f';c.beginPath();c.moveTo(-14,-3);c.lineTo(-24-Math.random()*6,0);c.lineTo(-14,3);c.fill();
     c.rotate(-ang);c.globalAlpha=.18;c.strokeStyle='#ffe8b0';c.lineWidth=s.width*.6;c.beginPath();c.moveTo(0,0);const back=this.point(s.x-s.dx*120,s.y-s.dy*120,8);c.lineTo(back.x-p.x,back.y-p.y);c.stroke();}
@@ -262,7 +263,7 @@ export class Renderer{
   else{dot(c,pt.x,pt.y,p.type==='mortar'?3.4:p.type==='slime'?3:2.5,p.color,'#f5f1bb');if(p.type!=='mortar'){const tail=position(Math.max(0,u-.09));dot(c,tail.x,tail.y,1.6,p.color+'80');}}
  }
  render(){
-  const c=this.ctx,g=this.game,s=this.width*this.dpr/W,t=g.time;c.setTransform(s,0,0,s,0,0);c.globalAlpha=1;c.drawImage(this.bg,0,0,W,this.viewHeight);
+  const c=this.ctx,g=this.game,s=this.width*this.dpr/W,t=g.time,sh=g.shake||0,sx=sh?(Math.sin(t*90)*sh*7):0,sy=sh?(Math.cos(t*77)*sh*7):0;c.setTransform(s,0,0,s,sx*s,sy*s);c.globalAlpha=1;c.drawImage(this.bg,0,0,W,this.viewHeight);
   /* faction captions removed (v17): they collided with the HUD on phones */
   for(const z of g.zones){const p=this.point(z.x,z.y);c.save();c.globalAlpha=Math.min(.35,z.life*.2);c.fillStyle='#7da522';c.beginPath();c.ellipse(p.x,p.y,z.radius*.92,z.radius*DEPTH_SCALE,0,0,TAU);c.fill();c.restore();}
   if(g.focus&&g.focus.until>g.time){const f=g.focus,p=this.point(f.x,f.y,0),left=f.until-g.time,a=Math.min(1,left);c.save();c.globalAlpha=a;
