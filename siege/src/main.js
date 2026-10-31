@@ -1,25 +1,25 @@
-import{CampaignView}from'./campaign-view.js?v=bb55dcaf4d';
-import{CampaignDataProvider,newCourseRun,readCourseRun,checkpointCourse,storeCourseRun,removeCourseRun,restoreCourseCombat,settleCourse}from'./campaign.js?v=bb55dcaf4d';
-import{courseFor,courseTime,CAMPAIGN_REWARD_RATE,campaignProgress}from'./campaign-courses.js?v=bb55dcaf4d';
-import{stockFor}from'./symbols.js?v=bb55dcaf4d';
-import{StockPicker}from'./stock-picker.js?v=bb55dcaf4d';
-import{drawSessionChart}from'./session-chart.js?v=bb55dcaf4d';
-import{WALL_MAX_XP}from'./progression.js?v=bb55dcaf4d';
-import { CANNONS,SCENARIOS,SETTINGS,ENEMIES,SUPPLIES,WORLD_WIDTH,DRONE,WALL,WALL_STAGES,cannonStats,upgradeCost,validPlacement,clamp } from './config.js?v=bb55dcaf4d';
-import { DemoMarketDataProvider, LiveMarketDataProvider, AlpacaMarketDataProvider, MARKET_ERRORS } from './market.js?v=bb55dcaf4d';
-import { Game } from './game.js?v=bb55dcaf4d';
-import { DIGITS, DIGIT_H, DIGIT_W } from './digit-sprites.js?v=bb55dcaf4d';
+import{CampaignView}from'./campaign-view.js?v=c5c424ee2f';
+import{CampaignDataProvider,newCourseRun,readCourseRun,checkpointCourse,storeCourseRun,removeCourseRun,restoreCourseCombat,settleCourse}from'./campaign.js?v=c5c424ee2f';
+import{courseFor,courseTime,CAMPAIGN_REWARD_RATE,campaignProgress}from'./campaign-courses.js?v=c5c424ee2f';
+import{stockFor}from'./symbols.js?v=c5c424ee2f';
+import{StockPicker}from'./stock-picker.js?v=c5c424ee2f';
+import{drawSessionChart}from'./session-chart.js?v=c5c424ee2f';
+import{WALL_MAX_XP}from'./progression.js?v=c5c424ee2f';
+import { CANNONS,SCENARIOS,SETTINGS,ENEMIES,SUPPLIES,WORLD_WIDTH,DRONE,WALL,WALL_STAGES,cannonStats,upgradeCost,validPlacement,clamp } from './config.js?v=c5c424ee2f';
+import { DemoMarketDataProvider, LiveMarketDataProvider, AlpacaMarketDataProvider, MARKET_ERRORS } from './market.js?v=c5c424ee2f';
+import { Game } from './game.js?v=c5c424ee2f';
+import { DIGITS, DIGIT_H, DIGIT_W } from './digit-sprites.js?v=c5c424ee2f';
 var goldShown='',goldNum=0;
-import { Renderer,renderShopIcon } from './renderer.js?v=bb55dcaf4d';
-import { initialState,readSave,writeSave,snapshotGame,safeStorage,readRawSave,writeRawSave } from './storage.js?v=bb55dcaf4d';
-import{cloudConfigured,currentUser,signUpEmail,signInEmail,signOut,pull,push,EMAIL_RULE,idOf,claimSession,sessionState,SESSION_ID,pullGrant}from'./cloud.js?v=bb55dcaf4d';
-import{recentSymbols}from'./stock-picker.js?v=bb55dcaf4d';
-import { loadClayAssets,useBattlefield } from './clay-assets.js?v=bb55dcaf4d';
-import{THEMES,themeFor}from'./themes.js?v=bb55dcaf4d';
-import { drawClayPreview } from './clay-runtime.js?v=bb55dcaf4d';
-import{money,playerXPAt,SLOT_LEVELS,wallXPAt,WALL_MAX_LEVEL,wallPower}from'./progression.js?v=bb55dcaf4d';
-import{openPack,applyCard,PACKS,MODES,MODE_ORDER,modeFor,RARITIES,TOWER_RARITY}from'./cards.js?v=bb55dcaf4d';
-import{CardStage,renderCollection,towerCard,statLines,nextLevelLines}from'./card-ui.js?v=bb55dcaf4d';
+import { Renderer,renderShopIcon } from './renderer.js?v=c5c424ee2f';
+import { initialState,readSave,writeSave,snapshotGame,safeStorage,readRawSave,writeRawSave } from './storage.js?v=c5c424ee2f';
+import{cloudConfigured,currentUser,signUpEmail,signInEmail,signOut,pull,push,EMAIL_RULE,idOf,claimSession,sessionState,SESSION_ID,pullGrant}from'./cloud.js?v=c5c424ee2f';
+import{recentSymbols}from'./stock-picker.js?v=c5c424ee2f';
+import { loadClayAssets,useBattlefield } from './clay-assets.js?v=c5c424ee2f';
+import{THEMES,themeFor}from'./themes.js?v=c5c424ee2f';
+import { drawClayPreview } from './clay-runtime.js?v=c5c424ee2f';
+import{money,playerXPAt,SLOT_LEVELS,wallXPAt,WALL_MAX_LEVEL,wallPower}from'./progression.js?v=c5c424ee2f';
+import{openPack,applyCard,PACKS,MODES,MODE_ORDER,modeFor,RARITIES,TOWER_RARITY}from'./cards.js?v=c5c424ee2f';
+import{CardStage,renderCollection,towerCard,statLines,nextLevelLines}from'./card-ui.js?v=c5c424ee2f';
 const $=id=>document.getElementById(id),fmt=new Intl.NumberFormat('ko-KR'),nyTime=new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',hour12:false,hour:'2-digit',minute:'2-digit',second:'2-digit'});
 async function prepareArt(){const started=performance.now();
  $('asset-retry').hidden=true;$('asset-loading-message').textContent='클레이 전장을 준비하고 있어요.';
@@ -353,7 +353,7 @@ setInterval(()=>{if(cloudUser&&!cloudKicked&&!qaMode&&!document.hidden&&isDirty(
 /* v53: ultimate cut-in — comic panel over the whole screen, hero shouts, then the launch */
 let cutinActive=false;const CUTIN_LINES={musk:['화성으로 가즈아!!','풀매수 로켓 발사!','떡상 엔진 점화!!']};
 Game.prototype.onCutin=function(type,c,fire){if(cutinActive||this!==game||document.hidden){fire();return;}cutinActive=true;const w=document.createElement('div');w.className='cutin';const lines=CUTIN_LINES[type]||['필살기!'];
- w.innerHTML=`<div class="cutin-band"><i class="cutin-lines"></i><img class="cutin-hero" src="assets/clay/${type}-clay-v1.webp" alt=""><div class="cutin-bubble">${lines[Math.floor(Math.random()*lines.length)]}</div><b class="cutin-name">${CANNONS[type].name} · 필살기</b></div>`;document.body.append(w);
+ w.innerHTML=`<div class="cutin-band"><i class="cutin-lines"></i><img class="cutin-hero" src="assets/clay/cutin-${type}-v1.webp" alt=""><div class="cutin-bubble">${lines[Math.floor(Math.random()*lines.length)]}</div><b class="cutin-name">${CANNONS[type].name} · 필살기</b></div>`;document.body.append(w);
  setTimeout(()=>w.classList.add('out'),1250);setTimeout(()=>{w.remove();cutinActive=false;last=performance.now();fire();},1550);};
 
 // v56: GPT gold digit sprites for the money readout (keeps the text for screen readers), bounces on increase

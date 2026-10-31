@@ -900,3 +900,9 @@ body .scrim:not([hidden]){z-index:44}
 .battle-dock .shop-toggle::before,.battle-dock .shop-toggle::after{display:none!important}
 .battle-dock .shop-toggle>*{display:none!important}
 .battle-dock .shop-toggle:active,.battle-dock .shop-toggle[aria-expanded="true"]{background-image:url(assets/clay/btn-draw-press-v1.webp)!important;transform:none!important}
+
+/* v56: GPT cut-in illustration — big upper body bleeding off the band's bottom edge */
+.cutin-hero{left:-2%!important;bottom:-2%!important;width:min(78vw,520px)!important;transform:rotate(8deg)!important;filter:drop-shadow(6px 6px 0 #2b1a0b)!important}
+@keyframes ciHero{from{transform:rotate(8deg) translateX(-70vw)}}
+.cutin-bubble{right:8%!important;top:12%!important;max-width:40%!important}
+.cutin-name{right:23%!important;bottom:9%!important}
