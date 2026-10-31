@@ -945,3 +945,35 @@ body .scrim:not([hidden]){z-index:44}
 @keyframes medalDrop{0%{transform:translateY(-60px) rotate(-12deg);opacity:0}55%{transform:translateY(6px) rotate(6deg);opacity:1}75%{transform:translateY(-4px) rotate(-3deg)}}
 @keyframes medalShine{50%{filter:drop-shadow(0 10px 14px #0009) brightness(1.15)}}
 @keyframes medalGlow{50%{transform:translateX(-50%) scale(1.15);opacity:.7}}
+/* ============ v58: unified GPT UI kit — wood/gold panels, pill buttons, close buttons, ribbon headers ============ */
+.exit-card,.profile-pop,.sheet,.ti-card:not(.wall-info){border-image-source:url(assets/clay/ui-panel-v1.webp)!important;border-image-slice:86 fill!important;border-image-width:30px!important;border-image-repeat:stretch round!important;background:transparent!important;box-shadow:0 14px 34px #000a!important;border-radius:0!important}
+.exit-card{padding:30px 26px 24px!important}
+.profile-pop{padding:30px 24px 22px!important}
+.sheet{padding-left:28px!important;padding-right:28px!important;padding-top:34px!important}
+.sheet .sheet-handle{display:none!important}
+.ti-card:not(.wall-info){padding:28px 24px max(24px,env(safe-area-inset-bottom))!important}
+.wall-pop .ti-card.wall-info{border-image-source:url(assets/clay/ui-panel-v1.webp)!important;border-image-slice:86 fill!important;border-image-width:22px!important;border-image-repeat:stretch round!important;background:transparent!important;border-radius:0!important;padding:16px 20px 14px!important}
+/* text on parchment */
+.sheet,.exit-card,.profile-pop,.ti-card{color:#3a2a12}
+.sheet .eyebrow{color:#8a6a3a!important}
+/* ribbon behind sheet titles */
+.sheet>h2,.sheet .tower-menu-heading h2,.sheet .detail-heading h2{position:relative;display:block;width:max-content;max-width:100%;margin:0 auto 10px!important;padding:8px 42px 14px!important;background:url(assets/clay/ui-ribbon-v1.webp) center/100% 100% no-repeat!important;color:#fff!important;-webkit-text-stroke:3px #6a0a0a;paint-order:stroke fill;text-shadow:0 2px 0 #3a0404!important;font-family:var(--gk-font)!important;font-weight:400!important}
+/* close buttons */
+.close-panel,.pp-close,.wall-pop .wi-x{width:34px!important;height:34px!important;padding:0!important;border:0!important;border-radius:50%!important;background:url(assets/clay/ui-close-v1.webp) center/100% 100% no-repeat!important;color:transparent!important;font-size:0!important;box-shadow:none!important;filter:drop-shadow(0 2px 2px #0008)}
+.close-panel:active,.pp-close:active,.wall-pop .wi-x:active{transform:scale(.9)}
+/* pill buttons */
+button.primary,.course-primary,button.secondary,.course-secondary{border:0!important;border-radius:0!important;background:none!important;border-image-slice:38 fill!important;border-image-width:20px!important;border-image-repeat:stretch!important;box-shadow:none!important;min-height:42px;padding:10px 22px!important;color:#fff!important;font-family:var(--gk-font)!important;font-weight:400!important;-webkit-text-stroke:3px #1d4a10;paint-order:stroke fill;text-shadow:0 2px 0 #0006!important;filter:drop-shadow(0 3px 2px #0007)}
+button.primary,.course-primary{border-image-source:url(assets/clay/ui-btn-green-v1.webp)!important}
+button.secondary,.course-secondary{border-image-source:url(assets/clay/ui-btn-wood-v1.webp)!important;-webkit-text-stroke:3px #3a2008}
+button.danger,#exit-ok,button#exit-ok{border-image-source:url(assets/clay/ui-btn-red-v1.webp)!important;-webkit-text-stroke:3px #6a0a0a}
+button.primary:active,.course-primary:active,button.secondary:active,.course-secondary:active{transform:translateY(2px) scale(.98);filter:drop-shadow(0 1px 1px #0007) brightness(.92)}
+button.primary:disabled,.course-primary:disabled,button.secondary:disabled{filter:grayscale(.8) brightness(.85);opacity:.7}
+/* v58: exit dialog buttons + readable text on parchment */
+#exit-cancel,#exit-ok,.exit-card .exit-actions button,.account-form button[type=submit]{border:0!important;border-radius:0!important;background:none!important;border-image-slice:38 fill!important;border-image-width:20px!important;border-image-repeat:stretch!important;box-shadow:none!important;min-height:42px;color:#fff!important;font-family:var(--gk-font)!important;font-weight:400!important;paint-order:stroke fill;text-shadow:0 2px 0 #0006!important;filter:drop-shadow(0 3px 2px #0007)}
+#exit-cancel{border-image-source:url(assets/clay/ui-btn-wood-v1.webp)!important;-webkit-text-stroke:3px #3a2008}
+#exit-ok{border-image-source:url(assets/clay/ui-btn-red-v1.webp)!important;-webkit-text-stroke:3px #6a0a0a}
+.account-form button[type=submit]{border-image-source:url(assets/clay/ui-btn-green-v1.webp)!important;-webkit-text-stroke:3px #1d4a10}
+.sheet .shop-balance,.sheet .slot-guide,.sheet .eyebrow,.sheet small,.sheet .muted{color:#6a4a20!important;text-shadow:none!important}
+.sheet .shop-balance strong{color:#2f7a2a!important}
+.sheet .slot-guide{background:#efd9a6!important;border:2px solid #b07a3a!important;color:#4a2804!important}
+.sheet h3,.sheet .collection-title,.sheet .armory-head h3{color:#4a2804!important;text-shadow:0 1px 0 #fff6!important}
