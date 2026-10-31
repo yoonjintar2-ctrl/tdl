@@ -1,23 +1,23 @@
-import{CampaignView}from'./campaign-view.js?v=cffd2f6728';
-import{CampaignDataProvider,newCourseRun,readCourseRun,checkpointCourse,storeCourseRun,removeCourseRun,restoreCourseCombat,settleCourse}from'./campaign.js?v=cffd2f6728';
-import{courseFor,courseTime,CAMPAIGN_REWARD_RATE,campaignProgress}from'./campaign-courses.js?v=cffd2f6728';
-import{stockFor}from'./symbols.js?v=cffd2f6728';
-import{StockPicker}from'./stock-picker.js?v=cffd2f6728';
-import{drawSessionChart}from'./session-chart.js?v=cffd2f6728';
-import{WALL_MAX_XP}from'./progression.js?v=cffd2f6728';
-import { CANNONS,SCENARIOS,SETTINGS,ENEMIES,SUPPLIES,WORLD_WIDTH,DRONE,WALL,WALL_STAGES,cannonStats,upgradeCost,validPlacement,clamp } from './config.js?v=cffd2f6728';
-import { DemoMarketDataProvider, LiveMarketDataProvider, AlpacaMarketDataProvider, MARKET_ERRORS } from './market.js?v=cffd2f6728';
-import { Game } from './game.js?v=cffd2f6728';
-import { Renderer,renderShopIcon } from './renderer.js?v=cffd2f6728';
-import { initialState,readSave,writeSave,snapshotGame,safeStorage,readRawSave,writeRawSave } from './storage.js?v=cffd2f6728';
-import{cloudConfigured,currentUser,signUpEmail,signInEmail,signOut,pull,push,EMAIL_RULE,idOf,claimSession,sessionState,SESSION_ID,pullGrant}from'./cloud.js?v=cffd2f6728';
-import{recentSymbols}from'./stock-picker.js?v=cffd2f6728';
-import { loadClayAssets,useBattlefield } from './clay-assets.js?v=cffd2f6728';
-import{THEMES,themeFor}from'./themes.js?v=cffd2f6728';
-import { drawClayPreview } from './clay-runtime.js?v=cffd2f6728';
-import{money,playerXPAt,SLOT_LEVELS,wallXPAt,WALL_MAX_LEVEL,wallPower}from'./progression.js?v=cffd2f6728';
-import{openPack,applyCard,PACKS,MODES,MODE_ORDER,modeFor,RARITIES,TOWER_RARITY}from'./cards.js?v=cffd2f6728';
-import{CardStage,renderCollection,towerCard,statLines,nextLevelLines}from'./card-ui.js?v=cffd2f6728';
+import{CampaignView}from'./campaign-view.js?v=d9a0933b62';
+import{CampaignDataProvider,newCourseRun,readCourseRun,checkpointCourse,storeCourseRun,removeCourseRun,restoreCourseCombat,settleCourse}from'./campaign.js?v=d9a0933b62';
+import{courseFor,courseTime,CAMPAIGN_REWARD_RATE,campaignProgress}from'./campaign-courses.js?v=d9a0933b62';
+import{stockFor}from'./symbols.js?v=d9a0933b62';
+import{StockPicker}from'./stock-picker.js?v=d9a0933b62';
+import{drawSessionChart}from'./session-chart.js?v=d9a0933b62';
+import{WALL_MAX_XP}from'./progression.js?v=d9a0933b62';
+import { CANNONS,SCENARIOS,SETTINGS,ENEMIES,SUPPLIES,WORLD_WIDTH,DRONE,WALL,WALL_STAGES,cannonStats,upgradeCost,validPlacement,clamp } from './config.js?v=d9a0933b62';
+import { DemoMarketDataProvider, LiveMarketDataProvider, AlpacaMarketDataProvider, MARKET_ERRORS } from './market.js?v=d9a0933b62';
+import { Game } from './game.js?v=d9a0933b62';
+import { Renderer,renderShopIcon } from './renderer.js?v=d9a0933b62';
+import { initialState,readSave,writeSave,snapshotGame,safeStorage,readRawSave,writeRawSave } from './storage.js?v=d9a0933b62';
+import{cloudConfigured,currentUser,signUpEmail,signInEmail,signOut,pull,push,EMAIL_RULE,idOf,claimSession,sessionState,SESSION_ID,pullGrant}from'./cloud.js?v=d9a0933b62';
+import{recentSymbols}from'./stock-picker.js?v=d9a0933b62';
+import { loadClayAssets,useBattlefield } from './clay-assets.js?v=d9a0933b62';
+import{THEMES,themeFor}from'./themes.js?v=d9a0933b62';
+import { drawClayPreview } from './clay-runtime.js?v=d9a0933b62';
+import{money,playerXPAt,SLOT_LEVELS,wallXPAt,WALL_MAX_LEVEL,wallPower}from'./progression.js?v=d9a0933b62';
+import{openPack,applyCard,PACKS,MODES,MODE_ORDER,modeFor,RARITIES,TOWER_RARITY}from'./cards.js?v=d9a0933b62';
+import{CardStage,renderCollection,towerCard,statLines,nextLevelLines}from'./card-ui.js?v=d9a0933b62';
 const $=id=>document.getElementById(id),fmt=new Intl.NumberFormat('ko-KR'),nyTime=new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',hour12:false,hour:'2-digit',minute:'2-digit',second:'2-digit'});
 async function prepareArt(){const started=performance.now();
  $('asset-retry').hidden=true;$('asset-loading-message').textContent='클레이 전장을 준비하고 있어요.';
@@ -104,7 +104,7 @@ function marketUI(s){
 let themeKey='default';
 function applyTheme(symbol){const mk=game.modeKey,key=mk&&mk!=='normal'&&THEMES[mk]?mk:themeFor(symbol),th=THEMES[key];game.terrain.setArt(th.aspect,th.corridor);if(key===themeKey&&renderer.bg)return;themeKey=key;useBattlefield(th.file).then(ok=>{if(ok){themeKey=key;resize();}});}
 function bindProvider(){provider.subscribe(s=>{game.onMarket(s);marketUI(s);});game.onMarket(provider.last);marketUI(provider.last);if(marketChosen)provider.start?.();}
-picker=new StockPicker($('stock-picker'),{onCampaign:()=>openCampaignMap(),missions:()=>{const home=homeGame||game,mode=home.modeKey,view=campaignView_(snapshotGame(home),mode);return{progress:campaignProgress(view.campaign),pending:readCourseRun(view,courseStorage),mode};},onMission:id=>{const home=homeGame||game,pending=readCourseRun(campaignView_(snapshotGame(home),home.modeKey),courseStorage);if(pending&&pending.courseId!==id){openCampaignMap();return;}beginCourse(id,!!pending);},onChoose:async symbol=>{provider.destroy();game.settings.symbol=symbol;game.resetMarket();marketChosen=true;provider=makeProvider(symbol);applyTheme(symbol);$('stock-select').textContent=(stockFor(symbol)?.market==='KR'?stockFor(symbol).name:symbol)+'';$('stock-select').title=symbol;$('data-mode').value='live';$('simulation-controls').hidden=true;bindProvider();game.dirty=true;save();updateUI();},onClose:({selected})=>{$('stock-select').setAttribute('aria-expanded','false');$('stock-select').focus({preventScroll:true});if(!selected&&marketChosen)provider.refresh?.();}});
+picker=new StockPicker($('stock-picker'),{onCampaign:()=>openCampaignMap(),missions:()=>{const home=homeGame||game,mode=home.modeKey,view=campaignView_(snapshotGame(home),mode);return{progress:campaignProgress(view.campaign),pending:readCourseRun(view,courseStorage),mode};},onMission:id=>startMission(id),onChoose:async symbol=>{provider.destroy();game.settings.symbol=symbol;game.resetMarket();marketChosen=true;provider=makeProvider(symbol);applyTheme(symbol);$('stock-select').textContent=(stockFor(symbol)?.market==='KR'?stockFor(symbol).name:symbol)+'';$('stock-select').title=symbol;$('data-mode').value='live';$('simulation-controls').hidden=true;bindProvider();game.dirty=true;save();updateUI();},onClose:({selected})=>{$('stock-select').setAttribute('aria-expanded','false');$('stock-select').focus({preventScroll:true});if(!selected&&marketChosen)provider.refresh?.();}});
 // v21: the ticker plaque is a label now; stocks are changed from the start screen (back button).
 $('stock-select').onclick=()=>{if(courseRun)openCampaignMap();};
 $('market-provider').value=game.settings.marketProvider||'yahoo';$('market-provider').addEventListener('change',e=>{provider.destroy();game.settings.marketProvider=e.target.value==='alpaca'?'alpaca':'yahoo';game.resetMarket();provider=makeProvider();$('data-mode').value='live';$('simulation-controls').hidden=true;bindProvider();game.dirty=true;save();updateUI();});
@@ -230,7 +230,7 @@ function bankCourse(run,outcome){const base=homeGame||game,mode=run.mode||'norma
  removeCourseRun(courseStorage);provider.destroy();game=nextHome;homeGame=null;courseRun=null;renderer.game=game;renderer.clayWallCache=null;game.resetMarket();marketChosen=false;provider=makeProvider();courseModeUI(false);$('stock-select').textContent='종목';bindProvider();quality();updateUI();campaignView.result(settlement.result);}
 function finishCourse(outcome){if(!courseRun||courseRun.ending)return;courseRun.ending=true;const run=checkpointCourse(courseRun,game,provider);storeCourseRun(run,courseStorage);bankCourse(run,outcome);}
 function updateCourse(dt){if(!courseRun||courseRun.ending)return;courseRun.elapsed=provider.elapsed;courseRun.zeroSeconds=game.wallXP<=0?courseRun.zeroSeconds+dt:0;if(courseRun.zeroSeconds>=.6){if(courseFor(courseRun.courseId).infinite){try{const b=JSON.parse(localStorage.getItem('stock-siege-infinite-best')||'null'),kills=game.metrics.kills||0;if(!b||provider.elapsed>b.sec)localStorage.setItem('stock-siege-infinite-best',JSON.stringify({sec:Math.floor(provider.elapsed),kills}));}catch{}}toast('성벽이 무너졌어요!');finishCourse('failed');}else if(provider.elapsed>=courseFor(courseRun.courseId).duration)finishCourse('clear');}
-campaignView=new CampaignView($('campaign-panel'),{start:beginCourse,back:backToStocks,map:openCampaignMap,resume:resumeCourse,quit:()=>finishCourse('quit'),quitPending:()=>{if(courseRun)finishCourse('quit');else{const pending=readCourseRun(campaignView_(snapshotGame(game),game.modeKey),courseStorage);if(pending)bankCourse(pending,'quit');}}});
+campaignView=new CampaignView($('campaign-panel'),{start:id=>startMission(id),back:backToStocks,map:openCampaignMap,resume:resumeCourse,quit:()=>finishCourse('quit'),quitPending:()=>{if(courseRun)finishCourse('quit');else{const pending=readCourseRun(campaignView_(snapshotGame(game),game.modeKey),courseStorage);if(pending)bankCourse(pending,'quit');}}});
 $('course-map-button').onclick=openCampaignMap;
 // Floating back (with in-page confirm) and mission-only pause.
 function pauseCourse(){if(!courseRun)return;courseRun.elapsed=provider.elapsed;courseRun.paused=true;save();closePanel();campaignView.pause(courseRun);}
@@ -332,3 +332,9 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden)holdWake()
 
 async function applyGrant(){if(!cloudUser||cloudKicked)return;try{const g=await pullGrant(cloudUser);if(!g||game.grantsApplied.includes(g.id))return;game.gold+=g.gold;game.grantsApplied.push(g.id);save();pushNow(true);toast('🎁 운영자 지급: '+game.cash(g.gold)+' 이 계정에 들어왔어요!');}catch{}}
 setInterval(applyGrant,30000);
+
+/* v51: start any unlocked mission (incl. replays). A different run in progress is banked first, with confirmation. */
+function startMission(id){const home=homeGame||game,view=campaignView_(snapshotGame(home),home.modeKey),pending=courseRun&&!courseRun.ending?courseRun:readCourseRun(view,courseStorage);
+ if(pending&&pending.courseId===id){beginCourse(id,true);return;}
+ if(pending){if(!confirm(`진행 중인 미션 ${pending.courseId}을(를) 그만두고 미션 ${id}을(를) 시작할까요?\n지금까지 얻은 보상은 저장돼요.`))return;if(courseRun)finishCourse('quit');else bankCourse(pending,'quit');}
+ beginCourse(id,false);}

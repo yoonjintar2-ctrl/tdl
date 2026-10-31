@@ -811,3 +811,39 @@ body.gacha-open .mission-goal,.tower-info~.mission-goal{display:none}
 body .sheet:not([hidden]){z-index:45}
 body .scrim:not([hidden]){z-index:44}
 .profile-pop{z-index:46!important}
+/* v51: tower popup never overflows the screen */
+.ti-card{box-sizing:border-box;max-width:100vw;overflow:hidden}
+.ti-stats,.ti-rows,.ti-row{min-width:0}
+.ti-role{white-space:normal;word-break:keep-all;overflow-wrap:anywhere}
+.tower-info .ti-rows{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;column-gap:10px}
+.tower-info .ti-row{display:flex;justify-content:space-between;gap:6px;font-size:12px!important}
+.tower-info .ti-row span{white-space:nowrap;flex:none}
+.tower-info .ti-row b{min-width:0;text-align:right;white-space:normal!important;overflow:visible!important;text-overflow:clip!important;word-break:keep-all;line-height:1.2}
+/* v51: mission list — clear "정복" badge, readable resume card */
+.course-card.cleared::after{content:"✓ 정복"!important;transform:none!important;top:10px!important;right:10px!important;padding:4px 10px!important;border:2px solid #4a463c!important;border-radius:99px!important;background:#5d594f!important;color:#fffdf4!important;font:400 13px/1 var(--gk-font)!important;letter-spacing:0!important;text-decoration:none!important;box-shadow:0 2px 0 #2b2820!important}
+.course-card.cleared{filter:saturate(.35)!important}
+.course-card.cleared strong,.course-card.cleared .course-description{color:#3a372f!important}
+.course-resume small{color:#8a5a14!important;font:400 13px var(--gk-font)!important;letter-spacing:1px}
+.course-resume p{color:#5a3a10!important;font:400 13px/1.4 var(--gk-font)!important;opacity:1!important}
+.course-resume strong{color:#3a2208!important}
+.course-card.cleared .course-duration{visibility:hidden}
+/* v51: gacha level-up showcase */
+.lvup{position:absolute;inset:0;z-index:20;display:grid;place-items:center;background:#06100bcc;backdrop-filter:blur(3px);animation:stageIn .25s ease both}
+.lvup-stage{position:relative;display:flex;flex-direction:column;align-items:center;gap:8px;padding:22px 26px 18px;width:min(320px,calc(100% - 40px));border-radius:24px;border:3px solid #4a2e12;background:linear-gradient(#fff6dc,#ecd6a0);box-shadow:inset 0 0 0 3px #fff3c4,0 16px 50px #000c;animation:lvIn .45s cubic-bezier(.3,1.5,.5,1) both}
+.lvup-glow{position:absolute;left:50%;top:38%;width:260px;height:260px;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,#ffe58a 0%,#ffd34f55 35%,#0000 70%);animation:lvGlow 1.6s ease-in-out infinite;pointer-events:none}
+.lvup-art{position:relative;width:200px;height:177px;transition:filter .3s}
+.lvup-stage.evolve .lvup-art{filter:brightness(4) saturate(0);transform:scale(1.08)}
+.lvup-title{position:relative;font:400 22px var(--gk-font);color:#4a2804}
+.lvup-lv{position:relative;display:flex;align-items:center;gap:10px;font:400 26px var(--gk-font);color:#6a4a20}
+.lvup-lv i{font-style:normal;font-size:14px;color:#c48a1c}
+.lvup-lv b.to{color:#e2780f;-webkit-text-stroke:1px #4a2e12}
+.lvup-lv b.pop{animation:lvPop .35s ease}
+.lvup-bar{position:relative;width:86%;height:12px;border-radius:99px;background:#4a2e1233;border:2px solid #4a2e12;overflow:hidden}
+.lvup-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#7fd65a,#d9f57a)}
+.lvup-extra{position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;min-height:4px}
+.lvup-evo{font:400 18px var(--gk-font);color:#b8460c;animation:lvPop .4s ease}
+.lvup-perk{font:400 13px var(--gk-font);color:#2e5a2a;background:#e9f7cf;border:2px solid #7fb35a;border-radius:10px;padding:3px 9px;animation:lvIn .4s ease both}
+.lvup-tap{position:absolute;bottom:max(24px,env(safe-area-inset-bottom));font:400 12px var(--gk-font);color:#fff3c4aa}
+@keyframes lvIn{from{transform:scale(.6);opacity:0}}
+@keyframes lvPop{40%{transform:scale(1.35)}}
+@keyframes lvGlow{50%{transform:translate(-50%,-50%) scale(1.15);opacity:.75}}

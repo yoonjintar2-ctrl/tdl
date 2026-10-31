@@ -1,4 +1,4 @@
-import { WORLD_WIDTH, DRONE, WALL, CAMERA_DEPTH } from './config.js?v=cffd2f6728';
+import { WORLD_WIDTH, DRONE, WALL, CAMERA_DEPTH } from './config.js?v=d9a0933b62';
 
 // A north-facing orthographic quarter view. Only rendering/input is projected:
 // combat coordinates, percent bands, ranges and swept collisions stay in world space.

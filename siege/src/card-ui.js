@@ -1,7 +1,7 @@
-import { CANNONS, cannonStats, PERKS, towerTier } from './config.js?v=cffd2f6728';
-import { RARITIES, TOWER_RARITY, xpForNext, MAX_CARD_LEVEL, cardOdds, PACKS } from './cards.js?v=cffd2f6728';
-import { renderShopIcon } from './renderer.js?v=cffd2f6728';
-import { FX } from './fx.js?v=cffd2f6728';
+import { CANNONS, cannonStats, PERKS, towerTier } from './config.js?v=d9a0933b62';
+import { RARITIES, TOWER_RARITY, xpForNext, MAX_CARD_LEVEL, cardOdds, PACKS } from './cards.js?v=d9a0933b62';
+import { renderShopIcon } from './renderer.js?v=d9a0933b62';
+import { FX } from './fx.js?v=d9a0933b62';
 
 const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
 const wait = ms => new Promise(r => setTimeout(r, ms));
@@ -63,7 +63,7 @@ export class CardStage {
     skip.onclick = () => this.skip(); flipAll.onclick = () => this.flipAll(flipAll);
     done.onclick = () => { this.close(); onClose?.(); };
     again.onclick = () => { this.close(); onAgain?.(); };
-    this.finish = () => { flipAll.hidden = skip.hidden = true; done.hidden = false; again.hidden = !canAgain?.(); this.showSummary(summary); };
+    this.finish = async () => { this.finish = null; flipAll.hidden = skip.hidden = true; await this.levelShow(); if (!this.root) return; done.hidden = false; again.hidden = !canAgain?.(); this.showSummary(summary); };
     if (count >= 100) { await wait(reduced() ? 50 : 1100); if (!this.skipping) this.flipAll(flipAll); }
   }
   async flip(i, fast = false) {
@@ -93,6 +93,31 @@ export class CardStage {
     for (let i = 0; i < (this.cards?.length || 0); i++) { if (!this.root || this.skipping) return; const rar = this.results[i].rarity; await this.flip(i); await wait(hundred ? (rar === 'common' ? 18 : 90) : (rar === 'common' ? 140 : 320)); }
   }
   skip() { if (!this.cards) return; this.skipping = true; for (let i = 0; i < this.cards.length; i++) this.flip(i, true); }
+  // v51: level-up showcase — each tower that levelled takes the stage in turn.
+  async levelShow() {
+    const ups = new Map(); for (const r of this.results) { if (r.isNew) continue; const u = ups.get(r.type); const from = r.level - r.levelUps; if (!u) ups.set(r.type, { type: r.type, from, to: r.level, any: r.levelUps > 0 }); else { u.from = Math.min(u.from, from); u.to = Math.max(u.to, r.level); u.any ||= r.levelUps > 0; } }
+    const list = [...ups.values()].filter(u => u.any && u.to > u.from); if (!list.length || !this.root) return;
+    const ov = el('div', 'lvup'); this.root.append(ov); let skip = false; const tap = el('small', 'lvup-tap', '탭하여 넘기기'); ov.onclick = () => { skip = true; };
+    for (const u of list) {
+      if (!this.root) return; skip = false;
+      const tierUp = towerTier(u.from, 10) !== towerTier(u.to, 10), perks = (PERKS[u.type] || []).filter(p => p.lv > u.from && p.lv <= u.to);
+      const stage = el('div', 'lvup-stage'), art = el('canvas', 'lvup-art'); art.width = 260; art.height = 230;
+      const lv = el('div', 'lvup-lv'), from = el('b', '', 'Lv.' + u.from), arrow = el('i', '', '▶'), to = el('b', 'to', 'Lv.' + u.from); lv.append(from, arrow, to);
+      const bar = el('div', 'lvup-bar'), fill = el('i'); bar.append(fill);
+      const title = el('strong', 'lvup-title', CANNONS[u.type].name + ' 레벨 업!'), extra = el('div', 'lvup-extra');
+      stage.append(el('i', 'lvup-glow'), art, title, lv, bar, extra); ov.replaceChildren(stage, tap); renderShopIcon(art, u.type, u.from);
+      const r = () => art.getBoundingClientRect(), fxAt = (k = 1) => { const b = r(); const x = b.left + b.width / 2, y = b.top + b.height / 2; this.fx?.ring(x, y, '#ffe27a', { radius: 140 * k, width: 6 }); this.fx?.burst(x, y, '#ffd34f', { count: 50 * k, speed: 300 * k, size: 3 }); this.fx?.glitter(b.left, b.top, b.width, b.height, '#fff3c4', 18 * k); };
+      await wait(skip ? 0 : 380);
+      const steps = u.to - u.from, dur = Math.min(1600, 260 * steps);
+      for (let i = 1; i <= steps; i++) { if (!this.root) return; fill.style.width = '0%'; void fill.offsetWidth; fill.style.transition = `width ${skip ? 0 : dur / steps}ms ease-out`; fill.style.width = '100%'; await wait(skip ? 0 : dur / steps); to.textContent = 'Lv.' + (u.from + i); to.classList.remove('pop'); void to.offsetWidth; to.classList.add('pop'); if (!skip) fxAt(.6); }
+      if (tierUp) { stage.classList.add('evolve'); await wait(skip ? 0 : 420); renderShopIcon(art, u.type, u.to); fxAt(1.6); extra.append(el('span', 'lvup-evo', '✨ 외형 진화!')); await wait(skip ? 0 : 300); stage.classList.remove('evolve'); }
+      else { renderShopIcon(art, u.type, u.to); fxAt(1); }
+      for (const p of perks) extra.append(el('span', 'lvup-perk', '🔓 ' + p.text));
+      await new Promise(res => { let t = setTimeout(res, skip ? 250 : 1500 + perks.length * 700); ov.onclick = () => { clearTimeout(t); res(); }; });
+      ov.onclick = () => { skip = true; };
+    }
+    ov.remove();
+  }
   banner(text, rarity = 'legend') { const b = this.root?.querySelector('.gacha-banner'); if (!b) return; b.textContent = text; b.className = 'gacha-banner show r-' + rarity; clearTimeout(this.bannerT); this.bannerT = setTimeout(() => { if (b) b.className = 'gacha-banner'; }, 1800); }
   showSummary(box) {
     const by = new Map(); for (const r of this.results) { const s = by.get(r.type) || { type: r.type, n: 0, isNew: false, level: 0, ups: 0, refund: 0, gained: 0 }; s.n++; s.gained += r.gained || 0; s.isNew ||= r.isNew; s.level = Math.max(s.level, r.level); s.ups += r.levelUps; s.refund += r.refund; by.set(r.type, s); }
