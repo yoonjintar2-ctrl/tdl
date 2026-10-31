@@ -1,11 +1,11 @@
-import { WORLD_WIDTH as W,CANNONS,ENEMIES,SUPPLIES,WALL_STAGES,DRONE,WALL,cannonStats,validPlacement,validDronePlacement,snapSlot,ALL_SLOTS,FORWARD_X,FORWARD_DY,clamp } from './config.js?v=984ba11a08';
-import{WALL_MAX_LEVEL,WALL_MAX_XP}from'./progression.js?v=984ba11a08';
-import{isAIStock}from'./symbols.js?v=984ba11a08';
-import { QuarterCamera, DEPTH_SCALE, WALL_ELEVATION } from './camera.js?v=984ba11a08';
-import { drawClayMortar, drawClayMortarIcon, clayBattlefield } from './clay-assets.js?v=984ba11a08';
-import{drawProjectile,drawEffect}from'./combat-fx.js?v=984ba11a08';
-import{artCrop}from'./terrain.js?v=984ba11a08';
-import { drawClayTower, drawClayUnit, drawClayWall, drawClayPreview, drawForwardPad, hasKeep, drawClaySprite, clayReady, metaOf, drawClayTowerIcon, wallOutline, tierOf, tierTint, drawTierBack, drawTierFront } from './clay-runtime.js?v=984ba11a08';
+import { WORLD_WIDTH as W,CANNONS,ENEMIES,SUPPLIES,WALL_STAGES,DRONE,WALL,cannonStats,validPlacement,validDronePlacement,snapSlot,ALL_SLOTS,FORWARD_X,FORWARD_DY,clamp } from './config.js?v=12f2a369ef';
+import{WALL_MAX_LEVEL,WALL_MAX_XP}from'./progression.js?v=12f2a369ef';
+import{isAIStock}from'./symbols.js?v=12f2a369ef';
+import { QuarterCamera, DEPTH_SCALE, WALL_ELEVATION } from './camera.js?v=12f2a369ef';
+import { drawClayMortar, drawClayMortarIcon, clayBattlefield } from './clay-assets.js?v=12f2a369ef';
+import{drawProjectile,drawEffect}from'./combat-fx.js?v=12f2a369ef';
+import{artCrop}from'./terrain.js?v=12f2a369ef';
+import { drawClayTower, drawClayUnit, drawClayWall, drawClayPreview, drawForwardPad, hasKeep, drawClaySprite, clayReady, metaOf, drawClayTowerIcon, wallOutline, tierOf, tierTint, drawTierBack, drawTierFront } from './clay-runtime.js?v=12f2a369ef';
 const BAND=215;
 const TAU=Math.PI*2;
 function box(c,x,y,w,h,r,fill,stroke){c.beginPath();c.roundRect(x,y,w,h,r);if(fill){c.fillStyle=fill;c.fill();}if(stroke){c.lineWidth=1;c.strokeStyle=stroke;c.stroke();}}

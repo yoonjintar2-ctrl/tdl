@@ -977,3 +977,16 @@ button.primary:disabled,.course-primary:disabled,button.secondary:disabled{filte
 .sheet .shop-balance strong{color:#2f7a2a!important}
 .sheet .slot-guide{background:#efd9a6!important;border:2px solid #b07a3a!important;color:#4a2804!important}
 .sheet h3,.sheet .collection-title,.sheet .armory-head h3{color:#4a2804!important;text-shadow:0 1px 0 #fff6!important}
+/* v61: in-battle info shows the tower character */
+.tower-info.field-info .ti-card{grid-template-columns:96px minmax(0,1fr)!important}
+.ti-hero{position:relative;align-self:start;width:96px;height:96px;border-radius:16px;background:radial-gradient(circle at 50% 60%,#fff6d8,#e7cf98);box-shadow:inset 0 0 0 2px #b07a3a}
+.ti-hero canvas{width:100%;height:100%;display:block}
+.ti-hero b{position:absolute;left:50%;bottom:-8px;transform:translateX(-50%);padding:1px 8px;border-radius:9px;background:#4a2e12;color:#ffe9a8;font:400 12px/16px var(--gk-font)}
+/* v61: stat rows — one rule for every tower: label on top, value below, 2 equal columns.
+   Any value length wraps inside its own cell, so new towers keep the same alignment. */
+.tower-info .ti-rows{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;column-gap:12px!important;row-gap:6px!important;margin-top:6px}
+.tower-info .ti-row{display:flex!important;flex-direction:column!important;align-items:flex-start!important;justify-content:flex-start!important;gap:1px!important;padding:3px 0 5px!important;border-bottom:1px dashed #c9b27a88}
+.tower-info .ti-row span{font:400 11px/1.2 var(--gk-font)!important;color:#8a6a3a!important;white-space:normal!important}
+.tower-info .ti-row b{font:700 14px/1.25 system-ui!important;color:#3a2a12;text-align:left!important;white-space:normal!important;word-break:keep-all;overflow-wrap:anywhere}
+.tower-info .ti-row.ti-next b{color:#2f7a2a}
+.tower-info.field-info .ti-card{padding-top:30px!important}.tower-info .ti-stats h3{margin:0 0 2px!important}
