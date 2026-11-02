@@ -1,26 +1,26 @@
-import{CampaignView}from'./campaign-view.js?v=17d9e20e45';
-import{CampaignDataProvider,newCourseRun,readCourseRun,checkpointCourse,storeCourseRun,removeCourseRun,restoreCourseCombat,settleCourse}from'./campaign.js?v=17d9e20e45';
-import{courseFor,courseTime,CAMPAIGN_REWARD_RATE,campaignProgress}from'./campaign-courses.js?v=17d9e20e45';
-import{stockFor}from'./symbols.js?v=17d9e20e45';
-import{StockPicker}from'./stock-picker.js?v=17d9e20e45';
-import{drawSessionChart}from'./session-chart.js?v=17d9e20e45';
-import{WALL_MAX_XP}from'./progression.js?v=17d9e20e45';
-import { CANNONS,SCENARIOS,SETTINGS,ENEMIES,SUPPLIES,WORLD_WIDTH,DRONE,WALL,WALL_STAGES,cannonStats,upgradeCost,validPlacement,validDronePlacement,clamp,ULT_INFO,ultNeed } from './config.js?v=17d9e20e45';
-import { DemoMarketDataProvider, LiveMarketDataProvider, AlpacaMarketDataProvider, MARKET_ERRORS } from './market.js?v=17d9e20e45';
-import { Game } from './game.js?v=17d9e20e45';
-import { DIGITS, DIGIT_H, DIGIT_W } from './digit-sprites.js?v=17d9e20e45';
+import{CampaignView}from'./campaign-view.js?v=1a281a03ab';
+import{CampaignDataProvider,newCourseRun,readCourseRun,checkpointCourse,storeCourseRun,removeCourseRun,restoreCourseCombat,settleCourse}from'./campaign.js?v=1a281a03ab';
+import{courseFor,courseTime,CAMPAIGN_REWARD_RATE,campaignProgress}from'./campaign-courses.js?v=1a281a03ab';
+import{stockFor}from'./symbols.js?v=1a281a03ab';
+import{StockPicker}from'./stock-picker.js?v=1a281a03ab';
+import{drawSessionChart}from'./session-chart.js?v=1a281a03ab';
+import{WALL_MAX_XP}from'./progression.js?v=1a281a03ab';
+import { CANNONS,SCENARIOS,SETTINGS,ENEMIES,SUPPLIES,WORLD_WIDTH,DRONE,WALL,WALL_STAGES,cannonStats,upgradeCost,validPlacement,validDronePlacement,clamp,ULT_INFO,ultNeed } from './config.js?v=1a281a03ab';
+import { DemoMarketDataProvider, LiveMarketDataProvider, AlpacaMarketDataProvider, MARKET_ERRORS } from './market.js?v=1a281a03ab';
+import { Game } from './game.js?v=1a281a03ab';
+import { DIGITS, DIGIT_H, DIGIT_W } from './digit-sprites.js?v=1a281a03ab';
 var goldShown='',goldNum=0;
-import { Renderer,renderShopIcon } from './renderer.js?v=17d9e20e45';
-import { initialState,readSave,writeSave,snapshotGame,safeStorage,readRawSave,writeRawSave } from './storage.js?v=17d9e20e45';
-import{cloudConfigured,currentUser,signUpEmail,signInEmail,signOut,pull,push,EMAIL_RULE,idOf,claimSession,sessionState,SESSION_ID,pullGrant}from'./cloud.js?v=17d9e20e45';
-import{recentSymbols}from'./stock-picker.js?v=17d9e20e45';
-import { loadClayAssets,useBattlefield } from './clay-assets.js?v=17d9e20e45';
-import{THEMES,themeFor}from'./themes.js?v=17d9e20e45';
-import { drawClayPreview } from './clay-runtime.js?v=17d9e20e45';
-import{money,playerXPAt,SLOT_LEVELS,wallXPAt,WALL_MAX_LEVEL,wallPower}from'./progression.js?v=17d9e20e45';
-import{openPack,applyCard,PACKS,MODES,MODE_ORDER,modeFor,RARITIES,TOWER_RARITY}from'./cards.js?v=17d9e20e45';
-import{CardStage,renderCollection,towerCard,statLines,nextLevelLines,openCodex}from'./card-ui.js?v=17d9e20e45';
-import{xpForNext,MAX_CARD_LEVEL}from'./cards.js?v=17d9e20e45';
+import { Renderer,renderShopIcon } from './renderer.js?v=1a281a03ab';
+import { initialState,readSave,writeSave,snapshotGame,safeStorage,readRawSave,writeRawSave } from './storage.js?v=1a281a03ab';
+import{cloudConfigured,currentUser,signUpEmail,signInEmail,signOut,pull,push,EMAIL_RULE,idOf,claimSession,sessionState,SESSION_ID,pullGrant}from'./cloud.js?v=1a281a03ab';
+import{recentSymbols}from'./stock-picker.js?v=1a281a03ab';
+import { loadClayAssets,useBattlefield } from './clay-assets.js?v=1a281a03ab';
+import{THEMES,themeFor}from'./themes.js?v=1a281a03ab';
+import { drawClayPreview } from './clay-runtime.js?v=1a281a03ab';
+import{money,playerXPAt,SLOT_LEVELS,wallXPAt,WALL_MAX_LEVEL,wallPower}from'./progression.js?v=1a281a03ab';
+import{openPack,applyCard,PACKS,MODES,MODE_ORDER,modeFor,RARITIES,TOWER_RARITY}from'./cards.js?v=1a281a03ab';
+import{CardStage,renderCollection,towerCard,statLines,nextLevelLines,openCodex}from'./card-ui.js?v=1a281a03ab';
+import{xpForNext,MAX_CARD_LEVEL}from'./cards.js?v=1a281a03ab';
 const $=id=>document.getElementById(id),fmt=new Intl.NumberFormat('ko-KR'),nyTime=new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',hour12:false,hour:'2-digit',minute:'2-digit',second:'2-digit'});
 async function prepareArt(){const started=performance.now();
  $('asset-retry').hidden=true;$('asset-loading-message').textContent='클레이 전장을 준비하고 있어요.';
@@ -388,3 +388,7 @@ renderTargetBtn();
 
 /* v66: player level-up celebration */
 Game.prototype.onLevelUp=function(from,to,bonus){if(this!==game||document.hidden)return;document.getElementById('lvl-cele')?.remove();const w=document.createElement('div');w.id='lvl-cele';w.className='lvl-cele';w.innerHTML=`<div class="lc-burst"></div><div class="lc-card"><div class="lc-ribbon">LEVEL UP!</div><div class="lc-num"></div><p>플레이어 레벨 ${from} → ${to}</p><div class="lc-bonus">축하금 <b></b></div></div>`;document.body.append(w);w.querySelector('.lc-num').innerHTML=digitHTML(String(to),64,'digits-v1.webp');w.querySelector('.lc-bonus b').innerHTML=digitHTML('+$'+bonus.toLocaleString('en-US'),26,'digits-v1.webp');w.onclick=()=>w.remove();setTimeout(()=>w.classList.add('out'),2600);setTimeout(()=>w.remove(),3100);};
+
+/* v66: named enemy alert — red siren beams sweep in from both sides + warning plate + short siren sound */
+let sirenCtx=null;function siren(){try{sirenCtx=sirenCtx||new (window.AudioContext||window.webkitAudioContext)();const ctx=sirenCtx,o=ctx.createOscillator(),g=ctx.createGain();o.type='triangle';const t=ctx.currentTime;for(let i=0;i<4;i++){o.frequency.setValueAtTime(880,t+i*.36);o.frequency.linearRampToValueAtTime(620,t+i*.36+.34);}g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.06,t+.05);g.gain.setValueAtTime(.06,t+1.3);g.gain.exponentialRampToValueAtTime(.0001,t+1.5);o.connect(g).connect(ctx.destination);o.start(t);o.stop(t+1.55);}catch{}}
+Game.prototype.onNamed=function(kind,text){if(this!==game||document.hidden)return;document.getElementById('named-alert')?.remove();const w=document.createElement('div');w.id='named-alert';w.className='named-alert';const art={giant:'enemy-giant',ram:'ram',bomber:'bomber'}[kind];w.innerHTML=`<i class="na-beam l"></i><i class="na-beam r"></i><div class="na-plate"><canvas width="140" height="140"></canvas><div><small>WARNING</small><b>${text}</b></div></div>`;document.body.append(w);requestAnimationFrame(()=>drawClayPreview(w.querySelector('canvas'),art));if(game.settings.sound!==false)siren();setTimeout(()=>w.classList.add('out'),2300);setTimeout(()=>w.remove(),2800);};

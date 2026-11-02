@@ -35,9 +35,17 @@ export const CANNONS = {
   sonic: { name: '소닉 타워', short: '소닉', icon: 'SO', cost: 260, damage: 2.2, rate: .8, range: 105, color: '#9fe8ff', role: '주변으로 둥글게 퍼지는 음파 · 약하지만 넓은 범위를 한꺼번에 · 전진 자리에 딱' },
   blackhole: { name: '블랙홀', short: '블랙홀', icon: 'BH', cost: 300, damage: 4, rate: 0, range: 150, pull: 38, drag: .45, color: '#b28cff', role: '주변 음봉을 끌어당기고 느리게 함 · 약한 지속 피해' },
   musk: { name: '삼론 머스크', short: '삼론머스크', icon: 'EM', cost: 320, damage: 8, rate: .26, range: 900, width: 38, rocketChance: .12, color: '#d9e3ec', role: '사이버트럭 발사 · 관통 광역 피해 · 가끔 초광역 로켓' },
-  drone: { name: '드론', short: '드론', icon: 'DR', cost: 350, damage: 14, rate: 3.2, range: 230, targetSwitch: .24, color: '#97e9ff', role: '자유 공중 배치 · 단일 타깃 레이저' }
+  drone: { name: '드론', short: '드론', icon: 'DR', cost: 350, damage: 14, rate: 3.2, range: 230, targetSwitch: .24, color: '#97e9ff', role: '자유 공중 배치 · 단일 타깃 레이저' },
+  ant: { name: '개미 투자자', short: '개미', icon: 'AT', cost: 120, damage: 3.2, rate: 1.3, range: 150, pellets: 3, color: '#ffcf6a', role: '머리띠를 두른 항쟁 개미 · 동전을 흩뿌리는 근거리 샷건 · 레벨이 오를수록 동전 수가 늘어요' },
+  bull: { name: '황소', short: '황소', icon: 'BL', cost: 200, damage: 10, rate: .8, range: 64, bullEvery: 22, color: '#7fd65a', role: '양봉 거래량을 키워 성벽을 빠르게 강화 · 아주 가까운 음봉만 들이받아요 · Lv.15부터 초록 황소 양봉 소환' },
+  buffett: { name: '전원버핏', short: '전원버핏', icon: 'WB', cost: 220, damage: 260, rate: 0, range: 0, radius: 120, charge: 55, crowd: 28, color: '#ffb3c8', role: '한 방만 노리는 의리형 투자자 · 평소엔 존버하며 기를 모으다 음봉이 몰리면 광역 한 방 · "나는 절대로 안 팔아!!"' },
+  leverage: { name: '레버리지', short: '레버리지', icon: 'LV', cost: 240, damage: 0, rate: 0, range: 0, color: '#ffd34f', role: '모든 타워 공격력 ×2 · 대신 성벽이 받는 피해도 커져요 · 레벨이 오를수록 이득은 늘고 손해는 줄어요' },
+  claw: { name: '인형뽑기', short: '인형뽑기', icon: 'CL', cost: 230, damage: 7, rate: .13, range: 0, capacity: 2, hits: 5, color: '#ff9ad0', role: '성벽 아래 양봉을 집어 전장으로 옮겨요 · 옮겨진 양봉은 검을 들고 싸워요 · 양봉이 많은 날일수록 강해요' },
+  hbm: { name: 'HBM 반도체', short: 'HBM', icon: 'HB', cost: 300, damage: 15, rate: .75, range: 9999, color: '#5af0c8', role: '땅속 전류가 전장을 누비다 무작위 음봉을 감전 · 고레벨이 되면 전기 타워들의 공격 속도를 올려요' },
+  lily: { name: '릴리', short: '릴리', icon: 'LI', cost: 280, damage: 0, rate: .6, range: 300, shrink: .12, color: '#ff8ab8', role: '마음자로 음봉을 연약하게 · 주사를 맞은 음봉은 최대 체력이 줄어요(직접 피해 없음) · 탱커 음봉 카운터' },
+  fed: { name: '연준의장', short: '연준의장', icon: 'FD', cost: 340, damage: 13, rate: .7, range: 160, chain: 2, color: '#f2f2ff', role: '비둘기 장풍 · 맞으면 둘로, 다시 넷으로 갈라지는 체인 피죠닝으로 넓게 커버' }
 };
-export const SHOP_NAMES = { sonic: 'SONIC', blackhole: 'BLACKHOLE', siege: 'SIEGE', summoner: 'SUMMON', musk: 'MUSK', machine: 'MG GUN', mortar: 'MORTAR', sniper: 'SNIPER', laser: 'LASER', totem: 'TOTEM', sticky: 'SLIME', poison: 'POISON', drone: 'DRONE' };
+export const SHOP_NAMES = { sonic: 'SONIC', blackhole: 'BLACKHOLE', siege: 'SIEGE', summoner: 'SUMMON', musk: 'MUSK', machine: 'MG GUN', mortar: 'MORTAR', sniper: 'SNIPER', laser: 'LASER', totem: 'TOTEM', sticky: 'SLIME', poison: 'POISON', drone: 'DRONE', ant: 'ANT', bull: 'BULL', buffett: 'HODL', leverage: 'X2', claw: 'CLAW', hbm: 'HBM', lily: 'LILY', fed: 'FED' };
 export const DRONE = Object.freeze({ altitude: 24, marginX: 29, marginTop: 62, marginBottom: 25 });
 export const WALL_STAGES = [
   { name: '흙', color: '#7a5a3c', edge: '#b58a5c' }, { name: '목책', color: '#5e4430', edge: '#a07a52' },
@@ -66,7 +74,7 @@ function baseStats(type, level = 1) {
     targetSwitch: c.targetSwitch ? c.targetSwitch / (1 + n * .045) : 0,
     range: c.range + n * (type === 'sniper' || type === 'siege' ? 4 : type === 'totem' || type === 'drone' ? 2 : .45), radius: (c.radius || 0) + n * (type === 'mortar' ? .65 : type === 'poison' ? .5 : .35),
     pierce: c.pierce ? Math.min(12, c.pierce + Math.floor(n / 6)) : 0, buff: c.buff ? Math.min(.5, c.buff + n * .008) : 0,
-    minRange: c.minRange || 0, width: (c.width || 0) + n * .4, knights: c.knights ? c.knights + Math.floor(n / 13) : 0, hits: c.hits ? c.hits + Math.floor(n / 8) : 0, slow: c.slow ? Math.min(.65, c.slow + n * .008) : 0, splashCap: c.splashCap ? Math.min(.52, c.splashCap + n * .006) : 0, duration: (c.duration || 0) + n * .045, dot: (c.dot || 0) * (1 + n * .055) };
+    minRange: c.minRange || 0, width: (c.width || 0) + n * .4, knights: c.knights ? c.knights + Math.floor(n / 13) : 0, hits: c.hits ? c.hits + Math.floor(n / 8) : 0, slow: c.slow ? Math.min(.65, c.slow + n * .008) : 0, splashCap: c.splashCap ? Math.min(.52, c.splashCap + n * .006) : 0, duration: (c.duration || 0) + n * .045, dot: (c.dot || 0) * (1 + n * .055), pellets: c.pellets ? c.pellets + Math.floor(n / 7) : 0, capacity: c.capacity ? c.capacity + Math.floor(n / 6) : 0, charge: c.charge ? c.charge * (1 - n * .006) : 0, crowd: c.crowd || 0, bullEvery: c.bullEvery ? Math.max(10, c.bullEvery - n * .25) : 0, shrink: c.shrink ? Math.min(.22, c.shrink + n * .002) : 0, chain: c.chain ? c.chain + (n >= 29 ? 1 : 0) : 0 };
 }
 export const upgradeCost = (type, level) => Math.ceil(CANNONS[type].cost * .8 * 1.17 ** (level - 1));
 export const energyMultiplier = (hp, maxHP = SETTINGS.maxHP) => .25 + .75 * clamp(hp / maxHP, 0, 1);
@@ -100,6 +108,14 @@ export const PERKS={
  summoner:[{lv:8,key:'more',text:'기사 +1명'},{lv:14,key:'archer',text:'궁수 양봉 소환 시작 — 멀리서 화살 사격'},{lv:22,key:'more2',text:'기사 +1명'},{lv:30,key:'archer2',text:'궁수 양봉 +1명'},{lv:38,key:'captain',text:'기사단장 — 기사 체력·피해 ×1.5'}],
  sonic:[{lv:12,key:'wide',text:'공명 — 음파 폭 +30%'},{lv:24,key:'stun',text:'충격파 — 맞은 적 0.4초 기절'},{lv:36,key:'double',text:'2연속 음파'}],
  blackhole:[{lv:12,key:'pull',text:'중력 강화 — 끌어당김 +30%'},{lv:24,key:'crush',text:'압착 — 중심부 피해 ×2'},{lv:36,key:'twin',text:'쌍블랙홀'}],
+ ant:[{lv:12,key:'jackpot',text:'대박 동전 — 동전 1개가 2배 피해'},{lv:24,key:'more',text:'개미 군단 — 동전 +2'},{lv:36,key:'pierce',text:'금화 — 동전이 관통'}],
+ bull:[{lv:15,key:'gbull',text:'초록 황소 양봉 소환 — 성벽 경험치 대폭 회복'},{lv:24,key:'volume',text:'거래량 폭발 — 양봉 회복 +20% 추가'},{lv:36,key:'stampede',text:'돌진 — 들이받기 피해 ×2'}],
+ buffett:[{lv:12,key:'patience',text:'존버 — 기 모으는 속도 +10%'},{lv:24,key:'big',text:'몰빵 — 폭발 반경 +25%'},{lv:36,key:'loyal',text:'의리 — 음봉 조건 수 -25%'}],
+ leverage:[{lv:12,key:'hedge',text:'헤지 — 성벽 피해 증가폭 소폭 감소'},{lv:24,key:'margin',text:'증거금 — 공격력 배율 소폭 증가'},{lv:36,key:'pro',text:'프로 트레이더 — 두 효과 모두 개선'}],
+ claw:[{lv:12,key:'grip',text:'강한 집게 — 한 번에 1마리 더'},{lv:24,key:'sword',text:'명검 — 옮긴 양봉 피해 +30%'},{lv:36,key:'combo',text:'연속 뽑기 — 뽑기 간격 단축'}],
+ hbm:[{lv:12,key:'stack',text:'적층 — 감전 피해 +20%'},{lv:24,key:'grid',text:'전력망 — 전기 타워(노광장비·드론·HBM) 공속 +12%'},{lv:36,key:'arc',text:'아크 — 감전이 주변 1마리에 튐'}],
+ lily:[{lv:12,key:'dose',text:'증량 — 체력 감소량 증가'},{lv:24,key:'drain',text:'흡혈 — 뺏은 체력 일부로 성벽 강화(만렙이면 자금)'},{lv:36,key:'double',text:'2연발 주사'}],
+ fed:[{lv:12,key:'dovish',text:'비둘기파 — 비둘기 피해 +15%'},{lv:24,key:'qe',text:'양적완화 — 공격 속도 +15%'},{lv:30,key:'chain3',text:'체인 피죠닝 3단 분기 — 최대 8마리'}],
  musk:[{lv:12,key:'rocket',text:'로켓 확률 +15%'},{lv:24,key:'fleet',text:'트럭 2대 동시 출격'},{lv:36,key:'mars',text:'화성 로켓 — 로켓 피해 ×2'}],
  drone:[{lv:18,key:'twin',text:'쌍발 — 두 적 동시 공격'},{lv:26,key:'fast',text:'과급 모터 — 공속 +25%'},{lv:36,key:'swarm',text:'세 적 동시 공격'}],
 };
@@ -107,7 +123,7 @@ export const hasPerk=(type,level,key)=>(PERKS[type]||[]).some(p=>p.key===key&&(l
 export const perksAt=(type,level)=>(PERKS[type]||[]).filter(p=>(level||1)>=p.lv);
 
 // v66: towers with an ultimate (gauge fills from their own kills)
-export const ULT_TYPES=['musk','laser','blackhole','totem','drone'];
+export const ULT_TYPES=['musk','laser','blackhole','totem','drone','sonic','mortar','sniper','hbm','lily','fed'];
 export const ultNeed=level=>Math.round(140-95*(Math.max(1,Math.min(40,level))-1)/39); // kills to fill: Lv1 140 → Lv40 45
 export const ULT_INFO={
  musk:{name:'떡상 로켓',text:'거대 로켓이 전장을 가르며 날아가 길목의 음봉을 연쇄 폭발로 쓸어버려요'},
@@ -115,4 +131,10 @@ export const ULT_INFO={
  blackhole:{name:'특이점 붕괴',text:'전장 한가운데 블랙홀을 열어 음봉을 빨아들인 뒤 붕괴시켜요'},
  totem:{name:'양봉의 대축복',text:'8초간 모든 타워의 공격 속도 2배·피해 1.5배, 성벽 경험치 회복'},
  drone:{name:'편대 융단폭격',text:'드론 편대가 날아가며 음봉 위로 폭탄 12발을 투하해요'},
+ sonic:{name:'초음파 폭풍',text:'거대한 음파가 전장 전체로 퍼지며 피해를 주고 음봉을 잠시 묶어요'},
+ mortar:{name:'집중 포화',text:'포탄 18발이 하늘에서 쏟아지는 융단 포격'},
+ sniper:{name:'헤드헌트',text:'체력이 가장 높은 음봉 5마리를 연속 저격'},
+ hbm:{name:'전력망 과부하',text:'전장 곳곳에서 번개가 솟아 음봉 최대 24마리를 감전'},
+ lily:{name:'대량 접종',text:'전장의 모든 음봉 최대 체력 30% 감소'},
+ fed:{name:'금리 인하',text:'전장의 모든 음봉에게 거시 충격 피해 + 5분간 모든 타워 공격 속도 +25%'},
 };
