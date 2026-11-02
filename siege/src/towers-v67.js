@@ -1,6 +1,6 @@
 // v67: new towers (ant, bull, buffett, leverage, claw, hbm, lily, fed) and ultimates for rare+ towers.
 // Installed onto Game.prototype by installTowersV67(Game). Every effect stays data-driven via cannonStats.
-import { cannonStats, hasPerk, WORLD_WIDTH, clamp } from './config.js?v=5825af33fe';
+import { cannonStats, hasPerk, WORLD_WIDTH, clamp } from './config.js?v=025b8cfef5';
 
 export const ELECTRIC = ['laser', 'drone', 'hbm'];
 export const PASSIVE = ['totem', 'buffett', 'leverage'];

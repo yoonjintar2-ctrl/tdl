@@ -1206,3 +1206,6 @@ button.primary:disabled,.course-primary:disabled,button.secondary:disabled{filte
 .ti-actions{flex-wrap:wrap!important;row-gap:8px!important}
 .ti-actions>.ti-locked{flex:1 0 100%!important;text-align:center!important;margin:0!important}
 .ti-actions>button{white-space:nowrap!important}
+.cutin-canvas{width:min(60vw,380px)!important;left:4%!important;bottom:0!important}
+/* v68: band is 120vw wide — keep the shout bubble inside the visible screen */
+.cutin-bubble{right:calc(14vw + 26px)!important;max-width:min(44vw,300px)!important}

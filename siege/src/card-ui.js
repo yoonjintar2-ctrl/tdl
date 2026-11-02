@@ -1,7 +1,7 @@
-import { CANNONS, cannonStats, PERKS, towerTier, ULT_INFO } from './config.js?v=5825af33fe';
-import { RARITIES, TOWER_RARITY, xpForNext, MAX_CARD_LEVEL, cardOdds, PACKS } from './cards.js?v=5825af33fe';
-import { renderShopIcon } from './renderer.js?v=5825af33fe';
-import { FX } from './fx.js?v=5825af33fe';
+import { CANNONS, cannonStats, PERKS, towerTier, ULT_INFO } from './config.js?v=025b8cfef5';
+import { RARITIES, TOWER_RARITY, xpForNext, MAX_CARD_LEVEL, cardOdds, PACKS } from './cards.js?v=025b8cfef5';
+import { renderShopIcon } from './renderer.js?v=025b8cfef5';
+import { FX } from './fx.js?v=025b8cfef5';
 
 const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
 const wait = ms => new Promise(r => setTimeout(r, ms));
@@ -165,7 +165,7 @@ export function statLines(game, c) {
   if (c.type === 'musk') lines.push(['사이버트럭', `관통 · 폭 ${Math.round(st.width)}`], ['로켓 확률', `${Math.round(st.rocketChance * 100)}% · 초광역`]);
   /* v68: new towers — no 'Infinity초' / meaningless range for passive or charge towers */
   const T = c.type, drop = (...ks) => { for (const k of ks) { const i = lines.findIndex(l => l[0] === k); if (i >= 0) lines.splice(i, 1); } };
-  if (T === 'buffett') { drop('공격 간격', '사거리', '초당 피해(DPS)'); lines.push(['충전 시간', `${Math.round(st.charge)}초`], ['즉시 발동', `음봉 ${st.crowd}마리 몰림`], ['폭발 반경', Math.round(st.radius)]); }
+  if (T === 'buffett') { drop('공격 간격', '사거리', '초당 피해(DPS)'); lines.push(['충전 시간', `${Math.round(st.charge)}초`], ['몰리면 즉시', `${st.crowd}마리`], ['폭발 반경', Math.round(st.radius)]); }
   if (T === 'leverage') { const k = (Math.max(1, c.level) - 1) / 39; drop('공격력', '공격 간격', '사거리', '초당 피해(DPS)'); lines.unshift(['모든 타워 공격력', `×${(2 + .25 * k).toFixed(2)}`], ['성벽 피해', `×${(1.8 - .45 * k).toFixed(2)} (위험)`]); }
   if (['hbm', 'claw', 'fed', 'bull', 'ant'].includes(T)) drop('다수 타격');
   if (T === 'claw') { drop('사거리', '초당 피해(DPS)'); lines.push(['뽑기 칸', `양봉 ${st.capacity}개`], ['칼 기사', `${st.damage.toFixed(1)} × ${st.hits}회`]); }
