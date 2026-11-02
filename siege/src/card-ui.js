@@ -1,7 +1,7 @@
-import { CANNONS, cannonStats, PERKS, towerTier, ULT_INFO } from './config.js?v=6490e8f28f';
-import { RARITIES, TOWER_RARITY, xpForNext, MAX_CARD_LEVEL, cardOdds, PACKS } from './cards.js?v=6490e8f28f';
-import { renderShopIcon } from './renderer.js?v=6490e8f28f';
-import { FX } from './fx.js?v=6490e8f28f';
+import { CANNONS, cannonStats, PERKS, towerTier, ULT_INFO } from './config.js?v=5825af33fe';
+import { RARITIES, TOWER_RARITY, xpForNext, MAX_CARD_LEVEL, cardOdds, PACKS } from './cards.js?v=5825af33fe';
+import { renderShopIcon } from './renderer.js?v=5825af33fe';
+import { FX } from './fx.js?v=5825af33fe';
 
 const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
 const wait = ms => new Promise(r => setTimeout(r, ms));
@@ -152,8 +152,8 @@ export function renderCollection(container, game, { onPack, onCard, slotText }) 
 
 export function statLines(game, c) {
   const live = !c.virtual, st = cannonStats(c.type, c.level), buff = live ? game.attackBuff(c) : 0, power = live ? game.power : 1;
-  const lines = [['공격력', c.type === 'totem' ? '지원 전용' : (st.damage * power).toFixed(1)], ['공격 간격', c.type === 'totem' || c.type === 'blackhole' ? '지속 효과' : `${(1 / (st.rate * (1 + buff))).toFixed(2)}초마다`], ['사거리', Math.round(st.range)], ['성벽 보너스', `공격력 ×${(power / .75).toFixed(2)}`]];
-  if (!live) { lines.splice(3, 1); const hits = st.pierce ? Math.min(st.pierce, 4) : st.radius ? 2.5 : 1; if (st.rate > 0 && st.damage > 0) lines.unshift(['초당 피해(DPS)', (st.damage * st.rate).toFixed(1) + (hits > 1 ? ` · 다수 ×${hits}` : '')]); }
+  const lines = [['공격력', c.type === 'totem' ? '지원 전용' : (st.damage * power).toFixed(1)], ['공격 간격', c.type === 'totem' || c.type === 'blackhole' ? '지속 효과' : `${(1 / (st.rate * (1 + buff))).toFixed(2)}초`], ['사거리', Math.round(st.range)], ['성벽 보너스', `공격력 ×${(power / .75).toFixed(2)}`]];
+  if (!live) { lines.splice(3, 1); const hits = st.pierce ? Math.min(st.pierce, 4) : st.radius ? 2.5 : 1; if (st.rate > 0 && st.damage > 0) { lines.unshift(['초당 피해(DPS)', (st.damage * st.rate).toFixed(1)]); if (hits > 1) lines.push(['다수 타격', `평균 ×${hits}`]); } }
   if (buff > 0) lines.push(['토템 지원', `연사 +${Math.round(buff * 100)}%`]);
   if (c.type === 'totem') lines.push(['주변 지원', `연사 +${Math.round(st.buff * 100)}%`]);
   if (st.pierce) lines.push(['관통', `${st.pierce}마리`]); if (st.slow) lines.push(['감속', `${Math.round(st.slow * 100)}% · ${st.duration.toFixed(1)}초`]); if (c.type === 'poison') lines.push(['독', `${st.dot.toFixed(1)}/초`]); if (c.type === 'mortar') lines.push(['폭발 반경', Math.round(st.radius)]);
@@ -163,6 +163,17 @@ export function statLines(game, c) {
   if (c.type === 'sonic') lines.push(['음파 반경', Math.round(st.range)]);
   if (c.type === 'blackhole') lines.push(['끌어당김', `반경 ${Math.round(st.range)} · 감속 ${Math.round(st.drag * 100)}%`], ['지속 피해', `${st.damage.toFixed(1)}/초`]);
   if (c.type === 'musk') lines.push(['사이버트럭', `관통 · 폭 ${Math.round(st.width)}`], ['로켓 확률', `${Math.round(st.rocketChance * 100)}% · 초광역`]);
+  /* v68: new towers — no 'Infinity초' / meaningless range for passive or charge towers */
+  const T = c.type, drop = (...ks) => { for (const k of ks) { const i = lines.findIndex(l => l[0] === k); if (i >= 0) lines.splice(i, 1); } };
+  if (T === 'buffett') { drop('공격 간격', '사거리', '초당 피해(DPS)'); lines.push(['충전 시간', `${Math.round(st.charge)}초`], ['즉시 발동', `음봉 ${st.crowd}마리 몰림`], ['폭발 반경', Math.round(st.radius)]); }
+  if (T === 'leverage') { const k = (Math.max(1, c.level) - 1) / 39; drop('공격력', '공격 간격', '사거리', '초당 피해(DPS)'); lines.unshift(['모든 타워 공격력', `×${(2 + .25 * k).toFixed(2)}`], ['성벽 피해', `×${(1.8 - .45 * k).toFixed(2)} (위험)`]); }
+  if (['hbm', 'claw', 'fed', 'bull', 'ant'].includes(T)) drop('다수 타격');
+  if (T === 'claw') { drop('사거리', '초당 피해(DPS)'); lines.push(['뽑기 칸', `양봉 ${st.capacity}개`], ['칼 기사', `${st.damage.toFixed(1)} × ${st.hits}회`]); }
+  if (T === 'hbm') { drop('사거리'); lines.push(['사거리', '전장 전체']); }
+  if (T === 'lily') { drop('공격력', '초당 피해(DPS)'); lines.push(['최대 체력 감소', `${Math.round(st.shrink * 100)}%`]); }
+  if (T === 'bull') lines.push(['녹색 양봉', `${Math.round(st.bullEvery)}초마다 (Lv.15+)`]);
+  if (T === 'ant') lines.push(['동전 수', `${st.pellets}개`]);
+  if (T === 'fed') lines.push(['비둘기 연쇄', `${st.chain}마리`]);
   if (live) lines.push(['이번 판 처치', `${game.metrics.killsByType?.[c.type] || 0}마리`]);
   if (c.type === 'musk') { const i = lines.findIndex(l => l[0] === '로켓 확률'); if (i >= 0) lines.splice(i, 1); }
   return lines;

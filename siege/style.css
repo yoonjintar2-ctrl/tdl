@@ -1200,3 +1200,9 @@ button.primary:disabled,.course-primary:disabled,button.secondary:disabled{filte
 .tcard .tc-artbox>.tc-lv{top:auto!important;bottom:0!important;right:0!important;font-size:9.5cqw!important}
 .tcard .tc-name{margin-top:1cqw!important}
 .tcard .tc-artbox>.tc-art{inset:2cqw -8cqw -2cqw!important;width:calc(100% + 16cqw)!important;height:calc(100% - 0cqw)!important}
+/* v68: stat values break between words, never inside one ("0.69초마/다") */
+.ti-row b,.ti-row span{word-break:keep-all!important;overflow-wrap:anywhere}
+/* v68: a notice line in the info actions takes its own row — never squeezes the 닫기 button into a vertical strip */
+.ti-actions{flex-wrap:wrap!important;row-gap:8px!important}
+.ti-actions>.ti-locked{flex:1 0 100%!important;text-align:center!important;margin:0!important}
+.ti-actions>button{white-space:nowrap!important}
