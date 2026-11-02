@@ -1,4 +1,4 @@
-import {CANNONS,ENEMIES,SUPPLIES,WALL,WORLD_WIDTH,ACTOR_STYLE,WALL_SLOTS,COMMAND_X,towerTier,ULT_TYPES,ultNeed} from './config.js?v=1a281a03ab';
+import {CANNONS,ENEMIES,SUPPLIES,WALL,WORLD_WIDTH,ACTOR_STYLE,WALL_SLOTS,COMMAND_X,towerTier,ULT_TYPES,ultNeed} from './config.js?v=dfd1078fe3';
 export const ENEMY_ART=['enemy-small','enemy-tall','enemy-fat','enemy-giant'];
 // Kind 4 (초미니 음봉) reuses the small candle art at a much smaller size.
 const ENEMY_KIND_ART=[...ENEMY_ART,'enemy-small'];
@@ -7,9 +7,9 @@ export const SUPPLY_ART=['supply-dram','supply-processor','supply-wafer','supply
 // Wall levels 1–10: two new shabby tiers (earth, wooden palisade) below the original eight.
 export const WALL_ART=['castle-wall-low-0','castle-wall-low-1',...Array.from({length:8},(_,i)=>'castle-wall-'+i)];
 export const BASTION_ART=['castle-bastion-low-0','castle-bastion-low-1',...Array.from({length:8},(_,i)=>'castle-bastion-'+i)];
-export const TOWER_ART=['machine','sniper','laser','totem','sticky','poison','drone','siege','summoner','musk','command','mortar','sonic','blackhole'];
+export const TOWER_ART=['machine','sniper','laser','totem','sticky','poison','drone','siege','summoner','musk','command','mortar','sonic','blackhole','ant','bull','hbm','buffett','lily','leverage','fed','claw'];
 const pictures=new Map(),unitSprites=new Map();let metadata={},pending=null;
-const NAMES={'sonic':'소닉 타워','blackhole':'블랙홀','command':'성벽 지휘본부','siege':'공성 전차','summoner':'소환사','musk':'삼론 머스크','machine':'기관총','mortar':'박격포','sniper':'저격포','laser':'레이저','totem':'토템','sticky':'끈적이포','poison':'독 캐논','drone':'드론','enemy-small':'작은 음봉','enemy-tall':'키 큰 음봉','enemy-fat':'돼지 음봉','enemy-giant':'거인 음봉','supply-dram':'DRAM','supply-processor':'프로세서','supply-wafer':'실리콘 웨이퍼','supply-optical':'광통신 모듈','supply-connector':'광섬유 커넥터','supply-substrate':'반도체 기판','wall-soil':'흙 성벽','wall-wood':'나무 성벽','wall-reinforced-wood':'강화 나무 성벽','wall-mixed':'나무·돌 성벽','wall-stone':'돌 성벽','wall-reinforced-stone':'강화 돌 성벽','wall-iron':'철·돌 성벽','wall-gold':'황금 성벽'};
+const NAMES={'ant':'개미 투자자','bull':'황소','hbm':'HBM 반도체','buffett':'전원버핏','lily':'릴리','leverage':'레버리지','fed':'연준의장','claw':'인형뽑기','sonic':'소닉 타워','blackhole':'블랙홀','command':'성벽 지휘본부','siege':'공성 전차','summoner':'소환사','musk':'삼론 머스크','machine':'기관총','mortar':'박격포','sniper':'저격포','laser':'레이저','totem':'토템','sticky':'끈적이포','poison':'독 캐논','drone':'드론','enemy-small':'작은 음봉','enemy-tall':'키 큰 음봉','enemy-fat':'돼지 음봉','enemy-giant':'거인 음봉','supply-dram':'DRAM','supply-processor':'프로세서','supply-wafer':'실리콘 웨이퍼','supply-optical':'광통신 모듈','supply-connector':'광섬유 커넥터','supply-substrate':'반도체 기판','wall-soil':'흙 성벽','wall-wood':'나무 성벽','wall-reinforced-wood':'강화 나무 성벽','wall-mixed':'나무·돌 성벽','wall-stone':'돌 성벽','wall-reinforced-stone':'강화 돌 성벽','wall-iron':'철·돌 성벽','wall-gold':'황금 성벽'};
 export const KEEP_ART=Array.from({length:10},(_,i)=>i<2?'castle-keep-low-'+i:'castle-keep-'+(i-2));
 export const hasKeep=g=>clayReady(KEEP_ART[g.stage]);
 export const UNIT_ART=['ram','cart','cart-small','cart-big','bomber','knight','archer','archer-arrow','ram-walk','fx-wallhit','walk-small','walk-tall','walk-fat','walk-giant','attack-all','ult-fx','ult-hits','fx-shots','fx-flash','musk-shots'];
@@ -48,8 +48,10 @@ export function drawTierFront(c,x,top,base,level,time=0,scale=1){const t=tierOf(
   else{c.fillStyle=m;c.strokeStyle=d;c.lineWidth=1*scale;c.beginPath();for(let i=0;i<10;i++){const r=(i%2?2.6:6)*scale,a=-Math.PI/2+i*Math.PI/5;c.lineTo(x+Math.cos(a)*r,cy+Math.sin(a)*r);}c.closePath();c.fill();c.stroke();}}
  if(t>=4){c.globalCompositeOperation='lighter';for(let i=0;i<4;i++){const a=time*1.6+i*Math.PI/2,sx=x+Math.cos(a)*20*scale,sy=(top+base)/2+Math.sin(a)*8*scale,r=(1.6+Math.sin(time*5+i)*.6)*scale;c.fillStyle='#fff0ffcc';c.beginPath();c.arc(sx,sy,r,0,Math.PI*2);c.fill();c.fillStyle='#c78bff55';c.beginPath();c.arc(sx,sy,r*3,0,Math.PI*2);c.fill();}}
  c.restore();}
+/* v68: GPT Work tower sheets share one scale per sheet — boost so they match older art on the wall */
+const ART_BOOST={ant:1.2,bull:1.15,hbm:1.15,buffett:1.2,lily:1.12,leverage:1.12,fed:1.2,claw:1.22,siege:1.1};
 export function drawClayTower(c,u,x,y,t=0,power=1,selected=false,icon=false){
- if(!clayReady(u.type))return false;const air=u.type==='drone',size=(air?(icon?70:70*ACTOR_STYLE.droneScale):icon?78:78*WALL.cannonScale)*(u.type==='command'&&!icon?1.35:1);
+ if(!clayReady(u.type))return false;const air=u.type==='drone',size=(air?(icon?70:70*ACTOR_STYLE.droneScale):icon?78:78*WALL.cannonScale)*(u.type==='command'&&!icon?1.35:1)*(ART_BOOST[u.type]||1);
  c.save();if(selected&&!icon)halo(c,x,y+(air?36:-4),air?22:18,'#dcf6a0');
  if(!air&&!icon){c.fillStyle='#142f2b38';c.beginPath();c.ellipse(x,y-4,16,3,0,0,Math.PI*2);c.fill();}
  if(!icon&&air){c.save();c.globalAlpha=.2;c.fillStyle='#173b32';c.beginPath();c.ellipse(x+2,y+40,16,4,0,0,Math.PI*2);c.fill();c.restore();y+=Math.sin(t*3.1)*2;}

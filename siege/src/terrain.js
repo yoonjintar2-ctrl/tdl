@@ -1,4 +1,4 @@
-import{QuarterCamera}from'./camera.js?v=1a281a03ab';import{WORLD_WIDTH,CAMERA_DEPTH,clamp}from'./config.js?v=1a281a03ab';
+import{QuarterCamera}from'./camera.js?v=dfd1078fe3';import{WORLD_WIDTH,CAMERA_DEPTH,clamp}from'./config.js?v=dfd1078fe3';
 // Ground footprints traced against battlefield-clay-v1. Coordinates are fractions
 // of the painted image, so the factory / mountain boundaries survive resizing.
 export const TERRAIN_CORRIDOR=[
