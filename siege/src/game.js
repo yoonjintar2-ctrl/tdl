@@ -1,12 +1,12 @@
-import{campaignProgress}from'./campaign-courses.js?v=29595ff9b9';
-import { SETTINGS, CANNONS, ENEMIES, SUPPLIES, WORLD_WIDTH, DRONE, WALL, CAMERA_DEPTH, ACTOR_STYLE, cannonStats, upgradeCost, energyMultiplier, wallYFor, priceBand, validPlacement, snapSlot, FORWARD_X, FORWARD_DY, validDronePlacement, clamp, hasPerk } from './config.js?v=29595ff9b9';
-import { wallMountDepth } from './fortification.js?v=29595ff9b9';
-import { marketArmy,estimatedArmy } from './market-army.js?v=29595ff9b9';
-import {playerLevelFor,towerSlots,wallLevelFor,wallPower,money,WALL_MAX_XP} from './progression.js?v=29595ff9b9';
-import{TerrainField}from'./terrain.js?v=29595ff9b9';
-import{modeFor}from'./cards.js?v=29595ff9b9';
-import{formatDamage}from'./combat-fx.js?v=29595ff9b9';
-import{wallXPAt,WALL_MAX_LEVEL}from'./progression.js?v=29595ff9b9';
+import{campaignProgress}from'./campaign-courses.js?v=17d9e20e45';
+import { SETTINGS, CANNONS, ENEMIES, SUPPLIES, WORLD_WIDTH, DRONE, WALL, CAMERA_DEPTH, ACTOR_STYLE, cannonStats, upgradeCost, energyMultiplier, wallYFor, priceBand, validPlacement, snapSlot, FORWARD_X, FORWARD_DY, validDronePlacement, clamp, hasPerk } from './config.js?v=17d9e20e45';
+import { wallMountDepth } from './fortification.js?v=17d9e20e45';
+import { marketArmy,estimatedArmy } from './market-army.js?v=17d9e20e45';
+import {playerLevelFor,towerSlots,wallLevelFor,wallPower,money,WALL_MAX_XP} from './progression.js?v=17d9e20e45';
+import{TerrainField}from'./terrain.js?v=17d9e20e45';
+import{modeFor}from'./cards.js?v=17d9e20e45';
+import{formatDamage}from'./combat-fx.js?v=17d9e20e45';
+import{wallXPAt,WALL_MAX_LEVEL}from'./progression.js?v=17d9e20e45';
 // Kill gold is scaled down and a steady per-minute battle stipend added, so income stays in a narrow band
 // between a starter and a maxed army (card packs are the only use of gold).
 export const KILL_GOLD=.3,STIPEND_PER_MIN=30;
@@ -17,7 +17,8 @@ export const HP_WEIGHT_FLOOR=.2;
 // v24: the giant is a rare boss — about one per five minutes at most, only on a heavy sell-off minute.
 export const WALL_SAG=38;
 // v63: ultimates for epic+ towers. Rare at low level, strong when they fire; one at a time (comic cut-in first).
-export const ULT_TYPES=['musk','laser','blackhole','totem','drone'];
+export {ULT_TYPES,ultNeed} from './config.js?v=17d9e20e45';
+import {ULT_TYPES,ultNeed} from './config.js?v=17d9e20e45';
 export const ultRate=level=>.0035+.0011*(Math.max(1,Math.min(40,level))-1); // chance per second: Lv1≈0.35% (~5 min), Lv40≈4.6% (~22 s)
 export const ULT_COOLDOWN=20;
 const WALL_BLESS_XP=120;
@@ -26,8 +27,8 @@ export const BOSS=Object.freeze({cooldownMs:3*60*1000,minIntensity:.8,minSellSha
 export const SPECIALS=Object.freeze({ram:Object.freeze({hp:2600,speed:8.5,radius:30,damage:110,interval:2.4,cooldownMs:2*60*1000,minIntensity:.7,chance:.75,goldMul:6}),bomber:Object.freeze({hp:12,speed:92,radius:9,damage:150,cooldownMs:40*1000,minIntensity:.5,chance:.85,goldMul:1.5})});
 const SPECIAL_DEF={ram:{...ENEMIES[3],speed:SPECIALS.ram.speed,damage:SPECIALS.ram.damage,interval:SPECIALS.ram.interval},bomber:{...ENEMIES[4],speed:SPECIALS.bomber.speed,damage:SPECIALS.bomber.damage,interval:9}};
 const BOSS_DEF=Object.freeze({...ENEMIES[3],speed:ENEMIES[3].speed*BOSS.speed,damage:ENEMIES[3].damage*BOSS.damage});
-import{isAIStock}from'./symbols.js?v=29595ff9b9';
-import {weaponMuzzle} from './weapon-geometry.js?v=29595ff9b9';
+import{isAIStock}from'./symbols.js?v=17d9e20e45';
+import {weaponMuzzle} from './weapon-geometry.js?v=17d9e20e45';
 export class Game {
   constructor(state, { height = 620, random = Math.random,now=Date.now,rewardMultiplier=1,mode } = {}) {
     this.modeKey=modeFor(mode??state.settings?.mode).key;this.stipendClock=0;this.wallHold=0;
@@ -60,7 +61,7 @@ export class Game {
   get marketCode(){return this.market?.market||this.settings.market||'US';}
   cash(value){return money(value,this.marketCode);}
   owned(type){return this.inventory.find(c=>c.type===type)||this.cannons.find(c=>c.type===type);}
-  gainPlayerXP(amount){const before=this.playerLevel,slots=this.slotLimit;this.playerXP+=amount;this.dirty=true;if(this.playerLevel>before){this.effect('player-level',216,this.wallY,'#ffe5a2',`${before} → ${this.playerLevel}`,2,{slots:this.slotLimit,unlocked:this.slotLimit>slots});}}
+  gainPlayerXP(amount){const before=this.playerLevel,slots=this.slotLimit;this.playerXP+=amount;this.dirty=true;if(this.playerLevel>before){/* v66: celebration bonus = $100 × each new level reached */let bonus=0;for(let l=before+1;l<=this.playerLevel;l++)bonus+=100*l;this.gold+=bonus;this.metrics.levelBonus=(this.metrics.levelBonus||0)+bonus;this.onLevelUp?.(before,this.playerLevel,bonus);}}
   wallXPLabel(amount,x){if(!amount)return;const lane=Math.floor(x/72),same=this.effects.find(f=>f.type==='wall-xp'&&f.lane===lane&&Math.sign(f.amount)===Math.sign(amount)&&f.life>.55);if(same){same.amount+=amount;same.life=.9;}else this.effect('wall-xp',x,this.wallBackAt(x),'',amount,.9,{sourceAltitude:WALL.elevation+8,lane});}
   addWallXP(amount,x=216){const before=this.wallXP;this.wallXP=clamp(this.wallXP+amount,0,WALL_MAX_XP);const delta=this.wallXP-before;this.wallXPLabel(delta,x);this.dirty=true;return delta;}
   updateWallLevel(dt){this.wallHold=Math.max(0,this.wallHold-dt);const desired=this.desiredWallLevel();if(!this.wallTransition&&desired<this.wallLevel&&this.wallHold>0&&this.wallXP>0&&desired>=this.wallLevel-1)return;if(!this.wallTransition&&desired!==this.wallLevel)this.wallTransition={from:this.wallLevel,to:desired,elapsed:0,duration:desired>this.wallLevel?1.8:.75};const f=this.wallTransition;if(!f)return;f.elapsed+=dt;f.to=desired;/* v64: new wall art appears at the flash peak, so it is revealed as the white fades */if(f.to>f.from&&!f.swapped&&f.elapsed>=f.duration*.14){f.swapped=true;this.stage=Math.min(9,f.to-1);}if(f.elapsed>=f.duration){const before=this.wallLevel;this.wallLevel=desired;this.stage=Math.min(9,desired-1);this.wallTransition=null;if(desired!==before){this.wallHold=1.5;this.notify(`장벽 Lv.${before} → Lv.${desired}`);}}}
@@ -141,7 +142,7 @@ export class Game {
   remove(entity, reason) {
     if (!entity.alive) return; entity.alive = false;
     const enemy = entity.maxHP !== undefined;
-    if (reason === 'cannon' && enemy) { this.lifetimeKills++;const weight=Math.max(HP_WEIGHT_FLOOR,entity.marketWeight??1),reward=this.creditMarketGold(ENEMIES[entity.kind].reward*weight*KILL_GOLD*(entity.boss?BOSS.hp*4:entity.special?SPECIALS[entity.special].goldMul:1));if(entity.lastHit){this.metrics.killsByType[entity.lastHit]=(this.metrics.killsByType[entity.lastHit]||0)+1;};this.metrics.kills++;this.gainPlayerXP(([1,2,3,5,.5][entity.kind]??1)*weight*this.rewardMultiplier);this.dirty=true;if(reward)this.effect('text',entity.x,entity.y-15,'#ffdc8c',`+${this.cash(reward)}`,.65); }
+    if (reason === 'cannon' && enemy) { this.lifetimeKills++;const weight=Math.max(HP_WEIGHT_FLOOR,entity.marketWeight??1),reward=this.creditMarketGold(ENEMIES[entity.kind].reward*weight*KILL_GOLD*(entity.boss?BOSS.hp*4:entity.special?SPECIALS[entity.special].goldMul:1));if(entity.lastHit){this.metrics.killsByType[entity.lastHit]=(this.metrics.killsByType[entity.lastHit]||0)+1;this.chargeUlt(entity.lastHit,entity.boss?8:entity.special?4:1);};this.metrics.kills++;this.gainPlayerXP(([1,2,3,5,.5][entity.kind]??1)*weight*this.rewardMultiplier);this.dirty=true;if(reward)this.effect('text',entity.x,entity.y-15,'#ffdc8c',`+${this.cash(reward)}`,.65); }
     if (reason === 'crush') { this.metrics[enemy ? 'crushedEnemies' : 'crushedSupplies']++; this.effect('crush', entity.x, entity.y, enemy ? '#ff6876' : '#54efbc', '', .5); }
     if (reason === 'expire') { this.metrics.expired++; this.effect('ghost', entity.x, entity.y, enemy ? '#ff6876' : '#54efbc', '', .6, { radius: entity.radius }); }
     else this.burst(entity.x, entity.y, enemy ? '#ff6876' : '#54efbc', reason === 'cannon' ? 5 : 3);
@@ -311,7 +312,7 @@ export class Game {
       if (c.type === 'blackhole') { c.cooldown = 1; continue; }
       if (c.type === 'sonic') { const p=this.cannonPosition(c); let hit=0; for (const e of this.enemies) { if (e.alive && Math.hypot(e.x-p.x,e.y-p.y) <= stats.range + e.radius) { this.damage(e, stats.damage, { cannonType: 'sonic' }); hit++; } } this.effect('sonic', p.x, p.y, '#9fe8ff', '', .7, { radius: stats.range }); c.recoil = 1; if (hit) this.metrics.shots.sonic=(this.metrics.shots.sonic||0)+1; c.cooldown = 1/(stats.rate*(1+this.attackBuff(c))); continue; }
       if (c.type === 'summoner') { this.summonKnights(c, stats); c.cooldown = 1/(stats.rate*(1+this.attackBuff(c))); continue; }
-      let targets = this.enemies.filter(e => { if (!e.alive || e.y >= this.wallAt(e.x)) return false; const d = Math.hypot(e.x-c.x,e.y-y); return d <= stats.range && d >= stats.minRange; });
+      let targets = this.enemies.filter(e => { if (!e.alive || e.y >= this.wallAt(e.x)) return false; const d = Math.hypot(e.x-c.x,e.y-y); return d <= stats.range && d >= stats.minRange; }); if (this.priority) { const pr = targets.filter(e => this.matchesPriority(e)); if (pr.length) targets = pr; }
       targets.sort(c.type === 'sniper' ? (a,b) => b.hp-a.hp : (a,b) => Math.hypot(a.x-c.x,a.y-y)-Math.hypot(b.x-c.x,b.y-y));
       { const major = targets.filter(e => e.boss || e.special === 'ram'); if (major.length) targets = major.sort((a, b) => b.hp - a.hp); }
       { const f = this.focus && this.focus.until > this.time ? this.focus : null; if (f) { const fd = Math.hypot(f.x - c.x, f.y - y); if (fd <= stats.range && fd >= (stats.minRange || 0)) { const near = targets.filter(e => Math.hypot(e.x - f.x, e.y - f.y) <= 72); if (near.length) { if (c.type !== 'sniper') near.sort((a, b) => Math.hypot(a.x - f.x, a.y - f.y) - Math.hypot(b.x - f.x, b.y - f.y)); targets = near; } } } }
@@ -330,8 +331,11 @@ export class Game {
     this.autoTimer += dt;
     if (this.settings.autoUpgrade && this.autoTimer >= 1) { this.autoTimer = 0; const list = this.cannons.filter(c=>c.level<40).sort((a,b)=>upgradeCost(a.type,a.level)-upgradeCost(b.type,b.level)); const c=list[0]; if (c) this.upgrade(c); }
   }
-  rollUlt(c,dt){if(!ULT_TYPES.includes(c.type))return;c.ultCd=Math.max(0,(c.ultCd??ULT_COOLDOWN*.5)-dt);if(c.ultCd>0||this._ultBusy||!this.enemies.some(e=>e.alive))return;if(this.random()>=ultRate(c.level)*dt)return;this.triggerUlt(c);}
-  triggerUlt(c){c.ultCd=ULT_COOLDOWN;this._ultBusy=true;const go=()=>{this._ultBusy=false;if(this.cannons.includes(c))this.fireUlt(c);};if(this.onCutin)this.onCutin(c.type,c,go);else go();}
+  /* v66: ultimates charge from the tower's own kills; higher level = smaller gauge */
+  chargeUlt(type,n=1){const c=this.cannons.find(t=>t.type===type);if(c&&ULT_TYPES.includes(c.type))c.ult=Math.min(ultNeed(c.level),(c.ult||0)+n);/* totem charges from everyone's kills */const tt=this.cannons.find(t=>t.type==='totem');if(tt&&type!=='totem')tt.ult=Math.min(ultNeed(tt.level),(tt.ult||0)+n*.5);}
+  matchesPriority(e){const p=this.priority;if(!p)return false;if(p==='giant')return e.boss||(!e.special&&e.kind===3);if(p==='ram'||p==='bomber')return e.special===p;return !e.special&&!e.boss&&['small','tall','fat'][e.kind]===p;}
+  rollUlt(c,dt){if(!ULT_TYPES.includes(c.type))return;if((c.ult||0)<ultNeed(c.level)||this._ultBusy||!this.enemies.some(e=>e.alive))return;c.ult=0;this.triggerUlt(c);}
+  triggerUlt(c){this._ultBusy=true;const go=()=>{this._ultBusy=false;if(this.cannons.includes(c))this.fireUlt(c);};if(this.onCutin)this.onCutin(c.type,c,go);else go();}
   fireUlt(c){const st=cannonStats(c.type,c.level),pos=this.cannonPosition(c),top=Math.min(...[60,216,372].map(x=>this.wallAt(x)));this.metrics.ults=(this.metrics.ults||0)+1;this.shake=Math.max(this.shake||0,.6);
     if(c.type==='musk'){this.sweeps.push({kind:'rocket',big:true,x:pos.x,y:pos.y-6,dx:0,dy:-1,speed:430,width:st.width*3.6,damage:st.damage*30,traveled:0,max:1600,hit:new Set(),weapon:'musk',age:0,boomDmg:st.damage*6});return;}
     if(c.type==='laser'){this.ults.push({kind:'laser',t:0,dur:1.7,dmg:st.damage*28,hit:new Set(),y0:-40,y1:top-10});return;}
@@ -349,7 +353,7 @@ export class Game {
     const inRange = e => e.alive && Math.hypot(e.x - pos.x, e.y - pos.y) <= stats.range;
     let target = this.enemies.find(e => e.id === c.targetId && inRange(e));
     if (!target) {
-      const isMajor=e=>e.boss||e.special==='ram';target = this.enemies.filter(inRange).sort((a,b)=>(isMajor(b)-isMajor(a))||(Math.hypot(a.x-pos.x,a.y-pos.y)-Math.hypot(b.x-pos.x,b.y-pos.y)))[0];
+      const isMajor=e=>e.boss||e.special==='ram';{const inr=this.enemies.filter(inRange),pr=this.priority?inr.filter(e=>this.matchesPriority(e)):[];target=(pr.length?pr:inr).sort((a,b)=>(isMajor(b)-isMajor(a))||(Math.hypot(a.x-pos.x,a.y-pos.y)-Math.hypot(b.x-pos.x,b.y-pos.y)))[0];}
       c.targetId = target?.id ?? null; c.targetLock = target ? stats.targetSwitch : 0;
     }
     if (!target) { c.cooldown = Math.max(0, c.cooldown); return; }

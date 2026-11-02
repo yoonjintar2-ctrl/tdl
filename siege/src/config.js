@@ -105,3 +105,14 @@ export const PERKS={
 };
 export const hasPerk=(type,level,key)=>(PERKS[type]||[]).some(p=>p.key===key&&(level||1)>=p.lv);
 export const perksAt=(type,level)=>(PERKS[type]||[]).filter(p=>(level||1)>=p.lv);
+
+// v66: towers with an ultimate (gauge fills from their own kills)
+export const ULT_TYPES=['musk','laser','blackhole','totem','drone'];
+export const ultNeed=level=>Math.round(140-95*(Math.max(1,Math.min(40,level))-1)/39); // kills to fill: Lv1 140 → Lv40 45
+export const ULT_INFO={
+ musk:{name:'떡상 로켓',text:'거대 로켓이 전장을 가르며 날아가 길목의 음봉을 연쇄 폭발로 쓸어버려요'},
+ laser:{name:'초정밀 노광',text:'하늘에서 노광 빔이 내려와 전장을 좌우로 훑으며 닿는 음봉에게 큰 피해'},
+ blackhole:{name:'특이점 붕괴',text:'전장 한가운데 블랙홀을 열어 음봉을 빨아들인 뒤 붕괴시켜요'},
+ totem:{name:'양봉의 대축복',text:'8초간 모든 타워의 공격 속도 2배·피해 1.5배, 성벽 경험치 회복'},
+ drone:{name:'편대 융단폭격',text:'드론 편대가 날아가며 음봉 위로 폭탄 12발을 투하해요'},
+};

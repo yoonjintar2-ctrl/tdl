@@ -1,7 +1,7 @@
-import { CANNONS, cannonStats, PERKS, towerTier } from './config.js?v=29595ff9b9';
-import { RARITIES, TOWER_RARITY, xpForNext, MAX_CARD_LEVEL, cardOdds, PACKS } from './cards.js?v=29595ff9b9';
-import { renderShopIcon } from './renderer.js?v=29595ff9b9';
-import { FX } from './fx.js?v=29595ff9b9';
+import { CANNONS, cannonStats, PERKS, towerTier, ULT_INFO } from './config.js?v=17d9e20e45';
+import { RARITIES, TOWER_RARITY, xpForNext, MAX_CARD_LEVEL, cardOdds, PACKS } from './cards.js?v=17d9e20e45';
+import { renderShopIcon } from './renderer.js?v=17d9e20e45';
+import { FX } from './fx.js?v=17d9e20e45';
 
 const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
 const wait = ms => new Promise(r => setTimeout(r, ms));
@@ -15,7 +15,8 @@ export function towerCard(type, item, { mini = false, faceDown = false } = {}) {
   const inner = el('div', 'tcard-inner'), front = el('div', 'tcard-face front'), back = el('div', 'tcard-face back');
   const top = el('div', 'tc-top'); top.append(el('span', 'tc-rarity', r.name), el('span', 'tc-lv', item ? `Lv.${item.level}` : ''));
   const art = el('canvas', 'tc-art'); art.width = 200; art.height = 180; art.setAttribute('aria-hidden', 'true');
-  front.append(top, art, el('div', 'tc-name', CANNONS[type].short));
+  /* v65: art lives in a fixed box (canvas absolutely positioned) so no engine can grow the row */const artBox = el('div', 'tc-artbox'); artBox.append(art, top.querySelector('.tc-lv'));
+  front.append(top, el('div', 'tc-name', CANNONS[type].short), artBox);
   if (!mini) {
     const bar = el('div', 'tc-bar'), fill = el('i'), need = item ? xpForNext(item.level) : 1;
     fill.style.width = item ? (item.level >= MAX_CARD_LEVEL ? 100 : Math.min(100, (item.xp || 0) / need * 100)) + '%' : '0%';
@@ -114,9 +115,11 @@ export class CardStage {
       await wait(skip ? 0 : 380);
       const steps = u.to - u.from, dur = Math.min(1600, 260 * steps);
       for (let i = 1; i <= steps; i++) { if (!this.root) return; fill.style.width = '0%'; void fill.offsetWidth; fill.style.transition = `width ${skip ? 0 : dur / steps}ms ease-out`; fill.style.width = '100%'; await wait(skip ? 0 : dur / steps); to.textContent = 'Lv.' + (u.from + i); to.classList.remove('pop'); void to.offsetWidth; to.classList.add('pop'); if (!skip) fxAt(.6); }
-      if (tierUp) { stage.classList.add('evolve'); await wait(skip ? 0 : 420); renderShopIcon(art, u.type, u.to); fxAt(1.6); extra.append(el('span', 'lvup-evo', '✨ 외형 진화!')); await wait(skip ? 0 : 300); stage.classList.remove('evolve'); }
+      if (tierUp) { stage.classList.add('evolve'); await wait(skip ? 0 : 420); renderShopIcon(art, u.type, u.to); fxAt(1.6); extra.append(el('span', 'lvup-evo', '외형 진화!')); await wait(skip ? 0 : 300); stage.classList.remove('evolve'); }
       else { renderShopIcon(art, u.type, u.to); fxAt(1); }
-      for (const p of perks) extra.append(el('span', 'lvup-perk', '🔓 ' + p.text));
+      { const A = cannonStats(u.type, u.from), B = cannonStats(u.type, u.to), diff = el('div', 'lvup-diff'); const row = (k, a, b, f = v => v.toFixed(1)) => { if (Math.abs(b - a) < 1e-6) return; diff.append(el('span', '', `${k} ${f(a)} → `), el('b', '', f(b))); diff.append(el('br')); };
+        if (A.damage) row('공격력', A.damage, B.damage); if (A.rate) row('초당 공격', A.rate, B.rate, v => v.toFixed(2)); if (A.range) row('사거리', A.range, B.range, v => String(Math.round(v))); if (A.pierce) row('관통', A.pierce, B.pierce, v => String(v)); if (A.knights) row('기사 수', A.knights, B.knights, v => String(v)); if (A.radius) row('범위', A.radius, B.radius, v => String(Math.round(v))); if (diff.childNodes.length) extra.append(diff); }
+      for (const p of perks) extra.append(el('span', 'lvup-perk', '새 능력 · ' + p.text));
       await new Promise(res => { let t = setTimeout(res, skip ? 250 : 1500 + perks.length * 700); ov.onclick = () => { clearTimeout(t); res(); }; });
       ov.onclick = () => { skip = true; };
     }
@@ -148,8 +151,9 @@ export function renderCollection(container, game, { onPack, onCard, slotText }) 
 }
 
 export function statLines(game, c) {
-  const st = cannonStats(c.type, c.level), buff = game.attackBuff(c), power = game.power;
+  const live = !c.virtual, st = cannonStats(c.type, c.level), buff = live ? game.attackBuff(c) : 0, power = live ? game.power : 1;
   const lines = [['공격력', c.type === 'totem' ? '지원 전용' : (st.damage * power).toFixed(1)], ['공격 간격', c.type === 'totem' || c.type === 'blackhole' ? '지속 효과' : `${(1 / (st.rate * (1 + buff))).toFixed(2)}초마다`], ['사거리', Math.round(st.range)], ['성벽 보너스', `공격력 ×${(power / .75).toFixed(2)}`]];
+  if (!live) { lines.splice(3, 1); const hits = st.pierce ? Math.min(st.pierce, 4) : st.radius ? 2.5 : 1; if (st.rate > 0 && st.damage > 0) lines.unshift(['초당 피해(DPS)', (st.damage * st.rate).toFixed(1) + (hits > 1 ? ` · 다수 ×${hits}` : '')]); }
   if (buff > 0) lines.push(['토템 지원', `연사 +${Math.round(buff * 100)}%`]);
   if (c.type === 'totem') lines.push(['주변 지원', `연사 +${Math.round(st.buff * 100)}%`]);
   if (st.pierce) lines.push(['관통', `${st.pierce}마리`]); if (st.slow) lines.push(['감속', `${Math.round(st.slow * 100)}% · ${st.duration.toFixed(1)}초`]); if (c.type === 'poison') lines.push(['독', `${st.dot.toFixed(1)}/초`]); if (c.type === 'mortar') lines.push(['폭발 반경', Math.round(st.radius)]);
@@ -159,7 +163,8 @@ export function statLines(game, c) {
   if (c.type === 'sonic') lines.push(['음파 반경', Math.round(st.range)]);
   if (c.type === 'blackhole') lines.push(['끌어당김', `반경 ${Math.round(st.range)} · 감속 ${Math.round(st.drag * 100)}%`], ['지속 피해', `${st.damage.toFixed(1)}/초`]);
   if (c.type === 'musk') lines.push(['사이버트럭', `관통 · 폭 ${Math.round(st.width)}`], ['로켓 확률', `${Math.round(st.rocketChance * 100)}% · 초광역`]);
-  lines.push(['이번 판 처치', `${game.metrics.killsByType?.[c.type] || 0}마리`]);
+  if (live) lines.push(['이번 판 처치', `${game.metrics.killsByType?.[c.type] || 0}마리`]);
+  if (c.type === 'musk') { const i = lines.findIndex(l => l[0] === '로켓 확률'); if (i >= 0) lines.splice(i, 1); }
   return lines;
 }
 // v23: what the next level adds (shown in the tower info card).
@@ -188,7 +193,7 @@ export function openCodex(type, item) {
   const d = CANNONS[type], wrap = el('div', 'codex'); wrap.id = 'codex';
   const box = el('div', 'codex-box gk-panel'), head = el('div', 'codex-head'), list = el('div', 'codex-list'), close = el('button', 'codex-close', '×');
   close.type = 'button'; close.setAttribute('aria-label', '닫기');
-  head.append(el('small', '', 'TOWER CODEX'), el('h3', '', d.name + ' 도감'), el('p', '', d.role)); box.append(close, head, list); wrap.append(box);
+  head.append(el('small', '', 'TOWER CODEX'), el('h3', '', d.name + ' 도감'), el('p', '', d.role)); if (ULT_INFO[type]) { const u = ULT_INFO[type], b = el('div', 'ti-ult'); b.append(el('b', '', '필살기 · ' + u.name), el('span', '', u.text)); head.append(b); } box.append(close, head, list); wrap.append(box);
   const cur = item?.level || 0, perks = PERKS[type] || [], seen = new Set();
   for (let lv = 1; lv <= MAX_CARD_LEVEL; lv++) {
     const tier = towerTier(lv, 10), newPerks = perks.filter(p => p.lv === lv), tierStart = towerTier(lv - 1 || 1, 10) !== tier || lv === 1;

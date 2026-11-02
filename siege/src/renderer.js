@@ -1,11 +1,11 @@
-import { WORLD_WIDTH as W,CANNONS,ENEMIES,SUPPLIES,WALL_STAGES,DRONE,WALL,cannonStats,validPlacement,validDronePlacement,snapSlot,ALL_SLOTS,FORWARD_X,FORWARD_DY,clamp } from './config.js?v=29595ff9b9';
-import{WALL_MAX_LEVEL,WALL_MAX_XP}from'./progression.js?v=29595ff9b9';
-import{isAIStock}from'./symbols.js?v=29595ff9b9';
-import { QuarterCamera, DEPTH_SCALE, WALL_ELEVATION } from './camera.js?v=29595ff9b9';
-import { drawClayMortar, drawClayMortarIcon, clayBattlefield } from './clay-assets.js?v=29595ff9b9';
-import{drawProjectile,drawEffect}from'./combat-fx.js?v=29595ff9b9';
-import{artCrop}from'./terrain.js?v=29595ff9b9';
-import { drawClayTower, drawClayUnit, drawClayWall, drawClayPreview, drawForwardPad, hasKeep, drawClaySprite, clayReady, metaOf, drawClayTowerIcon, wallOutline, tierOf, tierTint, drawTierBack, drawTierFront } from './clay-runtime.js?v=29595ff9b9';
+import { WORLD_WIDTH as W,CANNONS,ENEMIES,SUPPLIES,WALL_STAGES,DRONE,WALL,cannonStats,validPlacement,validDronePlacement,snapSlot,ALL_SLOTS,FORWARD_X,FORWARD_DY,clamp } from './config.js?v=17d9e20e45';
+import{WALL_MAX_LEVEL,WALL_MAX_XP}from'./progression.js?v=17d9e20e45';
+import{isAIStock}from'./symbols.js?v=17d9e20e45';
+import { QuarterCamera, DEPTH_SCALE, WALL_ELEVATION } from './camera.js?v=17d9e20e45';
+import { drawClayMortar, drawClayMortarIcon, clayBattlefield } from './clay-assets.js?v=17d9e20e45';
+import{drawProjectile,drawEffect}from'./combat-fx.js?v=17d9e20e45';
+import{artCrop}from'./terrain.js?v=17d9e20e45';
+import { drawClayTower, drawClayUnit, drawClayWall, drawClayPreview, drawForwardPad, hasKeep, drawClaySprite, clayReady, metaOf, drawClayTowerIcon, wallOutline, tierOf, tierTint, drawTierBack, drawTierFront } from './clay-runtime.js?v=17d9e20e45';
 const BAND=270;
 const TAU=Math.PI*2;
 function box(c,x,y,w,h,r,fill,stroke){c.beginPath();c.roundRect(x,y,w,h,r);if(fill){c.fillStyle=fill;c.fill();}if(stroke){c.lineWidth=1;c.strokeStyle=stroke;c.stroke();}}
@@ -221,8 +221,8 @@ export class Renderer{
   const [r,gg,b]=col;c.save();c.lineCap='round';c.lineJoin='round';for(const [w,a] of [[150,.16],[124,.2],[100,.24],[78,.3],[56,.36]]){c.strokeStyle=`rgba(${r},${gg},${b},${a})`;c.lineWidth=w;c.beginPath();pts.forEach(([x,y],i)=>i?c.lineTo(x,y):c.moveTo(x,y));c.stroke();}c.restore();}
  /* v62: tapped tower → translucent attack zone; towers with a minimum range show the blind ring in red */
  rangeZone(c,x,y,r,minR,color,altitude=0){const ring=(rr,rev)=>{for(let i=0;i<=96;i++){const a=(rev?-1:1)*i/96*TAU,p=this.point(x+Math.cos(a)*rr,y+Math.sin(a)*rr,altitude);i?c.lineTo(p.x,p.y):c.moveTo(p.x,p.y);}c.closePath();};const t=this.game.time;c.save();
-  c.beginPath();ring(r,false);if(minR>0)ring(minR,true);c.fillStyle=color+'33';c.fill('evenodd');
-  c.beginPath();ring(r,false);c.setLineDash([8,6]);c.lineDashOffset=-t*18;c.strokeStyle=color+'e6';c.lineWidth=2.2;c.stroke();
+  const pulse=.5+.5*Math.sin(t*4);c.beginPath();ring(r,false);if(minR>0)ring(minR,true);c.fillStyle=color+(pulse>.5?'5c':'4a');c.fill('evenodd');
+  c.beginPath();ring(r,false);c.setLineDash([]);c.strokeStyle='#2b1a0bcc';c.lineWidth=5;c.stroke();c.shadowColor=color;c.shadowBlur=10+6*pulse;c.strokeStyle=color;c.lineWidth=3;c.stroke();c.shadowBlur=0;c.setLineDash([10,7]);c.lineDashOffset=-t*22;c.strokeStyle='#ffffff';c.lineWidth=1.4;c.stroke();c.setLineDash([]);
   if(minR>0){c.beginPath();ring(minR,false);c.fillStyle='#ff5a4a26';c.fill();c.setLineDash([5,5]);c.strokeStyle='#ff7a6ad0';c.lineWidth=1.8;c.stroke();const p=this.point(x,y-minR*.55,altitude);c.setLineDash([]);c.font='400 11px Jua,sans-serif';c.textAlign='center';c.lineWidth=3;c.strokeStyle='#2b1a0b';c.strokeText('사각지대',p.x,p.y);c.fillStyle='#ffb0a4';c.fillText('사각지대',p.x,p.y);}
   c.restore();}
  /* v63: ultimate effects (GPT sprites 'ult-fx' when ready, procedural glow otherwise) */

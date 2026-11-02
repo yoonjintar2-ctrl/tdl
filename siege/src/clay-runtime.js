@@ -1,4 +1,4 @@
-import {CANNONS,ENEMIES,SUPPLIES,WALL,WORLD_WIDTH,ACTOR_STYLE,WALL_SLOTS,COMMAND_X,towerTier} from './config.js?v=29595ff9b9';
+import {CANNONS,ENEMIES,SUPPLIES,WALL,WORLD_WIDTH,ACTOR_STYLE,WALL_SLOTS,COMMAND_X,towerTier,ULT_TYPES,ultNeed} from './config.js?v=17d9e20e45';
 export const ENEMY_ART=['enemy-small','enemy-tall','enemy-fat','enemy-giant'];
 // Kind 4 (초미니 음봉) reuses the small candle art at a much smaller size.
 const ENEMY_KIND_ART=[...ENEMY_ART,'enemy-small'];
@@ -31,6 +31,7 @@ function sprite(c,key,frame,x,y,size){const data=info(key,frame);if(!data)return
 function unitSprite(c,key,frame,x,y,size){const data=info(key,frame);if(!data)return false;const f=data.frame,k=size/f.cellW,q=Math.max(4,Math.round(size/4)*4),kq=q/f.cellW,id=key+':'+frame+':'+q;let cached=unitSprites.get(id);if(!cached){/* v60: quantised size + capped cache (perspective scaling made sizes continuous → unbounded canvases → iOS flicker) */if(unitSprites.size>900){const it=unitSprites.keys();for(let i=0;i<300;i++)unitSprites.delete(it.next().value);}const bitmap=document.createElement('canvas'),w=f.w*kq,h=f.h*kq;bitmap.width=Math.ceil(w*3);bitmap.height=Math.ceil(h*3);const ctx=bitmap.getContext('2d');ctx.imageSmoothingQuality='high';ctx.drawImage(data.image,f.x,f.y,f.w,f.h,0,0,bitmap.width,bitmap.height);cached={bitmap};unitSprites.set(id,cached);}c.drawImage(cached.bitmap,x+(f.x-f.anchorX)*k,y+(f.y-f.anchorY)*k,f.w*k,f.h*k);return true;}
 function halo(c,x,y,r,color){c.save();c.strokeStyle=color;c.lineWidth=1.2;c.beginPath();c.ellipse(x,y,r,r*.3,0,0,Math.PI*2);c.stroke();c.restore();}
 function levelLabel(c,u,x,y){const t=Math.min(4,Math.floor(Math.max(1,u.level||1)/10)),rim=['#c9b98a','#e09a5a','#e2e8ee','#ffd34f','#c78bff'][t];c.save();c.fillStyle='#1d3328ee';c.beginPath();c.roundRect(x-15,y+5,30,13,6.5);c.fill();c.strokeStyle=rim;c.lineWidth=1.3;c.stroke();c.fillStyle='#fff3d0';c.textAlign='center';c.textBaseline='middle';c.font='800 8px system-ui';c.fillText(`Lv.${u.level||1}`,x,y+11.8);c.restore();}
+function ultGauge(c,u,x,y){if(!ULT_TYPES.includes(u.type))return;const need=ultNeed(u.level),k=Math.min(1,(u.ult||0)/need),w=28;c.save();c.fillStyle='#1d1206dd';c.beginPath();c.roundRect(x-w/2-1,y+19,w+2,5,2.5);c.fill();const g=c.createLinearGradient(x-w/2,0,x+w/2,0);g.addColorStop(0,'#ffb02a');g.addColorStop(1,k>=1?'#fff6a0':'#ffd34f');c.fillStyle=g;c.beginPath();c.roundRect(x-w/2,y+20,Math.max(0,w*k),3,1.5);c.fill();if(k>=1){c.globalAlpha=.5+.5*Math.sin(performance.now()/120);c.strokeStyle='#fff3a0';c.lineWidth=1;c.beginPath();c.roundRect(x-w/2-1,y+19,w+2,5,2.5);c.stroke();}c.restore();}
 // v22: towers change look every 10 levels — plinth, trims, banners, crest and tint by design tier.
 export const tierOf=level=>Math.min(4,Math.floor(Math.max(1,level||1)/10));
 const TIER_TINT=['none','saturate(1.12) contrast(1.04)','saturate(1.2) brightness(1.05)','sepia(.3) saturate(1.5) brightness(1.07)','sepia(.2) saturate(1.7) brightness(1.1) hue-rotate(-8deg)'];
@@ -54,7 +55,7 @@ export function drawClayTower(c,u,x,y,t=0,power=1,selected=false,icon=false){
  if(!icon&&air){c.save();c.globalAlpha=.2;c.fillStyle='#173b32';c.beginPath();c.ellipse(x+2,y+40,16,4,0,0,Math.PI*2);c.fill();c.restore();y+=Math.sin(t*3.1)*2;}
  if(power<.4&&!icon)c.filter='saturate(.6) brightness(.78)';
  const tiers=metadata[u.type]?.tiers;/* v39: GPT tier sheets — row 1 front (cards), row 2 back (field, facing north) */sprite(c,u.type,tiers?(icon?0:tiers)+towerTier(u.level,tiers):frameForAngle(u.angle??-Math.PI/2),x,y+(u.recoil||0)*2.3,size);c.filter='none';
- if(!icon&&u.type!=='command')levelLabel(c,u,x,air?y+14:y);
+ if(!icon&&u.type!=='command'){levelLabel(c,u,x,air?y+14:y);ultGauge(c,u,x,air?y+14:y);}
  if(u.type==='totem'&&!icon){c.save();c.globalAlpha=.1+Math.sin(t*3)*.04;halo(c,x,y-30,21,'#c5f4b9');c.restore();}
  c.restore();return true;
 }
