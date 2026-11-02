@@ -1,4 +1,4 @@
-import {CANNONS,ENEMIES,SUPPLIES,WALL,WORLD_WIDTH,ACTOR_STYLE,WALL_SLOTS,COMMAND_X,towerTier,ULT_TYPES,ultNeed} from './config.js?v=025b8cfef5';
+import {CANNONS,ENEMIES,SUPPLIES,WALL,WORLD_WIDTH,ACTOR_STYLE,WALL_SLOTS,COMMAND_X,towerTier,ULT_TYPES,ultNeed} from './config.js?v=01791418a7';
 export const ENEMY_ART=['enemy-small','enemy-tall','enemy-fat','enemy-giant'];
 // Kind 4 (초미니 음봉) reuses the small candle art at a much smaller size.
 const ENEMY_KIND_ART=[...ENEMY_ART,'enemy-small'];
@@ -73,7 +73,7 @@ export function drawClayUnit(c,e,x,y,t=0,enemy=true,forcedFrame){
  if(e.hit>0)c.filter='brightness(1.5)';else if(e.poisons?.length)c.filter='hue-rotate(320deg) saturate(.85)';
  // The impact pose anchors the hands to the cap; the wall masks the feet.
  const contactOffset=!walk&&enemy&&e.attacking&&frame===3?[6,2,2,2,4][e.kind]*ACTOR_STYLE.unitScale:0;
- if(flip){c.translate(x,0);c.scale(-1,1);c.translate(-x,0);}unitSprite(c,key,frame,x,y+bob+contactOffset,size*(walk?1.12:1));if(flip){c.translate(x,0);c.scale(-1,1);c.translate(-x,0);}c.filter='none';
+ if(enemy&&e.slim){/* v68: 마음자로 — slimmer silhouette */c.translate(x,y);c.scale(1-e.slim,1+e.slim*.15);c.translate(-x,-y);}if(flip){c.translate(x,0);c.scale(-1,1);c.translate(-x,0);}unitSprite(c,key,frame,x,y+bob+contactOffset,size*(walk?1.12:1));if(flip){c.translate(x,0);c.scale(-1,1);c.translate(-x,0);}c.filter='none';
  if(enemy&&e.showHealth!==false&&(e.hp<e.maxHP||e.kind===3)){
   const f=info(key,frame).frame,top=y+(f.y-f.anchorY)*size/f.cellW-5,w=Math.max(12,ENEMIES[e.kind].width*.8*ACTOR_STYLE.unitScale*(e.scale?e.scale*.7:1));c.fillStyle='#3d463add';c.beginPath();c.roundRect(x-w/2-1,top-1,w+2,4,2);c.fill();c.fillStyle='#ed8e76';c.fillRect(x-w/2,top,Math.max(0,w*e.hp/e.maxHP),2);
  }

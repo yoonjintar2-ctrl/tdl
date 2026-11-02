@@ -42,7 +42,7 @@ export const CANNONS = {
   leverage: { name: '레버리지', short: '레버리지', icon: 'LV', cost: 240, damage: 0, rate: 0, range: 0, color: '#ffd34f', role: '모든 타워 공격력 ×2 · 대신 성벽이 받는 피해도 커져요 · 레벨이 오를수록 이득은 늘고 손해는 줄어요' },
   claw: { name: '인형뽑기', short: '인형뽑기', icon: 'CL', cost: 230, damage: 7, rate: .13, range: 0, capacity: 2, hits: 5, color: '#ff9ad0', role: '성벽 아래 양봉을 집어 전장으로 옮겨요 · 옮겨진 양봉은 검을 들고 싸워요 · 양봉이 많은 날일수록 강해요' },
   hbm: { name: 'HBM 반도체', short: 'HBM', icon: 'HB', cost: 300, damage: 15, rate: .75, range: 9999, color: '#5af0c8', role: '땅속 전류가 전장을 누비다 무작위 음봉을 감전 · 고레벨이 되면 전기 타워들의 공격 속도를 올려요' },
-  lily: { name: '릴리', short: '릴리', icon: 'LI', cost: 280, damage: 0, rate: .6, range: 300, shrink: .12, color: '#ff8ab8', role: '마음자로 음봉을 연약하게 · 주사를 맞은 음봉은 최대 체력이 줄어요(직접 피해 없음) · 탱커 음봉 카운터' },
+  lily: { name: '릴리', short: '릴리', icon: 'LI', cost: 280, damage: 0, rate: .6, range: 300, shrink: .12, color: '#ff8ab8', role: '마음자로 펜을 쏴 음봉을 날씬하고 연약하게 · 맞은 음봉은 최대 체력이 줄어요(직접 피해 없음) · 탱커 음봉 카운터' },
   fed: { name: '연준의장', short: '연준의장', icon: 'FD', cost: 340, damage: 13, rate: .7, range: 160, chain: 2, color: '#f2f2ff', role: '비둘기 장풍 · 맞으면 둘로, 다시 넷으로 갈라지는 체인 피죠닝으로 넓게 커버' }
 };
 export const SHOP_NAMES = { sonic: 'SONIC', blackhole: 'BLACKHOLE', siege: 'SIEGE', summoner: 'SUMMON', musk: 'MUSK', machine: 'MG GUN', mortar: 'MORTAR', sniper: 'SNIPER', laser: 'LASER', totem: 'TOTEM', sticky: 'SLIME', poison: 'POISON', drone: 'DRONE', ant: 'ANT', bull: 'BULL', buffett: 'HODL', leverage: 'X2', claw: 'CLAW', hbm: 'HBM', lily: 'LILY', fed: 'FED' };
@@ -114,7 +114,7 @@ export const PERKS={
  leverage:[{lv:12,key:'hedge',text:'헤지 — 성벽 피해 증가폭 소폭 감소'},{lv:24,key:'margin',text:'증거금 — 공격력 배율 소폭 증가'},{lv:36,key:'pro',text:'프로 트레이더 — 두 효과 모두 개선'}],
  claw:[{lv:12,key:'grip',text:'강한 집게 — 한 번에 1마리 더'},{lv:24,key:'sword',text:'명검 — 옮긴 양봉 피해 +30%'},{lv:36,key:'combo',text:'연속 뽑기 — 뽑기 간격 단축'}],
  hbm:[{lv:12,key:'stack',text:'적층 — 감전 피해 +20%'},{lv:24,key:'grid',text:'전력망 — 전기 타워(노광장비·드론·HBM) 공속 +12%'},{lv:36,key:'arc',text:'아크 — 감전이 주변 1마리에 튐'}],
- lily:[{lv:12,key:'dose',text:'증량 — 체력 감소량 증가'},{lv:24,key:'drain',text:'흡혈 — 뺏은 체력 일부로 성벽 강화(만렙이면 자금)'},{lv:36,key:'double',text:'2연발 주사'}],
+ lily:[{lv:12,key:'dose',text:'증량 — 체력 감소량 증가'},{lv:24,key:'drain',text:'흡혈 — 뺏은 체력 일부로 성벽 강화(만렙이면 자금)'},{lv:36,key:'double',text:'마음자로 2연발'}],
  fed:[{lv:12,key:'dovish',text:'비둘기파 — 비둘기 피해 +15%'},{lv:24,key:'qe',text:'양적완화 — 공격 속도 +15%'},{lv:30,key:'chain3',text:'체인 피죠닝 3단 분기 — 최대 8마리'}],
  musk:[{lv:12,key:'rocket',text:'로켓 확률 +15%'},{lv:24,key:'fleet',text:'트럭 2대 동시 출격'},{lv:36,key:'mars',text:'화성 로켓 — 로켓 피해 ×2'}],
  drone:[{lv:18,key:'twin',text:'쌍발 — 두 적 동시 공격'},{lv:26,key:'fast',text:'과급 모터 — 공속 +25%'},{lv:36,key:'swarm',text:'세 적 동시 공격'}],
@@ -135,6 +135,6 @@ export const ULT_INFO={
  mortar:{name:'집중 포화',text:'포탄 18발이 하늘에서 쏟아지는 융단 포격'},
  sniper:{name:'헤드헌트',text:'체력이 가장 높은 음봉 5마리를 연속 저격'},
  hbm:{name:'전력망 과부하',text:'전장 곳곳에서 번개가 솟아 음봉 최대 24마리를 감전'},
- lily:{name:'대량 접종',text:'전장의 모든 음봉 최대 체력 30% 감소'},
+ lily:{name:'마음자로 대량 투약',text:'전장의 모든 음봉에게 마음자로를 놓아 최대 체력 30% 감소'},
  fed:{name:'금리 인하',text:'전장의 모든 음봉에게 거시 충격 피해 + 5분간 모든 타워 공격 속도 +25%'},
 };

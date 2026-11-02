@@ -1,6 +1,6 @@
 // v67: new towers (ant, bull, buffett, leverage, claw, hbm, lily, fed) and ultimates for rare+ towers.
 // Installed onto Game.prototype by installTowersV67(Game). Every effect stays data-driven via cannonStats.
-import { cannonStats, hasPerk, WORLD_WIDTH, clamp } from './config.js?v=025b8cfef5';
+import { cannonStats, hasPerk, WORLD_WIDTH, clamp } from './config.js?v=01791418a7';
 
 export const ELECTRIC = ['laser', 'drone', 'hbm'];
 export const PASSIVE = ['totem', 'buffett', 'leverage'];
@@ -71,7 +71,7 @@ export function installTowersV67(Game) {
   P.resolveV67 = function (p) {
     const target = this.enemies.find(e => e.id === p.targetId && e.alive);
     if (p.type === 'coin') { if (target) { this.damage(target, p.damage, { cannonType: 'ant' }); this.effect('bullet-hit', target.x, target.y, '#ffd34f', '', .12); } return true; }
-    if (p.type === 'syringe') { if (target) { const st = p.stats, cut = target.maxHP * st.shrink; target.maxHP = Math.max(target.maxHP * .2, target.maxHP - cut); target.hp = Math.min(target.hp, target.maxHP); target.slim = Math.min(.35, (target.slim || 0) + .07); { const l = this.cannons.find(t => t.type === 'lily'); if (l) l.ult = (l.ult || 0) + .6; } this.effect('text', target.x, target.y - 12, '#ffb3d0', '-' + Math.round(cut), .7, { sourceAltitude: 14 });
+    if (p.type === 'syringe') { if (target) { const st = p.stats, cut = target.maxHP * st.shrink; target.maxHP = Math.max(target.maxHP * .2, target.maxHP - cut); target.hp = Math.min(target.hp, target.maxHP); target.slim = Math.min(.35, (target.slim || 0) + .07); { const l = this.cannons.find(t => t.type === 'lily'); if (l) l.ult = (l.ult || 0) + .6; } this.effect('text', target.x, target.y - 12, '#ffb3d0', '최대체력 -' + Math.round(st.shrink * 100) + '%', .7, { sourceAltitude: 14 });
         const lily = this.cannons.find(t => t.type === 'lily'); if (lily && hasPerk('lily', lily.level, 'drain')) { const gain = cut * .06; if (this.wallLevel >= 10) this.creditMarketGold(gain * .5); else this.addWallXP(gain, target.x); } } return true; }
     if (p.type === 'dove') { if (target) { this.damage(target, p.damage, { cannonType: 'fed' }); this.effect('bullet-hit', target.x, target.y, '#ffffff', '', .2); }
       if (p.depth < p.maxDepth) { const from = target || { x: p.tx, y: p.ty }; const next = this.enemies.filter(e => e.alive && !p.hitIds.includes(e.id) && Math.hypot(e.x - from.x, e.y - from.y) < 130).sort((a, b) => Math.hypot(a.x - from.x, a.y - from.y) - Math.hypot(b.x - from.x, b.y - from.y)).slice(0, 2);
