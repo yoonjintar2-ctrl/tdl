@@ -3,7 +3,7 @@
 export const MAX_CARD_LEVEL = 40;
 export const RARITIES = Object.freeze({
   common: Object.freeze({ key: 'common', name: '일반', color: '#f3efe2', glow: '#ffffff', weight: 99 }),
-  rare: Object.freeze({ key: 'rare', name: '고급', color: '#4f9dff', glow: '#8cc4ff', weight: 0.85 }),
+  rare: Object.freeze({ key: 'rare', name: '고급', color: '#4f9dff', glow: '#8cc4ff', weight: 5.2 }),
   epic: Object.freeze({ key: 'epic', name: '희귀', color: '#ffd23f', glow: '#ffe680', weight: 0.13 }),
   legend: Object.freeze({ key: 'legend', name: '레전드', color: '#ff9f1a', glow: '#ffc35a', weight: 0.02 })
 });
@@ -17,7 +17,7 @@ export const xpForNext = level => level >= MAX_CARD_LEVEL ? Infinity : 20 + 10 *
 // Design tier: the tower's look changes every 10 levels (1–9, 10–19, 20–29, 30–39, 40).
 export const towerTier = level => Math.min(4, Math.floor(Math.max(1, level || 1) / 10));
 // Pack prices are in the game's gold units. Duplicates past MAX refund gold.
-export const PACKS = Object.freeze({ 10: 1200, 100: 10800 });
+export const PACKS = Object.freeze({ 10: 1000, 100: 10000 });
 export const MAX_REFUND = Object.freeze({ common: 6, rare: 20, epic: 80, legend: 400 });
 
 export function cardOdds() {

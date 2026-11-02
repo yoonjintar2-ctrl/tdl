@@ -1,11 +1,11 @@
-import { WORLD_WIDTH as W,CANNONS,ENEMIES,SUPPLIES,WALL_STAGES,DRONE,WALL,cannonStats,validPlacement,validDronePlacement,snapSlot,ALL_SLOTS,FORWARD_X,FORWARD_DY,clamp } from './config.js?v=dcdc5554e3';
-import{WALL_MAX_LEVEL,WALL_MAX_XP}from'./progression.js?v=dcdc5554e3';
-import{isAIStock}from'./symbols.js?v=dcdc5554e3';
-import { QuarterCamera, DEPTH_SCALE, WALL_ELEVATION } from './camera.js?v=dcdc5554e3';
-import { drawClayMortar, drawClayMortarIcon, clayBattlefield } from './clay-assets.js?v=dcdc5554e3';
-import{drawProjectile,drawEffect}from'./combat-fx.js?v=dcdc5554e3';
-import{artCrop}from'./terrain.js?v=dcdc5554e3';
-import { drawClayTower, drawClayUnit, drawClayWall, drawClayPreview, drawForwardPad, hasKeep, drawClaySprite, clayReady, metaOf, drawClayTowerIcon, wallOutline, tierOf, tierTint, drawTierBack, drawTierFront } from './clay-runtime.js?v=dcdc5554e3';
+import { WORLD_WIDTH as W,CANNONS,ENEMIES,SUPPLIES,WALL_STAGES,DRONE,WALL,cannonStats,validPlacement,validDronePlacement,snapSlot,ALL_SLOTS,FORWARD_X,FORWARD_DY,clamp } from './config.js?v=29595ff9b9';
+import{WALL_MAX_LEVEL,WALL_MAX_XP}from'./progression.js?v=29595ff9b9';
+import{isAIStock}from'./symbols.js?v=29595ff9b9';
+import { QuarterCamera, DEPTH_SCALE, WALL_ELEVATION } from './camera.js?v=29595ff9b9';
+import { drawClayMortar, drawClayMortarIcon, clayBattlefield } from './clay-assets.js?v=29595ff9b9';
+import{drawProjectile,drawEffect}from'./combat-fx.js?v=29595ff9b9';
+import{artCrop}from'./terrain.js?v=29595ff9b9';
+import { drawClayTower, drawClayUnit, drawClayWall, drawClayPreview, drawForwardPad, hasKeep, drawClaySprite, clayReady, metaOf, drawClayTowerIcon, wallOutline, tierOf, tierTint, drawTierBack, drawTierFront } from './clay-runtime.js?v=29595ff9b9';
 const BAND=270;
 const TAU=Math.PI*2;
 function box(c,x,y,w,h,r,fill,stroke){c.beginPath();c.roundRect(x,y,w,h,r);if(fill){c.fillStyle=fill;c.fill();}if(stroke){c.lineWidth=1;c.strokeStyle=stroke;c.stroke();}}
@@ -204,8 +204,8 @@ export class Renderer{
  knightsAndSweeps(c,t){const g=this.game;
   for(const k of g.knights||[]){const foot=this.point(k.x,k.y+8);c.save();const grow=Math.min(1,k.age/.45);c.globalAlpha=grow;
    /* v40: GPT knight sheet — row 0 run (back view), row 1 sword attack */
-   if(k.archer&&clayReady('archer')){const n=6,fr=(k.attacking?n:0)+(k.attacking?Math.min(n-1,Math.floor((1-(k.shot||0)/.25)*n)):Math.floor(t*9+(k.phase||0)*3)%n);c.translate(foot.x,foot.y);c.scale(.4+grow*.6,.4+grow*.6);drawClaySprite(c,'archer',0,2,31,fr);c.restore();continue;}
-   if(clayReady('knight')){const fr=(k.attacking?4:0)+Math.floor(t*(k.attacking?10:9)+(k.phase||0)*3)%4;c.translate(foot.x,foot.y);c.scale(.4+grow*.6,.4+grow*.6);drawClaySprite(c,'knight',0,2,29,fr);c.restore();continue;}
+   if(k.archer&&clayReady('archer')){const n=6,fr=(k.attacking?n:0)+(k.attacking?Math.min(n-1,Math.floor((1-(k.shot||0)/.25)*n)):Math.floor(t*9+(k.phase||0)*3)%n);c.translate(foot.x,foot.y);c.scale(.4+grow*.6,.4+grow*.6);drawClaySprite(c,'archer',0,2,26,fr);c.restore();continue;}
+   if(clayReady('knight')){const fr=(k.attacking?4:0)+Math.floor(t*(k.attacking?10:9)+(k.phase||0)*3)%4;c.translate(foot.x,foot.y);c.scale(.4+grow*.6,.4+grow*.6);drawClaySprite(c,'knight',0,2,25,fr);c.restore();continue;}
    const fake={art:'candle',kind:0,radius:8,phase:k.phase,age:Math.max(1,k.age),attacking:k.attacking};c.translate(foot.x,foot.y);c.scale(.4+grow*.6,.4+grow*.6);c.translate(-foot.x,-foot.y);drawClayUnit(c,fake,foot.x,foot.y,t,false);c.restore();}
   for(const s of g.sweeps||[]){const p=this.point(s.x,s.y,8),q=this.point(s.x+s.dx*10,s.y+s.dy*10,8),ang=Math.atan2(q.y-p.y,q.x-p.x);c.save();
    /* v40: GPT musk rocket / car sprites (row 0 rocket, row 1 car), 4-frame loops */if(s.big){/* v53: ultimate rocket — huge exhaust plume, shock rings, glow */c.globalCompositeOperation='lighter';for(let i=1;i<26;i++){const b=this.point(s.x-s.dx*i*16,s.y-s.dy*i*16,8),k=1-i/26,w=(s.width*.28+i*2.2)*k+6;c.globalAlpha=.5*k;c.fillStyle=i<6?'#fff3c4':i<14?'#ffb04a':'#ff5a2a';c.beginPath();c.arc(b.x+Math.sin(t*30+i)*3,b.y,w,0,TAU);c.fill();}for(let i=0;i<3;i++){const ph=((t*1.6+i/3)%1),b=this.point(s.x-s.dx*ph*220,s.y-s.dy*ph*220,8);c.globalAlpha=.45*(1-ph);c.strokeStyle='#ffe58a';c.lineWidth=4;c.beginPath();c.ellipse(b.x,b.y,s.width*.4*(.4+ph),s.width*.14*(.4+ph),0,0,TAU);c.stroke();}c.globalCompositeOperation='source-over';c.globalAlpha=1;if(clayReady('musk-shots')){c.translate(p.x,p.y);c.rotate(ang+Math.PI/2);drawClaySprite(c,'musk-shots',0,0,96,Math.floor(t*14)%4);}c.restore();continue;}
@@ -227,10 +227,13 @@ export class Renderer{
   c.restore();}
  /* v63: ultimate effects (GPT sprites 'ult-fx' when ready, procedural glow otherwise) */
  ultFx(c){const g=this.game,t=g.time;for(const u of g.ults||[]){const k=u.t/u.dur;c.save();
-  if(u.kind==='laser'){const x=-30+k*492,a=this.point(x,u.y0,0),b=this.point(x,u.y1,0),fade=Math.min(1,u.t*5,(u.dur-u.t)*4),w=46+Math.sin(t*40)*6;c.globalCompositeOperation='lighter';
-   if(clayReady('ult-fx')){c.save();c.globalAlpha=fade;const L=b.y-a.y+80;c.translate(b.x,b.y);drawClaySprite(c,'ult-fx',0,0,L*1.05,0);c.restore();}
-   for(const [m,col,al] of [[2.2,'#58efd9',.18],[1.3,'#58efd9',.4],[.6,'#e8fffb',.9]]){c.globalAlpha=fade*al;c.fillStyle=col;c.fillRect(b.x-w*m/2,a.y-40,w*m,b.y-a.y+40);}
-   c.globalAlpha=fade*.8;const gr=c.createRadialGradient(b.x,b.y,0,b.x,b.y,90);gr.addColorStop(0,'#ffffff');gr.addColorStop(.4,'#58efd9');gr.addColorStop(1,'#0000');c.fillStyle=gr;c.beginPath();c.ellipse(b.x,b.y,90,34,0,0,TAU);c.fill();}
+  if(u.kind==='laser'){/* v64: layered orbital beam — outer haze, mid glow, flickering core, rolling rings, multi-frame ground impact */const x=-30+k*492,a=this.point(x,u.y0,0),b=this.point(x,u.y1,0),fade=Math.min(1,u.t*5,(u.dur-u.t)*4),fl=1+Math.sin(t*52)*.08+Math.sin(t*31)*.06,top=a.y-60,H=b.y-top;c.globalCompositeOperation='lighter';
+   for(const [w,col,al] of [[150,'#1fd6c8',.10],[96,'#3ff0dc',.18],[62,'#58efd9',.32],[38,'#9ffcef',.55],[20,'#e8fffb',.9],[8,'#ffffff',1]]){c.globalAlpha=fade*al;const gr=c.createLinearGradient(b.x-w*fl/2,0,b.x+w*fl/2,0);gr.addColorStop(0,col+'00');gr.addColorStop(.5,col);gr.addColorStop(1,col+'00');c.fillStyle=gr;c.fillRect(b.x-w*fl/2,top,w*fl,H);}
+   for(let i=0;i<6;i++){const ph=(t*1.8+i/6)%1,yy=top+ph*H;c.globalAlpha=fade*(1-ph)*.6;c.strokeStyle='#d8fffa';c.lineWidth=2.5;c.beginPath();c.ellipse(b.x,yy,30+ph*24,8+ph*5,0,0,TAU);c.stroke();}
+   if(clayReady('ult-fx')){c.save();c.globalAlpha=fade;c.translate(b.x,b.y+6);drawClaySprite(c,'ult-fx',0,0,150,0);c.restore();}
+   if(clayReady('ult-hits')){for(let i=0;i<3;i++){const fr=Math.floor((t*14+i*1.3)%4);c.save();c.globalAlpha=fade*.9;c.translate(b.x+(i-1)*34,b.y+8+Math.abs(i-1)*4);drawClaySprite(c,'ult-hits',0,10,64-Math.abs(i-1)*14,fr);c.restore();}}
+   c.globalAlpha=fade*.85;const gr=c.createRadialGradient(b.x,b.y,0,b.x,b.y,120);gr.addColorStop(0,'#ffffff');gr.addColorStop(.3,'#7ff7ff');gr.addColorStop(1,'#0000');c.fillStyle=gr;c.beginPath();c.ellipse(b.x,b.y,120,40,0,0,TAU);c.fill();
+   for(let i=0;i<10;i++){const an=t*7+i*.63,r=30+((t*90+i*17)%60);c.globalAlpha=fade*.8;c.fillStyle=i%2?'#e8fffb':'#58efd9';c.fillRect(b.x+Math.cos(an)*r,b.y-Math.abs(Math.sin(an))*r*.6,3,3);}}
   else if(u.kind==='blackhole'){const p=this.point(u.x,u.y,0),grow=Math.min(1,u.t/.5),collapse=u.t>u.dur-.35?1-(u.t-(u.dur-.35))/.35:1,R=(70+Math.sin(t*6)*6)*grow*collapse;
    c.globalAlpha=.35*grow;const ring=c.createRadialGradient(p.x,p.y,R*.6,p.x,p.y,R*3.4);ring.addColorStop(0,'#7a3cff99');ring.addColorStop(1,'#0000');c.fillStyle=ring;c.beginPath();c.arc(p.x,p.y,R*3.4,0,TAU);c.fill();c.globalAlpha=1;
    if(clayReady('ult-fx')){c.save();c.translate(p.x,p.y);c.rotate(t*2.4);{const f=metaOf('ult-fx').frames[1],sz=R*3.4,k=sz/f.cellW;drawClaySprite(c,'ult-fx',-(f.x+f.w/2-f.anchorX)*k,-(f.y+f.h/2-f.anchorY)*k,sz,1);}c.restore();}
@@ -260,7 +263,7 @@ export class Renderer{
   if(f.type==='bullet-hit'){const rr=(f.heavy?8:4)*p;for(let i=0;i<4;i++){const a=i*TAU/4;line(c,[[pos.x+Math.cos(a)*2,pos.y+Math.sin(a)*2],[pos.x+Math.cos(a)*rr,pos.y+Math.sin(a)*rr]],f.color,1.1);}dot(c,pos.x,pos.y,1.5,'#fff2c4');}
   if(f.type==='player-level'){const yy=60-p*12;box(c,121,yy,190,f.unlocked?56:44,12,'#304c37f2','#e6cf8b');text(c,'PLAYER LEVEL UP',216,yy+13,9,'#e8d69b');text(c,`Lv.${f.amount}`,216,yy+30,16,'#f6efcd');if(f.unlocked)text(c,'설치 슬롯 +1 · 최대 '+f.slots+'기',216,yy+46,8,'#e3e9b7');}
   if(f.type==='text'){c.shadowColor='#183622';c.shadowBlur=3;text(c,f.amount,pos.x,pos.y-p*28,14,f.color);}
-  if(f.type==='ult-hit'){const row={laser:0,blackhole:1,totem:2,drone:3}[f.ult]??0;if(clayReady('ult-hits')){const n=4,fr=row*n+Math.min(n-1,Math.floor(p*n));c.globalAlpha=1;c.translate(pos.x,pos.y);drawClaySprite(c,'ult-hits',0,10,f.ult==='drone'?70:46,fr);}else{c.globalCompositeOperation='lighter';c.fillStyle=f.color;c.globalAlpha=1-p;c.beginPath();c.arc(pos.x,pos.y,8+p*22,0,TAU);c.fill();}c.restore();continue;}
+  if(f.type==='ult-hit'){const row={laser:0,blackhole:1,totem:2,drone:3}[f.ult]??0;if(clayReady('ult-hits')){const n=4,fr=row*n+Math.min(n-1,Math.floor(p*n));c.globalAlpha=1;c.translate(pos.x,pos.y);drawClaySprite(c,'ult-hits',0,10,f.small?28:f.ult==='drone'?70:46,fr);}else{c.globalCompositeOperation='lighter';c.fillStyle=f.color;c.globalAlpha=1-p;c.beginPath();c.arc(pos.x,pos.y,8+p*22,0,TAU);c.fill();}c.restore();continue;}
   if(f.type==='beam'&&f.laser){/* v60: thick, slower laser — charge → sweep out → pulsing core with travelling rings → fade */const end=this.point(f.tx,f.ty,f.targetAltitude||0),t=this.game.time,grow=Math.min(1,p/.14),ex=pos.x+(end.x-pos.x)*grow,ey=pos.y+(end.y-pos.y)*grow,fade=p<.7?1:1-(p-.7)/.3,w=f.width*(p<.28?.55+grow*.45:1)*(1+Math.sin(t*46)*.12);c.globalAlpha=fade;c.globalCompositeOperation='lighter';c.lineCap='round';
    for(const [mul,col,a] of [[3.4,f.color,.18],[2.2,f.color,.35],[1.3,f.color,.75],[.55,'#f4fff8',1]]){c.globalAlpha=fade*a;c.strokeStyle=col;c.lineWidth=w*mul;c.beginPath();c.moveTo(pos.x,pos.y);c.lineTo(ex,ey);c.stroke();}
    const L=Math.hypot(ex-pos.x,ey-pos.y)||1,ux=(ex-pos.x)/L,uy=(ey-pos.y)/L;for(let i=0;i<7;i++){const ph=((t*1.4+i/7)%1);if(ph*L>L)continue;const bx=pos.x+ux*ph*L,by=pos.y+uy*ph*L;c.globalAlpha=fade*.7*(1-ph*.5);c.fillStyle='#e8fff6';c.beginPath();c.ellipse(bx,by,w*.9,w*.45,Math.atan2(uy,ux),0,TAU);c.fill();}
@@ -329,7 +332,7 @@ function sampleGround(art,crop){try{const k=document.createElement('canvas');k.w
 function clayBomber(c,e,p,foot,t){c.save();c.fillStyle='#1d2a1e33';c.beginPath();c.ellipse(foot.x,foot.y,9,3,0,0,TAU);c.fill();for(let i=1;i<6;i++){c.globalAlpha=.25*(1-i/6);c.fillStyle='#6a5a4e';c.beginPath();c.arc(p.x+Math.sin(i+t*9)*2,p.y-6-i*6,3+i,0,TAU);c.fill();}c.globalAlpha=1;const ok=drawClaySprite(c,'bomber',p.x,p.y+14+Math.sin(t*16+e.id)*1.5,40);c.restore();return ok;}
 function tierize(canvas,level){if(!tierOf(level)||typeof document==='undefined')return;const w=canvas.width,h=canvas.height,copy=document.createElement('canvas');copy.width=w;copy.height=h;copy.getContext('2d').drawImage(canvas,0,0);const c=canvas.getContext('2d'),k=w/88;c.clearRect(0,0,w,h);drawTierBack(c,w/2,h*.88,level,k);c.filter=tierTint(level);c.drawImage(copy,0,0);c.filter='none';drawTierFront(c,w/2,h*.16,h*.88,level,0,k);}
 /* v40: GPT walk-cycle supply carts — row 0 back view (pushing north), row 1 side view; variants by size & cargo; semiconductor stocks get chip haulers */
-const CART_SETS={candle:['cart-small','cart','cart-big'],semiconductor:['cart-small','cart','cart-big']},CART_SIZE=[40,50,62];
+const CART_SETS={candle:['cart-small','cart','cart-big'],semiconductor:['cart-small','cart','cart-big']},CART_SIZE=[34,42,52];
 export function drawCart(c,s,x,y,t,speed,still=false){const v=((s.variant??1)%3+3)%3,set=CART_SETS.candle;let key=set[v];if(!clayReady(key))key=clayReady(set[1])?set[1]:null;if(!key)return false;const e=metaOf(key),n=e?.cols||4,rows=e?.rows||2,vx=still?0:(s.vx||0),k=Math.abs(vx)/Math.max(1,speed),row=rows>=3?(k>.75?2:k>.3?1:0):(k>.45?1:0),step=still?0:Math.floor(t*10+(s.phase||0)*3)%n,size=CART_SIZE[v]*(key===set[v]?1:CART_SIZE[1]/CART_SIZE[v])*(rows>=3?1.15:1),bob=(step%3===1?-1.2:0);
  if(!still){c.save();c.fillStyle='#d9c49a';for(let i=0;i<2;i++){const ph=(t*3.5+(s.phase||0)+i*.5)%1;c.globalAlpha=.28*(1-ph);c.beginPath();c.arc(x+(row?(vx<0?1:-1)*(size*.32+ph*8):(i?6:-6)),y+4+ph*4,2+ph*4,0,Math.PI*2);c.fill();}c.restore();}
  c.save();c.translate(x,0);if(row&&vx<0)c.scale(-1,1);const ok=drawClaySprite(c,key,0,y+6+bob,size,row*n+step);c.restore();return ok;}

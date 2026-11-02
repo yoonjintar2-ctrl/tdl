@@ -1015,3 +1015,79 @@ button.primary:disabled,.course-primary:disabled,button.secondary:disabled{filte
 /* v63: cut-in bubble always fits inside the band */
 .cutin-bubble{right:7%!important;top:10%!important;max-width:38%!important;padding:10px 14px!important;font-size:clamp(15px,4.4vw,28px)!important;white-space:normal!important;word-break:keep-all;line-height:1.15!important}
 .cutin-name{right:7%!important;bottom:9%!important;font-size:clamp(12px,3.2vw,18px)!important}
+/* v64: live badge instead of the candle counter */
+.field-status>span#population{background:none!important;box-shadow:none!important;padding:0!important;color:#fff3c4!important;font:400 12px var(--gk-font)!important;-webkit-text-stroke:3px #2b1a0b;paint-order:stroke fill;display:inline-flex;align-items:center;gap:5px}
+.field-status>span#population[hidden]{display:none!important}
+.rt-dot{width:8px;height:8px;border-radius:50%;background:#ff3b30;box-shadow:0 0 0 2px #2b1a0b,0 0 8px #ff3b30;animation:rtBlink 1.2s ease-in-out infinite}
+@keyframes rtBlink{50%{opacity:.35}}
+.compact-hud .price-row>span{color:#ffd0c8!important;font-size:13px!important}.compact-hud .price-row>span.positive{color:#c8ffb0!important}
+/* v64: game-style mission gauge */
+.mission-goal .course-wall{height:22px!important;width:min(90%,330px)!important;margin:9px auto 2px!important;border-radius:12px!important;border:3px solid #3a2208!important;background:linear-gradient(180deg,#1b1006,#3a2410)!important;box-shadow:0 0 0 2px #e8b84a,0 3px 0 #2b1a0b,inset 0 3px 6px #000a!important;overflow:hidden}
+.mission-goal .course-wall i{border-radius:8px;background:linear-gradient(180deg,#f2ffd0 0,#a8ea6a 30%,#5fb636 60%,#3e8a22 100%)!important;box-shadow:inset 0 -3px 0 #2a6a14,inset 0 2px 0 #ffffffb0,0 0 10px #9be064aa}
+.mission-goal .course-wall i::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,#0000 0 14px,#0003 14px 16px);border-radius:inherit}
+.mission-goal .course-wall::before{content:"";position:absolute;left:6px;right:6px;top:3px;height:5px;border-radius:4px;background:linear-gradient(#fff9,#fff0);z-index:2;pointer-events:none}
+.mission-goal .course-wall.low i{background:linear-gradient(180deg,#ffd8c8,#ff7a52 40%,#c8341e)!important;box-shadow:inset 0 -3px 0 #7a1608,0 0 10px #ff6a42aa}
+.mission-goal .course-wall span{z-index:3;font:400 12px/16px var(--gk-font)!important;color:#fff!important;-webkit-text-stroke:3px #2b1a0b;paint-order:stroke fill;text-shadow:none!important}
+/* v64: game-style profile XP bar (gold/blue) */
+.profile-pop .pp-bar{height:22px!important;border-radius:12px!important;border:3px solid #3a2208;background:linear-gradient(180deg,#1b1006,#3a2410)!important;box-shadow:0 0 0 2px #e8b84a,0 3px 0 #2b1a0b,inset 0 3px 6px #000a!important;margin:10px 2px 6px!important}
+.profile-pop .pp-bar i{background:linear-gradient(180deg,#e8f6ff 0,#7cc8ff 30%,#3a8ee8 60%,#2563b8 100%)!important;box-shadow:inset 0 -3px 0 #183f80,inset 0 2px 0 #ffffffb0,0 0 10px #7cc8ffaa}
+.profile-pop .pp-bar i::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,#0000 0 14px,#0003 14px 16px);border-radius:inherit}
+.profile-pop .pp-bar::before{content:"";position:absolute;left:6px;right:6px;top:3px;height:5px;border-radius:4px;background:linear-gradient(#fff9,#fff0);z-index:2}
+.profile-pop .pp-bar span{z-index:3;font:400 12px/16px var(--gk-font)!important;color:#fff!important;-webkit-text-stroke:3px #2b1a0b;paint-order:stroke fill}
+/* v64: level number = white digit sprites, no plate, centred on the ribbon */
+.dg-num{display:inline-flex!important;align-items:center;justify-content:center;gap:0}
+.dg-num .dg{display:block;margin:0 -1px;filter:drop-shadow(0 1px 0 #000)}
+.user-portrait b,.pc-portrait .pc-lv{background:none!important;border:0!important;box-shadow:none!important;padding:0!important;min-width:0!important;height:auto!important;clip-path:none!important;display:flex!important;justify-content:center;align-items:center;transform:translate(-50%,-50%)!important;left:50%!important;right:auto!important}
+/* v64: '보유 타워' button — same pill as the other game buttons, same font family */
+.battle-dock .shop-toggle{width:136px!important;height:48px!important;background:none!important;border-image:url(assets/clay/ui-btn-green-v1.webp) 38 fill/20px stretch!important;color:#fff!important;font:400 18px/1 var(--gk-font)!important;-webkit-text-stroke:3.5px #1d4a10;paint-order:stroke fill;text-shadow:0 2px 0 #0006!important;filter:drop-shadow(0 4px 3px #0007)}
+.battle-dock .shop-toggle:active,.battle-dock .shop-toggle[aria-expanded="true"]{background-image:none!important;transform:translateY(2px)!important;filter:drop-shadow(0 1px 1px #0007) brightness(.92)}
+.coll-head.pack-head{margin-top:16px}
+.picker-brand.logo-brand .game-logo{width:min(48vw,190px)!important}
+.picker-corner .pc-portrait{display:none!important}
+/* v64: campaign — frame always above scrolled text, outer margin masked; no kicker; footer in frame tones */
+.campaign-panel::before{z-index:30!important;box-shadow:inset 0 0 0 3px #a8733a,inset 0 0 0 5px #e8c27799,inset 0 0 0 7px #3d250f,inset 0 0 40px #000a,0 0 0 40px #17372c!important}
+.campaign-panel .campaign-body{padding-left:20px!important;padding-right:20px!important;padding-bottom:calc(28px + env(safe-area-inset-bottom))!important}
+.campaign-kicker{display:none!important}
+.campaign-panel .course-rules{background:linear-gradient(180deg,#fff6dc,#efd9a6)!important;border:2px solid #b07a3a!important;box-shadow:inset 0 0 0 2px #fff6,0 3px 0 #3d250f!important;border-radius:16px!important;color:#4a2804!important}
+.campaign-panel .course-rules strong{color:#4a2804!important}.campaign-panel .course-rules p,.campaign-panel .course-rules small{color:#6a4a20!important}
+/* v64: empty-market card — everything stays inside its box */
+.picker-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center;overflow:hidden;min-height:0;max-width:100%;box-sizing:border-box;padding:22px 18px!important}
+.picker-empty[hidden]{display:none!important}
+.picker-empty .picker-moon{position:static!important;font-size:38px;line-height:1;margin:0!important;transform:none!important}
+.picker-empty strong{display:block;font-size:17px!important;line-height:1.3;word-break:keep-all}
+.picker-empty p{margin:0;font-size:12.5px;line-height:1.5;color:#d8e2c4;white-space:pre-line;word-break:keep-all;max-width:100%}
+/* v64: one button family everywhere — wood pill (default), green pill (primary), red pill (danger) */
+.ti-actions button:not(.primary),.exit-card button:not(.primary):not(#exit-ok),.course-button-row button.course-secondary,.sync-row button,.profile-pop button:not(.pp-close){border:0!important;border-radius:0!important;background:none!important;border-image:url(assets/clay/ui-btn-wood-v1.webp) 38 fill/20px stretch!important;box-shadow:none!important;min-height:42px;color:#fff!important;font-family:var(--gk-font)!important;font-weight:400!important;-webkit-text-stroke:3px #3a2008;paint-order:stroke fill;text-shadow:0 2px 0 #0006!important;filter:drop-shadow(0 3px 2px #0007)}
+.ti-actions button.primary{border-image:url(assets/clay/ui-btn-green-v1.webp) 38 fill/20px stretch!important;background:none!important;border:0!important}
+.ti-actions button:active{transform:translateY(2px)}
+/* v64: no seams — panel centre stretches instead of repeating */
+.exit-card,.profile-pop,.sheet,.ti-card,.codex-box,.wall-pop .ti-card.wall-info{border-image-repeat:stretch!important}
+/* v64: popup close stays pinned while the sheet scrolls */
+.sheet>.close-panel{position:sticky!important;top:2px!important;float:right;z-index:8;margin:-14px -14px 0 8px!important}
+/* v64: placement hint sits above the bottom dock, never over the forward slot */
+.placement-banner{top:auto!important;bottom:calc(150px + env(safe-area-inset-bottom))!important}
+/* v64: card glow is not clipped */
+.coll-grid{padding-top:8px!important;overflow:visible!important}
+/* v64: cut-in — no stray tail, name inside the band */
+.cutin-bubble::after{display:none!important}
+.cutin-name{right:auto!important;left:50%!important;bottom:7%!important;transform:translateX(-10%) rotate(8deg)!important;white-space:nowrap}
+/* v64: 100-pull view — one full card per tower with a count chip; buttons always on screen */
+.gacha-stage.hundred .gacha-cards{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:10px!important;width:min(100%,420px)!important}
+.tcard .tc-count{position:absolute;right:-6px;bottom:-8px;z-index:7;padding:2px 8px;border-radius:12px;background:#2b1a0b;color:#ffe9a8;font:400 14px/18px var(--gk-font);box-shadow:0 0 0 2px #e8b84a}
+.gacha-stage{display:flex!important;flex-direction:column;align-items:center;overflow-y:auto}
+.gacha-stage .gacha-cards{flex:0 0 auto;margin:auto 0;padding:18px 12px}
+.gacha-stage .gacha-ui{position:sticky!important;bottom:0;padding-bottom:max(14px,env(safe-area-inset-bottom));z-index:20}
+.gacha-stage .gacha-summary{max-height:58vh;overflow-y:auto}
+.sheet>.close-panel{float:none!important;align-self:flex-end;margin:-14px -14px -20px auto!important;display:block}
+.coll-head strong{color:#4a2804!important;font:400 17px var(--gk-font)!important}
+.tc-lv:empty{visibility:hidden}
+.tcard .tc-art{min-width:0!important;max-width:100%!important;box-sizing:border-box}.tcard .tc-art canvas,.tcard .tc-art img{max-width:100%!important;min-width:0!important}
+.tcard .tcard-face.front{grid-template-columns:minmax(0,1fr)!important}.tcard .tc-top{min-width:0;overflow:hidden}.tcard .tc-rarity{white-space:nowrap;font-size:9px}
+.wall-pop .wi-hint.wi-max{margin-top:2px;color:#8a5a10}
+/* v64 fixes: info buttons all pills (primary green, others wood), profile pop buttons */
+.ti-actions{display:flex!important}
+.ti-actions>button{flex:1 1 0!important;min-height:44px!important;padding:8px 10px!important;font-size:15px!important}
+.ti-actions>button.primary,.ti-actions>button:last-child.primary{border-image:url(assets/clay/ui-btn-green-v1.webp) 38 fill/20px stretch!important;-webkit-text-stroke:3px #1d4a10!important;color:#fff!important;background:none!important}
+.ti-actions>button:disabled{filter:grayscale(.7) brightness(.9);opacity:.75}
+.profile-pop .pp-close{position:absolute!important;top:22px!important;right:22px!important}
+.ti-actions>button.primary{border:0!important;border-style:solid!important;border-width:0!important;border-image-source:url(assets/clay/ui-btn-green-v1.webp)!important;border-image-slice:38 fill!important;border-image-width:20px!important;border-image-repeat:stretch!important;border-image-outset:0!important}

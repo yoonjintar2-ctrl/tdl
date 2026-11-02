@@ -1,7 +1,7 @@
-import { CANNONS, cannonStats, PERKS, towerTier } from './config.js?v=dcdc5554e3';
-import { RARITIES, TOWER_RARITY, xpForNext, MAX_CARD_LEVEL, cardOdds, PACKS } from './cards.js?v=dcdc5554e3';
-import { renderShopIcon } from './renderer.js?v=dcdc5554e3';
-import { FX } from './fx.js?v=dcdc5554e3';
+import { CANNONS, cannonStats, PERKS, towerTier } from './config.js?v=29595ff9b9';
+import { RARITIES, TOWER_RARITY, xpForNext, MAX_CARD_LEVEL, cardOdds, PACKS } from './cards.js?v=29595ff9b9';
+import { renderShopIcon } from './renderer.js?v=29595ff9b9';
+import { FX } from './fx.js?v=29595ff9b9';
 
 const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
 const wait = ms => new Promise(r => setTimeout(r, ms));
@@ -13,7 +13,7 @@ export function towerCard(type, item, { mini = false, faceDown = false } = {}) {
   const rarity = TOWER_RARITY[type], r = RARITIES[rarity];
   const card = el('div', `tcard r-${rarity}${mini ? ' mini' : ''}${faceDown ? ' hidden' : ''}${item ? '' : ' unowned'}`); card.dataset.type = type;
   const inner = el('div', 'tcard-inner'), front = el('div', 'tcard-face front'), back = el('div', 'tcard-face back');
-  const top = el('div', 'tc-top'); top.append(el('span', 'tc-rarity', r.name), el('span', 'tc-lv', item ? `Lv.${item.level}` : '?'));
+  const top = el('div', 'tc-top'); top.append(el('span', 'tc-rarity', r.name), el('span', 'tc-lv', item ? `Lv.${item.level}` : ''));
   const art = el('canvas', 'tc-art'); art.width = 200; art.height = 180; art.setAttribute('aria-hidden', 'true');
   front.append(top, art, el('div', 'tc-name', CANNONS[type].short));
   if (!mini) {
@@ -42,7 +42,11 @@ export class CardStage {
     root.append(canvas, grid, banner, summary, ui); document.body.append(root); this.root = root; document.body.classList.add('gacha-open');
     const fx = new FX(canvas); fx.start(); this.fx = fx; window.addEventListener('resize', this.onResize = () => fx.resize());
     this.results = results; this.revealed = 0; this.skipping = false;
-    const order = results.map((res, i) => ({ res, i }));
+    /* v64: 100-pulls are dealt as one card per tower (×count) — readable and light */
+    let view = results;
+    if (count >= 100) { const m = new Map(); for (const r of results) { const v = m.get(r.type); if (!v) m.set(r.type, { ...r, n: 1 }); else { v.n++; v.level = Math.max(v.level, r.level); v.xp = r.xp; v.isNew ||= r.isNew; v.levelUps += r.levelUps || 0; v.refund = (v.refund || 0) + (r.refund || 0); v.gained = (v.gained || 0) + (r.gained || 0); } } const R = ['common', 'rare', 'epic', 'legend']; view = [...m.values()].sort((a, b) => R.indexOf(a.rarity) - R.indexOf(b.rarity)); }
+    this.view = view;
+    const order = view.map((res, i) => ({ res, i }));
     // Pack burst intro.
     const pack = el('div', 'gacha-pack'); pack.innerHTML = '<div class="pack-face"><span>STOCK SIEGE</span><b>' + count + '</b><small>TOWER CARDS</small></div>'; root.append(pack);
     const best = results.reduce((m, r) => Math.max(m, ['common', 'rare', 'epic', 'legend'].indexOf(r.rarity)), 0), bestColor = FLAME[['common', 'rare', 'epic', 'legend'][best]][0];
@@ -51,14 +55,14 @@ export class CardStage {
     const pr = pack.getBoundingClientRect(), cx = pr.left + pr.width / 2, cy = pr.top + pr.height / 2;
     fx.remove(packAura); fx.flash(cx, cy, bestColor, { radius: 340 }); fx.ring(cx, cy, bestColor, { radius: 260 }); fx.burst(cx, cy, bestColor, { count: 90, speed: 420 }); pack.remove();
     // Spread face-down cards from the centre into the grid.
-    this.cards = order.map(({ res }) => { const c = towerCard(res.type, null, { mini: count >= 100, faceDown: true }); c.classList.add('deal'); c.style.setProperty('--fromX', '0px'); grid.append(c); return c; });
+    this.cards = order.map(({ res }) => { const c = towerCard(res.type, null, { faceDown: true }); c.classList.add('deal'); c.style.setProperty('--fromX', '0px'); grid.append(c); return c; });
     await new Promise(requestAnimationFrame);
     const gr = grid.getBoundingClientRect();
     this.cards.forEach((c, i) => { const r = c.getBoundingClientRect(); c.style.setProperty('--fromX', (cx - (r.left + r.width / 2)) + 'px'); c.style.setProperty('--fromY', (cy - (r.top + r.height / 2)) + 'px'); c.style.animationDelay = (count >= 100 ? i * 9 : i * 70) + 'ms'; });
     this.cards.forEach(c => c.classList.add('dealing'));
     // Card-back flames tint by the hidden rarity (Hearthstone-style hint). 100-pull uses glow only on rare+.
-    this.auras = this.cards.map((c, i) => { const rar = results[i].rarity, [col, k] = FLAME[rar]; if (count >= 100 && rar === 'common') return null; return count >= 100 ? fx.dustAura(() => c.getBoundingClientRect(), col, rar === 'legend' ? 14 : rar === 'epic' ? 7 : 3) : fx.flameAura(() => { const r = c.getBoundingClientRect(); return { left: r.left + 3, right: r.right - 3, top: r.top + 3, bottom: r.bottom - 3, width: r.width - 6, height: r.height - 6 }; }, col, k); });
-    this.cards.forEach((c, i) => { c.classList.add('glow-' + results[i].rarity); c.onclick = () => this.flip(i); });
+    this.auras = this.cards.map((c, i) => { const rar = view[i].rarity, [col, k] = FLAME[rar]; if (count >= 100 && rar === 'common') return null; return count >= 100 ? fx.dustAura(() => c.getBoundingClientRect(), col, rar === 'legend' ? 14 : rar === 'epic' ? 7 : 3) : fx.flameAura(() => { const r = c.getBoundingClientRect(); return { left: r.left + 3, right: r.right - 3, top: r.top + 3, bottom: r.bottom - 3, width: r.width - 6, height: r.height - 6 }; }, col, k); });
+    this.cards.forEach((c, i) => { c.classList.add('glow-' + view[i].rarity); c.onclick = () => this.flip(i); });
     skip.onclick = () => this.skip(); flipAll.onclick = () => this.flipAll(flipAll);
     done.onclick = () => { this.close(); onClose?.(); };
     again.onclick = () => { this.close(); onAgain?.(); };
@@ -67,17 +71,18 @@ export class CardStage {
   }
   async flip(i, fast = false) {
     const card = this.cards?.[i]; if (!card || !card.classList.contains('hidden') || card.classList.contains('charging')) return;
-    const res = this.results[i], fx = this.fx, hundred = this.root.classList.contains('hundred');
+    const res = this.view[i], fx = this.fx, hundred = this.root.classList.contains('hundred');
     if (!fast && !reduced() && (res.rarity === 'epic' || res.rarity === 'legend')) { card.classList.add('charging'); if (this.auras[i] && !hundred) this.auras[i].intensity *= 2.2; await wait(hundred ? 380 : res.rarity === 'legend' ? 1100 : 750); }
     else if (!fast && res.rarity === 'rare' && !hundred) { card.classList.add('charging', 'short'); await wait(260); }
     if (!this.root) return;
     if (this.auras[i]) { fx.remove(this.auras[i]); this.auras[i] = null; }
     // Swap the face content to the real card.
-    const real = towerCard(res.type, { level: res.level, xp: res.xp ?? 0 }, { mini: hundred });
+    const real = towerCard(res.type, { level: res.level, xp: res.xp ?? 0 });
     card.querySelector('.tcard-face.front').replaceWith(real.querySelector('.tcard-face.front'));
     card.classList.remove('hidden', 'charging', 'short', 'unowned'); card.classList.add('revealed');
     const badge = res.isNew ? 'NEW!' : res.levelUps ? '레벨 업!' : res.refund ? `+${res.refund}G` : res.gained ? `+${res.gained} XP` : '';
     if (badge) { const b = el('span', 'tc-badge' + (res.isNew ? ' new' : ''), badge); card.append(b); }
+    if (res.n > 1) card.append(el('span', 'tc-count', '×' + res.n));
     const r = card.getBoundingClientRect(), x = r.left + r.width / 2, y = r.top + r.height / 2, col = RARITIES[res.rarity].color;
     if (!fast) {
       if (res.rarity === 'rare') { fx.ring(x, y, col, { radius: hundred ? 40 : 90, width: 4 }); fx.burst(x, y, col, { count: hundred ? 12 : 30, speed: hundred ? 120 : 220, size: 2.4 }); }
@@ -89,7 +94,7 @@ export class CardStage {
   }
   async flipAll(btn) {
     if (btn) btn.disabled = true; const hundred = this.root?.classList.contains('hundred');
-    for (let i = 0; i < (this.cards?.length || 0); i++) { if (!this.root || this.skipping) return; const rar = this.results[i].rarity; await this.flip(i); await wait(hundred ? (rar === 'common' ? 18 : 90) : (rar === 'common' ? 140 : 320)); }
+    for (let i = 0; i < (this.cards?.length || 0); i++) { if (!this.root || this.skipping) return; const rar = this.view[i].rarity; await this.flip(i); await wait(hundred ? (rar === 'common' ? 18 : 90) : (rar === 'common' ? 140 : 320)); }
   }
   skip() { if (!this.cards) return; this.skipping = true; for (let i = 0; i < this.cards.length; i++) this.flip(i, true); }
   // v51: level-up showcase — each tower that levelled takes the stage in turn.
@@ -135,11 +140,11 @@ export function renderCollection(container, game, { onPack, onCard, slotText }) 
   for (const n of [10, 100]) { const b = el('button', 'pack-btn' + (n === 100 ? ' big' : ''), ''); b.type = 'button'; b.innerHTML = `<span>${n}장 뽑기</span><b>${game.cash(PACKS[n])}</b>`; b.disabled = game.gold < PACKS[n]; b.onclick = () => onPack(n); packs.append(b); }
   if (game.freePack) { const f = el('button', 'pack-btn free', ''); f.type = 'button'; f.innerHTML = '<span>첫 선물 · 10장</span><b>무료</b>'; f.onclick = () => onPack(10, true); packs.prepend(f); }
   const odds = cardOdds(), oddsLine = el('p', 'odds-line odds-note', ['legend', 'epic', 'rare', 'common'].map(r => `${RARITIES[r].name} ${(Object.entries(odds).filter(([t]) => TOWER_RARITY[t] === r).reduce((n, [, p]) => n + p, 0) * 100).toFixed(r === 'common' ? 1 : 2).replace(/\.?0+$/, '')}%`).join(' · ') + ' · 중복 카드는 레벨업 재료');
-  const head = el('div', 'coll-head'); head.append(el('strong', '', '내 타워 카드'), el('small', '', slotText));
+  const head = el('div', 'coll-head'); head.append(el('strong', '', '보유 타워'), el('small', '', slotText));
   const grid = el('div', 'coll-grid');
-  const order = Object.keys(TOWER_RARITY).sort((a, b) => ['common', 'rare', 'epic', 'legend'].indexOf(TOWER_RARITY[a]) - ['common', 'rare', 'epic', 'legend'].indexOf(TOWER_RARITY[b]));
+  const R=['common', 'rare', 'epic', 'legend'],rank=t=>(game.cannons.some(c=>c.type===t)?0:game.inventory.some(c=>c.type===t)?1:2);/* v64: deployed → owned → missing, then rarity */const order = Object.keys(TOWER_RARITY).sort((a, b) => rank(a)-rank(b) || R.indexOf(TOWER_RARITY[a]) - R.indexOf(TOWER_RARITY[b]));
   for (const type of order) { const item = game.inventory.find(c => c.type === type), deployed = game.cannons.some(c => c.type === type), card = towerCard(type, item || null); const chip = el('span', 'tc-state ' + (deployed ? 'on' : item ? 'off' : 'none'), deployed ? '배치 중' : item ? '보관 중' : '미보유'); card.append(chip); card.tabIndex = 0; card.onclick = () => onCard(type); grid.append(card); }
-  container.append(packs, head, grid, oddsLine);
+  const ph=el('div','coll-head pack-head');ph.append(el('strong','','타워 뽑기'));container.append(head, grid, ph, packs, oddsLine);
 }
 
 export function statLines(game, c) {
