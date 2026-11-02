@@ -1,7 +1,7 @@
-import { CANNONS, cannonStats, PERKS, towerTier, ULT_INFO } from './config.js?v=dfd1078fe3';
-import { RARITIES, TOWER_RARITY, xpForNext, MAX_CARD_LEVEL, cardOdds, PACKS } from './cards.js?v=dfd1078fe3';
-import { renderShopIcon } from './renderer.js?v=dfd1078fe3';
-import { FX } from './fx.js?v=dfd1078fe3';
+import { CANNONS, cannonStats, PERKS, towerTier, ULT_INFO } from './config.js?v=6490e8f28f';
+import { RARITIES, TOWER_RARITY, xpForNext, MAX_CARD_LEVEL, cardOdds, PACKS } from './cards.js?v=6490e8f28f';
+import { renderShopIcon } from './renderer.js?v=6490e8f28f';
+import { FX } from './fx.js?v=6490e8f28f';
 
 const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
 const wait = ms => new Promise(r => setTimeout(r, ms));
@@ -15,8 +15,8 @@ export function towerCard(type, item, { mini = false, faceDown = false } = {}) {
   const inner = el('div', 'tcard-inner'), front = el('div', 'tcard-face front'), back = el('div', 'tcard-face back');
   const top = el('div', 'tc-top'); top.append(el('span', 'tc-rarity', r.name), el('span', 'tc-lv', item ? `Lv.${item.level}` : ''));
   const art = el('canvas', 'tc-art'); art.width = 200; art.height = 180; art.setAttribute('aria-hidden', 'true');
-  /* v65: art lives in a fixed box (canvas absolutely positioned) so no engine can grow the row */const artBox = el('div', 'tc-artbox'); artBox.append(art, top.querySelector('.tc-lv'));
-  front.append(top, el('div', 'tc-name', CANNONS[type].short), artBox);
+  /* v65: art lives in a fixed box (canvas absolutely positioned) so no engine can grow the row */const artBox = el('div', 'tc-artbox'); artBox.append(art, top.querySelector('.tc-rarity'), top.querySelector('.tc-lv'));
+  /* v68: rarity + level float over the art so the tower picture gets the card's height */front.append(el('div', 'tc-name', CANNONS[type].short), artBox);
   if (!mini) {
     const bar = el('div', 'tc-bar'), fill = el('i'), need = item ? xpForNext(item.level) : 1;
     fill.style.width = item ? (item.level >= MAX_CARD_LEVEL ? 100 : Math.min(100, (item.xp || 0) / need * 100)) + '%' : '0%';

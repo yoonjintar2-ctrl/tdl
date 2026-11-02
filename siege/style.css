@@ -1194,3 +1194,9 @@ button.primary:disabled,.course-primary:disabled,button.secondary:disabled{filte
 .user-portrait .pf-face,.pc-portrait .pc-face{background-size:112%!important;background-position:50% 38%!important}
 .user-portrait::before,.pc-portrait::before{filter:saturate(.35) contrast(1.08) drop-shadow(0 2px 2px #0008)!important}
 .user-portrait.pf-t3::before,.user-portrait.pf-t4::before,.user-portrait.pf-t5::before{filter:saturate(.6) contrast(1.08) drop-shadow(0 2px 2px #0008)!important}
+/* v68: card front = name / art / bar — rarity pill top-left and level badge bottom-right float over the art box */
+.tcard .tcard-face.front,.gacha-cards .tcard:not(.mini) .tcard-face.front,.coll-grid .tcard .tcard-face.front{grid-template-areas:"name" "art" "bar"!important;grid-template-rows:auto minmax(0,1fr) auto!important}
+.tcard .tc-artbox>.tc-rarity{position:absolute!important;left:0!important;top:0!important;z-index:3;max-width:60%!important;font-size:9.5cqw!important;padding:.3cqw 3.5cqw!important}
+.tcard .tc-artbox>.tc-lv{top:auto!important;bottom:0!important;right:0!important;font-size:9.5cqw!important}
+.tcard .tc-name{margin-top:1cqw!important}
+.tcard .tc-artbox>.tc-art{inset:2cqw -8cqw -2cqw!important;width:calc(100% + 16cqw)!important;height:calc(100% - 0cqw)!important}
