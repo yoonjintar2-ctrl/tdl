@@ -1,11 +1,11 @@
-import { WORLD_WIDTH as W,CANNONS,ENEMIES,SUPPLIES,WALL_STAGES,DRONE,WALL,cannonStats,validPlacement,validDronePlacement,snapSlot,ALL_SLOTS,FORWARD_X,FORWARD_DY,clamp } from './config.js?v=a4f58195a1';
-import{WALL_MAX_LEVEL,WALL_MAX_XP}from'./progression.js?v=a4f58195a1';
-import{isAIStock}from'./symbols.js?v=a4f58195a1';
-import { QuarterCamera, DEPTH_SCALE, WALL_ELEVATION } from './camera.js?v=a4f58195a1';
-import { drawClayMortar, drawClayMortarIcon, clayBattlefield } from './clay-assets.js?v=a4f58195a1';
-import{drawProjectile,drawEffect}from'./combat-fx.js?v=a4f58195a1';
-import{artCrop}from'./terrain.js?v=a4f58195a1';import{drawEffectV68,drawUltV68,drawShotV68,drawSpecialV73,drawEnemyShotsV73}from'./fx-v68.js?v=a4f58195a1';
-import { drawClayTower, drawClayUnit, drawClayWall, drawClayPreview, drawForwardPad, hasKeep, drawClaySprite, clayReady, metaOf, drawClayTowerIcon, wallOutline, tierOf, tierTint, drawTierBack, drawTierFront } from './clay-runtime.js?v=a4f58195a1';
+import { WORLD_WIDTH as W,CANNONS,ENEMIES,SUPPLIES,WALL_STAGES,DRONE,WALL,cannonStats,validPlacement,validDronePlacement,snapSlot,ALL_SLOTS,FORWARD_X,FORWARD_DY,clamp } from './config.js?v=e8850c899e';
+import{WALL_MAX_LEVEL,WALL_MAX_XP}from'./progression.js?v=e8850c899e';
+import{isAIStock}from'./symbols.js?v=e8850c899e';
+import { QuarterCamera, DEPTH_SCALE, WALL_ELEVATION } from './camera.js?v=e8850c899e';
+import { drawClayMortar, drawClayMortarIcon, clayBattlefield } from './clay-assets.js?v=e8850c899e';
+import{drawProjectile,drawEffect}from'./combat-fx.js?v=e8850c899e';
+import{artCrop}from'./terrain.js?v=e8850c899e';import{drawEffectV68,drawUltV68,drawShotV68,drawSpecialV73,drawEnemyShotsV73}from'./fx-v68.js?v=e8850c899e';
+import { drawClayTower, drawClayUnit, drawClayWall, drawClayPreview, drawForwardPad, hasKeep, drawClaySprite, clayReady, metaOf, drawClayTowerIcon, wallOutline, tierOf, tierTint, drawTierBack, drawTierFront } from './clay-runtime.js?v=e8850c899e';
 const BAND=270;
 const TAU=Math.PI*2;
 function box(c,x,y,w,h,r,fill,stroke){c.beginPath();c.roundRect(x,y,w,h,r);if(fill){c.fillStyle=fill;c.fill();}if(stroke){c.lineWidth=1;c.strokeStyle=stroke;c.stroke();}}

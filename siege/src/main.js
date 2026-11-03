@@ -1,26 +1,26 @@
-import{CampaignView}from'./campaign-view.js?v=a4f58195a1';
-import{CampaignDataProvider,newCourseRun,readCourseRun,checkpointCourse,storeCourseRun,removeCourseRun,restoreCourseCombat,settleCourse}from'./campaign.js?v=a4f58195a1';
-import{courseFor,courseTime,CAMPAIGN_REWARD_RATE,campaignProgress}from'./campaign-courses.js?v=a4f58195a1';
-import{stockFor}from'./symbols.js?v=a4f58195a1';
-import{StockPicker}from'./stock-picker.js?v=a4f58195a1';
-import{drawSessionChart}from'./session-chart.js?v=a4f58195a1';
-import{WALL_MAX_XP}from'./progression.js?v=a4f58195a1';
-import { CANNONS,SCENARIOS,SETTINGS,ENEMIES,SUPPLIES,WORLD_WIDTH,DRONE,WALL,WALL_STAGES,cannonStats,upgradeCost,validPlacement,validDronePlacement,clamp,ULT_INFO,ultNeed } from './config.js?v=a4f58195a1';
-import { DemoMarketDataProvider, LiveMarketDataProvider, AlpacaMarketDataProvider, MARKET_ERRORS } from './market.js?v=a4f58195a1';
-import { Game } from './game.js?v=a4f58195a1';
-import { DIGITS, DIGIT_H, DIGIT_W } from './digit-sprites.js?v=a4f58195a1';
+import{CampaignView}from'./campaign-view.js?v=e8850c899e';
+import{CampaignDataProvider,newCourseRun,readCourseRun,checkpointCourse,storeCourseRun,removeCourseRun,restoreCourseCombat,settleCourse}from'./campaign.js?v=e8850c899e';
+import{courseFor,courseTime,CAMPAIGN_REWARD_RATE,campaignProgress}from'./campaign-courses.js?v=e8850c899e';
+import{stockFor}from'./symbols.js?v=e8850c899e';
+import{StockPicker}from'./stock-picker.js?v=e8850c899e';
+import{drawSessionChart}from'./session-chart.js?v=e8850c899e';
+import{WALL_MAX_XP}from'./progression.js?v=e8850c899e';
+import { CANNONS,SCENARIOS,SETTINGS,ENEMIES,SUPPLIES,WORLD_WIDTH,DRONE,WALL,WALL_STAGES,cannonStats,upgradeCost,validPlacement,validDronePlacement,clamp,ULT_INFO,ultNeed } from './config.js?v=e8850c899e';
+import { DemoMarketDataProvider, LiveMarketDataProvider, AlpacaMarketDataProvider, MARKET_ERRORS } from './market.js?v=e8850c899e';
+import { Game } from './game.js?v=e8850c899e';
+import { DIGITS, DIGIT_H, DIGIT_W } from './digit-sprites.js?v=e8850c899e';
 var goldShown='',goldNum=0;
-import { Renderer,renderShopIcon } from './renderer.js?v=a4f58195a1';
-import { initialState,readSave,writeSave,snapshotGame,safeStorage,readRawSave,writeRawSave } from './storage.js?v=a4f58195a1';
-import{cloudConfigured,currentUser,signUpEmail,signInEmail,signOut,pull,push,EMAIL_RULE,idOf,claimSession,sessionState,SESSION_ID,pullGrant}from'./cloud.js?v=a4f58195a1';
-import{recentSymbols}from'./stock-picker.js?v=a4f58195a1';
-import { loadClayAssets,useBattlefield } from './clay-assets.js?v=a4f58195a1';
-import{THEMES,themeFor}from'./themes.js?v=a4f58195a1';
-import { drawClayPreview } from './clay-runtime.js?v=a4f58195a1';
-import{money,playerXPAt,SLOT_LEVELS,wallXPAt,WALL_MAX_LEVEL,wallPower}from'./progression.js?v=a4f58195a1';
-import{openPack,applyCard,PACKS,MODES,MODE_ORDER,modeFor,RARITIES,TOWER_RARITY}from'./cards.js?v=a4f58195a1';
-import{CardStage,renderCollection,towerCard,statLines,dpsOf,dpsText,nextLevelLines,openCodex}from'./card-ui.js?v=a4f58195a1';
-import{xpForNext,MAX_CARD_LEVEL}from'./cards.js?v=a4f58195a1';
+import { Renderer,renderShopIcon } from './renderer.js?v=e8850c899e';
+import { initialState,readSave,writeSave,snapshotGame,safeStorage,readRawSave,writeRawSave } from './storage.js?v=e8850c899e';
+import{cloudConfigured,currentUser,signUpEmail,signInEmail,signOut,pull,push,EMAIL_RULE,idOf,claimSession,sessionState,SESSION_ID,pullGrant}from'./cloud.js?v=e8850c899e';
+import{recentSymbols}from'./stock-picker.js?v=e8850c899e';
+import { loadClayAssets,useBattlefield } from './clay-assets.js?v=e8850c899e';
+import{THEMES,themeFor}from'./themes.js?v=e8850c899e';
+import { drawClayPreview } from './clay-runtime.js?v=e8850c899e';
+import{money,playerXPAt,SLOT_LEVELS,wallXPAt,WALL_MAX_LEVEL,wallPower}from'./progression.js?v=e8850c899e';
+import{openPack,applyCard,PACKS,MODES,MODE_ORDER,modeFor,RARITIES,TOWER_RARITY}from'./cards.js?v=e8850c899e';
+import{CardStage,renderCollection,towerCard,statLines,dpsOf,dpsText,nextLevelLines,openCodex}from'./card-ui.js?v=e8850c899e';
+import{xpForNext,MAX_CARD_LEVEL}from'./cards.js?v=e8850c899e';
 const $=id=>document.getElementById(id),fmt=new Intl.NumberFormat('ko-KR'),nyTime=new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',hour12:false,hour:'2-digit',minute:'2-digit',second:'2-digit'});
 async function prepareArt(){const started=performance.now();
  $('asset-retry').hidden=true;$('asset-loading-message').textContent='클레이 전장을 준비하고 있어요.';
@@ -345,8 +345,10 @@ async function applyGrant(){if(!cloudUser||cloudKicked)return;try{const g=await 
 setInterval(applyGrant,30000);
 
 /* v51: start any unlocked mission (incl. replays). A different run in progress is banked first, with confirmation. */
-function startMission(id){{const mk=(homeGame||game).modeKey||'normal';if(!missionModeOpen(mk)){toast(modeLockHint(mk).replace('🔒 ',''));return;}}const home=homeGame||game,view=campaignView_(snapshotGame(home),home.modeKey),pending=courseRun&&!courseRun.ending?courseRun:readCourseRun(view,courseStorage);
+function startMission(id){const home=homeGame||game,view=campaignView_(snapshotGame(home),home.modeKey),pending=courseRun&&!courseRun.ending?courseRun:readCourseRun(view,courseStorage);
  if(pending&&pending.courseId===id){beginCourse(id,true);return;}
+ /* v75: a run saved under another difficulty is still resumable — switch to that difficulty first */if(!pending&&!courseRun){for(const mk of MODE_ORDER){if(mk===(home.modeKey||'normal'))continue;const r=readCourseRun(campaignView_(snapshotGame(home),mk),courseStorage);if(r&&r.courseId===id){home.setMode(mk);if(game!==home)game.setMode(mk);renderFloatMode();beginCourse(id,true);return;}}}
+ /* v75: the difficulty lock only blocks NEW missions — a saved run can always be resumed */{const mk=home.modeKey||'normal';if(!missionModeOpen(mk)){toast(modeLockHint(mk).replace('🔒 ',''));return;}}
  if(pending){if(!confirm(`진행 중인 미션 ${pending.courseId}을(를) 그만두고 미션 ${id}을(를) 시작할까요?\n지금까지 얻은 보상은 저장돼요.`))return;if(courseRun)finishCourse('quit');else bankCourse(pending,'quit');}
  beginCourse(id,false);}
 
