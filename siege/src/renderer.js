@@ -1,11 +1,11 @@
-import { WORLD_WIDTH as W,CANNONS,ENEMIES,SUPPLIES,WALL_STAGES,DRONE,WALL,cannonStats,validPlacement,validDronePlacement,snapSlot,ALL_SLOTS,FORWARD_X,FORWARD_DY,clamp } from './config.js?v=d0eda7a79f';
-import{WALL_MAX_LEVEL,WALL_MAX_XP}from'./progression.js?v=d0eda7a79f';
-import{isAIStock}from'./symbols.js?v=d0eda7a79f';
-import { QuarterCamera, DEPTH_SCALE, WALL_ELEVATION } from './camera.js?v=d0eda7a79f';
-import { drawClayMortar, drawClayMortarIcon, clayBattlefield } from './clay-assets.js?v=d0eda7a79f';
-import{drawProjectile,drawEffect}from'./combat-fx.js?v=d0eda7a79f';
-import{artCrop}from'./terrain.js?v=d0eda7a79f';import{drawEffectV68,drawUltV68,drawShotV68,drawSpecialV73,drawEnemyShotsV73}from'./fx-v68.js?v=d0eda7a79f';
-import { drawClayTower, drawClayUnit, drawClayWall, drawClayPreview, drawForwardPad, hasKeep, drawClaySprite, clayReady, metaOf, drawClayTowerIcon, wallOutline, tierOf, tierTint, drawTierBack, drawTierFront } from './clay-runtime.js?v=d0eda7a79f';
+import { WORLD_WIDTH as W,CANNONS,ENEMIES,SUPPLIES,WALL_STAGES,DRONE,WALL,cannonStats,validPlacement,validDronePlacement,snapSlot,ALL_SLOTS,FORWARD_X,FORWARD_DY,clamp } from './config.js?v=a4f58195a1';
+import{WALL_MAX_LEVEL,WALL_MAX_XP}from'./progression.js?v=a4f58195a1';
+import{isAIStock}from'./symbols.js?v=a4f58195a1';
+import { QuarterCamera, DEPTH_SCALE, WALL_ELEVATION } from './camera.js?v=a4f58195a1';
+import { drawClayMortar, drawClayMortarIcon, clayBattlefield } from './clay-assets.js?v=a4f58195a1';
+import{drawProjectile,drawEffect}from'./combat-fx.js?v=a4f58195a1';
+import{artCrop}from'./terrain.js?v=a4f58195a1';import{drawEffectV68,drawUltV68,drawShotV68,drawSpecialV73,drawEnemyShotsV73}from'./fx-v68.js?v=a4f58195a1';
+import { drawClayTower, drawClayUnit, drawClayWall, drawClayPreview, drawForwardPad, hasKeep, drawClaySprite, clayReady, metaOf, drawClayTowerIcon, wallOutline, tierOf, tierTint, drawTierBack, drawTierFront } from './clay-runtime.js?v=a4f58195a1';
 const BAND=270;
 const TAU=Math.PI*2;
 function box(c,x,y,w,h,r,fill,stroke){c.beginPath();c.roundRect(x,y,w,h,r);if(fill){c.fillStyle=fill;c.fill();}if(stroke){c.lineWidth=1;c.strokeStyle=stroke;c.stroke();}}
@@ -154,7 +154,7 @@ export class Renderer{
  if(e.kind===2){dot(c,-10,yy+5,2,'#ffa995');dot(c,10,yy+5,2,'#ffa995');}
  if(e.hp<e.maxHP||e.kind===3||e.attacking){box(c,-d.width/2-2,-d.height/2-18,d.width+4,5,2,'#4e5143','#eee5bc');box(c,-d.width/2-1,-d.height/2-17,(d.width+2)*clamp(e.hp/e.maxHP,0,1),3,1,'#ef6d61');}
  if(e.poisons.length){dot(c,d.width/2+3,-8,5,'#c195e8','#e9c9fb');text(c,e.poisons.length,d.width/2+3,-8,7,'#55356b');}c.restore();}
- supply(c,s){const clayFoot=this.point(s.x,s.y+s.radius);if(drawCart(c,s,clayFoot.x,clayFoot.y,this.game.time,SUPPLIES[s.kind].speed))return;if(drawClayUnit(c,s,clayFoot.x,clayFoot.y,this.game.time,false))return;const r=s.radius,t=this.game.time,run=Math.sin(t*10+s.phase),p=this.point(s.x,s.y+s.radius);c.save();c.translate(p.x,p.y-(r+5)*.9-Math.max(0,run)*3);c.scale(.9,.9);c.globalAlpha=clamp(Math.min(s.age*3,(35-s.age)*2),0,1);c.lineCap='round';shadow(c,2,r+7,r,3);
+ supply(c,s){const clayFoot=this.point(s.x,s.y+s.radius);if(s.bullBonus&&clayReady('supply-goldbull')){/* v74: green bull carrying a money sack */const t=this.game.time,sz=46;c.save();c.fillStyle='#1d2a1e33';c.beginPath();c.ellipse(clayFoot.x,clayFoot.y,10,3,0,0,TAU);c.fill();drawClaySprite(c,'supply-goldbull',clayFoot.x,clayFoot.y,sz,Math.floor(t*9+(s.phase||0))%6);c.restore();return;}if(drawCart(c,s,clayFoot.x,clayFoot.y,this.game.time,SUPPLIES[s.kind].speed))return;if(drawClayUnit(c,s,clayFoot.x,clayFoot.y,this.game.time,false))return;const r=s.radius,t=this.game.time,run=Math.sin(t*10+s.phase),p=this.point(s.x,s.y+s.radius);c.save();c.translate(p.x,p.y-(r+5)*.9-Math.max(0,run)*3);c.scale(.9,.9);c.globalAlpha=clamp(Math.min(s.age*3,(35-s.age)*2),0,1);c.lineCap='round';shadow(c,2,r+7,r,3);
  line(c,[[-r*.7,0],[-r-4,-5-run*3],[-r-5,-7-run*3]],'#536148',2);line(c,[[r*.7,0],[r+4,-5+run*3],[r+5,-7+run*3]],'#536148',2);
  for(const p of [-1,1])line(c,[[p*r*.35,r*.6],[p*(r*.4+run*3),r+5],[p*(r*.4+run*3+3),r+5]],'#4a5140',2.6);
  if(s.kind===2){const g=c.createLinearGradient(-r,-r,r,r);g.addColorStop(0,'#b4e2c0');g.addColorStop(.4,'#b9d5ec');g.addColorStop(.7,'#e7bfd8');g.addColorStop(1,'#f1dc96');dot(c,0,0,r,g,'#648b6a');c.save();c.beginPath();c.arc(0,0,r-1,0,TAU);c.clip();for(let j=-r;j<r;j+=6){line(c,[[j,-r],[j,r]],'#689a8d66');line(c,[[-r,j],[r,j]],'#689a8d66');}c.restore();}
