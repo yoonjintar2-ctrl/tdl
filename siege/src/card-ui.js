@@ -1,7 +1,7 @@
-import { CANNONS, cannonStats, PERKS, towerTier, ULT_INFO } from './config.js?v=fa0058698b';
-import { RARITIES, TOWER_RARITY, xpForNext, MAX_CARD_LEVEL, cardOdds, PACKS } from './cards.js?v=fa0058698b';
-import { renderShopIcon } from './renderer.js?v=fa0058698b';
-import { FX } from './fx.js?v=fa0058698b';
+import { CANNONS, cannonStats, PERKS, towerTier, ULT_INFO } from './config.js?v=56837d2efd';
+import { RARITIES, TOWER_RARITY, xpForNext, MAX_CARD_LEVEL, cardOdds, PACKS } from './cards.js?v=56837d2efd';
+import { renderShopIcon } from './renderer.js?v=56837d2efd';
+import { FX } from './fx.js?v=56837d2efd';
 
 const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
 const wait = ms => new Promise(r => setTimeout(r, ms));
@@ -157,13 +157,16 @@ export function dpsOf(type, level, mul = 1) {
   if (type === 'buffett') return st.charge ? st.damage / st.charge * mul : null;
   if (type === 'blackhole') return st.damage * mul;
   if (type === 'claw') return st.rate ? st.damage * st.hits * st.rate * mul : null;
-  return st.damage > 0 && st.rate > 0 ? st.damage * st.rate * mul : null;
+  if (!(st.damage > 0 && st.rate > 0)) return null;
+  /* estimated hits per shot so area / pierce / multi-shot towers are not shown as weak */
+  const hits = type === 'musk' ? 6 : type === 'sonic' ? 5 : type === 'ant' ? Math.max(1, st.pellets || 1) : type === 'fed' ? 1 + (st.chain || 1) * 1.5 : st.pierce ? Math.min(st.pierce, 6) : (st.radius || 0) >= 40 ? st.radius / 25 : 1;
+  return (st.damage * st.rate * hits + (type === 'poison' ? (st.dot || 0) * hits : 0)) * mul;
 }
 export const dpsText = v => v == null ? '' : v >= 100 ? Math.round(v).toLocaleString() : v.toFixed(1);
 export function statLines(game, c) {
   const live = !c.virtual, st = cannonStats(c.type, c.level), buff = live ? game.attackBuff(c) : 0, power = live ? game.power : 1;
   const lines = [['공격력', c.type === 'totem' ? '지원 전용' : (st.damage * power).toFixed(1)], ['공격 간격', c.type === 'totem' || c.type === 'blackhole' ? '지속 효과' : `${(1 / (st.rate * (1 + buff))).toFixed(2)}초`], ['사거리', Math.round(st.range)], ['성벽 보너스', `공격력 ×${(power / .75).toFixed(2)}`]];
-  if (!live) { lines.splice(3, 1); const hits = st.pierce ? Math.min(st.pierce, 4) : st.radius ? 2.5 : 1; if (hits > 1 && st.rate > 0 && st.damage > 0) lines.push(['다수 타격', `평균 ×${hits}`]); }
+  if (!live) { lines.splice(3, 1); const hits = st.pierce ? Math.min(st.pierce, 4) : st.radius ? 2.5 : 1;  }
   if (buff > 0) lines.push(['토템 지원', `연사 +${Math.round(buff * 100)}%`]);
   if (c.type === 'totem') lines.push(['주변 지원', `연사 +${Math.round(st.buff * 100)}%`]);
   if (st.pierce) lines.push(['관통', `${st.pierce}마리`]); if (st.slow) lines.push(['감속', `${Math.round(st.slow * 100)}% · ${st.duration.toFixed(1)}초`]); if (c.type === 'poison') lines.push(['독', `${st.dot.toFixed(1)}/초`]); if (c.type === 'mortar') lines.push(['폭발 반경', Math.round(st.radius)]);
@@ -173,7 +176,7 @@ export function statLines(game, c) {
   if (c.type === 'sonic') lines.push(['음파 반경', Math.round(st.range)]);
   if (c.type === 'blackhole') lines.push(['끌어당김', `반경 ${Math.round(st.range)} · 감속 ${Math.round(st.drag * 100)}%`], ['지속 피해', `${st.damage.toFixed(1)}/초`]);
   if (c.type === 'musk') lines.push(['사이버트럭', `관통 · 폭 ${Math.round(st.width)}`], ['로켓 확률', `${Math.round(st.rocketChance * 100)}% · 초광역`]);
-  { const d = dpsOf(c.type, c.level, power * (1 + buff)); if (d != null) lines.unshift(['초당 피해(DPS)', dpsText(d)]); }
+  { const d = dpsOf(c.type, c.level, power * (1 + buff)); if (d != null) lines.unshift(['예상 DPS', dpsText(d)]); }
   /* v68: new towers — no 'Infinity초' / meaningless range for passive or charge towers */
   const T = c.type, drop = (...ks) => { for (const k of ks) { const i = lines.findIndex(l => l[0] === k); if (i >= 0) lines.splice(i, 1); } };
   if (T === 'buffett') { drop('공격 간격', '사거리'); lines.push(['충전 시간', `${Math.round(st.charge)}초`], ['몰리면 즉시', `${st.crowd}마리`], ['폭발 반경', Math.round(st.radius)]); }
