@@ -1,7 +1,7 @@
-import { CANNONS, cannonStats, PERKS, towerTier, ULT_INFO } from './config.js?v=e8850c899e';
-import { RARITIES, TOWER_RARITY, xpForNext, MAX_CARD_LEVEL, cardOdds, PACKS } from './cards.js?v=e8850c899e';
-import { renderShopIcon } from './renderer.js?v=e8850c899e';
-import { FX } from './fx.js?v=e8850c899e';
+import { CANNONS, cannonStats, PERKS, towerTier, ULT_INFO } from './config.js?v=a507772b24';
+import { RARITIES, TOWER_RARITY, xpForNext, MAX_CARD_LEVEL, cardOdds, PACKS } from './cards.js?v=a507772b24';
+import { renderShopIcon } from './renderer.js?v=a507772b24';
+import { FX } from './fx.js?v=a507772b24';
 
 const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
 const wait = ms => new Promise(r => setTimeout(r, ms));
@@ -140,14 +140,14 @@ export class CardStage {
 export function renderCollection(container, game, { onPack, onCard, slotText }) {
   container.replaceChildren();
   const packs = el('div', 'pack-row');
-  for (const n of [10, 100]) { const b = el('button', 'pack-btn' + (n === 100 ? ' big' : ''), ''); b.type = 'button'; b.innerHTML = `<span>${n}장 뽑기</span><b>${game.cash(PACKS[n])}</b>`; b.disabled = game.gold < PACKS[n]; b.onclick = () => onPack(n); packs.append(b); }
+  for (const n of [10, 100]) { const b = el('button', 'pack-btn' + (n === 100 ? ' big' : ''), ''); b.type = 'button'; b.dataset.n = n; b.innerHTML = `<span>${n}장 뽑기</span><b>${game.cash(PACKS[n])}</b>`; b.disabled = game.gold < PACKS[n]; b.onclick = () => onPack(n); packs.append(b); }
   if (game.freePack) { const f = el('button', 'pack-btn free', ''); f.type = 'button'; f.innerHTML = '<span>첫 선물 · 10장</span><b>무료</b>'; f.onclick = () => onPack(10, true); packs.prepend(f); }
   const odds = cardOdds(), oddsLine = el('p', 'odds-line odds-note', ['legend', 'epic', 'rare', 'common'].map(r => `${RARITIES[r].name} ${(Object.entries(odds).filter(([t]) => TOWER_RARITY[t] === r).reduce((n, [, p]) => n + p, 0) * 100).toFixed(r === 'common' ? 1 : 2).replace(/\.?0+$/, '')}%`).join(' · ') + ' · 중복 카드는 레벨업 재료');
   const head = el('div', 'coll-head'); head.append(el('strong', '', '보유 타워'), el('small', '', slotText));
   const grid = el('div', 'coll-grid');
-  const R=['common', 'rare', 'epic', 'legend'],rank=t=>(game.cannons.some(c=>c.type===t)?0:game.inventory.some(c=>c.type===t)?1:2);/* v64: deployed → owned → missing, then rarity */const order = Object.keys(TOWER_RARITY).sort((a, b) => rank(a)-rank(b) || R.indexOf(TOWER_RARITY[a]) - R.indexOf(TOWER_RARITY[b]));
+  const R=['common', 'rare', 'epic', 'legend'],rank=t=>(game.cannons.some(c=>c.type===t)?0:game.inventory.some(c=>c.type===t)?1:2);/* v64: deployed → owned → missing, then rarity *//* v76: owned first, then rarity (legend→common), then DPS */const lv = t => game.inventory.find(c => c.type === t)?.level || 1, dps = t => dpsOf(t, lv(t)) ?? 0, owned = t => game.inventory.some(c => c.type === t) ? 0 : 1; const order = Object.keys(TOWER_RARITY).sort((a, b) => owned(a) - owned(b) || R.indexOf(TOWER_RARITY[b]) - R.indexOf(TOWER_RARITY[a]) || dps(b) - dps(a));
   for (const type of order) { const item = game.inventory.find(c => c.type === type), deployed = game.cannons.some(c => c.type === type), card = towerCard(type, item || null); const chip = el('span', 'tc-state ' + (deployed ? 'on' : item ? 'off' : 'none'), deployed ? '배치 중' : item ? '보관 중' : '미보유'); card.append(chip); card.tabIndex = 0; card.onclick = () => onCard(type); grid.append(card); }
-  const ph=el('div','coll-head pack-head');ph.append(el('strong','','타워 뽑기'));container.append(head, grid, ph, packs, oddsLine);
+  const ph=el('div','coll-head pack-head');ph.append(el('strong','','타워 뽑기'));/* v76: draw buttons first so they are never below the fold */container.append(ph, packs, oddsLine, head, grid);
 }
 
 /* v69: one DPS formula used everywhere (info, codex, swap list, level-up) */

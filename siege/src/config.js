@@ -32,7 +32,7 @@ export const CANNONS = {
   poison: { name: '독 캐논', short: '독', icon: 'TX', cost: 240, damage: 3, rate: .9, range: 520, minRange: 170, radius: 46, dot: 1.4, duration: 6, color: '#c093ff', role: '먼 곳에 독 폭발 · 즉시 피해 후 체력을 서서히 깎음(최대 3중첩) · 가까운 적은 못 맞힘' },
   siege: { name: '시즈탱크', short: '시즈탱크', icon: 'ST', cost: 260, damage: 7, rate: .32, range: 800, minRange: 230, radius: 72, color: '#ffb35a', role: '시즈 모드 장거리 포격 · 넓은 범위 폭발 · 가까운 적은 못 맞힘' },
   summoner: { name: '소환사', short: '소환사', icon: 'SM', cost: 240, damage: 7, rate: .16, range: 70, knights: 3, hits: 6, color: '#9be064', role: '양봉 기사를 주기적으로 소환 · 레벨이 오르면 기사 수가 늘고 Lv.14부터 궁수 양봉도 소환' },
-  sonic: { name: '소닉 타워', short: '소닉', icon: 'SO', cost: 260, damage: 2.2, rate: .8, range: 105, color: '#9fe8ff', role: '주변으로 둥글게 퍼지는 음파 · 약하지만 넓은 범위를 한꺼번에 · 전진 자리에 딱' },
+  sonic: { name: '소닉 타워', short: '소닉', icon: 'SO', cost: 260, damage: 5.5, rate: .8, range: 130, color: '#9fe8ff', role: '주변으로 둥글게 퍼지는 음파 · 약하지만 넓은 범위를 한꺼번에 · 전진 자리에 딱' },
   blackhole: { name: '블랙홀', short: '블랙홀', icon: 'BH', cost: 300, damage: 4, rate: 0, range: 150, pull: 38, drag: .45, color: '#b28cff', role: '주변 음봉을 끌어당기고 느리게 함 · 약한 지속 피해' },
   musk: { name: '삼론 머스크', short: '삼론머스크', icon: 'EM', cost: 320, damage: 8, rate: .26, range: 900, width: 38, rocketChance: .12, color: '#d9e3ec', role: '사이버트럭 발사 · 관통 광역 피해 · 가끔 초광역 로켓' },
   drone: { name: '드론', short: '드론', icon: 'DR', cost: 350, damage: 14, rate: 3.2, range: 230, targetSwitch: .24, color: '#97e9ff', role: '자유 공중 배치 · 단일 타깃 레이저' },

@@ -12,8 +12,8 @@ export const TOWER_RARITY = Object.freeze({ machine: 'common', sticky: 'common',
 export const towersOf = rarity => Object.keys(TOWER_RARITY).filter(t => TOWER_RARITY[t] === rarity);
 export const rarityOf = type => RARITIES[TOWER_RARITY[type] || 'common'];
 // v22: duplicates grant card XP (rarer towers give more); XP fills up to the next level.
-export const XP_PER_CARD = Object.freeze({ common: 10, rare: 40, epic: 120, legend: 400 });
-export const xpForNext = level => level >= MAX_CARD_LEVEL ? Infinity : 20 + 10 * Math.max(1, Math.floor(level));
+export const XP_PER_CARD = Object.freeze({ common: 10, rare: 25, epic: 45, legend: 70 });/* v76: one duplicate ≈ one level at most for rare+ */
+export const xpForNext = level => level >= MAX_CARD_LEVEL ? Infinity : 25 + 12 * Math.max(1, Math.floor(level));
 // Design tier: the tower's look changes every 10 levels (1–9, 10–19, 20–29, 30–39, 40).
 export const towerTier = level => Math.min(4, Math.floor(Math.max(1, level || 1) / 10));
 // Pack prices are in the game's gold units. Duplicates past MAX refund gold.

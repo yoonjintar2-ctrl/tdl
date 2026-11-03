@@ -1,12 +1,13 @@
 // v68/v71: visuals for the v67 towers. GPT sprite sheets only (fx-flash, fx-shots, ult-hits) — no hand-drawn
 // vector shapes on the battlefield. Dedicated GPT sheets will replace these re-tinted stand-ins.
-import { drawClaySprite, clayReady } from './clay-runtime.js?v=e8850c899e';
+import { drawClaySprite, clayReady } from './clay-runtime.js?v=a507772b24';
 const TAU = Math.PI * 2;
 const PINK = 'hue-rotate(285deg) saturate(1.6) brightness(1.1)', GOLD = 'sepia(1) saturate(5) hue-rotate(-12deg) brightness(1.25)', WHITE = 'grayscale(1) brightness(2.2)';
 function spr(c, key, x, y, size, frame, filter) { if (!clayReady(key)) return false; c.save(); if (filter) c.filter = filter; drawClaySprite(c, key, x, y, size, frame); c.restore(); return true; }
 const hitFrame = (row, p) => row * 4 + Math.min(3, Math.floor(p * 4));
 export function drawEffectV68(r, c, f, p, pos) {
   if (f.type === 'zap') { c.globalAlpha = 1; if (!spr(c, 'fx-zap', pos.x, pos.y + 6, 64, Math.min(5, Math.floor(p * 6)))) spr(c, 'ult-hits', pos.x, pos.y + 8, 52, hitFrame(0, p), 'hue-rotate(-25deg) saturate(1.3)'); return true; }
+  if (f.type === 'sonic' && clayReady('fx-sonic')) { const k = r.camera?.a || 1, rad = (f.radius || 120); c.globalAlpha = .8 * (1 - p * .5); c.save(); c.translate(pos.x, pos.y - 34); c.scale(1, .55); drawClaySprite(c, 'fx-sonic', 0, 0, rad * 2.2 * (0.55 + p * .6), Math.min(5, Math.floor(p * 6))); c.restore(); return true; }
   if (f.type === 'drumboom') { c.globalAlpha = 1; spr(c, 'fx-drumboom', pos.x, pos.y + 6, 80, Math.min(5, Math.floor(p * 6))); return true; }
   if (f.type === 'lily-hit') { c.globalAlpha = 1; if (!spr(c, 'fx-lilyhit', pos.x, pos.y - 10, 58, Math.min(5, Math.floor(p * 6)))) spr(c, 'fx-flash', pos.x, pos.y + 6, 44, 8, PINK); return true; }
   if (f.type === 'snipe') { c.globalAlpha = 1; spr(c, 'fx-flash', pos.x, pos.y + 6, 46, 5); return true; }
@@ -25,7 +26,7 @@ export function drawShotV68(r, c, p, pt, ang, position, u) {
 }
 export function drawUltV68(r, c, u, k, t, W, H) {
   const fade = Math.min(1, u.t * 5, (u.dur - u.t) * 4);
-  if (u.kind === 'sonic') return true; // shock hits on each candle come from the ult-hit sprites
+  if (u.kind === 'sonic') { const o = r.point(u.x, u.y, 0); for (let i = 0; i < 3; i++) { const kk = Math.max(0, k - i * .12); if (kk <= 0) continue; c.globalAlpha = fade * (1 - kk) * .75; c.save(); c.translate(o.x, o.y - 60 - kk * 120); c.scale(1, .5); drawClaySprite(c, 'fx-sonic', 0, 0, 160 + kk * 900, Math.min(5, Math.floor(kk * 6))); c.restore(); } return true; }
   if (u.kind === 'sniper') { c.globalAlpha = fade * .55; const g = c.createRadialGradient(W / 2, H * .38, H * .18, W / 2, H * .38, H * .7); g.addColorStop(0, '#0000'); g.addColorStop(1, '#000c'); c.fillStyle = g; c.fillRect(0, 0, W, H); return true; }
   if (u.kind === 'hbm') { c.globalAlpha = fade * (.1 + .06 * Math.sin(t * 24)); c.fillStyle = '#20ffb0'; c.globalCompositeOperation = 'lighter'; c.fillRect(0, 0, W, H * .62); return true; }
   if (u.kind === 'lily') { c.globalAlpha = fade * .3; const g = c.createLinearGradient(0, 0, 0, H * .7); g.addColorStop(0, '#ff8ab8'); g.addColorStop(1, '#ff8ab800'); c.fillStyle = g; c.fillRect(0, 0, W, H * .7); return true; }
@@ -36,7 +37,7 @@ export function drawUltV68(r, c, u, k, t, W, H) {
 
 // v73: named enemies drawn from their GPT sheets (6 frames each, feet at the anchor)
 export function drawSpecialV73(r, c, e, foot, t) {
-  const big = e.special === 'catapult' ? 118 : e.special === 'drum' ? 66 : 80, d = e._depth || 1, sz = big * d;
+  const big = e.special === 'catapult' ? 118 : e.special === 'drum' ? 66 : e.special === 'burry' ? 104 : 80, d = e._depth || 1, sz = big * d;
   let key, fr;
   if (e.special === 'drum') { key = 'enemy-drum'; fr = Math.floor(t * 9 + e.id) % 6; }
   else if (e.special === 'catapult') { key = 'enemy-catapult'; fr = e.phaseT || 0; }

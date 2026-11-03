@@ -1,11 +1,11 @@
-import { WORLD_WIDTH as W,CANNONS,ENEMIES,SUPPLIES,WALL_STAGES,DRONE,WALL,cannonStats,validPlacement,validDronePlacement,snapSlot,ALL_SLOTS,FORWARD_X,FORWARD_DY,clamp } from './config.js?v=e8850c899e';
-import{WALL_MAX_LEVEL,WALL_MAX_XP}from'./progression.js?v=e8850c899e';
-import{isAIStock}from'./symbols.js?v=e8850c899e';
-import { QuarterCamera, DEPTH_SCALE, WALL_ELEVATION } from './camera.js?v=e8850c899e';
-import { drawClayMortar, drawClayMortarIcon, clayBattlefield } from './clay-assets.js?v=e8850c899e';
-import{drawProjectile,drawEffect}from'./combat-fx.js?v=e8850c899e';
-import{artCrop}from'./terrain.js?v=e8850c899e';import{drawEffectV68,drawUltV68,drawShotV68,drawSpecialV73,drawEnemyShotsV73}from'./fx-v68.js?v=e8850c899e';
-import { drawClayTower, drawClayUnit, drawClayWall, drawClayPreview, drawForwardPad, hasKeep, drawClaySprite, clayReady, metaOf, drawClayTowerIcon, wallOutline, tierOf, tierTint, drawTierBack, drawTierFront } from './clay-runtime.js?v=e8850c899e';
+import { WORLD_WIDTH as W,CANNONS,ENEMIES,SUPPLIES,WALL_STAGES,DRONE,WALL,cannonStats,validPlacement,validDronePlacement,snapSlot,ALL_SLOTS,FORWARD_X,FORWARD_DY,clamp } from './config.js?v=a507772b24';
+import{WALL_MAX_LEVEL,WALL_MAX_XP}from'./progression.js?v=a507772b24';
+import{isAIStock}from'./symbols.js?v=a507772b24';
+import { QuarterCamera, DEPTH_SCALE, WALL_ELEVATION } from './camera.js?v=a507772b24';
+import { drawClayMortar, drawClayMortarIcon, clayBattlefield } from './clay-assets.js?v=a507772b24';
+import{drawProjectile,drawEffect}from'./combat-fx.js?v=a507772b24';
+import{artCrop}from'./terrain.js?v=a507772b24';import{drawEffectV68,drawUltV68,drawShotV68,drawSpecialV73,drawEnemyShotsV73}from'./fx-v68.js?v=a507772b24';
+import { drawClayTower, drawClayUnit, drawClayWall, drawClayPreview, drawForwardPad, hasKeep, drawClaySprite, clayReady, metaOf, drawClayTowerIcon, wallOutline, tierOf, tierTint, drawTierBack, drawTierFront } from './clay-runtime.js?v=a507772b24';
 const BAND=270;
 const TAU=Math.PI*2;
 function box(c,x,y,w,h,r,fill,stroke){c.beginPath();c.roundRect(x,y,w,h,r);if(fill){c.fillStyle=fill;c.fill();}if(stroke){c.lineWidth=1;c.strokeStyle=stroke;c.stroke();}}
@@ -247,7 +247,7 @@ export class Renderer{
  range(c,x,y,r,color='#a3f2ea',altitude=0){
   c.save();c.beginPath();for(let i=0;i<=80;i++){const a=i/80*TAU,p=this.point(x+Math.cos(a)*r,y+Math.sin(a)*r,altitude);i?c.lineTo(p.x,p.y):c.moveTo(p.x,p.y);}c.closePath();c.fillStyle=color+'12';c.fill();c.setLineDash([5,4]);c.strokeStyle=color+'b0';c.lineWidth=1.2;c.stroke();c.restore();
  }
- effects(c,front){for(const f of this.game.effects){const isFront=['ult-hit','lily-hit','drumboom','zap','snipe','claw','summon','summon-gate','text','wall-xp','wall-gold','player-level','impact','bullet-hit','beam','muzzle','supply-deliver','dmg'].includes(f.type);if(isFront!==front)continue;const p=1-f.life/f.maxLife,pos=this.point(f.x,f.y,f.sourceAltitude||0);c.save();c.globalAlpha=Math.min(1,f.life/f.maxLife*1.8);if(drawEffectV68(this,c,f,p,pos)){c.restore();continue;}
+ effects(c,front){for(const f of this.game.effects){const isFront=['ult-hit','lily-hit','drumboom','sonic','zap','snipe','claw','summon','summon-gate','text','wall-xp','wall-gold','player-level','impact','bullet-hit','beam','muzzle','supply-deliver','dmg'].includes(f.type);if(isFront!==front)continue;const p=1-f.life/f.maxLife,pos=this.point(f.x,f.y,f.sourceAltitude||0);c.save();c.globalAlpha=Math.min(1,f.life/f.maxLife*1.8);if(drawEffectV68(this,c,f,p,pos)){c.restore();continue;}
   /* v40: GPT muzzle flashes & impact bursts */if(clayReady('fx-flash')){const MZ={machine:0,drone:0,sniper:1,laser:2,sonic:2,blackhole:2,sticky:3,poison:4,mortar:1,siege:1},HT={machine:5,drone:5,summoner:5,sniper:5,mortar:6,siege:6,laser:7,sticky:8,poison:9};
    if(f.type==='muzzle'&&MZ[f.weapon]!=null){const k=1-p;c.globalAlpha=Math.min(1,k*1.6);c.translate(pos.x,pos.y);c.scale(.7+p*.5,.7+p*.5);drawClaySprite(c,'fx-flash',0,2,f.weapon==='machine'?22:f.weapon==='sniper'?30:28,MZ[f.weapon]);c.restore();continue;}
    if(f.type==='impact'&&clayReady('fx-wallhit')){const tr=f.tier||0,n=metaOf('fx-wallhit')?.cols||4,fr=tr*n+Math.min(n-1,Math.floor(p*n));c.globalAlpha=1;c.translate(pos.x,pos.y);drawClaySprite(c,'fx-wallhit',0,0,[26,36,52,84][tr],fr);c.restore();continue;}
@@ -295,7 +295,7 @@ export class Renderer{
   else{dot(c,pt.x,pt.y,p.type==='mortar'?3.4:p.type==='slime'?3:2.5,p.color,'#f5f1bb');if(p.type!=='mortar'){const tail=position(Math.max(0,u-.09));dot(c,tail.x,tail.y,1.6,p.color+'80');}}
  }
  render(){
-  const c=this.ctx,g=this.game,s=this.width*this.dpr/W,t=g.time,sh=g.shake||0,sx=sh?(Math.sin(t*90)*sh*7):0,sy=sh?(Math.cos(t*77)*sh*7):0;c.setTransform(s,0,0,s,sx*s,sy*s);c.globalAlpha=1;c.drawImage(this.bg,0,0,W,this.viewHeight);
+  const c=this.ctx,g=this.game,s=this.width*this.dpr/W,t=g.time,sh=g.shake||0,sx=sh?(Math.sin(t*90)*sh*7):0,sy=sh?(Math.cos(t*77)*sh*7):0;c.setTransform(s,0,0,s,sx*s,sy*s);c.globalAlpha=1;{/* v76: paint the battlefield straight from its image every frame — a cached canvas can be evicted on iOS and the art vanished */const art=clayBattlefield();if(art&&art.complete&&art.naturalWidth){const crop=artCrop(this.viewHeight,art.naturalWidth/art.naturalHeight,this.game.terrain?.corridor);c.drawImage(art,art.naturalWidth*crop.left,art.naturalHeight*crop.top,art.naturalWidth*crop.wfrac,art.naturalHeight*crop.frac,0,0,W,this.viewHeight);}else c.drawImage(this.bg,0,0,W,this.viewHeight);}
   /* faction captions removed (v17): they collided with the HUD on phones */
   for(const z of g.zones){const p=this.point(z.x,z.y);c.save();c.globalAlpha=Math.min(.35,z.life*.2);c.fillStyle='#7da522';c.beginPath();c.ellipse(p.x,p.y,z.radius*.92,z.radius*DEPTH_SCALE,0,0,TAU);c.fill();c.restore();}
   if(g.focus&&g.focus.until>g.time){const f=g.focus,p=this.point(f.x,f.y,0),left=f.until-g.time,a=Math.min(1,left);c.save();c.globalAlpha=a;

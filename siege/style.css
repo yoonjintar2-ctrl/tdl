@@ -1219,3 +1219,12 @@ button.primary:disabled,.course-primary:disabled,button.secondary:disabled{filte
 .sp-list{grid-template-columns:repeat(3,minmax(0,1fr))!important}.sp-item{min-width:0!important}.sp-item strong,.sp-item small{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .sp-sub,.codex-nums,.codex-perk,.codex-lv,.mode-lock{word-break:keep-all!important}
 .mode-locked .course-card{filter:grayscale(.9) brightness(.78)!important}
+/* v76: warning popup — fades out in place (the cut-in zoom-out made the plate balloon over the screen); text centred */
+.named-alert.out{animation:naFade .45s ease forwards!important}
+@keyframes naFade{to{opacity:0}}
+.na-plate{text-align:center;justify-content:center;max-width:calc(100vw - 32px);white-space:normal!important}
+.na-plate>div{display:flex;flex-direction:column;align-items:center;justify-content:center}
+.na-plate b{word-break:keep-all}
+.na-plate{left:0!important;right:0!important;margin:0 auto!important;transform:none!important;width:min(340px,calc(100vw - 32px))!important;box-sizing:border-box;padding:10px 14px!important}
+.na-plate>div{flex:1 1 auto;min-width:0}
+.na-plate b{font-size:clamp(16px,5vw,21px)!important}

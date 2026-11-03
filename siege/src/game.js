@@ -1,12 +1,12 @@
-import{campaignProgress}from'./campaign-courses.js?v=e8850c899e';
-import { SETTINGS, CANNONS, ENEMIES, SUPPLIES, WORLD_WIDTH, DRONE, WALL, CAMERA_DEPTH, ACTOR_STYLE, cannonStats, upgradeCost, energyMultiplier, wallYFor, priceBand, validPlacement, snapSlot, FORWARD_X, FORWARD_DY, validDronePlacement, clamp, hasPerk } from './config.js?v=e8850c899e';
-import { wallMountDepth } from './fortification.js?v=e8850c899e';
-import { marketArmy,estimatedArmy } from './market-army.js?v=e8850c899e';
-import {playerLevelFor,towerSlots,wallLevelFor,wallPower,money,WALL_MAX_XP} from './progression.js?v=e8850c899e';
-import{TerrainField}from'./terrain.js?v=e8850c899e';
-import{modeFor}from'./cards.js?v=e8850c899e';
-import{formatDamage}from'./combat-fx.js?v=e8850c899e';
-import{wallXPAt,WALL_MAX_LEVEL}from'./progression.js?v=e8850c899e';
+import{campaignProgress}from'./campaign-courses.js?v=a507772b24';
+import { SETTINGS, CANNONS, ENEMIES, SUPPLIES, WORLD_WIDTH, DRONE, WALL, CAMERA_DEPTH, ACTOR_STYLE, cannonStats, upgradeCost, energyMultiplier, wallYFor, priceBand, validPlacement, snapSlot, FORWARD_X, FORWARD_DY, validDronePlacement, clamp, hasPerk } from './config.js?v=a507772b24';
+import { wallMountDepth } from './fortification.js?v=a507772b24';
+import { marketArmy,estimatedArmy } from './market-army.js?v=a507772b24';
+import {playerLevelFor,towerSlots,wallLevelFor,wallPower,money,WALL_MAX_XP} from './progression.js?v=a507772b24';
+import{TerrainField}from'./terrain.js?v=a507772b24';
+import{modeFor}from'./cards.js?v=a507772b24';
+import{formatDamage}from'./combat-fx.js?v=a507772b24';
+import{wallXPAt,WALL_MAX_LEVEL}from'./progression.js?v=a507772b24';
 // Kill gold is scaled down and a steady per-minute battle stipend added, so income stays in a narrow band
 // between a starter and a maxed army (card packs are the only use of gold).
 export const KILL_GOLD=.3,STIPEND_PER_MIN=30;
@@ -15,11 +15,11 @@ export const MAX_TOWERS=5;
 // v24: crowd actors carry a fraction of a 'unit' of volume, but never drop below half a unit of HP — towers no longer one-shot everything.
 export const HP_WEIGHT_FLOOR=.2;
 // v24: the giant is a rare boss — about one per five minutes at most, only on a heavy sell-off minute.
-import {installTowersV67,PASSIVE} from './towers-v67.js?v=e8850c899e';import {installEnemiesV73} from './enemies-v73.js?v=e8850c899e';
+import {installTowersV67,PASSIVE} from './towers-v67.js?v=a507772b24';import {installEnemiesV73} from './enemies-v73.js?v=a507772b24';
 export const WALL_SAG=38;
 // v63: ultimates for epic+ towers. Rare at low level, strong when they fire; one at a time (comic cut-in first).
-export {ULT_TYPES,ultNeed} from './config.js?v=e8850c899e';
-import {ULT_TYPES,ultNeed} from './config.js?v=e8850c899e';
+export {ULT_TYPES,ultNeed} from './config.js?v=a507772b24';
+import {ULT_TYPES,ultNeed} from './config.js?v=a507772b24';
 export const ultRate=level=>.0035+.0011*(Math.max(1,Math.min(40,level))-1); // chance per second: Lv1≈0.35% (~5 min), Lv40≈4.6% (~22 s)
 export const ULT_COOLDOWN=20;
 const WALL_BLESS_XP=120;
@@ -28,8 +28,8 @@ export const BOSS=Object.freeze({cooldownMs:3*60*1000,minIntensity:.8,minSellSha
 export const SPECIALS=Object.freeze({drum:Object.freeze({hp:420,speed:24,radius:13,damage:160,cooldownMs:50*1000,minIntensity:.45,chance:.8,goldMul:3}),catapult:Object.freeze({hp:900,speed:12,radius:26,damage:95,cooldownMs:110*1000,minIntensity:.6,chance:.7,goldMul:5}),fed:Object.freeze({hp:1800,speed:13,radius:16,damage:40,cooldownMs:4*60*1000,minIntensity:.7,chance:.7,goldMul:10}),burry:Object.freeze({hp:1500,speed:14,radius:16,damage:30,cooldownMs:4*60*1000,minIntensity:.65,chance:.7,goldMul:10}),ram:Object.freeze({hp:2600,speed:8.5,radius:30,damage:110,interval:2.4,cooldownMs:2*60*1000,minIntensity:.7,chance:.75,goldMul:6}),bomber:Object.freeze({hp:12,speed:92,radius:9,damage:150,cooldownMs:40*1000,minIntensity:.5,chance:.85,goldMul:1.5})});
 const SPECIAL_DEF={drum:{...ENEMIES[1],speed:24,damage:10,interval:1.4},catapult:{...ENEMIES[2],speed:12,damage:20,interval:2},fed:{...ENEMIES[1],speed:13,damage:40,interval:1.6},burry:{...ENEMIES[1],speed:14,damage:30,interval:1.6},ram:{...ENEMIES[3],speed:SPECIALS.ram.speed,damage:SPECIALS.ram.damage,interval:SPECIALS.ram.interval},bomber:{...ENEMIES[4],speed:SPECIALS.bomber.speed,damage:SPECIALS.bomber.damage,interval:9}};
 const BOSS_DEF=Object.freeze({...ENEMIES[3],speed:ENEMIES[3].speed*BOSS.speed,damage:ENEMIES[3].damage*BOSS.damage});
-import{isAIStock}from'./symbols.js?v=e8850c899e';
-import {weaponMuzzle} from './weapon-geometry.js?v=e8850c899e';
+import{isAIStock}from'./symbols.js?v=a507772b24';
+import {weaponMuzzle} from './weapon-geometry.js?v=a507772b24';
 export class Game {
   constructor(state, { height = 620, random = Math.random,now=Date.now,rewardMultiplier=1,mode } = {}) {
     this.modeKey=modeFor(mode??state.settings?.mode).key;this.stipendClock=0;this.wallHold=0;
@@ -62,7 +62,7 @@ export class Game {
   get marketCode(){return this.market?.market||this.settings.market||'US';}
   cash(value){return money(value,this.marketCode);}
   owned(type){return this.inventory.find(c=>c.type===type)||this.cannons.find(c=>c.type===type);}
-  gainPlayerXP(amount){const before=this.playerLevel,slots=this.slotLimit;this.playerXP+=amount;this.dirty=true;if(this.playerLevel>before){/* v66: celebration bonus = $100 × each new level reached */let bonus=0;for(let l=before+1;l<=this.playerLevel;l++)bonus+=100*l;this.gold+=bonus;this.metrics.levelBonus=(this.metrics.levelBonus||0)+bonus;this.onLevelUp?.(before,this.playerLevel,bonus);}}
+  gainPlayerXP(amount){const before=this.playerLevel,slots=this.slotLimit;this.playerXP+=amount;this.dirty=true;if(this.playerLevel>before){/* v66: celebration bonus = $100 × each new level reached */let bonus=0;for(let l=before+1;l<=this.playerLevel;l++)bonus+=20+5*l;/* v76: was 100×level — far too generous */this.gold+=bonus;this.metrics.levelBonus=(this.metrics.levelBonus||0)+bonus;this.onLevelUp?.(before,this.playerLevel,bonus);}}
   wallXPLabel(amount,x){if(!amount)return;const lane=Math.floor(x/72),same=this.effects.find(f=>f.type==='wall-xp'&&f.lane===lane&&Math.sign(f.amount)===Math.sign(amount)&&f.life>.55);if(same){same.amount+=amount;same.life=.9;}else this.effect('wall-xp',x,this.wallBackAt(x),'',amount,.9,{sourceAltitude:WALL.elevation+8,lane});}
   addWallXP(amount,x=216){if(amount<0)amount*=this.wallDamageMul?.()||1;const before=this.wallXP;this.wallXP=clamp(this.wallXP+amount,0,WALL_MAX_XP);const delta=this.wallXP-before;this.wallXPLabel(delta,x);this.dirty=true;return delta;}
   updateWallLevel(dt){this.wallHold=Math.max(0,this.wallHold-dt);const desired=this.desiredWallLevel();if(!this.wallTransition&&desired<this.wallLevel&&this.wallHold>0&&this.wallXP>0&&desired>=this.wallLevel-1)return;if(!this.wallTransition&&desired!==this.wallLevel)this.wallTransition={from:this.wallLevel,to:desired,elapsed:0,duration:desired>this.wallLevel?1.8:.75};const f=this.wallTransition;if(!f)return;f.elapsed+=dt;f.to=desired;/* v64: new wall art appears at the flash peak, so it is revealed as the white fades */if(f.to>f.from&&!f.swapped&&f.elapsed>=f.duration*.14){f.swapped=true;this.stage=Math.min(9,f.to-1);}if(f.elapsed>=f.duration){const before=this.wallLevel;this.wallLevel=desired;this.stage=Math.min(9,desired-1);this.wallTransition=null;if(desired!==before){this.wallHold=1.5;this.notify(`장벽 Lv.${before} → Lv.${desired}`);}}}
@@ -313,7 +313,7 @@ export class Game {
       c.cooldown -= dt; if (c.cooldown > 0) continue;
       const stats = cannonStats(c.type,c.level), y = this.cannonPosition(c).y;
       if (c.type === 'blackhole') { c.cooldown = 1; if(this.enemies.some(e=>e.alive&&Math.hypot(e.x-c.x,e.y-y)<stats.range))c.ult=Math.min(ultNeed(c.level),(c.ult||0)+2.2);/* charges while holding candles */ continue; }
-      if (c.type === 'sonic') { const p=this.cannonPosition(c); let hit=0; for (const e of this.enemies) { if (e.alive && Math.hypot(e.x-p.x,e.y-p.y) <= stats.range + e.radius) { this.damage(e, stats.damage, { cannonType: 'sonic' }); hit++; } } this.effect('sonic', p.x, p.y, '#9fe8ff', '', .7, { radius: stats.range }); c.recoil = 1; if (hit) this.metrics.shots.sonic=(this.metrics.shots.sonic||0)+1; c.cooldown = 1/(stats.rate*(1+this.attackBuff(c))); continue; }
+      if (c.type === 'sonic') { const p=this.cannonPosition(c); let hit=0; for (const e of this.enemies) { if (e.alive && Math.hypot(e.x-p.x,e.y-p.y) <= stats.range + e.radius) { this.damage(e, stats.damage, { cannonType: 'sonic' }); hit++; if (!(e.slowUntil > this.time && e.slow > .35)) { e.slow = .35; e.slowUntil = this.time + .5; }/* v76: sonic stagger */ } } this.effect('sonic', p.x, p.y, '#9fe8ff', '', .7, { radius: stats.range }); c.recoil = 1; if (hit) this.metrics.shots.sonic=(this.metrics.shots.sonic||0)+1; c.cooldown = 1/(stats.rate*(1+this.attackBuff(c))); continue; }
       if (c.type === 'summoner') { this.summonKnights(c, stats); c.cooldown = 1/(stats.rate*(1+this.attackBuff(c))); continue; }
       let targets = this.enemies.filter(e => { if (!e.alive || e.y >= this.wallAt(e.x)) return false; const d = Math.hypot(e.x-c.x,e.y-y); return d <= stats.range && d >= stats.minRange; }); if (this.priority) { const pr = targets.filter(e => this.matchesPriority(e)); if (pr.length) targets = pr; }
       targets.sort(c.type === 'sniper' ? (a,b) => b.hp-a.hp : (a,b) => Math.hypot(a.x-c.x,a.y-y)-Math.hypot(b.x-c.x,b.y-y));
