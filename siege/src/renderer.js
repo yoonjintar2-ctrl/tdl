@@ -1,11 +1,11 @@
-import { WORLD_WIDTH as W,CANNONS,ENEMIES,SUPPLIES,WALL_STAGES,DRONE,WALL,cannonStats,validPlacement,validDronePlacement,snapSlot,ALL_SLOTS,FORWARD_X,FORWARD_DY,clamp } from './config.js?v=78a5ee6f04';
-import{WALL_MAX_LEVEL,WALL_MAX_XP}from'./progression.js?v=78a5ee6f04';
-import{isAIStock}from'./symbols.js?v=78a5ee6f04';
-import { QuarterCamera, DEPTH_SCALE, WALL_ELEVATION } from './camera.js?v=78a5ee6f04';
-import { drawClayMortar, drawClayMortarIcon, clayBattlefield } from './clay-assets.js?v=78a5ee6f04';
-import{drawProjectile,drawEffect}from'./combat-fx.js?v=78a5ee6f04';
-import{artCrop}from'./terrain.js?v=78a5ee6f04';import{drawEffectV68,drawUltV68,drawShotV68}from'./fx-v68.js?v=78a5ee6f04';
-import { drawClayTower, drawClayUnit, drawClayWall, drawClayPreview, drawForwardPad, hasKeep, drawClaySprite, clayReady, metaOf, drawClayTowerIcon, wallOutline, tierOf, tierTint, drawTierBack, drawTierFront } from './clay-runtime.js?v=78a5ee6f04';
+import { WORLD_WIDTH as W,CANNONS,ENEMIES,SUPPLIES,WALL_STAGES,DRONE,WALL,cannonStats,validPlacement,validDronePlacement,snapSlot,ALL_SLOTS,FORWARD_X,FORWARD_DY,clamp } from './config.js?v=bfbdfaa54c';
+import{WALL_MAX_LEVEL,WALL_MAX_XP}from'./progression.js?v=bfbdfaa54c';
+import{isAIStock}from'./symbols.js?v=bfbdfaa54c';
+import { QuarterCamera, DEPTH_SCALE, WALL_ELEVATION } from './camera.js?v=bfbdfaa54c';
+import { drawClayMortar, drawClayMortarIcon, clayBattlefield } from './clay-assets.js?v=bfbdfaa54c';
+import{drawProjectile,drawEffect}from'./combat-fx.js?v=bfbdfaa54c';
+import{artCrop}from'./terrain.js?v=bfbdfaa54c';import{drawEffectV68,drawUltV68,drawShotV68}from'./fx-v68.js?v=bfbdfaa54c';
+import { drawClayTower, drawClayUnit, drawClayWall, drawClayPreview, drawForwardPad, hasKeep, drawClaySprite, clayReady, metaOf, drawClayTowerIcon, wallOutline, tierOf, tierTint, drawTierBack, drawTierFront } from './clay-runtime.js?v=bfbdfaa54c';
 const BAND=270;
 const TAU=Math.PI*2;
 function box(c,x,y,w,h,r,fill,stroke){c.beginPath();c.roundRect(x,y,w,h,r);if(fill){c.fillStyle=fill;c.fill();}if(stroke){c.lineWidth=1;c.strokeStyle=stroke;c.stroke();}}
