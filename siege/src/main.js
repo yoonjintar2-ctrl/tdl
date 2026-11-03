@@ -1,26 +1,26 @@
-import{CampaignView}from'./campaign-view.js?v=e050186989';
-import{CampaignDataProvider,newCourseRun,readCourseRun,checkpointCourse,storeCourseRun,removeCourseRun,restoreCourseCombat,settleCourse}from'./campaign.js?v=e050186989';
-import{courseFor,courseTime,CAMPAIGN_REWARD_RATE,campaignProgress}from'./campaign-courses.js?v=e050186989';
-import{stockFor}from'./symbols.js?v=e050186989';
-import{StockPicker}from'./stock-picker.js?v=e050186989';
-import{drawSessionChart}from'./session-chart.js?v=e050186989';
-import{WALL_MAX_XP}from'./progression.js?v=e050186989';
-import { CANNONS,SCENARIOS,SETTINGS,ENEMIES,SUPPLIES,WORLD_WIDTH,DRONE,WALL,WALL_STAGES,cannonStats,upgradeCost,validPlacement,validDronePlacement,clamp,ULT_INFO,ultNeed } from './config.js?v=e050186989';
-import { DemoMarketDataProvider, LiveMarketDataProvider, AlpacaMarketDataProvider, MARKET_ERRORS } from './market.js?v=e050186989';
-import { Game } from './game.js?v=e050186989';
-import { DIGITS, DIGIT_H, DIGIT_W } from './digit-sprites.js?v=e050186989';
+import{CampaignView}from'./campaign-view.js?v=78a5ee6f04';
+import{CampaignDataProvider,newCourseRun,readCourseRun,checkpointCourse,storeCourseRun,removeCourseRun,restoreCourseCombat,settleCourse}from'./campaign.js?v=78a5ee6f04';
+import{courseFor,courseTime,CAMPAIGN_REWARD_RATE,campaignProgress}from'./campaign-courses.js?v=78a5ee6f04';
+import{stockFor}from'./symbols.js?v=78a5ee6f04';
+import{StockPicker}from'./stock-picker.js?v=78a5ee6f04';
+import{drawSessionChart}from'./session-chart.js?v=78a5ee6f04';
+import{WALL_MAX_XP}from'./progression.js?v=78a5ee6f04';
+import { CANNONS,SCENARIOS,SETTINGS,ENEMIES,SUPPLIES,WORLD_WIDTH,DRONE,WALL,WALL_STAGES,cannonStats,upgradeCost,validPlacement,validDronePlacement,clamp,ULT_INFO,ultNeed } from './config.js?v=78a5ee6f04';
+import { DemoMarketDataProvider, LiveMarketDataProvider, AlpacaMarketDataProvider, MARKET_ERRORS } from './market.js?v=78a5ee6f04';
+import { Game } from './game.js?v=78a5ee6f04';
+import { DIGITS, DIGIT_H, DIGIT_W } from './digit-sprites.js?v=78a5ee6f04';
 var goldShown='',goldNum=0;
-import { Renderer,renderShopIcon } from './renderer.js?v=e050186989';
-import { initialState,readSave,writeSave,snapshotGame,safeStorage,readRawSave,writeRawSave } from './storage.js?v=e050186989';
-import{cloudConfigured,currentUser,signUpEmail,signInEmail,signOut,pull,push,EMAIL_RULE,idOf,claimSession,sessionState,SESSION_ID,pullGrant}from'./cloud.js?v=e050186989';
-import{recentSymbols}from'./stock-picker.js?v=e050186989';
-import { loadClayAssets,useBattlefield } from './clay-assets.js?v=e050186989';
-import{THEMES,themeFor}from'./themes.js?v=e050186989';
-import { drawClayPreview } from './clay-runtime.js?v=e050186989';
-import{money,playerXPAt,SLOT_LEVELS,wallXPAt,WALL_MAX_LEVEL,wallPower}from'./progression.js?v=e050186989';
-import{openPack,applyCard,PACKS,MODES,MODE_ORDER,modeFor,RARITIES,TOWER_RARITY}from'./cards.js?v=e050186989';
-import{CardStage,renderCollection,towerCard,statLines,dpsOf,dpsText,nextLevelLines,openCodex}from'./card-ui.js?v=e050186989';
-import{xpForNext,MAX_CARD_LEVEL}from'./cards.js?v=e050186989';
+import { Renderer,renderShopIcon } from './renderer.js?v=78a5ee6f04';
+import { initialState,readSave,writeSave,snapshotGame,safeStorage,readRawSave,writeRawSave } from './storage.js?v=78a5ee6f04';
+import{cloudConfigured,currentUser,signUpEmail,signInEmail,signOut,pull,push,EMAIL_RULE,idOf,claimSession,sessionState,SESSION_ID,pullGrant}from'./cloud.js?v=78a5ee6f04';
+import{recentSymbols}from'./stock-picker.js?v=78a5ee6f04';
+import { loadClayAssets,useBattlefield } from './clay-assets.js?v=78a5ee6f04';
+import{THEMES,themeFor}from'./themes.js?v=78a5ee6f04';
+import { drawClayPreview } from './clay-runtime.js?v=78a5ee6f04';
+import{money,playerXPAt,SLOT_LEVELS,wallXPAt,WALL_MAX_LEVEL,wallPower}from'./progression.js?v=78a5ee6f04';
+import{openPack,applyCard,PACKS,MODES,MODE_ORDER,modeFor,RARITIES,TOWER_RARITY}from'./cards.js?v=78a5ee6f04';
+import{CardStage,renderCollection,towerCard,statLines,dpsOf,dpsText,nextLevelLines,openCodex}from'./card-ui.js?v=78a5ee6f04';
+import{xpForNext,MAX_CARD_LEVEL}from'./cards.js?v=78a5ee6f04';
 const $=id=>document.getElementById(id),fmt=new Intl.NumberFormat('ko-KR'),nyTime=new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',hour12:false,hour:'2-digit',minute:'2-digit',second:'2-digit'});
 async function prepareArt(){const started=performance.now();
  $('asset-retry').hidden=true;$('asset-loading-message').textContent='클레이 전장을 준비하고 있어요.';
@@ -354,7 +354,7 @@ function startMission(id){{const mk=(homeGame||game).modeKey||'normal';if(!missi
 setInterval(()=>{if(cloudUser&&!cloudKicked&&!qaMode&&!document.hidden&&isDirty())pushNow(true);},15000);
 
 /* v53: ultimate cut-in — comic panel over the whole screen, hero shouts, then the launch */
-let cutinActive=false;const CUTIN_ART=new Set(['musk','laser','blackhole','totem','drone','sniper','sonic']);const CUTIN_LINES={musk:['화성으로 가즈아!!','풀매수 로켓 발사!','떡상 엔진 점화!!'],laser:['초정밀 노광, 패턴 전사!','회로처럼 새겨버려라!','EUV 출력 최대!'],blackhole:['모든 매도세를 삼켜라!','특이점 전개!!','중력이 너를 부른다!'],totem:['양봉의 축복을!!','모두 힘을 내라!','상승의 기운이여!'],drone:['드론 편대, 폭격 개시!','공중 지원 도착!','좌표 확인, 투하!'],sonic:['볼륨 최대!!','충격파 발사!','매도 소음 차단!'],mortar:['포탄 18발, 일제 사격!','하늘을 덮어라!','좌표 고정, 쏴라!'],sniper:['조준 완료… 헤드샷!','한 발에 하나씩!','숨 참고… 발사!'],hbm:['전력망 과부하!!','대역폭 폭주!','감전 주의!!'],lily:['마음자로 대량 투약!','다이어트 시간이에요~','마음자로 한 방이면 홀쭉!'],fed:['금리 인하!!','비둘기들아, 날아라!','유동성 공급 개시!']};const ULT_NAMES={musk:'떡상 로켓',laser:'초정밀 노광',blackhole:'특이점 붕괴',totem:'양봉의 대축복',drone:'편대 융단폭격',sonic:'초음파 충격',mortar:'일제 포격',sniper:'연속 헤드샷',hbm:'전력망 과부하',lily:'마음자로 대량 투약',fed:'금리 인하'};
+let cutinActive=false;const CUTIN_ART=new Set(['musk','laser','blackhole','totem','drone','sniper','sonic','mortar','hbm','fed','lily']);const CUTIN_LINES={musk:['화성으로 가즈아!!','풀매수 로켓 발사!','떡상 엔진 점화!!'],laser:['초정밀 노광, 패턴 전사!','회로처럼 새겨버려라!','EUV 출력 최대!'],blackhole:['모든 매도세를 삼켜라!','특이점 전개!!','중력이 너를 부른다!'],totem:['양봉의 축복을!!','모두 힘을 내라!','상승의 기운이여!'],drone:['드론 편대, 폭격 개시!','공중 지원 도착!','좌표 확인, 투하!'],sonic:['볼륨 최대!!','충격파 발사!','매도 소음 차단!'],mortar:['포탄 18발, 일제 사격!','하늘을 덮어라!','좌표 고정, 쏴라!'],sniper:['조준 완료… 헤드샷!','한 발에 하나씩!','숨 참고… 발사!'],hbm:['전력망 과부하!!','대역폭 폭주!','감전 주의!!'],lily:['마음자로 대량 투약!','다이어트 시간이에요~','마음자로 한 방이면 홀쭉!'],fed:['금리 인하!!','비둘기들아, 날아라!','유동성 공급 개시!']};const ULT_NAMES={musk:'떡상 로켓',laser:'초정밀 노광',blackhole:'특이점 붕괴',totem:'양봉의 대축복',drone:'편대 융단폭격',sonic:'초음파 충격',mortar:'일제 포격',sniper:'연속 헤드샷',hbm:'전력망 과부하',lily:'마음자로 대량 투약',fed:'금리 인하'};
 Game.prototype.onCutin=function(type,c,fire){if(cutinActive||this!==game||document.hidden){fire();return;}cutinActive=true;const w=document.createElement('div');w.className='cutin';const lines=CUTIN_LINES[type]||['필살기!'];
  w.innerHTML=`<div class="cutin-band"><i class="cutin-lines"></i>${CUTIN_ART.has(type)?`<img class="cutin-hero" src="assets/clay/cutin-${type}-v1.webp" alt="">`:'<canvas class="cutin-hero cutin-canvas" width="440" height="440"></canvas>'}<div class="cutin-bubble">${lines[Math.floor(Math.random()*lines.length)]}</div><b class="cutin-name">${CANNONS[type].name} · ${ULT_NAMES[type]||'필살기'}</b></div>`;document.body.append(w);{const cv=w.querySelector('.cutin-canvas');if(cv)renderShopIcon(cv,type,40);}
  setTimeout(()=>w.classList.add('out'),1250);setTimeout(()=>{w.remove();cutinActive=false;last=performance.now();fire();},1550);};
