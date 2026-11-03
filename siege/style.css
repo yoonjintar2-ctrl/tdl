@@ -1228,3 +1228,18 @@ button.primary:disabled,.course-primary:disabled,button.secondary:disabled{filte
 .na-plate{left:0!important;right:0!important;margin:0 auto!important;transform:none!important;width:min(340px,calc(100vw - 32px))!important;box-sizing:border-box;padding:10px 14px!important}
 .na-plate>div{flex:1 1 auto;min-width:0}
 .na-plate b{font-size:clamp(16px,5vw,21px)!important}
+/* v77: battle tower info is a compact bottom strip so the wall (and rear slot) stay visible — never scrolls */
+.tower-info.field-info .ti-card{grid-template-columns:64px minmax(0,1fr)!important;padding:22px 22px max(18px,calc(env(safe-area-inset-bottom) + 12px))!important;row-gap:6px!important;max-height:40vh;overflow:hidden!important}
+.tower-info.field-info .ti-hero{width:64px!important;height:64px!important}
+.tower-info.field-info .ti-hero canvas{width:64px!important;height:64px!important}
+.tower-info.field-info .ti-hero b{font-size:10px!important;padding:0 6px!important}
+.tower-info.field-info .ti-stats h3{font-size:16px!important}
+.tower-info.field-info .ti-role{font-size:11px!important;margin:0 0 3px!important;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
+.tower-info.field-info .ti-ult{display:none!important}
+.tower-info.field-info .ti-rows{grid-template-columns:repeat(3,minmax(0,1fr))!important;column-gap:8px!important;row-gap:2px!important}
+.tower-info.field-info .ti-row{display:flex!important;flex-direction:column!important;align-items:flex-start!important;padding:1px 0!important;gap:0!important;min-width:0}
+.tower-info.field-info .ti-row span{font-size:9.5px!important;line-height:1.2!important;opacity:.75}
+.tower-info.field-info .ti-row b{font-size:12.5px!important;line-height:1.25!important;text-align:left!important;max-width:100%}
+.tower-info.field-info .ti-actions{margin-top:4px!important;grid-column:1/-1}
+.tower-info.field-info .ti-actions button{padding:6px 0!important;min-height:36px!important;font-size:14px!important}
+.tower-info.field-info .ti-help{width:30px!important;height:30px!important;font-size:15px!important}

@@ -1,7 +1,7 @@
-import { CANNONS, cannonStats, PERKS, towerTier, ULT_INFO } from './config.js?v=a507772b24';
-import { RARITIES, TOWER_RARITY, xpForNext, MAX_CARD_LEVEL, cardOdds, PACKS } from './cards.js?v=a507772b24';
-import { renderShopIcon } from './renderer.js?v=a507772b24';
-import { FX } from './fx.js?v=a507772b24';
+import { CANNONS, cannonStats, PERKS, towerTier, ULT_INFO } from './config.js?v=3cc92929bf';
+import { RARITIES, TOWER_RARITY, xpForNext, MAX_CARD_LEVEL, cardOdds, PACKS } from './cards.js?v=3cc92929bf';
+import { renderShopIcon } from './renderer.js?v=3cc92929bf';
+import { FX } from './fx.js?v=3cc92929bf';
 
 const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
 const wait = ms => new Promise(r => setTimeout(r, ms));
@@ -184,7 +184,8 @@ export function statLines(game, c) {
   if (['hbm', 'claw', 'fed', 'bull', 'ant'].includes(T)) drop('다수 타격');
   if (T === 'claw') { drop('사거리'); lines.push(['뽑기 칸', `양봉 ${st.capacity}개`], ['칼 기사', `${st.damage.toFixed(1)} × ${st.hits}회`]); }
   if (T === 'hbm') { drop('사거리'); lines.push(['사거리', '전장 전체']); }
-  if (T === 'lily') { drop('공격력', '초당 피해(DPS)'); lines.push(['최대 체력 감소', `${Math.round(st.shrink * 100)}%`]); }
+  if (T === 'totem') { drop('사거리'); lines.push(['적용 범위', '전장 전체']); }
+  if (T === 'lily') { drop('공격력', '초당 피해(DPS)', '사거리'); lines.push(['사거리', '전장 전체']); lines.push(['최대 체력 감소', `${Math.round(st.shrink * 100)}%`]); }
   if (T === 'bull') lines.push(['녹색 양봉', `${Math.round(st.bullEvery)}초마다 (Lv.15+)`]);
   if (T === 'ant') lines.push(['동전 수', `${st.pellets}개`]);
   if (T === 'fed') lines.push(['비둘기 연쇄', `${st.chain}마리`]);

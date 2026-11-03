@@ -1,11 +1,11 @@
-import { WORLD_WIDTH as W,CANNONS,ENEMIES,SUPPLIES,WALL_STAGES,DRONE,WALL,cannonStats,validPlacement,validDronePlacement,snapSlot,ALL_SLOTS,FORWARD_X,FORWARD_DY,clamp } from './config.js?v=a507772b24';
-import{WALL_MAX_LEVEL,WALL_MAX_XP}from'./progression.js?v=a507772b24';
-import{isAIStock}from'./symbols.js?v=a507772b24';
-import { QuarterCamera, DEPTH_SCALE, WALL_ELEVATION } from './camera.js?v=a507772b24';
-import { drawClayMortar, drawClayMortarIcon, clayBattlefield } from './clay-assets.js?v=a507772b24';
-import{drawProjectile,drawEffect}from'./combat-fx.js?v=a507772b24';
-import{artCrop}from'./terrain.js?v=a507772b24';import{drawEffectV68,drawUltV68,drawShotV68,drawSpecialV73,drawEnemyShotsV73}from'./fx-v68.js?v=a507772b24';
-import { drawClayTower, drawClayUnit, drawClayWall, drawClayPreview, drawForwardPad, hasKeep, drawClaySprite, clayReady, metaOf, drawClayTowerIcon, wallOutline, tierOf, tierTint, drawTierBack, drawTierFront } from './clay-runtime.js?v=a507772b24';
+import { WORLD_WIDTH as W,CANNONS,ENEMIES,SUPPLIES,WALL_STAGES,DRONE,WALL,cannonStats,validPlacement,validDronePlacement,snapSlot,ALL_SLOTS,FORWARD_X,FORWARD_DY,clamp } from './config.js?v=3cc92929bf';
+import{WALL_MAX_LEVEL,WALL_MAX_XP}from'./progression.js?v=3cc92929bf';
+import{isAIStock}from'./symbols.js?v=3cc92929bf';
+import { QuarterCamera, DEPTH_SCALE, WALL_ELEVATION } from './camera.js?v=3cc92929bf';
+import { drawClayMortar, drawClayMortarIcon, clayBattlefield } from './clay-assets.js?v=3cc92929bf';
+import{drawProjectile,drawEffect}from'./combat-fx.js?v=3cc92929bf';
+import{artCrop}from'./terrain.js?v=3cc92929bf';import{drawEffectV68,drawUltV68,drawShotV68,drawSpecialV73,drawEnemyShotsV73}from'./fx-v68.js?v=3cc92929bf';
+import { drawClayTower, drawClayUnit, drawClayWall, drawClayPreview, drawForwardPad, drawRearPad, hasKeep, drawClaySprite, clayReady, metaOf, drawClayTowerIcon, wallOutline, tierOf, tierTint, drawTierBack, drawTierFront } from './clay-runtime.js?v=3cc92929bf';
 const BAND=270;
 const TAU=Math.PI*2;
 function box(c,x,y,w,h,r,fill,stroke){c.beginPath();c.roundRect(x,y,w,h,r);if(fill){c.fillStyle=fill;c.fill();}if(stroke){c.lineWidth=1;c.strokeStyle=stroke;c.stroke();}}
@@ -301,12 +301,12 @@ export class Renderer{
   if(g.focus&&g.focus.until>g.time){const f=g.focus,p=this.point(f.x,f.y,0),left=f.until-g.time,a=Math.min(1,left);c.save();c.globalAlpha=a;
    for(const u of g.cannons){if(['totem','blackhole','summoner','sonic'].includes(u.type))continue;const st=cannonStats(u.type,u.level),pp=g.cannonPosition(u),d=Math.hypot(f.x-pp.x,f.y-pp.y);if(d>st.range||d<(st.minRange||0))continue;const q=this.cannonAnchor(u);c.setLineDash([3,5]);c.lineDashOffset=-g.time*24;line(c,[[q.x,q.y-20],[p.x,p.y]],'#ff6a5a99',1.4);}
    c.setLineDash([]);const r=22+Math.sin(g.time*6)*2;c.strokeStyle='#ff5a4a';c.lineWidth=2;c.beginPath();c.ellipse(p.x,p.y,r,r*.45,0,0,TAU);c.stroke();for(let i=0;i<4;i++){const ang=i*Math.PI/2+g.time;const x1=p.x+Math.cos(ang)*(r+6),y1=p.y+Math.sin(ang)*(r+6)*.45,x2=p.x+Math.cos(ang)*(r-6),y2=p.y+Math.sin(ang)*(r-6)*.45;line(c,[[x1,y1],[x2,y2]],'#ff8a7a',2.4);}c.restore();}
-  if(g.selected){const u=g.selected,st=cannonStats(u.type,u.level),pos=g.cannonPosition(u);if(u.type==='totem')this.totemLinks(c,u.x,u.level,u);if(st.range>0)this.rangeZone(c,pos.x,pos.y,st.range,st.minRange||0,u.type==='drone'?'#8be2fa':'#fff1a8',u.type==='drone'?DRONE.altitude*0:0);}
+  if(g.selected){const u=g.selected,st=cannonStats(u.type,u.level),pos=g.cannonPosition(u);if(u.type==='totem')this.totemLinks(c,u.x,u.level,u);if(st.range>0&&!['totem','lily','leverage','buffett','hbm'].includes(u.type))this.rangeZone(c,pos.x,pos.y,st.range,st.minRange||0,u.type==='drone'?'#8be2fa':'#fff1a8',u.type==='drone'?DRONE.altitude*0:0);}
   this.effects(c,false);
   {const list=g.enemies.filter(e=>e.alive).sort((a,b)=>this.point(a.x,a.y+Math.min(a.radius,14)).y-this.point(b.x,b.y+Math.min(b.radius,14)).y),fwdY=this.point(216,g.wallAt(216)+WALL.deck+WALL.mountOffset-FORWARD_DY,0).y;let done=false;const outpost=()=>{const fwd=g.cannons.find(u=>u.type!=='drone'&&Math.abs(u.x-216)<.5);drawForwardPad(c,g,(x,y,z)=>this.point(x,y,z),!!fwd);if(fwd){const p=this.cannonAnchor(fwd);c.save();if(this.ghost?.cannon===fwd)c.globalAlpha=.2;buffAura(c,p.x,p.y,t,g.wallLevel);drawCannon(c,{...fwd,angle:this.screenAngle(fwd)},p.x,p.y,t,g.power,fwd===g.selected);buffAura(c,p.x,p.y,t,g.wallLevel,true);c.restore();}};for(const e of list){if(!done&&this.point(e.x,e.y+Math.min(e.radius,14)).y>fwdY){outpost();done=true;}this.enemy(c,e);}if(!done)outpost();}
   for(const bh of g.cannons.filter(u=>u.type==='blackhole')){const st=cannonStats('blackhole',bh.level),pp=g.cannonPosition(bh),p=this.point(pp.x,pp.y,0);c.save();for(let i=0;i<4;i++){const q=((t*.5+i/4)%1),r=st.range*(1-q);c.globalAlpha=q*.35;c.strokeStyle='#b28cff';c.lineWidth=2;c.beginPath();c.ellipse(p.x,p.y,r,r*DEPTH_SCALE,0,0,TAU);c.stroke();}const gr=c.createRadialGradient(p.x,p.y,0,p.x,p.y,st.range*.5);gr.addColorStop(0,'rgba(40,10,70,.35)');gr.addColorStop(1,'rgba(40,10,70,0)');c.globalAlpha=1;c.fillStyle=gr;c.beginPath();c.ellipse(p.x,p.y,st.range*.5,st.range*.5*DEPTH_SCALE,0,0,TAU);c.fill();c.restore();}
   this.knightsAndSweeps(c,t);
-  this.wallGround(c);this.wall(c);this.wallLevelFX(c);
+  this.wallGround(c);this.wall(c);this.wallLevelFX(c);drawRearPad(c,g,(x,y,z)=>this.point(x,y,z),g.cannons.some(u=>u.type!=='drone'&&Math.abs(u.x-217)<.5));
   if(!hasKeep(g)){const cx=g.commandX,cu={type:'command',x:cx,level:1,angle:-Math.PI/2},cp=this.cannonAnchor(cu);drawClayTower(c,cu,cp.x,cp.y,t,1,g.selectedCommand,false);}
   for(const u of g.cannons.filter(u=>u.type!=='drone'&&Math.abs(u.x-216)>=.5)){const p=this.cannonAnchor(u);c.save();if(this.ghost?.cannon===u)c.globalAlpha=.2;buffAura(c,p.x,p.y,t,g.wallLevel);drawCannon(c,{...u,angle:this.screenAngle(u)},p.x,p.y,t,g.power,u===g.selected);buffAura(c,p.x,p.y,t,g.wallLevel,true);c.restore();}
   // Attackers stop at the north upper silhouette; masonry covers only their
@@ -316,10 +316,10 @@ export class Renderer{
   for(const u of g.cannons.filter(u=>u.type==='drone')){const p=this.cannonAnchor(u);c.save();if(this.ghost?.cannon===u)c.globalAlpha=.2;drawDrone(c,{...u,angle:this.screenAngle(u)},p.x,p.y,t,g.power,u===g.selected);c.restore();}
   this.effects(c,true);this.ultFx(c);this.wallLevelBanner(c);
   if(g.placement||this.ghost){
-   const exclude=this.ghost?.cannon||null,type=g.placement||exclude.type,air=type==='drone',rawX=this.ghost?.x??216,y0=this.ghost?.y??g.height*.35,snapped=air?rawX:(snapSlot(rawX,g.cannons.filter(u=>!(this.ghost?.swapTarget&&u===this.ghost.swapTarget)),exclude,g.wallAt(rawX)-y0)??rawX),x=snapped,y=air?y0:(Math.abs(snapped-FORWARD_X)<.5?g.wallAt(snapped)+WALL.deck+WALL.mountOffset-FORWARD_DY:y0);
+   const exclude=this.ghost?.cannon||null,type=g.placement||exclude.type,air=type==='drone',rawX=this.ghost?.x??216,y0=this.ghost?.y??g.height*.35,snapped=air?rawX:(snapSlot(rawX,g.cannons.filter(u=>!(this.ghost?.swapTarget&&u===this.ghost.swapTarget)),exclude,g.wallAt(rawX)-y0,type)??rawX),x=snapped,y=air?y0:(Math.abs(snapped-FORWARD_X)<.5?g.wallAt(snapped)+WALL.deck+WALL.mountOffset-FORWARD_DY:y0);
    const valid=this.ghost?.inBounds!==false&&(this.ghost?.swapTarget?!!g.swapPlan(exclude,this.ghost.swapTarget):(air?validDronePlacement(x,y,g.height):validPlacement(x,g.cannons,exclude))),col=valid?'#b5ff7b':'#ff6d70';
    if(air)this.range(c,x,y,cannonStats(type,exclude?.level||1).range,col);
-   else{c.save();for(const sx of ALL_SLOTS){const fwd=sx===FORWARD_X,occ=g.cannons.some(u=>u!==exclude&&u.type!=='drone'&&Math.abs(u.x-sx)<.5),p=this.point(sx,g.wallAt(sx)+WALL.deck+WALL.mountOffset-(fwd?FORWARD_DY:0),fwd?16:WALL_ELEVATION),on=Math.abs(sx-x)<.5;c.setLineDash(on?[]:[4,4]);c.strokeStyle=occ?'#ffd36acc':on?col:'#fff3c499';c.lineWidth=on?3:1.6;c.beginPath();c.ellipse(p.x,p.y+3,on?20:16,on?7:5.5,0,0,TAU);c.stroke();}c.restore();}
+   else{c.save();for(const sx of ALL_SLOTS){if(Math.abs(sx-217)<.5&&!['totem','leverage','buffett','lily','claw','bull'].includes(type))continue;const fwd=sx===FORWARD_X,rear=Math.abs(sx-217)<.5,occ=g.cannons.some(u=>u!==exclude&&u.type!=='drone'&&Math.abs(u.x-sx)<.5),p=this.point(sx,g.wallAt(sx)+WALL.deck+WALL.mountOffset-(fwd?FORWARD_DY:0)+(rear?74:0),fwd?16:rear?6:WALL_ELEVATION),on=Math.abs(sx-x)<.5;c.setLineDash(on?[]:[4,4]);c.strokeStyle=occ?'#ffd36acc':on?col:'#fff3c499';c.lineWidth=on?3:1.6;c.beginPath();c.ellipse(p.x,p.y+3,on?20:16,on?7:5.5,0,0,TAU);c.stroke();}c.restore();}
    if(!air&&type==='totem')this.totemLinks(c,x,exclude?.level||g.owned('totem')?.level||1,exclude);else if(!air)this.auraCheck(c,x,exclude);
    const temp={type,x,y,level:exclude?.level||g.owned(type)?.level||1,angle:exclude?.angle??-Math.PI/2},p=this.cannonAnchor(temp);c.save();c.globalAlpha=.6;drawCannon(c,{...temp,angle:this.screenAngle(temp)},p.x,p.y,t,1,true);c.restore();
    const bannerY=Math.min(this.viewHeight-46,this.point(216,g.wallY).y+94);box(c,82,bannerY,268,23,6,'#294835eb',col);text(c,this.ghost?.swapTarget?(valid?'놓으면 두 타워의 자리 교환':'교환할 수 없는 위치입니다'):valid?(air?'전투 공간을 터치해 공중 배치':'원하는 자리를 터치해 배치'):(air?'전투 영역 안에 배치하세요':'빈 자리에 놓아 주세요'),216,bannerY+12,11,col);

@@ -1,26 +1,26 @@
-import{CampaignView}from'./campaign-view.js?v=a507772b24';
-import{CampaignDataProvider,newCourseRun,readCourseRun,checkpointCourse,storeCourseRun,removeCourseRun,restoreCourseCombat,settleCourse}from'./campaign.js?v=a507772b24';
-import{courseFor,courseTime,CAMPAIGN_REWARD_RATE,campaignProgress}from'./campaign-courses.js?v=a507772b24';
-import{stockFor}from'./symbols.js?v=a507772b24';
-import{StockPicker}from'./stock-picker.js?v=a507772b24';
-import{drawSessionChart}from'./session-chart.js?v=a507772b24';
-import{WALL_MAX_XP}from'./progression.js?v=a507772b24';
-import { CANNONS,SCENARIOS,SETTINGS,ENEMIES,SUPPLIES,WORLD_WIDTH,DRONE,WALL,WALL_STAGES,cannonStats,upgradeCost,validPlacement,validDronePlacement,clamp,ULT_INFO,ultNeed } from './config.js?v=a507772b24';
-import { DemoMarketDataProvider, LiveMarketDataProvider, AlpacaMarketDataProvider, MARKET_ERRORS } from './market.js?v=a507772b24';
-import { Game } from './game.js?v=a507772b24';
-import { DIGITS, DIGIT_H, DIGIT_W } from './digit-sprites.js?v=a507772b24';
+import{CampaignView}from'./campaign-view.js?v=3cc92929bf';
+import{CampaignDataProvider,newCourseRun,readCourseRun,checkpointCourse,storeCourseRun,removeCourseRun,restoreCourseCombat,settleCourse}from'./campaign.js?v=3cc92929bf';
+import{courseFor,courseTime,CAMPAIGN_REWARD_RATE,campaignProgress}from'./campaign-courses.js?v=3cc92929bf';
+import{stockFor}from'./symbols.js?v=3cc92929bf';
+import{StockPicker}from'./stock-picker.js?v=3cc92929bf';
+import{drawSessionChart}from'./session-chart.js?v=3cc92929bf';
+import{WALL_MAX_XP}from'./progression.js?v=3cc92929bf';
+import { CANNONS,SCENARIOS,SETTINGS,ENEMIES,SUPPLIES,WORLD_WIDTH,DRONE,WALL,WALL_STAGES,cannonStats,upgradeCost,validPlacement,validDronePlacement,clamp,ULT_INFO,ultNeed } from './config.js?v=3cc92929bf';
+import { DemoMarketDataProvider, LiveMarketDataProvider, AlpacaMarketDataProvider, MARKET_ERRORS } from './market.js?v=3cc92929bf';
+import { Game } from './game.js?v=3cc92929bf';
+import { DIGITS, DIGIT_H, DIGIT_W } from './digit-sprites.js?v=3cc92929bf';
 var goldShown='',goldNum=0;
-import { Renderer,renderShopIcon } from './renderer.js?v=a507772b24';
-import { initialState,readSave,writeSave,snapshotGame,safeStorage,readRawSave,writeRawSave } from './storage.js?v=a507772b24';
-import{cloudConfigured,currentUser,signUpEmail,signInEmail,signOut,pull,push,EMAIL_RULE,idOf,claimSession,sessionState,SESSION_ID,pullGrant}from'./cloud.js?v=a507772b24';
-import{recentSymbols}from'./stock-picker.js?v=a507772b24';
-import { loadClayAssets,useBattlefield } from './clay-assets.js?v=a507772b24';
-import{THEMES,themeFor}from'./themes.js?v=a507772b24';
-import { drawClayPreview } from './clay-runtime.js?v=a507772b24';
-import{money,playerXPAt,SLOT_LEVELS,wallXPAt,WALL_MAX_LEVEL,wallPower}from'./progression.js?v=a507772b24';
-import{openPack,applyCard,PACKS,MODES,MODE_ORDER,modeFor,RARITIES,TOWER_RARITY}from'./cards.js?v=a507772b24';
-import{CardStage,renderCollection,towerCard,statLines,dpsOf,dpsText,nextLevelLines,openCodex}from'./card-ui.js?v=a507772b24';
-import{xpForNext,MAX_CARD_LEVEL}from'./cards.js?v=a507772b24';
+import { Renderer,renderShopIcon } from './renderer.js?v=3cc92929bf';import {REAR_X,REAR_DY,SUPPORT_TYPES,isRear} from './config.js?v=3cc92929bf';
+import { initialState,readSave,writeSave,snapshotGame,safeStorage,readRawSave,writeRawSave } from './storage.js?v=3cc92929bf';
+import{cloudConfigured,currentUser,signUpEmail,signInEmail,signOut,pull,push,EMAIL_RULE,idOf,claimSession,sessionState,SESSION_ID,pullGrant}from'./cloud.js?v=3cc92929bf';
+import{recentSymbols}from'./stock-picker.js?v=3cc92929bf';
+import { loadClayAssets,useBattlefield } from './clay-assets.js?v=3cc92929bf';
+import{THEMES,themeFor}from'./themes.js?v=3cc92929bf';
+import { drawClayPreview } from './clay-runtime.js?v=3cc92929bf';
+import{money,playerXPAt,SLOT_LEVELS,wallXPAt,WALL_MAX_LEVEL,wallPower}from'./progression.js?v=3cc92929bf';
+import{openPack,applyCard,PACKS,MODES,MODE_ORDER,modeFor,RARITIES,TOWER_RARITY}from'./cards.js?v=3cc92929bf';
+import{CardStage,renderCollection,towerCard,statLines,dpsOf,dpsText,nextLevelLines,openCodex}from'./card-ui.js?v=3cc92929bf';
+import{xpForNext,MAX_CARD_LEVEL}from'./cards.js?v=3cc92929bf';
 const $=id=>document.getElementById(id),fmt=new Intl.NumberFormat('ko-KR'),nyTime=new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',hour12:false,hour:'2-digit',minute:'2-digit',second:'2-digit'});
 async function prepareArt(){const started=performance.now();
  $('asset-retry').hidden=true;$('asset-loading-message').textContent='클레이 전장을 준비하고 있어요.';
@@ -161,16 +161,16 @@ function towerAtScreen(screen,exclude=null){return game.cannons.filter(c=>c!==ex
 function dragPosition(e,d){const type=game.placement||d.cannon?.type,p=point(e,type),x=clamp(p.x+(d.offsetX||0),type==='drone'?DRONE.marginX:25,type==='drone'?WORLD_WIDTH-DRONE.marginX:407),y=p.y+(d.offsetY||0),temp={type,x,y},anchor=renderer.cannonAnchor(temp),swapTarget=d.cannon?game.cannons.find(c=>c!==d.cannon&&Math.hypot(renderer.cannonAnchor(c).x-anchor.x,renderer.cannonAnchor(c).y-anchor.y)<25):null;return{x,y,screen:p.screen,swapTarget,inBounds:p.screen.x>=0&&p.screen.x<=WORLD_WIDTH&&p.screen.y>=0&&p.screen.y<=renderer.viewHeight&&(type==='drone'||Math.abs(y-game.cannonPosition(temp).y)<80)};}
 // v29: tap-only controls — no dragging. Tap a tower → info (교체 swaps with reserve or deployed towers),
 // tap an empty slot → choose what goes there, tap the command post → wall info.
-const SLOT_XS=[60,138,294,372,216];
+const SLOT_XS=[60,138,294,372,216,REAR_X];
 function slotAnchor(sx){return renderer.cannonAnchor({type:sx===216?'machine':'machine',x:sx,level:1});}
 function slotAtScreen(s){let best=null,bd=1e9;for(const sx of SLOT_XS){const a=slotAnchor(sx),d=Math.hypot(a.x-s.x,(a.y-14)-s.y);if(d<bd){bd=d;best=sx;}}return bd<34?best:null;}
-function slotY(sx){return sx===216?game.wallAt(216)-250:game.wallAt(sx);}
+function slotY(sx){return sx===216?game.wallAt(216)-250:isRear(sx)?game.wallAt(sx)+REAR_DY:game.wallAt(sx);}
 function towerInSlot(sx){return game.cannons.find(c=>c.type!=='drone'&&Math.abs(c.x-sx)<.5);}
 function putInSlot(type,sx){const placed=game.cannons.find(c=>c.type===type);if(placed){if(placed.type==='drone')return false;const ok=game.moveCannon(placed,sx,slotY(sx));if(ok){save();updateUI();toast(CANNONS[type].name+' 자리 이동');}return ok;}
- if(game.full(type)){toast('타워는 최대 '+game.slotLimit+'기까지예요');return false;}if(!game.beginPlacement(type))return false;const ok=game.place(sx,slotY(sx));game.placement=null;if(ok){save();updateUI();toast(CANNONS[type].name+' 설치 완료');}return ok;}
+ if(game.full(type,sx)){toast(isRear(sx)?'후방 자리는 지원 타워 전용이에요':'타워는 최대 '+game.slotLimit+'기까지예요');return false;}if(!game.beginPlacement(type))return false;const ok=game.place(sx,slotY(sx));game.placement=null;if(ok){save();updateUI();toast(CANNONS[type].name+' 설치 완료');}return ok;}
 function openSlotPicker(sx,current=null){closeTowerInfo();const w=document.createElement('div');w.className='tower-info';w.id='tower-info';const card=document.createElement('div');card.className='ti-card slot-picker';
- const title=current?`${CANNONS[current.type].name} 교체`:sx===216?'전진 자리에 설치':'빈 자리에 설치';card.innerHTML=`<h3 class="sp-title">${title}</h3><p class="sp-sub">${current?'고른 타워와 자리를 바꿔요 · 배치 중인 타워도 고를 수 있어요':'보관 중이거나 배치 중인 타워를 골라요'}</p><div class="sp-list"></div>`;
- const list=card.querySelector('.sp-list');const items=game.inventory.filter(v=>v.type!=='drone'&&v.type!==current?.type);
+ const title=current?`${CANNONS[current.type].name} 교체`:sx===216?'전진 자리에 설치':isRear(sx)?'후방 지원 자리에 설치':'빈 자리에 설치';card.innerHTML=`<h3 class="sp-title">${title}</h3><p class="sp-sub">${current?'고른 타워와 자리를 바꿔요 · 배치 중인 타워도 고를 수 있어요':'보관 중이거나 배치 중인 타워를 골라요'}</p><div class="sp-list"></div>`;
+ const list=card.querySelector('.sp-list');const items=game.inventory.filter(v=>v.type!=='drone'&&v.type!==current?.type&&(!isRear(sx)||SUPPORT_TYPES.includes(v.type))&&(!current||!isRear(current.x)||!game.cannons.find(c=>c.type===v.type)||true));
  if(!items.length)list.innerHTML='<p class="sp-empty">고를 수 있는 타워가 없어요 · 카드 뽑기로 얻어 보세요</p>';
  for(const it of items){const deployed=game.cannons.find(c=>c.type===it.type);const b=document.createElement('button');b.type='button';b.className='sp-item'+(deployed?' on':'');b.innerHTML=`<canvas width="120" height="104"></canvas><strong>${CANNONS[it.type].short}</strong><small>Lv.${it.level} · ${deployed?'배치 중':'보관 중'}</small><em class="sp-dps">${(d=>d!=null?'DPS '+dpsText(d):'지원형')(dpsOf(it.type,it.level))}</em>`;renderShopIcon(b.querySelector('canvas'),it.type,it.level);{const q=document.createElement('span');q.className='sp-help';q.textContent='?';q.setAttribute('role','button');q.setAttribute('aria-label',CANNONS[it.type].name+' 능력치');q.onclick=e=>{e.stopPropagation();e.preventDefault();openCodex(it.type,it);};b.append(q);}
   b.onclick=()=>{let ok;if(current){ok=deployed?game.swapCannons(current,deployed):game.replaceTower(current,it.type);if(ok){save();updateUI();toast(deployed?'두 타워의 자리를 바꿨어요':CANNONS[it.type].name+'(으)로 교체');}}else ok=putInSlot(it.type,sx);if(ok)closeTowerInfo();else toast('여기에는 놓을 수 없어요');};list.append(b);}

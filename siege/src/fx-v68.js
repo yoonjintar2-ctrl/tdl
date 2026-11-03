@@ -1,6 +1,6 @@
 // v68/v71: visuals for the v67 towers. GPT sprite sheets only (fx-flash, fx-shots, ult-hits) — no hand-drawn
 // vector shapes on the battlefield. Dedicated GPT sheets will replace these re-tinted stand-ins.
-import { drawClaySprite, clayReady } from './clay-runtime.js?v=a507772b24';
+import { drawClaySprite, clayReady } from './clay-runtime.js?v=3cc92929bf';
 const TAU = Math.PI * 2;
 const PINK = 'hue-rotate(285deg) saturate(1.6) brightness(1.1)', GOLD = 'sepia(1) saturate(5) hue-rotate(-12deg) brightness(1.25)', WHITE = 'grayscale(1) brightness(2.2)';
 function spr(c, key, x, y, size, frame, filter) { if (!clayReady(key)) return false; c.save(); if (filter) c.filter = filter; drawClaySprite(c, key, x, y, size, frame); c.restore(); return true; }

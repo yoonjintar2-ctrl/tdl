@@ -27,7 +27,7 @@ export const CANNONS = {
   mortar: { name: '박격포', short: '박격포', icon: 'MR', cost: 180, damage: 4, rate: .55, range: 265, radius: 55, color: '#ffc478', role: '포물선 포탄 · 범위 폭발' },
   sniper: { name: '스나이퍼', short: '저격', icon: 'SR', cost: 250, damage: 90, rate: .45, range: 530, color: '#85beff', role: '현재 HP가 가장 높은 적 우선' },
   laser: { name: '노광장비', short: '노광장비', icon: 'LS', cost: 280, damage: 9, rate: 1.2, range: 430, pierce: 9, color: '#58efd9', role: '빛으로 회로를 새기듯 직선 관통 · 줄지은 음봉 다중 타격' },
-  totem: { name: '토템', short: '토템', icon: 'TT', cost: 300, damage: 0, rate: 0, range: 165, buff: .2, color: '#ffda7a', role: '주변 캐논 연사력 지원 · 자신 제외' },
+  totem: { name: '토템', short: '토템', icon: 'TT', cost: 300, damage: 0, rate: 0, range: 165, buff: .2, color: '#ffda7a', role: '전장의 모든 타워 연사력 지원(자신 제외) · 후방 지원 자리에 둘 수 있어요' },
   sticky: { name: '끈적이', short: '끈적이', icon: 'GL', cost: 210, damage: 1.5, rate: 1, range: 235, radius: 34, slow: .55, duration: 3, color: '#a3ed75', role: '끈적한 점액으로 약한 범위 피해 · 음봉의 이동·공격 속도를 크게 낮춤' },
   poison: { name: '독 캐논', short: '독', icon: 'TX', cost: 240, damage: 3, rate: .9, range: 520, minRange: 170, radius: 46, dot: 1.4, duration: 6, color: '#c093ff', role: '먼 곳에 독 폭발 · 즉시 피해 후 체력을 서서히 깎음(최대 3중첩) · 가까운 적은 못 맞힘' },
   siege: { name: '시즈탱크', short: '시즈탱크', icon: 'ST', cost: 260, damage: 7, rate: .32, range: 800, minRange: 230, radius: 72, color: '#ffb35a', role: '시즈 모드 장거리 포격 · 넓은 범위 폭발 · 가까운 적은 못 맞힘' },
@@ -42,7 +42,7 @@ export const CANNONS = {
   leverage: { name: '레버리지', short: '레버리지', icon: 'LV', cost: 240, damage: 0, rate: 0, range: 0, color: '#ffd34f', role: '모든 타워 공격력 ×2 · 대신 성벽이 받는 피해도 커져요 · 레벨이 오를수록 이득은 늘고 손해는 줄어요' },
   claw: { name: '인형뽑기', short: '인형뽑기', icon: 'CL', cost: 230, damage: 7, rate: .13, range: 0, capacity: 2, hits: 5, color: '#ff9ad0', role: '성벽 아래 양봉을 집어 전장으로 옮겨요 · 옮겨진 양봉은 검을 들고 싸워요 · 양봉이 많은 날일수록 강해요' },
   hbm: { name: 'HBM 반도체', short: 'HBM', icon: 'HB', cost: 300, damage: 15, rate: .75, range: 9999, color: '#5af0c8', role: '땅속 전류가 전장을 누비다 무작위 음봉을 감전 · 고레벨이 되면 전기 타워들의 공격 속도를 올려요' },
-  lily: { name: '릴리', short: '릴리', icon: 'LI', cost: 280, damage: 0, rate: .6, range: 300, shrink: .12, color: '#ff8ab8', role: '마음자로 펜을 쏴 음봉을 날씬하고 연약하게 · 맞은 음봉은 최대 체력이 줄어요(직접 피해 없음) · 탱커 음봉 카운터' },
+  lily: { name: '릴리', short: '릴리', icon: 'LI', cost: 280, damage: 0, rate: .6, range: 9999, shrink: .12, color: '#ff8ab8', role: '전장 어디든 마음자로 펜을 쏴 음봉을 날씬하고 연약하게 · 한 음봉에 한 번만 · 큰 음봉부터 · 탱커 카운터' },
   fed: { name: '연준의장', short: '연준의장', icon: 'FD', cost: 340, damage: 13, rate: .7, range: 160, chain: 2, color: '#f2f2ff', role: '비둘기 장풍 · 맞으면 둘로, 다시 넷으로 갈라지는 체인 피죠닝으로 넓게 커버' }
 };
 export const SHOP_NAMES = { sonic: 'SONIC', blackhole: 'BLACKHOLE', siege: 'SIEGE', summoner: 'SUMMON', musk: 'MUSK', machine: 'MG GUN', mortar: 'MORTAR', sniper: 'SNIPER', laser: 'LASER', totem: 'TOTEM', sticky: 'SLIME', poison: 'POISON', drone: 'DRONE', ant: 'ANT', bull: 'BULL', buffett: 'HODL', leverage: 'X2', claw: 'CLAW', hbm: 'HBM', lily: 'LILY', fed: 'FED' };
@@ -84,11 +84,15 @@ export const priceBand = pct => { const value = clamp(pct, -30, 30), nearest = M
 // and one forward slot north of the centre (stored as x = FORWARD_X).
 export const WALL_SLOTS = Object.freeze([60, 138, 294, 372]);
 export const FORWARD_X = 216, FORWARD_DY = 250, COMMAND_X = 216;
-export const ALL_SLOTS = Object.freeze([...WALL_SLOTS, FORWARD_X]);
+// v77: one rear slot south of the keep, reserved for support towers (does not count toward the tower limit).
+export const REAR_X = 217, REAR_DY = 74;
+export const SUPPORT_TYPES = Object.freeze(['totem', 'leverage', 'buffett', 'lily', 'claw', 'bull']);
+export const isRear = x => Math.abs(x - REAR_X) < .5;
+export const ALL_SLOTS = Object.freeze([...WALL_SLOTS, FORWARD_X, REAR_X]);
 export const isSlotX = x => ALL_SLOTS.some(s => Math.abs(s - x) < .5);
 export function validPlacement(x, cannons, exclude = null) { return Number.isFinite(x) && isSlotX(x) && cannons.every(c => c.type === 'drone' || c === exclude || Math.abs(c.x - x) >= .5); }
 // Nearest free slot to a drop point. `north` = how far north of the wall the finger is (world units).
-export function snapSlot(x, cannons, exclude = null, north = 0) { const free = ALL_SLOTS.filter(s => validPlacement(s, cannons, exclude)); if (!free.length) return null; return free.map(s => ({ s, d: s === FORWARD_X ? Math.hypot(x - s, Math.max(0, FORWARD_DY - north)) : Math.hypot(x - s, Math.max(0, north) * .9 + 8) })).sort((a, b) => a.d - b.d)[0].s; }
+export function snapSlot(x, cannons, exclude = null, north = 0, type = null) { const free = ALL_SLOTS.filter(s => validPlacement(s, cannons, exclude) && (s !== REAR_X || (type && SUPPORT_TYPES.includes(type)))); if (!free.length) return null; return free.map(s => ({ s, d: s === REAR_X ? Math.hypot(x - s, north + REAR_DY) : s === FORWARD_X ? Math.hypot(x - s, Math.max(0, FORWARD_DY - north)) : Math.hypot(x - s, Math.max(0, north) * .9 + 8) })).sort((a, b) => a.d - b.d)[0].s; }
 export function validDronePlacement(x, y, height) { return Number.isFinite(x) && Number.isFinite(y) && x >= DRONE.marginX && x <= WORLD_WIDTH - DRONE.marginX && y >= DRONE.marginTop && y <= height - DRONE.marginBottom; }
 
 
@@ -129,7 +133,7 @@ export const ULT_INFO={
  musk:{name:'떡상 로켓',text:'거대 로켓이 전장을 가르며 날아가 길목의 음봉을 연쇄 폭발로 쓸어버려요'},
  laser:{name:'초정밀 노광',text:'하늘에서 노광 빔이 내려와 전장을 좌우로 훑으며 닿는 음봉에게 큰 피해'},
  blackhole:{name:'특이점 붕괴',text:'전장 한가운데 블랙홀을 열어 음봉을 빨아들인 뒤 붕괴시켜요'},
- totem:{name:'양봉의 대축복',text:'8초간 모든 타워의 공격 속도 2배·피해 1.5배, 성벽 경험치 회복'},
+ totem:{name:'양봉의 대축복',text:'20초간 모든 타워의 공격 속도 2배·피해 1.5배, 성벽 경험치 회복'},
  drone:{name:'편대 융단폭격',text:'드론 편대가 날아가며 음봉 위로 폭탄 12발을 투하해요'},
  sonic:{name:'초음파 폭풍',text:'거대한 음파가 전장 전체로 퍼지며 피해를 주고 음봉을 잠시 묶어요'},
  mortar:{name:'집중 포화',text:'포탄 18발이 하늘에서 쏟아지는 융단 포격'},
