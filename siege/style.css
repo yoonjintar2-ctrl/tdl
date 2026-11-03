@@ -1243,3 +1243,26 @@ button.primary:disabled,.course-primary:disabled,button.secondary:disabled{filte
 .tower-info.field-info .ti-actions{margin-top:4px!important;grid-column:1/-1}
 .tower-info.field-info .ti-actions button{padding:6px 0!important;min-height:36px!important;font-size:14px!important}
 .tower-info.field-info .ti-help{width:30px!important;height:30px!important;font-size:15px!important}
+/* v78: wall investment row */
+.wi-invest{display:flex;align-items:center;gap:10px;margin:8px 0 4px;padding:8px 10px;border-radius:12px;background:#fff6dccc;box-shadow:inset 0 0 0 1.5px #c99a4a}
+.wi-invest>div{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:1px}
+.wi-invest span{font:400 12px/1.2 var(--gk-font);color:#6a4a1a}
+.wi-invest b{font:400 16px/1.2 var(--gk-font);color:#2f6b1d}
+.wi-invest small{font-size:10px;color:#8a7350;word-break:keep-all}
+.wi-invest-btn{flex:0 0 auto;min-width:96px;min-height:40px;padding:6px 10px!important;white-space:nowrap;border:0!important;border-style:solid!important;border-image-source:url(assets/clay/ui-btn-green-v1.webp)!important;border-image-slice:38 fill!important;border-image-width:18px!important;background:none!important;color:#fff!important;font:400 14px/1 var(--gk-font)!important;-webkit-text-stroke:3px #1d4a10;paint-order:stroke fill}
+.wi-invest-btn:disabled{filter:grayscale(.7)}
+/* v78: AI combo popup */
+#float-ai b{font:400 13px/1 var(--gk-font);letter-spacing:.5px}
+.ai-card{display:flex!important;flex-direction:column!important;gap:8px!important;max-height:86vh;overflow:auto}
+.ai-title{margin:0!important;text-align:center;font:400 20px/1.2 var(--gk-font)!important}
+.ai-sub,.ai-empty{margin:0!important;text-align:center;font-size:13px;color:#6a4a1a;word-break:keep-all}
+.ai-sub b{color:#b0420e;font-size:15px}
+.ai-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.ai-slot{display:flex;flex-direction:column;align-items:center;min-width:0;padding:6px 4px;border-radius:12px;background:#fff6dccc;box-shadow:inset 0 0 0 1.5px #c99a4a}
+.ai-slot canvas{width:100%;max-width:84px;height:auto;aspect-ratio:96/84}
+.ai-slot strong{font:400 13px/1.2 var(--gk-font);max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ai-slot small{font-size:10px;color:#8a7350;white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis}
+/* v78: wall popup grows to fit the invest row (still a bottom sheet over the battle) */
+.wall-pop .ti-card.wall-info{max-height:none!important;height:auto!important}
+.wall-pop .wi-hint{margin:4px 0 0!important;font-size:11px!important;line-height:1.35!important;word-break:keep-all}
+.wall-pop .wi-invest{margin:6px 0 2px}

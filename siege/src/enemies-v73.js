@@ -5,13 +5,13 @@ export function installEnemiesV73(Game, { SPECIALS, WALL, FORWARD_DY, WORLD_WIDT
   const P = Game.prototype;
   const outpostY = g => g.wallAt(WORLD_WIDTH / 2) + WALL.deck + WALL.mountOffset - FORWARD_DY;
   const slowF = (g, e) => e.slowUntil > g.time && e.slow > 0 ? 1 - e.slow : 1;
-  const shoot = (g, e, kind, dmg, dur) => { const tx = e.x + (g.random() - .5) * 30; g.enemyShots.push({ kind, x: e.x, y: e.y - 10, tx, ty: g.wallBackAt(tx), t: 0, dur, dmg }); };
+  const shoot = (g, e, kind, dmg, dur, centre = false) => { const tx = centre ? WORLD_WIDTH / 2 + (g.random() - .5) * 16 : e.x + (g.random() - .5) * 30; g.enemyShots.push({ kind, x: e.x, y: e.y - 10, tx, ty: g.wallBackAt(tx), t: 0, dur, dmg }); };
 
   P.tickSpecialV73 = function (e, dt, stop) {
     if (!this.enemyShots) this.enemyShots = [];
     // 하락의 드럼: every ordinary candle moves a bit faster while the drum plays
     if (this.drumUntil > this.time && !e.special && !(e.slowUntil > this.time && e.slow > 0)) { e.slow = -.2; e.slowUntil = this.time + .1; }
-    const sp = e.special; if (!sp || !['drum', 'catapult', 'fed', 'burry'].includes(sp)) return false;
+    const sp = e.special; if (!sp || !['drum', 'catapult', 'fed', 'burry', 'pole'].includes(sp)) return false;
     const def = SPECIALS[sp], speed = def.speed * slowF(this, e);
     e.anim = (e.anim || 0) + dt;
     if (sp === 'drum') {
@@ -20,6 +20,15 @@ export function installEnemiesV73(Game, { SPECIALS, WALL, FORWARD_DY, WORLD_WIDT
         e.special = null; e.kind = 0; e.radius = 10; e.attack = 1; return false;
       }
       return false; // walks like a normal candle
+    }
+    if (sp === 'pole') { // 장대 음봉: strides over the wall and hunts supply candles from the rear line
+      const hold = this.wallAt(e.x) + WALL.deck + WALL.mountOffset + 70; e.attacking = false; e.vx = 0;
+      if (e.y < hold) { e.y = Math.min(hold, e.y + speed * dt); e.striding = true; return true; }
+      e.striding = false; e.swing = Math.max(0, (e.swing || 0) - dt); e.hitT = (e.hitT ?? .4) - dt * slowF(this, e);
+      if (e.hitT <= 0) { const prey = this.supplies.filter(s => s.alive && Math.abs(s.y - e.y) < 120 && Math.abs(s.x - e.x) < 120).sort((a, b) => Math.hypot(a.x - e.x, a.y - e.y) - Math.hypot(b.x - e.x, b.y - e.y))[0];
+        if (prey) { e.hitT = 1.2; e.swing = .4; this.effect('impact', prey.x, prey.y, '#ff6a4a', '', .45); this.remove(prey, 'pole'); } else e.hitT = .3; }
+      if (!this.supplies.some(s => s.alive && Math.abs(s.x - e.x) < 120)) { const t = this.supplies.filter(s => s.alive && s.y > e.y - 40).sort((a, b) => Math.abs(a.x - e.x) - Math.abs(b.x - e.x))[0]; if (t) e.x += Math.sign(t.x - e.x) * Math.min(Math.abs(t.x - e.x), speed * .8 * dt); }
+      return true;
     }
     if (sp === 'catapult') {
       const hold = Math.max(60, stop - 250);
@@ -31,10 +40,10 @@ export function installEnemiesV73(Game, { SPECIALS, WALL, FORWARD_DY, WORLD_WIDT
     }
     if (sp === 'fed') {
       e.hawkT = (e.hawkT ?? 2) - dt; e.throwing = Math.max(0, (e.throwing || 0) - dt);
-      if (e.hawkT <= 0 && e.y < stop - 30) { e.hawkT = 3.2; e.throwing = .45; shoot(this, e, 'hawk', 60, .9); }
+      if (e.hawkT <= 0 && e.y < stop - 30) { e.hawkT = 3.2; e.throwing = .45; shoot(this, e, 'hawk', 70, .9, true); }
       if (!e.hiked && e.y > outpostY(this)) { // charge 금리 인상
         e.charging = (e.charging || 0) + dt; if (e.charging < 2.2) return true;
-        e.hiked = true; this.rateHikeBy = e.id; this.onNamed?.('fed', '금리 인상! 모든 타워 공격 속도 감소'); this.shake = .6;
+        e.hiked = true; e.throwing = .6; shoot(this, e, 'bighawk', 320, 1.3, true); this.rateHikeBy = e.id; this.onNamed?.('fed', '금리 인상! 모든 타워 공격 속도 감소'); this.shake = .6;
       }
       return false;
     }
@@ -54,7 +63,7 @@ export function installEnemiesV73(Game, { SPECIALS, WALL, FORWARD_DY, WORLD_WIDT
   P.updateEnemyShotsV73 = function (dt) {
     if (!this.enemyShots) this.enemyShots = [];
     if (this.rateHikeBy != null && !this.enemies.some(e => e.alive && e.id === this.rateHikeBy)) { this.rateHikeBy = null; this.notify('연준의장 처치 · 금리 인상 해제'); }
-    for (const s of this.enemyShots) { s.t += dt; if (!s.done && s.t >= s.dur) { s.done = true; this.addWallXP(-s.dmg * this.mode.damage, s.tx); this.effect(s.kind === 'stone' ? 'explosion' : 'impact', s.tx, s.ty, '#ffb582', '', .6, { radius: s.kind === 'stone' ? 40 : 20 }); if (s.kind === 'stone') this.shake = Math.max(this.shake || 0, .35); } }
+    for (const s of this.enemyShots) { s.t += dt; if (!s.done && s.t >= s.dur) { s.done = true; this.addWallXP(-s.dmg * this.mode.damage, s.tx); this.effect(s.kind === 'impact' ? 'impact' : s.kind === 'hawk' ? 'impact' : 'explosion', s.tx, s.ty, '#ffb582', '', s.kind === 'bighawk' ? 1 : .6, { radius: s.kind === 'stone' ? 40 : s.kind === 'bighawk' ? 70 : 20 }); if (s.kind !== 'hawk') this.shake = Math.max(this.shake || 0, s.kind === 'bighawk' ? .9 : .35); } }
     this.enemyShots = this.enemyShots.filter(s => !s.done);
   };
 
@@ -67,6 +76,7 @@ export function installEnemiesV73(Game, { SPECIALS, WALL, FORWARD_DY, WORLD_WIDT
     this.lastSpecial = this.lastSpecial || {};
     const tryOne = (type, label, n = 1) => { const d = SPECIALS[type]; if (intensity < d.minIntensity || (this.lastSpecial[type] != null && epoch - this.lastSpecial[type] < d.cooldownMs) || this.random() >= d.chance) return; if (type !== 'drum' && this.enemies.some(e => e.alive && e.special === type)) return; this.lastSpecial[type] = epoch; let ok = false; for (let i = 0; i < n; i++) ok = !!this.spawnSpecial(type, 60 + this.random() * (WORLD_WIDTH - 120), -50 - i * 40) || ok; if (ok && label) this.onNamed?.(type, label); };
     tryOne('drum', '드럼통 음봉 접근!', 2 + Math.floor(this.random() * 2));
+    tryOne('pole', '장대 음봉이 성벽을 넘어온다!');
     tryOne('catapult', '공성전차 음봉 출현!');
     tryOne('fed', '연준의장 등장!');
     tryOne('burry', '마이클 벼리 등장!');

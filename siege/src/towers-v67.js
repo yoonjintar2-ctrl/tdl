@@ -1,6 +1,6 @@
 // v67: new towers (ant, bull, buffett, leverage, claw, hbm, lily, fed) and ultimates for rare+ towers.
 // Installed onto Game.prototype by installTowersV67(Game). Every effect stays data-driven via cannonStats.
-import { cannonStats, hasPerk, WORLD_WIDTH, clamp } from './config.js?v=3cc92929bf';
+import { cannonStats, hasPerk, WORLD_WIDTH, clamp } from './config.js?v=bbce5924c3';
 
 export const ELECTRIC = ['laser', 'drone', 'hbm'];
 export const PASSIVE = ['totem', 'buffett', 'leverage'];
@@ -22,7 +22,7 @@ export function installTowersV67(Game) {
     if (c.type === 'buffett') { // slow, uneven charge; fires only when candles crowd the field
       c.qiNoise = (c.qiNoise ?? 1) + (this.random() - .5) * dt * 1.4; c.qiNoise = clamp(c.qiNoise, .55, 1.45);
       c.qi = Math.min(1, (c.qi || 0) + dt / st.charge * c.qiNoise);
-      const alive = this.enemies.filter(e => e.alive && e.y < this.wallAt(e.x));
+      const alive = this.enemies.filter(e => e.alive && (e.y < this.wallAt(e.x) || e.special === 'pole'));
       if (c.qi >= 1 && alive.length >= st.crowd) { c.qi = 0; this.buffettBlast(c, st, alive); }
       return true;
     }
@@ -41,7 +41,7 @@ export function installTowersV67(Game) {
     }
     if (c.type === 'hbm') {
       c.cooldown -= dt; if (c.cooldown > 0) return true;
-      const pool = this.enemies.filter(e => e.alive && e.y < this.wallAt(e.x)); const pr = this.priority ? pool.filter(e => this.matchesPriority(e)) : [];
+      const pool = this.enemies.filter(e => e.alive && (e.y < this.wallAt(e.x) || e.special === 'pole')); const pr = this.priority ? pool.filter(e => this.matchesPriority(e)) : [];
       const list = pr.length ? pr : pool; c.cooldown = 1 / (st.rate * (1 + this.attackBuff(c) + this.extraRateBuff(c)));
       if (!list.length) { c.cooldown = .2; return true; }
       const e = list[Math.floor(this.random() * list.length)]; this.zap(e, st.damage, 'hbm'); c.recoil = 1; return true;
@@ -53,7 +53,7 @@ export function installTowersV67(Game) {
 
   P.buffettBlast = function (c, st, alive) {
     let best = alive[0], bn = 0; for (const a of alive) { const n = alive.reduce((k, b) => k + (Math.hypot(a.x - b.x, a.y - b.y) < st.radius ? 1 : 0), 0); if (n > bn) { bn = n; best = a; } }
-    this.effect('explosion', best.x, best.y, '#ffb3c8', '', 1, { radius: st.radius, weapon: 'mortar' }); this.effect('text', best.x, best.y - 30, '#ffe0ea', '나는 절대로 안 팔아!!', 1.6, { sourceAltitude: 20 });
+    this.effect('buffettboom', best.x, best.y, '#ffd34f', '', 1.1, { radius: st.radius }); this.effect('text', best.x, best.y - 30, '#ffe0ea', '나는 절대로 안 팔아!!', 1.6, { sourceAltitude: 20 });
     this.shake = Math.max(this.shake || 0, .45);
     for (const e of this.enemies) if (e.alive && Math.hypot(e.x - best.x, e.y - best.y) <= st.radius + e.radius) this.damage(e, st.damage, { cannonType: 'buffett' });
   };
@@ -83,9 +83,9 @@ export function installTowersV67(Game) {
   // ---------- ultimates for rare+ towers added in v67 ----------
   P.fireUltV67 = function (c, st, pos, top) {
     if (c.type === 'sonic') { this.ults.push({ kind: 'sonic', t: 0, dur: 1.6, x: pos.x, y: pos.y, dmg: st.damage * 40, hit: new Set() }); return true; }
-    if (c.type === 'mortar') { const shells = []; const alive = this.enemies.filter(e => e.alive && e.y < this.wallAt(e.x)); for (let i = 0; i < 18; i++) { const e = alive.length ? alive[Math.floor(this.random() * alive.length)] : null; shells.push({ at: .2 + i * .1, x: e ? e.x : 40 + this.random() * 352, y: e ? e.y : 80 + this.random() * (top - 160), done: false }); } this.ults.push({ kind: 'mortar', t: 0, dur: 2.4, shells, dmg: st.damage * 9, r: st.radius * 1.2 }); return true; }
+    if (c.type === 'mortar') { const shells = []; const alive = this.enemies.filter(e => e.alive && (e.y < this.wallAt(e.x) || e.special === 'pole')); for (let i = 0; i < 18; i++) { const e = alive.length ? alive[Math.floor(this.random() * alive.length)] : null; shells.push({ at: .2 + i * .1, x: e ? e.x : 40 + this.random() * 352, y: e ? e.y : 80 + this.random() * (top - 160), done: false }); } this.ults.push({ kind: 'mortar', t: 0, dur: 2.4, shells, dmg: st.damage * 9, r: st.radius * 1.2 }); return true; }
     if (c.type === 'sniper') { const tg = this.enemies.filter(e => e.alive).sort((a, b) => b.hp - a.hp).slice(0, 5); this.ults.push({ kind: 'sniper', t: 0, dur: 1.5, targets: tg.map((e, i) => ({ id: e.id, at: .25 + i * .22, done: false })), dmg: st.damage * 7 }); return true; }
-    if (c.type === 'hbm') { const alive = this.enemies.filter(e => e.alive && e.y < this.wallAt(e.x)); const n = Math.min(24, alive.length); const strikes = []; for (let i = 0; i < n; i++) strikes.push({ id: alive[Math.floor(this.random() * alive.length)].id, at: .15 + i * .06, done: false }); this.ults.push({ kind: 'hbm', t: 0, dur: 2.2, strikes, dmg: st.damage * 5 }); return true; }
+    if (c.type === 'hbm') { const alive = this.enemies.filter(e => e.alive && (e.y < this.wallAt(e.x) || e.special === 'pole')); const n = Math.min(24, alive.length); const strikes = []; for (let i = 0; i < n; i++) strikes.push({ id: alive[Math.floor(this.random() * alive.length)].id, at: .15 + i * .06, done: false }); this.ults.push({ kind: 'hbm', t: 0, dur: 2.2, strikes, dmg: st.damage * 5 }); return true; }
     if (c.type === 'lily') { this.ults.push({ kind: 'lily', t: 0, dur: 1.6, done: false }); return true; }
     if (c.type === 'fed') { this.ults.push({ kind: 'fed', t: 0, dur: 2.2, done: false, dmg: 60 + st.damage * 12 }); this.rateCutUntil = this.time + 300; return true; }
     return false;
