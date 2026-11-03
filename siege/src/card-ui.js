@@ -1,7 +1,7 @@
-import { CANNONS, cannonStats, PERKS, towerTier, ULT_INFO } from './config.js?v=bfbdfaa54c';
-import { RARITIES, TOWER_RARITY, xpForNext, MAX_CARD_LEVEL, cardOdds, PACKS } from './cards.js?v=bfbdfaa54c';
-import { renderShopIcon } from './renderer.js?v=bfbdfaa54c';
-import { FX } from './fx.js?v=bfbdfaa54c';
+import { CANNONS, cannonStats, PERKS, towerTier, ULT_INFO } from './config.js?v=d0eda7a79f';
+import { RARITIES, TOWER_RARITY, xpForNext, MAX_CARD_LEVEL, cardOdds, PACKS } from './cards.js?v=d0eda7a79f';
+import { renderShopIcon } from './renderer.js?v=d0eda7a79f';
+import { FX } from './fx.js?v=d0eda7a79f';
 
 const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
 const wait = ms => new Promise(r => setTimeout(r, ms));

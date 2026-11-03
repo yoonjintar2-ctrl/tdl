@@ -1,11 +1,11 @@
-import { WORLD_WIDTH as W,CANNONS,ENEMIES,SUPPLIES,WALL_STAGES,DRONE,WALL,cannonStats,validPlacement,validDronePlacement,snapSlot,ALL_SLOTS,FORWARD_X,FORWARD_DY,clamp } from './config.js?v=bfbdfaa54c';
-import{WALL_MAX_LEVEL,WALL_MAX_XP}from'./progression.js?v=bfbdfaa54c';
-import{isAIStock}from'./symbols.js?v=bfbdfaa54c';
-import { QuarterCamera, DEPTH_SCALE, WALL_ELEVATION } from './camera.js?v=bfbdfaa54c';
-import { drawClayMortar, drawClayMortarIcon, clayBattlefield } from './clay-assets.js?v=bfbdfaa54c';
-import{drawProjectile,drawEffect}from'./combat-fx.js?v=bfbdfaa54c';
-import{artCrop}from'./terrain.js?v=bfbdfaa54c';import{drawEffectV68,drawUltV68,drawShotV68}from'./fx-v68.js?v=bfbdfaa54c';
-import { drawClayTower, drawClayUnit, drawClayWall, drawClayPreview, drawForwardPad, hasKeep, drawClaySprite, clayReady, metaOf, drawClayTowerIcon, wallOutline, tierOf, tierTint, drawTierBack, drawTierFront } from './clay-runtime.js?v=bfbdfaa54c';
+import { WORLD_WIDTH as W,CANNONS,ENEMIES,SUPPLIES,WALL_STAGES,DRONE,WALL,cannonStats,validPlacement,validDronePlacement,snapSlot,ALL_SLOTS,FORWARD_X,FORWARD_DY,clamp } from './config.js?v=d0eda7a79f';
+import{WALL_MAX_LEVEL,WALL_MAX_XP}from'./progression.js?v=d0eda7a79f';
+import{isAIStock}from'./symbols.js?v=d0eda7a79f';
+import { QuarterCamera, DEPTH_SCALE, WALL_ELEVATION } from './camera.js?v=d0eda7a79f';
+import { drawClayMortar, drawClayMortarIcon, clayBattlefield } from './clay-assets.js?v=d0eda7a79f';
+import{drawProjectile,drawEffect}from'./combat-fx.js?v=d0eda7a79f';
+import{artCrop}from'./terrain.js?v=d0eda7a79f';import{drawEffectV68,drawUltV68,drawShotV68,drawSpecialV73,drawEnemyShotsV73}from'./fx-v68.js?v=d0eda7a79f';
+import { drawClayTower, drawClayUnit, drawClayWall, drawClayPreview, drawForwardPad, hasKeep, drawClaySprite, clayReady, metaOf, drawClayTowerIcon, wallOutline, tierOf, tierTint, drawTierBack, drawTierFront } from './clay-runtime.js?v=d0eda7a79f';
 const BAND=270;
 const TAU=Math.PI*2;
 function box(c,x,y,w,h,r,fill,stroke){c.beginPath();c.roundRect(x,y,w,h,r);if(fill){c.fillStyle=fill;c.fill();}if(stroke){c.lineWidth=1;c.strokeStyle=stroke;c.stroke();}}
@@ -122,7 +122,7 @@ export class Renderer{
  this.building(c,55,h-27,.8,2);this.building(c,371,h-31,.82,0);this.building(c,201,h-12,.93,1);this.building(c,-14,h-103,.58,0);this.building(c,445,h-126,.65,1);
  for(const [x,y,s]of [[12,h-13,.8],[111,h-22,.62],[301,h-14,.8],[410,h-10,.9]])this.tree(c,x,y,s);
  }
- specialEnemy(c,e){const t=this.game.time,foot=this.point(e.x,e.y+e.radius);const bar=(x,y,w)=>{const k=Math.max(0,e.hp/e.maxHP);c.fillStyle='#2b1a0bdd';c.beginPath();c.roundRect(x-w/2-1,y-1,w+2,6,3);c.fill();c.fillStyle=k>.5?'#ff8a72':'#ff4a3a';c.beginPath();c.roundRect(x-w/2,y,w*k,4,2);c.fill();};
+ specialEnemy(c,e){const t=this.game.time,foot=this.point(e.x,e.y+e.radius);if(drawSpecialV73(this,c,e,foot,t))return;const bar=(x,y,w)=>{const k=Math.max(0,e.hp/e.maxHP);c.fillStyle='#2b1a0bdd';c.beginPath();c.roundRect(x-w/2-1,y-1,w+2,6,3);c.fill();c.fillStyle=k>.5?'#ff8a72':'#ff4a3a';c.beginPath();c.roundRect(x-w/2,y,w*k,4,2);c.fill();};
   if(e.special==='ram'){const bob=e.attacking?0:Math.abs(Math.sin(t*6))*-2,lunge=e.attacking?Math.max(0,e.attackPulse||0)*8:0;{if(e.hit>0)c.filter='brightness(1.7)';const ok=drawRam(c,e,foot.x,foot.y+8+lunge,t);c.filter='none';if(ok){bar(foot.x,foot.y-74,54);return;}}c.save();c.fillStyle='#1d2a1e40';c.beginPath();c.ellipse(foot.x,foot.y,36,9,0,0,TAU);c.fill();
    const rows=[-46,-28,-10];for(const side of [-1,1])for(let i=0;i<3;i++)drawClayUnit(c,{kind:0,radius:8,phase:i+side,age:1,attacking:e.attacking,hit:e.hit},foot.x+side*15,foot.y+rows[i]+bob+lunge,t,true);
    // the log: carried forward toward the gate
@@ -247,7 +247,7 @@ export class Renderer{
  range(c,x,y,r,color='#a3f2ea',altitude=0){
   c.save();c.beginPath();for(let i=0;i<=80;i++){const a=i/80*TAU,p=this.point(x+Math.cos(a)*r,y+Math.sin(a)*r,altitude);i?c.lineTo(p.x,p.y):c.moveTo(p.x,p.y);}c.closePath();c.fillStyle=color+'12';c.fill();c.setLineDash([5,4]);c.strokeStyle=color+'b0';c.lineWidth=1.2;c.stroke();c.restore();
  }
- effects(c,front){for(const f of this.game.effects){const isFront=['ult-hit','lily-hit','zap','snipe','claw','summon','summon-gate','text','wall-xp','wall-gold','player-level','impact','bullet-hit','beam','muzzle','supply-deliver','dmg'].includes(f.type);if(isFront!==front)continue;const p=1-f.life/f.maxLife,pos=this.point(f.x,f.y,f.sourceAltitude||0);c.save();c.globalAlpha=Math.min(1,f.life/f.maxLife*1.8);if(drawEffectV68(this,c,f,p,pos)){c.restore();continue;}
+ effects(c,front){for(const f of this.game.effects){const isFront=['ult-hit','lily-hit','drumboom','zap','snipe','claw','summon','summon-gate','text','wall-xp','wall-gold','player-level','impact','bullet-hit','beam','muzzle','supply-deliver','dmg'].includes(f.type);if(isFront!==front)continue;const p=1-f.life/f.maxLife,pos=this.point(f.x,f.y,f.sourceAltitude||0);c.save();c.globalAlpha=Math.min(1,f.life/f.maxLife*1.8);if(drawEffectV68(this,c,f,p,pos)){c.restore();continue;}
   /* v40: GPT muzzle flashes & impact bursts */if(clayReady('fx-flash')){const MZ={machine:0,drone:0,sniper:1,laser:2,sonic:2,blackhole:2,sticky:3,poison:4,mortar:1,siege:1},HT={machine:5,drone:5,summoner:5,sniper:5,mortar:6,siege:6,laser:7,sticky:8,poison:9};
    if(f.type==='muzzle'&&MZ[f.weapon]!=null){const k=1-p;c.globalAlpha=Math.min(1,k*1.6);c.translate(pos.x,pos.y);c.scale(.7+p*.5,.7+p*.5);drawClaySprite(c,'fx-flash',0,2,f.weapon==='machine'?22:f.weapon==='sniper'?30:28,MZ[f.weapon]);c.restore();continue;}
    if(f.type==='impact'&&clayReady('fx-wallhit')){const tr=f.tier||0,n=metaOf('fx-wallhit')?.cols||4,fr=tr*n+Math.min(n-1,Math.floor(p*n));c.globalAlpha=1;c.translate(pos.x,pos.y);drawClaySprite(c,'fx-wallhit',0,0,[26,36,52,84][tr],fr);c.restore();continue;}
@@ -312,7 +312,7 @@ export class Renderer{
   // Attackers stop at the north upper silhouette; masonry covers only their
   // south-facing contact edge. Supply units approach from the foreground.
   for(const s of g.supplies.filter(s=>s.alive).sort((a,b)=>this.point(a.x,a.y+Math.min(a.radius,14)).y-this.point(b.x,b.y+Math.min(b.radius,14)).y))this.supply(c,s);
-  for(const p of g.projectiles)this.projectile(c,p);
+  for(const p of g.projectiles)this.projectile(c,p);drawEnemyShotsV73(this,c,g);
   for(const u of g.cannons.filter(u=>u.type==='drone')){const p=this.cannonAnchor(u);c.save();if(this.ghost?.cannon===u)c.globalAlpha=.2;drawDrone(c,{...u,angle:this.screenAngle(u)},p.x,p.y,t,g.power,u===g.selected);c.restore();}
   this.effects(c,true);this.ultFx(c);this.wallLevelBanner(c);
   if(g.placement||this.ghost){

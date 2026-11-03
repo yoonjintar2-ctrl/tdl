@@ -1,5 +1,5 @@
-import { loadClayCollection,CLAY_CATALOG } from './clay-runtime.js?v=bfbdfaa54c';
-import { WALL } from './config.js?v=bfbdfaa54c';
+import { loadClayCollection,CLAY_CATALOG } from './clay-runtime.js?v=d0eda7a79f';
+import { WALL } from './config.js?v=d0eda7a79f';
 const images = new Map();
 export const CLAY_ART = {
   mortar: new URL('../assets/clay/mortar-master-v1.webp', import.meta.url).href,

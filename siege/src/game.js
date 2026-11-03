@@ -1,12 +1,12 @@
-import{campaignProgress}from'./campaign-courses.js?v=bfbdfaa54c';
-import { SETTINGS, CANNONS, ENEMIES, SUPPLIES, WORLD_WIDTH, DRONE, WALL, CAMERA_DEPTH, ACTOR_STYLE, cannonStats, upgradeCost, energyMultiplier, wallYFor, priceBand, validPlacement, snapSlot, FORWARD_X, FORWARD_DY, validDronePlacement, clamp, hasPerk } from './config.js?v=bfbdfaa54c';
-import { wallMountDepth } from './fortification.js?v=bfbdfaa54c';
-import { marketArmy,estimatedArmy } from './market-army.js?v=bfbdfaa54c';
-import {playerLevelFor,towerSlots,wallLevelFor,wallPower,money,WALL_MAX_XP} from './progression.js?v=bfbdfaa54c';
-import{TerrainField}from'./terrain.js?v=bfbdfaa54c';
-import{modeFor}from'./cards.js?v=bfbdfaa54c';
-import{formatDamage}from'./combat-fx.js?v=bfbdfaa54c';
-import{wallXPAt,WALL_MAX_LEVEL}from'./progression.js?v=bfbdfaa54c';
+import{campaignProgress}from'./campaign-courses.js?v=d0eda7a79f';
+import { SETTINGS, CANNONS, ENEMIES, SUPPLIES, WORLD_WIDTH, DRONE, WALL, CAMERA_DEPTH, ACTOR_STYLE, cannonStats, upgradeCost, energyMultiplier, wallYFor, priceBand, validPlacement, snapSlot, FORWARD_X, FORWARD_DY, validDronePlacement, clamp, hasPerk } from './config.js?v=d0eda7a79f';
+import { wallMountDepth } from './fortification.js?v=d0eda7a79f';
+import { marketArmy,estimatedArmy } from './market-army.js?v=d0eda7a79f';
+import {playerLevelFor,towerSlots,wallLevelFor,wallPower,money,WALL_MAX_XP} from './progression.js?v=d0eda7a79f';
+import{TerrainField}from'./terrain.js?v=d0eda7a79f';
+import{modeFor}from'./cards.js?v=d0eda7a79f';
+import{formatDamage}from'./combat-fx.js?v=d0eda7a79f';
+import{wallXPAt,WALL_MAX_LEVEL}from'./progression.js?v=d0eda7a79f';
 // Kill gold is scaled down and a steady per-minute battle stipend added, so income stays in a narrow band
 // between a starter and a maxed army (card packs are the only use of gold).
 export const KILL_GOLD=.3,STIPEND_PER_MIN=30;
@@ -15,21 +15,21 @@ export const MAX_TOWERS=5;
 // v24: crowd actors carry a fraction of a 'unit' of volume, but never drop below half a unit of HP — towers no longer one-shot everything.
 export const HP_WEIGHT_FLOOR=.2;
 // v24: the giant is a rare boss — about one per five minutes at most, only on a heavy sell-off minute.
-import {installTowersV67,PASSIVE} from './towers-v67.js?v=bfbdfaa54c';
+import {installTowersV67,PASSIVE} from './towers-v67.js?v=d0eda7a79f';import {installEnemiesV73} from './enemies-v73.js?v=d0eda7a79f';
 export const WALL_SAG=38;
 // v63: ultimates for epic+ towers. Rare at low level, strong when they fire; one at a time (comic cut-in first).
-export {ULT_TYPES,ultNeed} from './config.js?v=bfbdfaa54c';
-import {ULT_TYPES,ultNeed} from './config.js?v=bfbdfaa54c';
+export {ULT_TYPES,ultNeed} from './config.js?v=d0eda7a79f';
+import {ULT_TYPES,ultNeed} from './config.js?v=d0eda7a79f';
 export const ultRate=level=>.0035+.0011*(Math.max(1,Math.min(40,level))-1); // chance per second: Lv1≈0.35% (~5 min), Lv40≈4.6% (~22 s)
 export const ULT_COOLDOWN=20;
 const WALL_BLESS_XP=120;
 export const BOSS=Object.freeze({cooldownMs:3*60*1000,minIntensity:.8,minSellShare:.5,chance:.85,hp:15,scale:3.4,radius:40,speed:.6,damage:.7});
 // v32: special attackers — a six-candle siege ram (shared HP, slow, heavy) and fast kamikaze bombers. Both aim at the wall centre.
-export const SPECIALS=Object.freeze({ram:Object.freeze({hp:2600,speed:8.5,radius:30,damage:110,interval:2.4,cooldownMs:2*60*1000,minIntensity:.7,chance:.75,goldMul:6}),bomber:Object.freeze({hp:12,speed:92,radius:9,damage:150,cooldownMs:40*1000,minIntensity:.5,chance:.85,goldMul:1.5})});
-const SPECIAL_DEF={ram:{...ENEMIES[3],speed:SPECIALS.ram.speed,damage:SPECIALS.ram.damage,interval:SPECIALS.ram.interval},bomber:{...ENEMIES[4],speed:SPECIALS.bomber.speed,damage:SPECIALS.bomber.damage,interval:9}};
+export const SPECIALS=Object.freeze({drum:Object.freeze({hp:420,speed:24,radius:13,damage:160,cooldownMs:50*1000,minIntensity:.45,chance:.8,goldMul:3}),catapult:Object.freeze({hp:900,speed:12,radius:26,damage:95,cooldownMs:110*1000,minIntensity:.6,chance:.7,goldMul:5}),fed:Object.freeze({hp:1800,speed:13,radius:16,damage:40,cooldownMs:4*60*1000,minIntensity:.7,chance:.7,goldMul:10}),burry:Object.freeze({hp:1500,speed:14,radius:16,damage:30,cooldownMs:4*60*1000,minIntensity:.65,chance:.7,goldMul:10}),ram:Object.freeze({hp:2600,speed:8.5,radius:30,damage:110,interval:2.4,cooldownMs:2*60*1000,minIntensity:.7,chance:.75,goldMul:6}),bomber:Object.freeze({hp:12,speed:92,radius:9,damage:150,cooldownMs:40*1000,minIntensity:.5,chance:.85,goldMul:1.5})});
+const SPECIAL_DEF={drum:{...ENEMIES[1],speed:24,damage:10,interval:1.4},catapult:{...ENEMIES[2],speed:12,damage:20,interval:2},fed:{...ENEMIES[1],speed:13,damage:40,interval:1.6},burry:{...ENEMIES[1],speed:14,damage:30,interval:1.6},ram:{...ENEMIES[3],speed:SPECIALS.ram.speed,damage:SPECIALS.ram.damage,interval:SPECIALS.ram.interval},bomber:{...ENEMIES[4],speed:SPECIALS.bomber.speed,damage:SPECIALS.bomber.damage,interval:9}};
 const BOSS_DEF=Object.freeze({...ENEMIES[3],speed:ENEMIES[3].speed*BOSS.speed,damage:ENEMIES[3].damage*BOSS.damage});
-import{isAIStock}from'./symbols.js?v=bfbdfaa54c';
-import {weaponMuzzle} from './weapon-geometry.js?v=bfbdfaa54c';
+import{isAIStock}from'./symbols.js?v=d0eda7a79f';
+import {weaponMuzzle} from './weapon-geometry.js?v=d0eda7a79f';
 export class Game {
   constructor(state, { height = 620, random = Math.random,now=Date.now,rewardMultiplier=1,mode } = {}) {
     this.modeKey=modeFor(mode??state.settings?.mode).key;this.stipendClock=0;this.wallHold=0;
@@ -120,7 +120,7 @@ export class Game {
   // v26: the wall's command post always sits in the centre of the wall.
   get commandX(){return 216;}
   maybeBoss(intensity,sellShare,epoch){if(!(intensity>=BOSS.minIntensity&&sellShare>=BOSS.minSellShare))return false;if(this.lastBossAt!=null&&epoch-this.lastBossAt<BOSS.cooldownMs)return false;if(this.random()>BOSS.chance)return false;this.lastBossAt=epoch;return !!this.spawnBoss();}
-  spawnSpecial(type,x=WORLD_WIDTH/2+(this.random()-.5)*140,y=-50){const d=SPECIALS[type];const e=this.spawnEnemy(type==='ram'?3:4,x,y,{marketWeight:1});if(!e)return null;e.special=type;e.hp=e.maxHP=d.hp*this.mode.hp;e.radius=d.radius;e.wallSlot=WORLD_WIDTH/2+(this.random()-.5)*24;e.boss=false;return e;}
+  spawnSpecial(type,x=WORLD_WIDTH/2+(this.random()-.5)*140,y=-50){const d=SPECIALS[type];const e=this.spawnEnemy(type==='ram'?3:type==='bomber'?4:type==='catapult'?2:1,x,y,{marketWeight:1});if(!e)return null;e.special=type;e.hp=e.maxHP=d.hp*this.mode.hp;e.radius=d.radius;e.wallSlot=WORLD_WIDTH/2+(this.random()-.5)*24;e.boss=false;return e;}
   maybeSpecials(intensity,sellShare,epoch){if(sellShare<.4)return;const S=SPECIALS;this.lastSpecial=this.lastSpecial||{};
    if(intensity>=S.ram.minIntensity&&sellShare>=.45&&(this.lastSpecial.ram==null||epoch-this.lastSpecial.ram>=S.ram.cooldownMs)&&this.random()<S.ram.chance){this.lastSpecial.ram=epoch;if(this.spawnSpecial('ram'))this.onNamed?.('ram','공성 음봉 부대 접근!');}
    if(intensity>=S.bomber.minIntensity&&(this.lastSpecial.bomber==null||epoch-this.lastSpecial.bomber>=S.bomber.cooldownMs)&&this.random()<S.bomber.chance){this.lastSpecial.bomber=epoch;const n=3+Math.floor(this.random()*3);for(let i=0;i<n;i++)this.spawnSpecial('bomber',40+this.random()*(WORLD_WIDTH-80),-40-i*55);this.onNamed?.('bomber','공습 음봉 접근 중!');}}
@@ -266,7 +266,7 @@ export class Game {
       e.poisons = e.poisons.filter(p => p.until > this.time);
       if (e.poisons.length) this.damage(e, e.poisons.reduce((v,p) => v + p.dps * dt, 0), { cannonType: 'poison' });
       if (!e.alive) continue;
-      const def = e.special ? SPECIAL_DEF[e.special] : e.boss ? BOSS_DEF : ENEMIES[e.kind], stop = this.enemyStopAt(e);
+      const def = e.special ? SPECIAL_DEF[e.special] : e.boss ? BOSS_DEF : ENEMIES[e.kind], stop = this.enemyStopAt(e); if (this.tickSpecialV73(e, dt, stop)) continue;
       if (e.special === 'bomber') { const tx = e.wallSlot, dx = tx - e.x, dy = stop - e.y, d = Math.hypot(dx, dy) || 1, sp = def.speed * (e.slowUntil > this.time ? 1 - e.slow : 1) * dt; e.attacking = false; if (d <= sp + 1) { this.addWallXP(-def.damage * this.mode.damage, e.x); this.effect('explosion', e.x, stop, '#ff8a3a', '', .7, { radius: 48 }); for (let i = 0; i < 4; i++) this.effect('smoke', e.x + (this.random() - .5) * 30, stop, '#5a4a3e', '', 1.2, { vx: (this.random() - .5) * 20 }); this.burst(e.x, stop, '#ff8a3a', 10); this.remove(e, 'explode'); } else { e.x += dx / d * sp; e.y += dy / d * sp; } continue; }
       if (!Number.isFinite(e.wallSlot) && stop - e.y < 46) this.assignWallSlot(e, stop, wallLoad);
       const atWall = e.y >= stop - .1, sliding = atWall && Number.isFinite(e.wallSlot) && Math.abs(e.wallSlot - e.x) > 1.5;
@@ -305,7 +305,7 @@ export class Game {
     this.enemies = this.enemies.filter(e => e.alive); this.supplies = this.supplies.filter(s => s.alive);
     /* v64: thin pre/after-market minutes (or a stalled feed) still keep a light trickle on both sides */
     if(this.market&&this.marketPrimed&&this.time-(this.lastSpawnAt??this.time)>12){this.ambientT=(this.ambientT||0)+dt;if(this.ambientT>=6){this.ambientT=0;const up=(this.market.changePct||0)>=0;for(let i=0;i<(up?3:6);i++)this.spawnEnemy(0,undefined,-30-i*14,{marketWeight:.3});for(let i=0;i<(up?4:2);i++)this.spawnSupply(0,undefined,undefined,{marketWeight:.3});this.lastSpawnAt=this.time-13;}}
-    this.updateUlts(dt);
+    this.updateUlts(dt);this.updateEnemyShotsV73(dt);
     for (const c of this.cannons) {
       c.recoil = Math.max(0,c.recoil-dt*6); this.rollUlt(c,dt); if (PASSIVE.includes(c.type)&&c.type!=='buffett'&&c.type!=='leverage') continue; if (this.tickTowerV67(c,dt)) continue;
       if (this.blessUntil > this.time) c.cooldown -= dt;
@@ -370,3 +370,4 @@ export class Game {
 
 
 installTowersV67(Game);
+installEnemiesV73(Game,{SPECIALS,WALL,FORWARD_DY,WORLD_WIDTH});

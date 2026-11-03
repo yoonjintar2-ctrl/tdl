@@ -1,12 +1,13 @@
 // v68/v71: visuals for the v67 towers. GPT sprite sheets only (fx-flash, fx-shots, ult-hits) — no hand-drawn
 // vector shapes on the battlefield. Dedicated GPT sheets will replace these re-tinted stand-ins.
-import { drawClaySprite, clayReady } from './clay-runtime.js?v=bfbdfaa54c';
+import { drawClaySprite, clayReady } from './clay-runtime.js?v=d0eda7a79f';
 const TAU = Math.PI * 2;
 const PINK = 'hue-rotate(285deg) saturate(1.6) brightness(1.1)', GOLD = 'sepia(1) saturate(5) hue-rotate(-12deg) brightness(1.25)', WHITE = 'grayscale(1) brightness(2.2)';
 function spr(c, key, x, y, size, frame, filter) { if (!clayReady(key)) return false; c.save(); if (filter) c.filter = filter; drawClaySprite(c, key, x, y, size, frame); c.restore(); return true; }
 const hitFrame = (row, p) => row * 4 + Math.min(3, Math.floor(p * 4));
 export function drawEffectV68(r, c, f, p, pos) {
-  if (f.type === 'zap') { c.globalAlpha = 1; spr(c, 'ult-hits', pos.x, pos.y + 8, 52, hitFrame(0, p), 'hue-rotate(-25deg) saturate(1.3)'); return true; }
+  if (f.type === 'zap') { c.globalAlpha = 1; if (!spr(c, 'fx-zap', pos.x, pos.y + 6, 64, Math.min(5, Math.floor(p * 6)))) spr(c, 'ult-hits', pos.x, pos.y + 8, 52, hitFrame(0, p), 'hue-rotate(-25deg) saturate(1.3)'); return true; }
+  if (f.type === 'drumboom') { c.globalAlpha = 1; spr(c, 'fx-drumboom', pos.x, pos.y + 6, 80, Math.min(5, Math.floor(p * 6))); return true; }
   if (f.type === 'lily-hit') { c.globalAlpha = 1; if (!spr(c, 'fx-lilyhit', pos.x, pos.y - 10, 58, Math.min(5, Math.floor(p * 6)))) spr(c, 'fx-flash', pos.x, pos.y + 6, 44, 8, PINK); return true; }
   if (f.type === 'snipe') { c.globalAlpha = 1; spr(c, 'fx-flash', pos.x, pos.y + 6, 46, 5); return true; }
   if (f.type === 'claw') { c.globalAlpha = 1; const fr = Math.min(5, Math.floor(p * 9)), lift = p > .6 ? (p - .6) / .4 : 0; if (!spr(c, 'fx-claw', pos.x, pos.y + 8 - lift * 70, 54, fr)) spr(c, 'ult-hits', pos.x, pos.y + 6, 34, hitFrame(2, p)); return true; }
@@ -31,4 +32,25 @@ export function drawUltV68(r, c, u, k, t, W, H) {
   if (u.kind === 'fed') { if (u.t > .55 && u.t < .9) { c.globalAlpha = (1 - (u.t - .55) / .35) * .55; c.fillStyle = '#fff8e0'; c.fillRect(0, 0, W, H); } return true; }
   if (u.kind === 'mortar') { for (const s of u.shells || []) { if (s.done || u.t < s.at - .32) continue; const q = 1 - (s.at - u.t) / .32, p = r.point(s.x, s.y, 0); c.globalAlpha = 1; spr(c, 'fx-shots', p.x, p.y - 220 * (1 - q), 30, 6); } return true; }
   return false;
+}
+
+// v73: named enemies drawn from their GPT sheets (6 frames each, feet at the anchor)
+export function drawSpecialV73(r, c, e, foot, t) {
+  const big = e.special === 'catapult' ? 118 : e.special === 'drum' ? 66 : 80, d = e._depth || 1, sz = big * d;
+  let key, fr;
+  if (e.special === 'drum') { key = 'enemy-drum'; fr = Math.floor(t * 9 + e.id) % 6; }
+  else if (e.special === 'catapult') { key = 'enemy-catapult'; fr = e.phaseT || 0; }
+  else if (e.special === 'fed') { key = 'enemy-fed'; fr = e.throwing > 0 ? (e.throwing > .22 ? 4 : 5) : Math.floor(t * 7 + e.id) % 4; }
+  else if (e.special === 'burry') { key = 'enemy-burry'; fr = e.drumming > 0 ? 4 + (Math.floor(t * 8) % 2) : Math.floor(t * 7 + e.id) % 4; }
+  else return false;
+  if (!clayReady(key)) return false;
+  c.save(); c.fillStyle = '#1d2a1e40'; c.beginPath(); c.ellipse(foot.x, foot.y, sz * .32, sz * .09, 0, 0, TAU); c.fill();
+  if (e.hit > 0) c.filter = 'brightness(1.6)'; else if (e.special === 'fed' && e.charging > 0 && !e.hiked) c.filter = `drop-shadow(0 0 ${6 + Math.sin(t * 20) * 4}px #ff2a1a)`;
+  drawClaySprite(c, key, foot.x, foot.y, sz, fr); c.filter = 'none';
+  const k = Math.max(0, e.hp / e.maxHP), w = Math.max(26, sz * .55), y = foot.y - sz * .95; c.fillStyle = '#2b1a0bdd'; c.beginPath(); c.roundRect(foot.x - w / 2 - 1, y - 1, w + 2, 6, 3); c.fill(); c.fillStyle = k > .5 ? '#ff8a72' : '#ff4a3a'; c.beginPath(); c.roundRect(foot.x - w / 2, y, w * k, 4, 2); c.fill();
+  c.restore(); return true;
+}
+export function drawEnemyShotsV73(r, c, g) {
+  for (const s of g.enemyShots || []) { const u = Math.min(1, s.t / s.dur), arc = s.kind === 'stone' ? 140 : 30, p = r.point(s.x + (s.tx - s.x) * u, s.y + (s.ty - s.y) * u, Math.sin(u * Math.PI) * arc);
+    if (s.kind === 'stone') spr(c, 'fx-shots', p.x, p.y, 24, 6); else { c.save(); c.translate(p.x, p.y); spr(c, 'fx-hawk', 0, 0, 30, Math.floor(g.time * 14) % 6); c.restore(); } }
 }
