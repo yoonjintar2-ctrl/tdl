@@ -1,7 +1,7 @@
-import { CANNONS, cannonStats, PERKS, towerTier, ULT_INFO } from './config.js?v=01791418a7';
-import { RARITIES, TOWER_RARITY, xpForNext, MAX_CARD_LEVEL, cardOdds, PACKS } from './cards.js?v=01791418a7';
-import { renderShopIcon } from './renderer.js?v=01791418a7';
-import { FX } from './fx.js?v=01791418a7';
+import { CANNONS, cannonStats, PERKS, towerTier, ULT_INFO } from './config.js?v=fa0058698b';
+import { RARITIES, TOWER_RARITY, xpForNext, MAX_CARD_LEVEL, cardOdds, PACKS } from './cards.js?v=fa0058698b';
+import { renderShopIcon } from './renderer.js?v=fa0058698b';
+import { FX } from './fx.js?v=fa0058698b';
 
 const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
 const wait = ms => new Promise(r => setTimeout(r, ms));
@@ -118,7 +118,7 @@ export class CardStage {
       if (tierUp) { stage.classList.add('evolve'); await wait(skip ? 0 : 420); renderShopIcon(art, u.type, u.to); fxAt(1.6); extra.append(el('span', 'lvup-evo', '외형 진화!')); await wait(skip ? 0 : 300); stage.classList.remove('evolve'); }
       else { renderShopIcon(art, u.type, u.to); fxAt(1); }
       { const A = cannonStats(u.type, u.from), B = cannonStats(u.type, u.to), diff = el('div', 'lvup-diff'); const row = (k, a, b, f = v => v.toFixed(1)) => { if (Math.abs(b - a) < 1e-6) return; diff.append(el('span', '', `${k} ${f(a)} → `), el('b', '', f(b))); diff.append(el('br')); };
-        if (A.damage) row('공격력', A.damage, B.damage); if (A.rate) row('초당 공격', A.rate, B.rate, v => v.toFixed(2)); if (A.range) row('사거리', A.range, B.range, v => String(Math.round(v))); if (A.pierce) row('관통', A.pierce, B.pierce, v => String(v)); if (A.knights) row('기사 수', A.knights, B.knights, v => String(v)); if (A.radius) row('범위', A.radius, B.radius, v => String(Math.round(v))); if (diff.childNodes.length) extra.append(diff); }
+        { const da = dpsOf(u.type, u.from), db = dpsOf(u.type, u.to); if (da != null && db != null) row('DPS', da, db, dpsText); } if (A.damage) row('공격력', A.damage, B.damage); if (A.rate) row('초당 공격', A.rate, B.rate, v => v.toFixed(2)); if (A.range) row('사거리', A.range, B.range, v => String(Math.round(v))); if (A.pierce) row('관통', A.pierce, B.pierce, v => String(v)); if (A.knights) row('기사 수', A.knights, B.knights, v => String(v)); if (A.radius) row('범위', A.radius, B.radius, v => String(Math.round(v))); if (diff.childNodes.length) extra.append(diff); }
       for (const p of perks) extra.append(el('span', 'lvup-perk', '새 능력 · ' + p.text));
       await new Promise(res => { let t = setTimeout(res, skip ? 250 : 1500 + perks.length * 700); ov.onclick = () => { clearTimeout(t); res(); }; });
       ov.onclick = () => { skip = true; };
@@ -150,10 +150,20 @@ export function renderCollection(container, game, { onPack, onCard, slotText }) 
   const ph=el('div','coll-head pack-head');ph.append(el('strong','','타워 뽑기'));container.append(head, grid, ph, packs, oddsLine);
 }
 
+/* v69: one DPS formula used everywhere (info, codex, swap list, level-up) */
+export function dpsOf(type, level, mul = 1) {
+  const st = cannonStats(type, level);
+  if (['totem', 'leverage', 'lily'].includes(type)) return null;
+  if (type === 'buffett') return st.charge ? st.damage / st.charge * mul : null;
+  if (type === 'blackhole') return st.damage * mul;
+  if (type === 'claw') return st.rate ? st.damage * st.hits * st.rate * mul : null;
+  return st.damage > 0 && st.rate > 0 ? st.damage * st.rate * mul : null;
+}
+export const dpsText = v => v == null ? '' : v >= 100 ? Math.round(v).toLocaleString() : v.toFixed(1);
 export function statLines(game, c) {
   const live = !c.virtual, st = cannonStats(c.type, c.level), buff = live ? game.attackBuff(c) : 0, power = live ? game.power : 1;
   const lines = [['공격력', c.type === 'totem' ? '지원 전용' : (st.damage * power).toFixed(1)], ['공격 간격', c.type === 'totem' || c.type === 'blackhole' ? '지속 효과' : `${(1 / (st.rate * (1 + buff))).toFixed(2)}초`], ['사거리', Math.round(st.range)], ['성벽 보너스', `공격력 ×${(power / .75).toFixed(2)}`]];
-  if (!live) { lines.splice(3, 1); const hits = st.pierce ? Math.min(st.pierce, 4) : st.radius ? 2.5 : 1; if (st.rate > 0 && st.damage > 0) { lines.unshift(['초당 피해(DPS)', (st.damage * st.rate).toFixed(1)]); if (hits > 1) lines.push(['다수 타격', `평균 ×${hits}`]); } }
+  if (!live) { lines.splice(3, 1); const hits = st.pierce ? Math.min(st.pierce, 4) : st.radius ? 2.5 : 1; if (hits > 1 && st.rate > 0 && st.damage > 0) lines.push(['다수 타격', `평균 ×${hits}`]); }
   if (buff > 0) lines.push(['토템 지원', `연사 +${Math.round(buff * 100)}%`]);
   if (c.type === 'totem') lines.push(['주변 지원', `연사 +${Math.round(st.buff * 100)}%`]);
   if (st.pierce) lines.push(['관통', `${st.pierce}마리`]); if (st.slow) lines.push(['감속', `${Math.round(st.slow * 100)}% · ${st.duration.toFixed(1)}초`]); if (c.type === 'poison') lines.push(['독', `${st.dot.toFixed(1)}/초`]); if (c.type === 'mortar') lines.push(['폭발 반경', Math.round(st.radius)]);
@@ -163,12 +173,13 @@ export function statLines(game, c) {
   if (c.type === 'sonic') lines.push(['음파 반경', Math.round(st.range)]);
   if (c.type === 'blackhole') lines.push(['끌어당김', `반경 ${Math.round(st.range)} · 감속 ${Math.round(st.drag * 100)}%`], ['지속 피해', `${st.damage.toFixed(1)}/초`]);
   if (c.type === 'musk') lines.push(['사이버트럭', `관통 · 폭 ${Math.round(st.width)}`], ['로켓 확률', `${Math.round(st.rocketChance * 100)}% · 초광역`]);
+  { const d = dpsOf(c.type, c.level, power * (1 + buff)); if (d != null) lines.unshift(['초당 피해(DPS)', dpsText(d)]); }
   /* v68: new towers — no 'Infinity초' / meaningless range for passive or charge towers */
   const T = c.type, drop = (...ks) => { for (const k of ks) { const i = lines.findIndex(l => l[0] === k); if (i >= 0) lines.splice(i, 1); } };
-  if (T === 'buffett') { drop('공격 간격', '사거리', '초당 피해(DPS)'); lines.push(['충전 시간', `${Math.round(st.charge)}초`], ['몰리면 즉시', `${st.crowd}마리`], ['폭발 반경', Math.round(st.radius)]); }
+  if (T === 'buffett') { drop('공격 간격', '사거리'); lines.push(['충전 시간', `${Math.round(st.charge)}초`], ['몰리면 즉시', `${st.crowd}마리`], ['폭발 반경', Math.round(st.radius)]); }
   if (T === 'leverage') { const k = (Math.max(1, c.level) - 1) / 39; drop('공격력', '공격 간격', '사거리', '초당 피해(DPS)'); lines.unshift(['모든 타워 공격력', `×${(2 + .25 * k).toFixed(2)}`], ['성벽 피해', `×${(1.8 - .45 * k).toFixed(2)} (위험)`]); }
   if (['hbm', 'claw', 'fed', 'bull', 'ant'].includes(T)) drop('다수 타격');
-  if (T === 'claw') { drop('사거리', '초당 피해(DPS)'); lines.push(['뽑기 칸', `양봉 ${st.capacity}개`], ['칼 기사', `${st.damage.toFixed(1)} × ${st.hits}회`]); }
+  if (T === 'claw') { drop('사거리'); lines.push(['뽑기 칸', `양봉 ${st.capacity}개`], ['칼 기사', `${st.damage.toFixed(1)} × ${st.hits}회`]); }
   if (T === 'hbm') { drop('사거리'); lines.push(['사거리', '전장 전체']); }
   if (T === 'lily') { drop('공격력', '초당 피해(DPS)'); lines.push(['최대 체력 감소', `${Math.round(st.shrink * 100)}%`]); }
   if (T === 'bull') lines.push(['녹색 양봉', `${Math.round(st.bullEvery)}초마다 (Lv.15+)`]);
@@ -213,7 +224,7 @@ export function openCodex(type, item) {
     const art = el('canvas', 'codex-art'); art.width = 150; art.height = 130;
     const info = el('div', 'codex-info'); info.append(el('b', 'codex-lv', 'Lv.' + lv + (tierStart && !seen.has(tier) ? ` · ${tier + 1}단계 외형` : '')));
     seen.add(tier);
-    const nums = []; if (st.damage) nums.push('공격력 ' + st.damage.toFixed(1)); if (st.rate) nums.push((1 / st.rate).toFixed(2) + '초마다'); if (st.range) nums.push('사거리 ' + Math.round(st.range)); if (st.knights) nums.push('기사 ' + st.knights + (st.archers ? ' · 궁수 ' + st.archers : ''));
+    const nums = []; { const d = dpsOf(type, lv); if (d != null) nums.push('DPS ' + dpsText(d)); } if (st.damage) nums.push('공격력 ' + st.damage.toFixed(1)); if (st.rate) nums.push((1 / st.rate).toFixed(2) + '초마다'); if (st.range && !['buffett', 'leverage', 'hbm'].includes(type)) nums.push('사거리 ' + Math.round(st.range)); if (type === 'buffett') nums.push('충전 ' + Math.round(st.charge) + '초'); if (st.knights) nums.push('기사 ' + st.knights + (st.archers ? ' · 궁수 ' + st.archers : ''));
     info.append(el('span', 'codex-nums', nums.join(' · ')));
     for (const p of newPerks) info.append(el('span', 'codex-perk', '✨ ' + p.text));
     row.append(art, info); list.append(row);

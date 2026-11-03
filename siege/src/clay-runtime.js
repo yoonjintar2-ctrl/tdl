@@ -1,4 +1,4 @@
-import {CANNONS,ENEMIES,SUPPLIES,WALL,WORLD_WIDTH,ACTOR_STYLE,WALL_SLOTS,COMMAND_X,towerTier,ULT_TYPES,ultNeed} from './config.js?v=01791418a7';
+import {CANNONS,ENEMIES,SUPPLIES,WALL,WORLD_WIDTH,ACTOR_STYLE,WALL_SLOTS,COMMAND_X,towerTier,ULT_TYPES,ultNeed} from './config.js?v=fa0058698b';
 export const ENEMY_ART=['enemy-small','enemy-tall','enemy-fat','enemy-giant'];
 // Kind 4 (초미니 음봉) reuses the small candle art at a much smaller size.
 const ENEMY_KIND_ART=[...ENEMY_ART,'enemy-small'];
@@ -70,12 +70,12 @@ export function drawClayUnit(c,e,x,y,t=0,enemy=true,forcedFrame){
  const size=(enemy?ENEMIES[e.kind].height+28:SUPPLIES[e.kind].radius*2+30)*ACTOR_STYLE.unitScale*(e.scale||1)*(enemy?(e._depth||1):1),bob=enemy&&e.attacking?0:Math.sin(t*8+(e.phase||0))*.5;
  c.save();{const big=e.boss||e.special,life=big?160:35,cl=big?60:20;c.globalAlpha*=Math.max(0,Math.min(1,(e.age??1)*3,(life-(e.age??1))*2,enemy?(cl-(e.contact||0))*2:1));}
  c.fillStyle='#26382625';c.beginPath();c.ellipse(x+1,y+1,e.radius*.8,2.3,0,0,Math.PI*2);c.fill();
- if(e.hit>0)c.filter='brightness(1.5)';else if(e.poisons?.length)c.filter='hue-rotate(320deg) saturate(.85)';
+ if(e.hit>0)c.filter='brightness(1.5)';else if(e.poisons?.length)c.filter='hue-rotate(320deg) saturate(.85)';else if(enemy&&e.maxHP0)c.filter='hue-rotate(-28deg) saturate(1.15) brightness(1.12)';/* v69: 마음자로 맞은 음봉은 분홍빛 */
  // The impact pose anchors the hands to the cap; the wall masks the feet.
  const contactOffset=!walk&&enemy&&e.attacking&&frame===3?[6,2,2,2,4][e.kind]*ACTOR_STYLE.unitScale:0;
  if(enemy&&e.slim){/* v68: 마음자로 — slimmer silhouette */c.translate(x,y);c.scale(1-e.slim,1+e.slim*.15);c.translate(-x,-y);}if(flip){c.translate(x,0);c.scale(-1,1);c.translate(-x,0);}unitSprite(c,key,frame,x,y+bob+contactOffset,size*(walk?1.12:1));if(flip){c.translate(x,0);c.scale(-1,1);c.translate(-x,0);}c.filter='none';
- if(enemy&&e.showHealth!==false&&(e.hp<e.maxHP||e.kind===3)){
-  const f=info(key,frame).frame,top=y+(f.y-f.anchorY)*size/f.cellW-5,w=Math.max(12,ENEMIES[e.kind].width*.8*ACTOR_STYLE.unitScale*(e.scale?e.scale*.7:1));c.fillStyle='#3d463add';c.beginPath();c.roundRect(x-w/2-1,top-1,w+2,4,2);c.fill();c.fillStyle='#ed8e76';c.fillRect(x-w/2,top,Math.max(0,w*e.hp/e.maxHP),2);
+ if(enemy&&e.showHealth!==false&&(e.hp<e.maxHP||e.kind===3||e.maxHP0)){
+  const f=info(key,frame).frame,top=y+(f.y-f.anchorY)*size/f.cellW-5,w=Math.max(12,ENEMIES[e.kind].width*.8*ACTOR_STYLE.unitScale*(e.scale?e.scale*.7:1));c.fillStyle='#3d463add';c.beginPath();c.roundRect(x-w/2-1,top-1,w+2,4,2);c.fill();if(e.maxHP0&&e.maxHP<e.maxHP0){/* v69: 마음자로 — bar keeps the original length; the cut part shows as pink */const m=e.maxHP0,kept=w*e.maxHP/m;c.fillStyle='#ff6aa8';c.fillRect(x-w/2+kept,top-1,w-kept,4);c.fillStyle='#ffd0e4';for(let i=x-w/2+kept;i<x+w/2;i+=3)c.fillRect(i,top-1,1,4);c.fillStyle='#ed8e76';c.fillRect(x-w/2,top,Math.max(0,w*e.hp/m),2);}else{c.fillStyle='#ed8e76';c.fillRect(x-w/2,top,Math.max(0,w*e.hp/e.maxHP),2);}
  }
  c.restore();return true;
 }

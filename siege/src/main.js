@@ -1,26 +1,26 @@
-import{CampaignView}from'./campaign-view.js?v=01791418a7';
-import{CampaignDataProvider,newCourseRun,readCourseRun,checkpointCourse,storeCourseRun,removeCourseRun,restoreCourseCombat,settleCourse}from'./campaign.js?v=01791418a7';
-import{courseFor,courseTime,CAMPAIGN_REWARD_RATE,campaignProgress}from'./campaign-courses.js?v=01791418a7';
-import{stockFor}from'./symbols.js?v=01791418a7';
-import{StockPicker}from'./stock-picker.js?v=01791418a7';
-import{drawSessionChart}from'./session-chart.js?v=01791418a7';
-import{WALL_MAX_XP}from'./progression.js?v=01791418a7';
-import { CANNONS,SCENARIOS,SETTINGS,ENEMIES,SUPPLIES,WORLD_WIDTH,DRONE,WALL,WALL_STAGES,cannonStats,upgradeCost,validPlacement,validDronePlacement,clamp,ULT_INFO,ultNeed } from './config.js?v=01791418a7';
-import { DemoMarketDataProvider, LiveMarketDataProvider, AlpacaMarketDataProvider, MARKET_ERRORS } from './market.js?v=01791418a7';
-import { Game } from './game.js?v=01791418a7';
-import { DIGITS, DIGIT_H, DIGIT_W } from './digit-sprites.js?v=01791418a7';
+import{CampaignView}from'./campaign-view.js?v=fa0058698b';
+import{CampaignDataProvider,newCourseRun,readCourseRun,checkpointCourse,storeCourseRun,removeCourseRun,restoreCourseCombat,settleCourse}from'./campaign.js?v=fa0058698b';
+import{courseFor,courseTime,CAMPAIGN_REWARD_RATE,campaignProgress}from'./campaign-courses.js?v=fa0058698b';
+import{stockFor}from'./symbols.js?v=fa0058698b';
+import{StockPicker}from'./stock-picker.js?v=fa0058698b';
+import{drawSessionChart}from'./session-chart.js?v=fa0058698b';
+import{WALL_MAX_XP}from'./progression.js?v=fa0058698b';
+import { CANNONS,SCENARIOS,SETTINGS,ENEMIES,SUPPLIES,WORLD_WIDTH,DRONE,WALL,WALL_STAGES,cannonStats,upgradeCost,validPlacement,validDronePlacement,clamp,ULT_INFO,ultNeed } from './config.js?v=fa0058698b';
+import { DemoMarketDataProvider, LiveMarketDataProvider, AlpacaMarketDataProvider, MARKET_ERRORS } from './market.js?v=fa0058698b';
+import { Game } from './game.js?v=fa0058698b';
+import { DIGITS, DIGIT_H, DIGIT_W } from './digit-sprites.js?v=fa0058698b';
 var goldShown='',goldNum=0;
-import { Renderer,renderShopIcon } from './renderer.js?v=01791418a7';
-import { initialState,readSave,writeSave,snapshotGame,safeStorage,readRawSave,writeRawSave } from './storage.js?v=01791418a7';
-import{cloudConfigured,currentUser,signUpEmail,signInEmail,signOut,pull,push,EMAIL_RULE,idOf,claimSession,sessionState,SESSION_ID,pullGrant}from'./cloud.js?v=01791418a7';
-import{recentSymbols}from'./stock-picker.js?v=01791418a7';
-import { loadClayAssets,useBattlefield } from './clay-assets.js?v=01791418a7';
-import{THEMES,themeFor}from'./themes.js?v=01791418a7';
-import { drawClayPreview } from './clay-runtime.js?v=01791418a7';
-import{money,playerXPAt,SLOT_LEVELS,wallXPAt,WALL_MAX_LEVEL,wallPower}from'./progression.js?v=01791418a7';
-import{openPack,applyCard,PACKS,MODES,MODE_ORDER,modeFor,RARITIES,TOWER_RARITY}from'./cards.js?v=01791418a7';
-import{CardStage,renderCollection,towerCard,statLines,nextLevelLines,openCodex}from'./card-ui.js?v=01791418a7';
-import{xpForNext,MAX_CARD_LEVEL}from'./cards.js?v=01791418a7';
+import { Renderer,renderShopIcon } from './renderer.js?v=fa0058698b';
+import { initialState,readSave,writeSave,snapshotGame,safeStorage,readRawSave,writeRawSave } from './storage.js?v=fa0058698b';
+import{cloudConfigured,currentUser,signUpEmail,signInEmail,signOut,pull,push,EMAIL_RULE,idOf,claimSession,sessionState,SESSION_ID,pullGrant}from'./cloud.js?v=fa0058698b';
+import{recentSymbols}from'./stock-picker.js?v=fa0058698b';
+import { loadClayAssets,useBattlefield } from './clay-assets.js?v=fa0058698b';
+import{THEMES,themeFor}from'./themes.js?v=fa0058698b';
+import { drawClayPreview } from './clay-runtime.js?v=fa0058698b';
+import{money,playerXPAt,SLOT_LEVELS,wallXPAt,WALL_MAX_LEVEL,wallPower}from'./progression.js?v=fa0058698b';
+import{openPack,applyCard,PACKS,MODES,MODE_ORDER,modeFor,RARITIES,TOWER_RARITY}from'./cards.js?v=fa0058698b';
+import{CardStage,renderCollection,towerCard,statLines,dpsOf,dpsText,nextLevelLines,openCodex}from'./card-ui.js?v=fa0058698b';
+import{xpForNext,MAX_CARD_LEVEL}from'./cards.js?v=fa0058698b';
 const $=id=>document.getElementById(id),fmt=new Intl.NumberFormat('ko-KR'),nyTime=new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',hour12:false,hour:'2-digit',minute:'2-digit',second:'2-digit'});
 async function prepareArt(){const started=performance.now();
  $('asset-retry').hidden=true;$('asset-loading-message').textContent='클레이 전장을 준비하고 있어요.';
@@ -75,11 +75,12 @@ function closeTowerInfo(){document.getElementById('tower-info')?.remove();infoTo
 // ---- difficulty modes ----
 const homeOf=()=>homeGame||game;
 function modeUnlocked(){return true;}/* v66: every difficulty is open to everyone */
+/* v69: missions only — 악몽 opens after all 20 노말 missions, 불지옥 after all 20 악몽 missions (free battles stay open) */function missionModeOpen(key){const h=homeOf();if(key==='nightmare')return (h.campaign?.cleared||0)>=20;if(key==='hell')return (h.campaignModes?.nightmare?.cleared||0)>=20;return true;}
 function campaignView_(state,mode){return mode==='normal'?state:{...state,campaign:campaignProgress(state.campaignModes?.[mode])};}
 function campaignUnview(state,mode,original){if(mode==='normal')return state;return{...state,campaign:original.campaign,campaignModes:{...(original.campaignModes||{}),[mode]:state.campaign}};}
 function renderModeToggles(){for(const box of document.querySelectorAll('.mode-toggle')){box.replaceChildren();for(const key of MODE_ORDER){const b=document.createElement('button');b.type='button';b.dataset.mode=key;const open=modeUnlocked(key);b.textContent=(open?'':'🔒 ')+MODES[key].name;b.setAttribute('aria-pressed',String(homeOf().modeKey===key));b.disabled=!!courseRun;b.classList.toggle('locked',!open);b.title=open?MODES[key].name+' · 몹 체력 ×'+MODES[key].hp+' · 골드 ×'+MODES[key].gold:(key==='nightmare'?'노말 20단계 정복 시 개방':'악몽 20단계 정복 시 개방');b.onclick=()=>setMode(key);box.append(b);}}}
 function modeLockHint(key){const h=homeOf();if(key==='nightmare')return `🔒 악몽은 노말 미션 20단계를 모두 정복하면 열려요 (지금 ${h.campaign?.cleared||0}/20)`;return `🔒 지옥은 악몽 미션 20단계를 모두 정복하면 열려요 (지금 ${h.campaignModes?.nightmare?.cleared||0}/20)`;}
-function setMode(key){if(courseRun){toast('미션 중에는 바꿀 수 없어요 · 다음 미션부터 적용돼요');homeOf().setMode(key);save();renderFloatMode();return;}if(!modeUnlocked(key)){toast(modeLockHint(key));return;}homeOf().setMode(key);if(game!==homeOf())game.setMode(key);if(marketChosen)applyTheme(game.settings.symbol);save();renderModeToggles();renderFloatMode();picker.render?.();toast(MODES[key].name+' 모드 · 몹 체력 ×'+MODES[key].hp+' · 골드 ×'+MODES[key].gold);}
+function setMode(key){if(courseRun){toast('미션 중에는 바꿀 수 없어요 · 다음 미션부터 적용돼요');homeOf().setMode(key);save();renderFloatMode();return;}if(!modeUnlocked(key)){toast(modeLockHint(key));return;}homeOf().setMode(key);if(game!==homeOf())game.setMode(key);if(marketChosen)applyTheme(game.settings.symbol);save();renderModeToggles();renderFloatMode();picker.render?.();if(campaignView?.mode==='map'&&campaignView.active)openCampaignMap();toast(MODES[key].name+' 모드 · 몹 체력 ×'+MODES[key].hp+' · 골드 ×'+MODES[key].gold+(missionModeOpen(key)?'':' · 미션은 아직 잠김'));}
 function shopAction(type){const owned=game.owned(type);if(owned){if(game.upgrade(owned)){save();updateUI();toast(CANNONS[type].name+' 강화 완료');}}else if(game.full(type)){if(game.buyTower(type)){save();updateUI();toast('보관함에 추가했습니다 · 설치 타워를 눌러 교체하세요');}}else if(game.beginPurchase(type)){closePanel();updatePlacement();toast(CANNONS[type].name+' · 성벽을 터치해 설치');}}
 $('scenario').innerHTML=SCENARIOS.map(([v,t])=>`<option value="${v}">${t}</option>`).join('');$('scenario').value=game.settings.scenario;$('quality').value=game.settings.quality;$('auto-upgrade').checked=game.settings.autoUpgrade;
 function chart(snapshot){const cv=$('chart'),c=cv.getContext('2d'),w=cv.width,h=cv.height,items=snapshot.candles.slice(-28);c.clearRect(0,0,w,h);if(!items.length)return;
@@ -151,7 +152,7 @@ $('detail-install').onclick=()=>{if(game.beginPlacement(activeType)){closePanel(
 $('move-action').onclick=()=>{closePanel();toast('타워를 드래그하세요 · 다른 타워 위에 놓으면 자리 교환');};
 function openTowerMenu(c){replaceTarget=c;game.selected=c;lastTowerMenu='';renderTowerMenu();showPanel('swap-panel');}
 const RARITY_NAME=t=>RARITIES[TOWER_RARITY[t]]?.name||'';function renderTowerMenu(){if(!replaceTarget||!game.cannons.includes(replaceTarget))return;const c=replaceTarget,d=CANNONS[c.type],signature=c.type+c.level+'|'+game.inventory.map(v=>v.type+v.level).join(',')+'|'+game.cannons.map(v=>v.type).join(',');const nextPrice=upgradeCost(c.type,c.level);$('swap-upgrade').textContent=c.level>=40?'MAX':(game.gold<nextPrice?'':'↑ ')+cash(nextPrice);$('swap-upgrade').disabled=c.level>=40||game.gold<nextPrice;if(signature===lastTowerMenu)return;lastTowerMenu=signature;$('swap-title').textContent=d.name;renderShopIcon($('swap-icon'),c.type,c.level);const price=upgradeCost(c.type,c.level);$('swap-upgrade').textContent=c.level>=40?'MAX':(game.gold<price?'':'↑ ')+cash(price);$('swap-upgrade').disabled=c.level>=40||game.gold<price;$('swap-list').replaceChildren();
- const reserves=game.inventory.filter(v=>!game.cannons.some(a=>a.type===v.type));$('swap-empty').hidden=!!reserves.length;for(const item of reserves){const b=document.createElement('button');b.className='reserve-card';b.setAttribute('aria-label',CANNONS[item.type].name+'로 교체');b.innerHTML='<canvas width="140" height="120"></canvas><strong></strong><small>'+RARITY_NAME(item.type)+'</small>';b.querySelector('strong').textContent=CANNONS[item.type].short;renderShopIcon(b.querySelector('canvas'),item.type,item.level);b.onclick=()=>{if(game.replaceTower(c,item.type)){save();closePanel();updateUI();toast(CANNONS[item.type].name+' 교체 완료');}else toast('이 위치에는 설치할 수 없습니다');};$('swap-list').append(b);}}
+ const reserves=game.inventory.filter(v=>!game.cannons.some(a=>a.type===v.type));$('swap-empty').hidden=!!reserves.length;for(const item of reserves){const b=document.createElement('button');b.className='reserve-card';b.setAttribute('aria-label',CANNONS[item.type].name+'로 교체');{const dv=dpsOf(item.type,item.level);b.innerHTML='<canvas width="140" height="120"></canvas><strong></strong><small>'+RARITY_NAME(item.type)+' · Lv.'+item.level+'</small><em class="rc-dps">'+(dv!=null?'DPS '+dpsText(dv):'지원형')+'</em>';}b.querySelector('strong').textContent=CANNONS[item.type].short;renderShopIcon(b.querySelector('canvas'),item.type,item.level);b.onclick=()=>{if(game.replaceTower(c,item.type)){save();closePanel();updateUI();toast(CANNONS[item.type].name+' 교체 완료');}else toast('이 위치에는 설치할 수 없습니다');};$('swap-list').append(b);}}
 $('swap-upgrade').onclick=()=>{if(game.upgrade(replaceTarget)){save();renderTowerMenu();updateUI();}};$('swap-detail').onclick=()=>openDetail(replaceTarget.type);$('swap-store').onclick=()=>{if(game.storeTower(replaceTarget)){save();closePanel();updateUI();toast('타워를 보관했습니다');}};
 function updatePlacement(){marketUI(provider.last);$('placement-banner').hidden=!game.placement&&!replaceType;if(game.placement)$('placement-label').textContent=`${CANNONS[game.placement].name} · ${game.placement==='drone'?'전투 공간':'성벽 위'} 터치`;else if(replaceType)$('placement-label').textContent=`${CANNONS[replaceType].name}(으)로 바꿀 타워를 누르세요`;$('hint').textContent=game.placement?'원하는 곳을 터치하세요 · 설치 시 결제':'타워 선택 → 구매 → 성벽에 배치';}
 $('cancel-placement').addEventListener('click',()=>{game.placement=null;replaceType=null;renderer.ghost=null;updatePlacement();});
@@ -171,7 +172,7 @@ function openSlotPicker(sx,current=null){closeTowerInfo();const w=document.creat
  const title=current?`${CANNONS[current.type].name} 교체`:sx===216?'전진 자리에 설치':'빈 자리에 설치';card.innerHTML=`<h3 class="sp-title">${title}</h3><p class="sp-sub">${current?'고른 타워와 자리를 바꿔요 · 배치 중인 타워도 고를 수 있어요':'보관 중이거나 배치 중인 타워를 골라요'}</p><div class="sp-list"></div>`;
  const list=card.querySelector('.sp-list');const items=game.inventory.filter(v=>v.type!=='drone'&&v.type!==current?.type);
  if(!items.length)list.innerHTML='<p class="sp-empty">고를 수 있는 타워가 없어요 · 카드 뽑기로 얻어 보세요</p>';
- for(const it of items){const deployed=game.cannons.find(c=>c.type===it.type);const b=document.createElement('button');b.type='button';b.className='sp-item'+(deployed?' on':'');b.innerHTML=`<canvas width="120" height="104"></canvas><strong>${CANNONS[it.type].short}</strong><small>Lv.${it.level} · ${deployed?'배치 중':'보관 중'}</small>`;renderShopIcon(b.querySelector('canvas'),it.type,it.level);{const q=document.createElement('span');q.className='sp-help';q.textContent='?';q.setAttribute('role','button');q.setAttribute('aria-label',CANNONS[it.type].name+' 능력치');q.onclick=e=>{e.stopPropagation();e.preventDefault();openCodex(it.type,it);};b.append(q);}
+ for(const it of items){const deployed=game.cannons.find(c=>c.type===it.type);const b=document.createElement('button');b.type='button';b.className='sp-item'+(deployed?' on':'');b.innerHTML=`<canvas width="120" height="104"></canvas><strong>${CANNONS[it.type].short}</strong><small>Lv.${it.level} · ${deployed?'배치 중':'보관 중'}</small><em class="sp-dps">${(d=>d!=null?'DPS '+dpsText(d):'지원형')(dpsOf(it.type,it.level))}</em>`;renderShopIcon(b.querySelector('canvas'),it.type,it.level);{const q=document.createElement('span');q.className='sp-help';q.textContent='?';q.setAttribute('role','button');q.setAttribute('aria-label',CANNONS[it.type].name+' 능력치');q.onclick=e=>{e.stopPropagation();e.preventDefault();openCodex(it.type,it);};b.append(q);}
   b.onclick=()=>{let ok;if(current){ok=deployed?game.swapCannons(current,deployed):game.replaceTower(current,it.type);if(ok){save();updateUI();toast(deployed?'두 타워의 자리를 바꿨어요':CANNONS[it.type].name+'(으)로 교체');}}else ok=putInSlot(it.type,sx);if(ok)closeTowerInfo();else toast('여기에는 놓을 수 없어요');};list.append(b);}
  const act=document.createElement('div');act.className='ti-actions';const c=document.createElement('button');c.type='button';c.className='primary';c.textContent='닫기';c.onclick=closeTowerInfo;act.append(c);card.append(act);w.append(card);const at=performance.now();w.onclick=e=>{if(e.target===w&&performance.now()-at>450)closeTowerInfo();};document.body.append(w);}
 canvas.addEventListener('pointerdown',e=>{if(modal)return;e.preventDefault();drag={id:e.pointerId,start:point(e,null).screen};});
@@ -222,7 +223,7 @@ function updateUI(){
  if(modal==='detail-panel')detail();if(modal==='settings-panel')$('diagnostics').textContent=`처치 ${game.metrics.kills} · 음봉 압사 ${game.metrics.crushedEnemies} · 보급 압사 ${game.metrics.crushedSupplies} · 성벽 이동 ${game.metrics.wallSteps} · ${renderer.quality<.7?'절전':'고화질'}`;
 }
 function courseModeUI(active){document.body.classList.toggle('course-mode',!!active);if(!active){$('stock-select').textContent='종목';$('stock-select').title='';}$('data-mode-description').textContent=active?'가상 장세로 구성한 정복 코스입니다. 코스 자금·구매·강화는 연습용이며 정산 보상만 기존 캐릭터에 합산됩니다.':'라이브 가격·거래량은 실제 데이터입니다. 첫 화면에서 라이브 종목 또는 가상 정복 코스를 선택할 수 있습니다.';$('stock-select').setAttribute('aria-label',active?'현재 코스 지도':'종목 검색');$('course-hud').hidden=!active;$('float-pause').hidden=!active;renderModeToggles();$('app').classList.toggle('course-active',active);$('data-mode').disabled=active;$('data-mode').value=active?'course':'live';$('simulation-controls').hidden=true;$('auto-upgrade').checked=game.settings.autoUpgrade;$('gold').parentElement.querySelector('small').textContent='자금';$('quality').value=game.settings.quality;lastShop='';game.placement=null;renderer.ghost=null;replaceTarget=null;}
-function openCampaignMap(){closePanel();if(courseRun){courseRun.elapsed=provider.elapsed;courseRun.paused=true;save();}picker.close(true);{const h=homeGame||game,view=campaignView_(snapshotGame(h),courseRun?.mode||h.modeKey);campaignView.map(view,courseRun?checkpointCourse(courseRun,game,provider):readCourseRun(view,courseStorage));}}
+function openCampaignMap(){closePanel();if(courseRun){courseRun.elapsed=provider.elapsed;courseRun.paused=true;save();}picker.close(true);{const h=homeGame||game,view=campaignView_(snapshotGame(h),courseRun?.mode||h.modeKey);campaignView.map(view,courseRun?checkpointCourse(courseRun,game,provider):readCourseRun(view,courseStorage));const mk=courseRun?.mode||h.modeKey||'normal',panel=$('campaign-panel');panel.querySelector('.mode-lock')?.remove();if(!missionModeOpen(mk)){const n=document.createElement('p');n.className='mode-lock';n.textContent=modeLockHint(mk).replace('🔒 ','');{const hd=panel.querySelector('header');if(hd)hd.after(n);else panel.prepend(n);}panel.classList.add('mode-locked');}else panel.classList.remove('mode-locked');}}
 function resumeCourse(){if(!courseRun)return;courseRun.paused=false;courseRun.ending=false;campaignView.hide();last=performance.now();acc=0;$('course-pause-button').focus({preventScroll:true});}
 function backToStocks(){if(courseRun){save();provider.destroy();game=homeGame;homeGame=null;courseRun=null;renderer.game=game;game.resetMarket();marketChosen=false;provider=makeProvider();courseModeUI(false);bindProvider();quality();}updateUI();campaignView.hide();closePanel();picker.open({mandatory:!marketChosen});$('stock-select').setAttribute('aria-expanded','true');}
 function beginCourse(id,resume=false){try{
@@ -328,7 +329,7 @@ function frame(now){const raw=(now-last)/1000;last=now;if(cutinActive){last=now;
 }
 document.addEventListener('visibilitychange',()=>{if(document.hidden)save();else{last=performance.now();acc=0;if(picker.active)picker.refresh();else if(marketChosen)provider.refresh?.();}});window.addEventListener('pagehide',save);
 // Explicit inspection hook for browser QA; no network, orders or credentials.
-window.stockSiege={applyTheme,get game(){return game;},picker,get campaignView(){return campaignView;},get courseRun(){return courseRun;},get provider(){return provider;},renderer,save,openDetail,closePanel,openTowerInfo,openWallInfo};requestAnimationFrame(frame);
+window.stockSiege={applyTheme,get game(){return game;},picker,get campaignView(){return campaignView;},get courseRun(){return courseRun;},get provider(){return provider;},renderer,save,openDetail,closePanel,openTowerInfo,openWallInfo,openSlotPicker,openCodex,openCampaignMap,setMode};requestAnimationFrame(frame);
 
 
 
@@ -344,7 +345,7 @@ async function applyGrant(){if(!cloudUser||cloudKicked)return;try{const g=await 
 setInterval(applyGrant,30000);
 
 /* v51: start any unlocked mission (incl. replays). A different run in progress is banked first, with confirmation. */
-function startMission(id){const home=homeGame||game,view=campaignView_(snapshotGame(home),home.modeKey),pending=courseRun&&!courseRun.ending?courseRun:readCourseRun(view,courseStorage);
+function startMission(id){{const mk=(homeGame||game).modeKey||'normal';if(!missionModeOpen(mk)){toast(modeLockHint(mk).replace('🔒 ',''));return;}}const home=homeGame||game,view=campaignView_(snapshotGame(home),home.modeKey),pending=courseRun&&!courseRun.ending?courseRun:readCourseRun(view,courseStorage);
  if(pending&&pending.courseId===id){beginCourse(id,true);return;}
  if(pending){if(!confirm(`진행 중인 미션 ${pending.courseId}을(를) 그만두고 미션 ${id}을(를) 시작할까요?\n지금까지 얻은 보상은 저장돼요.`))return;if(courseRun)finishCourse('quit');else bankCourse(pending,'quit');}
  beginCourse(id,false);}

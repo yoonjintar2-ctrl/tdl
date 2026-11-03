@@ -1209,3 +1209,13 @@ button.primary:disabled,.course-primary:disabled,button.secondary:disabled{filte
 .cutin-canvas{width:min(60vw,380px)!important;left:4%!important;bottom:0!important}
 /* v68: band is 120vw wide — keep the shout bubble inside the visible screen */
 .cutin-bubble{right:calc(14vw + 26px)!important;max-width:min(44vw,300px)!important}
+/* v69: locked difficulty on the mission map */
+.mode-lock{margin:6px 14px 2px;padding:9px 12px;border-radius:12px;background:#2b1a0bd9;color:#ffe9a8;font:400 13px/1.35 var(--gk-font);text-align:center;word-break:keep-all}
+.mode-locked .course-card{filter:grayscale(.85) brightness(.85)}
+/* v69: DPS on every tower picker card */
+.sp-item .sp-dps,.reserve-card .rc-dps{display:block;font:400 11px/1.2 var(--gk-font);font-style:normal;color:#b0420e;white-space:nowrap;margin-top:1px}
+.reserve-card .rc-dps{font-size:10px}
+/* v69: picker grid never wider than the card; codex numbers wrap between words */
+.sp-list{grid-template-columns:repeat(3,minmax(0,1fr))!important}.sp-item{min-width:0!important}.sp-item strong,.sp-item small{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sp-sub,.codex-nums,.codex-perk,.codex-lv,.mode-lock{word-break:keep-all!important}
+.mode-locked .course-card{filter:grayscale(.9) brightness(.78)!important}

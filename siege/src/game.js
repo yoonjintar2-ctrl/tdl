@@ -1,12 +1,12 @@
-import{campaignProgress}from'./campaign-courses.js?v=01791418a7';
-import { SETTINGS, CANNONS, ENEMIES, SUPPLIES, WORLD_WIDTH, DRONE, WALL, CAMERA_DEPTH, ACTOR_STYLE, cannonStats, upgradeCost, energyMultiplier, wallYFor, priceBand, validPlacement, snapSlot, FORWARD_X, FORWARD_DY, validDronePlacement, clamp, hasPerk } from './config.js?v=01791418a7';
-import { wallMountDepth } from './fortification.js?v=01791418a7';
-import { marketArmy,estimatedArmy } from './market-army.js?v=01791418a7';
-import {playerLevelFor,towerSlots,wallLevelFor,wallPower,money,WALL_MAX_XP} from './progression.js?v=01791418a7';
-import{TerrainField}from'./terrain.js?v=01791418a7';
-import{modeFor}from'./cards.js?v=01791418a7';
-import{formatDamage}from'./combat-fx.js?v=01791418a7';
-import{wallXPAt,WALL_MAX_LEVEL}from'./progression.js?v=01791418a7';
+import{campaignProgress}from'./campaign-courses.js?v=fa0058698b';
+import { SETTINGS, CANNONS, ENEMIES, SUPPLIES, WORLD_WIDTH, DRONE, WALL, CAMERA_DEPTH, ACTOR_STYLE, cannonStats, upgradeCost, energyMultiplier, wallYFor, priceBand, validPlacement, snapSlot, FORWARD_X, FORWARD_DY, validDronePlacement, clamp, hasPerk } from './config.js?v=fa0058698b';
+import { wallMountDepth } from './fortification.js?v=fa0058698b';
+import { marketArmy,estimatedArmy } from './market-army.js?v=fa0058698b';
+import {playerLevelFor,towerSlots,wallLevelFor,wallPower,money,WALL_MAX_XP} from './progression.js?v=fa0058698b';
+import{TerrainField}from'./terrain.js?v=fa0058698b';
+import{modeFor}from'./cards.js?v=fa0058698b';
+import{formatDamage}from'./combat-fx.js?v=fa0058698b';
+import{wallXPAt,WALL_MAX_LEVEL}from'./progression.js?v=fa0058698b';
 // Kill gold is scaled down and a steady per-minute battle stipend added, so income stays in a narrow band
 // between a starter and a maxed army (card packs are the only use of gold).
 export const KILL_GOLD=.3,STIPEND_PER_MIN=30;
@@ -15,11 +15,11 @@ export const MAX_TOWERS=5;
 // v24: crowd actors carry a fraction of a 'unit' of volume, but never drop below half a unit of HP — towers no longer one-shot everything.
 export const HP_WEIGHT_FLOOR=.2;
 // v24: the giant is a rare boss — about one per five minutes at most, only on a heavy sell-off minute.
-import {installTowersV67,PASSIVE} from './towers-v67.js?v=01791418a7';
+import {installTowersV67,PASSIVE} from './towers-v67.js?v=fa0058698b';
 export const WALL_SAG=38;
 // v63: ultimates for epic+ towers. Rare at low level, strong when they fire; one at a time (comic cut-in first).
-export {ULT_TYPES,ultNeed} from './config.js?v=01791418a7';
-import {ULT_TYPES,ultNeed} from './config.js?v=01791418a7';
+export {ULT_TYPES,ultNeed} from './config.js?v=fa0058698b';
+import {ULT_TYPES,ultNeed} from './config.js?v=fa0058698b';
 export const ultRate=level=>.0035+.0011*(Math.max(1,Math.min(40,level))-1); // chance per second: Lv1≈0.35% (~5 min), Lv40≈4.6% (~22 s)
 export const ULT_COOLDOWN=20;
 const WALL_BLESS_XP=120;
@@ -28,8 +28,8 @@ export const BOSS=Object.freeze({cooldownMs:3*60*1000,minIntensity:.8,minSellSha
 export const SPECIALS=Object.freeze({ram:Object.freeze({hp:2600,speed:8.5,radius:30,damage:110,interval:2.4,cooldownMs:2*60*1000,minIntensity:.7,chance:.75,goldMul:6}),bomber:Object.freeze({hp:12,speed:92,radius:9,damage:150,cooldownMs:40*1000,minIntensity:.5,chance:.85,goldMul:1.5})});
 const SPECIAL_DEF={ram:{...ENEMIES[3],speed:SPECIALS.ram.speed,damage:SPECIALS.ram.damage,interval:SPECIALS.ram.interval},bomber:{...ENEMIES[4],speed:SPECIALS.bomber.speed,damage:SPECIALS.bomber.damage,interval:9}};
 const BOSS_DEF=Object.freeze({...ENEMIES[3],speed:ENEMIES[3].speed*BOSS.speed,damage:ENEMIES[3].damage*BOSS.damage});
-import{isAIStock}from'./symbols.js?v=01791418a7';
-import {weaponMuzzle} from './weapon-geometry.js?v=01791418a7';
+import{isAIStock}from'./symbols.js?v=fa0058698b';
+import {weaponMuzzle} from './weapon-geometry.js?v=fa0058698b';
 export class Game {
   constructor(state, { height = 620, random = Math.random,now=Date.now,rewardMultiplier=1,mode } = {}) {
     this.modeKey=modeFor(mode??state.settings?.mode).key;this.stipendClock=0;this.wallHold=0;
@@ -106,7 +106,7 @@ export class Game {
       if (!Number.isFinite(value) || value <= 0) continue;
       const strength = clamp(value / avg, 0, 12), count = Math.min(5, Math.floor(strength * .8) + (this.random() < Math.min(.95, strength * .65) ? 1 : 0));
       for (let i = 0; i < count; i++) {
-        if (side === 'sell') { const r = this.random(); this.spawnEnemy(strength > 4 && r < .16 || strength > 1.5 && r < .05 ? 3 : strength > 2.5 && r < .46 || strength > 1 && r < .14 ? 2 : strength > 1.1 && r < .65 ? 1 : r > .86 ? 4 : 0); }
+        if (side === 'sell') { const r = this.random(), kind = strength > 4 && r < .16 || strength > 1.5 && r < .05 ? 3 : strength > 2.5 && r < .46 || strength > 1 && r < .14 ? 2 : strength > 1.1 && r < .65 ? 1 : r > .86 ? 4 : 0; this.spawnEnemy(kind); /* v69: harder modes field more candles */ for (let extra = (this.mode.count || 1) - 1; extra > 0; extra--) if (this.random() < extra) this.spawnEnemy(kind === 3 ? 2 : kind); }
         else this.spawnSupply(strength > 3 ? Math.floor(this.random() * 6) : [0, 1, 3, 4][Math.floor(this.random() * 4)]);
       }
     }
@@ -335,11 +335,11 @@ export class Game {
     if (this.settings.autoUpgrade && this.autoTimer >= 1) { this.autoTimer = 0; const list = this.cannons.filter(c=>c.level<40).sort((a,b)=>upgradeCost(a.type,a.level)-upgradeCost(b.type,b.level)); const c=list[0]; if (c) this.upgrade(c); }
   }
   /* v66: ultimates charge from the tower's own kills; higher level = smaller gauge */
-  chargeUlt(type,n=1){const c=this.cannons.find(t=>t.type===type);if(c&&ULT_TYPES.includes(c.type))c.ult=Math.min(ultNeed(c.level),(c.ult||0)+n);/* totem charges from everyone's kills */const tt=this.cannons.find(t=>t.type==='totem');if(tt&&type!=='totem')tt.ult=Math.min(ultNeed(tt.level),(tt.ult||0)+n*.5);}
+  chargeUlt(type,n=1){const c=this.cannons.find(t=>t.type===type);/* v69: kills made by the ultimate itself must not refill the gauge (it fired twice in a row) */if(c&&ULT_TYPES.includes(c.type)&&!((c.ultLock||0)>this.time))c.ult=Math.min(ultNeed(c.level),(c.ult||0)+n);/* totem charges from everyone's kills */const tt=this.cannons.find(t=>t.type==='totem');if(tt&&type!=='totem')tt.ult=Math.min(ultNeed(tt.level),(tt.ult||0)+n*.5);}
   matchesPriority(e){const p=this.priority;if(!p)return false;if(p==='giant')return e.boss||(!e.special&&e.kind===3);if(p==='ram'||p==='bomber')return e.special===p;return !e.special&&!e.boss&&['small','tall','fat'][e.kind]===p;}
   rollUlt(c,dt){if(!ULT_TYPES.includes(c.type))return;if((c.ult||0)<ultNeed(c.level)||this._ultBusy||!this.enemies.some(e=>e.alive))return;c.ult=0;this.triggerUlt(c);}
   triggerUlt(c){this._ultBusy=true;const go=()=>{this._ultBusy=false;if(this.cannons.includes(c))this.fireUlt(c);};if(this.onCutin)this.onCutin(c.type,c,go);else go();}
-  fireUlt(c){const st=cannonStats(c.type,c.level),pos=this.cannonPosition(c),top=Math.min(...[60,216,372].map(x=>this.wallAt(x)));this.metrics.ults=(this.metrics.ults||0)+1;this.shake=Math.max(this.shake||0,.6);
+  fireUlt(c){const st=cannonStats(c.type,c.level),pos=this.cannonPosition(c),top=Math.min(...[60,216,372].map(x=>this.wallAt(x)));this.metrics.ults=(this.metrics.ults||0)+1;c.ultLock=this.time+4.5;c.ult=0;this.shake=Math.max(this.shake||0,.6);
     if(this.fireUltV67(c,st,pos,top))return;
     if(c.type==='musk'){this.sweeps.push({kind:'rocket',big:true,x:pos.x,y:pos.y-6,dx:0,dy:-1,speed:430,width:st.width*3.6,damage:st.damage*30,traveled:0,max:1600,hit:new Set(),weapon:'musk',age:0,boomDmg:st.damage*6});return;}
     if(c.type==='laser'){this.ults.push({kind:'laser',t:0,dur:1.7,dmg:st.damage*28,hit:new Set(),y0:-40,y1:top-10});return;}

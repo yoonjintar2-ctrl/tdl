@@ -25,6 +25,11 @@ export function drawEffectV68(r, c, f, p, pos) {
     for (const sd of [-1, 1]) { c.beginPath(); c.moveTo(x, y - 9); c.quadraticCurveTo(x + sd * (9 + grip * 4), y - 6, x + sd * (4 + grip * 5), y + 3); c.stroke(); }
     c.fillStyle = '#ffb02a'; c.beginPath(); c.arc(x, y - 10, 2.4, 0, TAU); c.fill(); return true;
   }
+  if (f.type === 'lily-hit') {
+    c.globalCompositeOperation = 'lighter'; const rr = 6 + p * 26; c.globalAlpha *= 1 - p; c.strokeStyle = '#ff6aa8'; c.lineWidth = 3 * (1 - p) + 1; c.beginPath(); c.ellipse(pos.x, pos.y - 8, rr, rr * .7, 0, 0, TAU); c.stroke();
+    c.globalCompositeOperation = 'source-over'; for (let i = 0; i < 5; i++) { const a = i / 5 * TAU + p * 2, d = 6 + p * 22; heart(c, pos.x + Math.cos(a) * d, pos.y - 10 + Math.sin(a) * d * .7 - p * 10, 3.2 * (1 - p * .5)); }
+    return true;
+  }
   if (f.type === 'snipe') {
     const rr = 26 * (1 - p) + 8; c.strokeStyle = '#ffd34f'; c.lineWidth = 1.6; c.beginPath(); c.arc(pos.x, pos.y - 10, rr, 0, TAU); c.stroke();
     for (let i = 0; i < 4; i++) { const a = i * Math.PI / 2; c.beginPath(); c.moveTo(pos.x + Math.cos(a) * (rr - 6), pos.y - 10 + Math.sin(a) * (rr - 6)); c.lineTo(pos.x + Math.cos(a) * (rr + 6), pos.y - 10 + Math.sin(a) * (rr + 6)); c.stroke(); }
@@ -33,6 +38,7 @@ export function drawEffectV68(r, c, f, p, pos) {
   }
   return false;
 }
+function heart(c, x, y, r) { c.save(); c.translate(x, y); c.fillStyle = '#ff5a9a'; c.strokeStyle = '#7a1238'; c.lineWidth = .8; c.beginPath(); c.moveTo(0, r * .9); c.bezierCurveTo(-r * 1.6, -r * .2, -r * .7, -r * 1.4, 0, -r * .5); c.bezierCurveTo(r * .7, -r * 1.4, r * 1.6, -r * .2, 0, r * .9); c.fill(); c.stroke(); c.restore(); }
 function pen(c, x, y, ang, s = 1) { c.save(); c.translate(x, y); c.rotate(ang); c.scale(s, s); c.lineWidth = 1; c.strokeStyle = '#5a1830'; c.fillStyle = '#fff4f8'; c.beginPath(); c.roundRect(-9, -2.6, 13, 5.2, 2.4); c.fill(); c.stroke(); c.fillStyle = '#ff5aa0'; c.fillRect(-4, -2.6, 4, 5.2); c.fillStyle = '#8a2a55'; c.beginPath(); c.roundRect(-12, -2.2, 3.4, 4.4, 1.2); c.fill(); c.strokeStyle = '#cfd6de'; c.lineWidth = 1.2; c.beginPath(); c.moveTo(4, 0); c.lineTo(8, 0); c.stroke(); c.restore(); }
 function dove(c, x, y, s, flap) { c.save(); c.translate(x, y); c.scale(s, s); c.fillStyle = '#ffffff'; c.strokeStyle = '#8ea0b8'; c.lineWidth = .8; c.beginPath(); c.ellipse(0, 0, 6, 3, 0, 0, TAU); c.fill(); c.stroke(); for (const sd of [-1, 1]) { c.beginPath(); c.moveTo(-1, 0); c.quadraticCurveTo(1, sd * (8 + flap * 4), 5, sd * (2 + flap * 6)); c.quadraticCurveTo(3, 0, -1, 0); c.fill(); c.stroke(); } c.fillStyle = '#ffb02a'; c.beginPath(); c.moveTo(-6, 0); c.lineTo(-8.5, -1); c.lineTo(-8.5, 1); c.fill(); c.restore(); }
 // returns true when the ultimate was drawn here

@@ -52,9 +52,11 @@ export function openPack(inventory, count, random = Math.random, { guarantee = n
 
 // Difficulty modes: stronger bears, richer rewards. Unlocked by clearing all 20 missions on the previous mode.
 export const MODES = Object.freeze({
-  normal: Object.freeze({ key: 'normal', name: '노말', hp: 1, damage: 1, gold: 1, color: '#7fbf6a' }),
-  nightmare: Object.freeze({ key: 'nightmare', name: '악몽', hp: 4, damage: 1.5, gold: 2.2, color: '#a97cff' }),
-  hell: Object.freeze({ key: 'hell', name: '지옥', hp: 14, damage: 2.2, gold: 4.5, color: '#ff5a3c' })
+  normal: Object.freeze({ key: 'normal', name: '노말', hp: 1, damage: 1, gold: 1, count: 1, color: '#7fbf6a' }),
+  /* v69: each step must feel much harder AND pay much more — gold outgrows HP so income per minute rises,
+     and extra candles spawn (count) so the field is visibly denser. */
+  nightmare: Object.freeze({ key: 'nightmare', name: '악몽', hp: 3.5, damage: 2.2, gold: 6, count: 1.6, color: '#a97cff' }),
+  hell: Object.freeze({ key: 'hell', name: '불지옥', hp: 10, damage: 4, gold: 20, count: 2.3, color: '#ff5a3c' })
 });
 export const MODE_ORDER = ['normal', 'nightmare', 'hell'];
 export const modeFor = key => MODES[key] || MODES.normal;
