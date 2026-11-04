@@ -1,26 +1,26 @@
-import{CampaignView}from'./campaign-view.js?v=bbce5924c3';
-import{CampaignDataProvider,newCourseRun,readCourseRun,checkpointCourse,storeCourseRun,removeCourseRun,restoreCourseCombat,settleCourse}from'./campaign.js?v=bbce5924c3';
-import{courseFor,courseTime,CAMPAIGN_REWARD_RATE,campaignProgress}from'./campaign-courses.js?v=bbce5924c3';
-import{stockFor}from'./symbols.js?v=bbce5924c3';
-import{StockPicker}from'./stock-picker.js?v=bbce5924c3';
-import{drawSessionChart}from'./session-chart.js?v=bbce5924c3';
-import{WALL_MAX_XP}from'./progression.js?v=bbce5924c3';
-import { CANNONS,SCENARIOS,SETTINGS,ENEMIES,SUPPLIES,WORLD_WIDTH,DRONE,WALL,WALL_STAGES,cannonStats,upgradeCost,validPlacement,validDronePlacement,clamp,ULT_INFO,ultNeed } from './config.js?v=bbce5924c3';
-import { DemoMarketDataProvider, LiveMarketDataProvider, AlpacaMarketDataProvider, MARKET_ERRORS } from './market.js?v=bbce5924c3';
-import { Game } from './game.js?v=bbce5924c3';
-import { DIGITS, DIGIT_H, DIGIT_W } from './digit-sprites.js?v=bbce5924c3';
+import{CampaignView}from'./campaign-view.js?v=19af3ae636';
+import{CampaignDataProvider,newCourseRun,readCourseRun,checkpointCourse,storeCourseRun,removeCourseRun,restoreCourseCombat,settleCourse}from'./campaign.js?v=19af3ae636';
+import{courseFor,courseTime,CAMPAIGN_REWARD_RATE,campaignProgress}from'./campaign-courses.js?v=19af3ae636';
+import{stockFor}from'./symbols.js?v=19af3ae636';
+import{StockPicker}from'./stock-picker.js?v=19af3ae636';
+import{drawSessionChart}from'./session-chart.js?v=19af3ae636';
+import{WALL_MAX_XP}from'./progression.js?v=19af3ae636';
+import { CANNONS,SCENARIOS,SETTINGS,ENEMIES,SUPPLIES,WORLD_WIDTH,DRONE,WALL,WALL_STAGES,cannonStats,upgradeCost,validPlacement,validDronePlacement,clamp,ULT_INFO,ultNeed } from './config.js?v=19af3ae636';
+import { DemoMarketDataProvider, LiveMarketDataProvider, AlpacaMarketDataProvider, MARKET_ERRORS } from './market.js?v=19af3ae636';
+import { Game } from './game.js?v=19af3ae636';
+import { DIGITS, DIGIT_H, DIGIT_W } from './digit-sprites.js?v=19af3ae636';
 var goldShown='',goldNum=0;
-import { Renderer,renderShopIcon } from './renderer.js?v=bbce5924c3';import {REAR_X,REAR_DY,SUPPORT_TYPES,isRear} from './config.js?v=bbce5924c3';import {recommend,applyCombo} from './ai-combo.js?v=bbce5924c3';
-import { initialState,readSave,writeSave,snapshotGame,safeStorage,readRawSave,writeRawSave } from './storage.js?v=bbce5924c3';
-import{cloudConfigured,currentUser,signUpEmail,signInEmail,signOut,pull,push,EMAIL_RULE,idOf,claimSession,sessionState,SESSION_ID,pullGrant}from'./cloud.js?v=bbce5924c3';
-import{recentSymbols}from'./stock-picker.js?v=bbce5924c3';
-import { loadClayAssets,useBattlefield } from './clay-assets.js?v=bbce5924c3';
-import{THEMES,themeFor}from'./themes.js?v=bbce5924c3';
-import { drawClayPreview } from './clay-runtime.js?v=bbce5924c3';
-import{money,playerXPAt,SLOT_LEVELS,wallXPAt,WALL_MAX_LEVEL,wallPower}from'./progression.js?v=bbce5924c3';
-import{openPack,applyCard,PACKS,MODES,MODE_ORDER,modeFor,RARITIES,TOWER_RARITY}from'./cards.js?v=bbce5924c3';
-import{CardStage,renderCollection,towerCard,statLines,dpsOf,dpsText,nextLevelLines,openCodex}from'./card-ui.js?v=bbce5924c3';
-import{xpForNext,MAX_CARD_LEVEL}from'./cards.js?v=bbce5924c3';
+import { Renderer,renderShopIcon } from './renderer.js?v=19af3ae636';import {REAR_X,REAR_DY,SUPPORT_TYPES,isRear} from './config.js?v=19af3ae636';import {recommend,applyCombo} from './ai-combo.js?v=19af3ae636';
+import { initialState,readSave,writeSave,snapshotGame,safeStorage,readRawSave,writeRawSave,mergeSaves,coreOf } from './storage.js?v=19af3ae636';
+import{cloudConfigured,currentUser,signUpEmail,signInEmail,signOut,pull,push,EMAIL_RULE,idOf,claimSession,sessionState,SESSION_ID,pullGrant}from'./cloud.js?v=19af3ae636';
+import{recentSymbols}from'./stock-picker.js?v=19af3ae636';
+import { loadClayAssets,useBattlefield } from './clay-assets.js?v=19af3ae636';
+import{THEMES,themeFor}from'./themes.js?v=19af3ae636';
+import { drawClayPreview } from './clay-runtime.js?v=19af3ae636';
+import{money,playerXPAt,SLOT_LEVELS,wallXPAt,WALL_MAX_LEVEL,wallPower}from'./progression.js?v=19af3ae636';
+import{openPack,applyCard,PACKS,MODES,MODE_ORDER,modeFor,RARITIES,TOWER_RARITY}from'./cards.js?v=19af3ae636';
+import{CardStage,renderCollection,towerCard,statLines,dpsOf,dpsText,nextLevelLines,openCodex}from'./card-ui.js?v=19af3ae636';
+import{xpForNext,MAX_CARD_LEVEL}from'./cards.js?v=19af3ae636';
 const $=id=>document.getElementById(id),fmt=new Intl.NumberFormat('ko-KR'),nyTime=new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',hour12:false,hour:'2-digit',minute:'2-digit',second:'2-digit'});
 async function prepareArt(){const started=performance.now();
  $('asset-retry').hidden=true;$('asset-loading-message').textContent='클레이 전장을 준비하고 있어요.';
@@ -260,22 +260,22 @@ const BASE_KEY='stock-siege-cloud-base',DIRTY_KEY='stock-siege-cloud-dirty';cons
 const ALT_KEY='stock-siege-alt';const getAlt=()=>{try{return JSON.parse(localStorage.getItem(ALT_KEY)||'null');}catch{return null;}};function keepAlt(d,from){if(!d||!progressScore(d))return;const {alt,...clean}=d,cur=getAlt();if(cur&&progressScore(cur.data)>=progressScore(clean))return;try{localStorage.setItem(ALT_KEY,JSON.stringify({data:clean,from,at:Date.now()}));}catch{}}
 function cloudPayload(){const raw=readRawSave();if(!raw)return null;const {alt:_a,...clean}=raw,a=getAlt();return{...clean,by:SESSION_ID,recent:recentSymbols(),...(a?{alt:a}:{})};}
 function noteSync(kind,d){try{localStorage.setItem('stock-siege-sync-info',JSON.stringify({kind,at:Date.now(),cleared:d?.campaign?.cleared||0,xp:Math.floor(d?.playerXP||0),cards:(d?.inventory||[]).length}));}catch{}}
-function applyRemote(remote,note){noteSync('불러옴',remote.data);const loc=readRawSave();if(loc&&progressScore(loc)>0)keepAlt(loc,'이 기기');if(remote.data?.alt?.data)keepAlt(remote.data.alt.data,remote.data.alt.from||'계정');const {alt:_x,...rd}=remote.data;writeRawSave({...rd,savedAt:Date.now()});setBase(remote.updatedAt);try{if(Array.isArray(remote.data?.recent))localStorage.setItem('stock-siege-recent',JSON.stringify(remote.data.recent.slice(0,5)));sessionStorage.setItem('siege-cloud-applied',String(remote.updatedAt));if(note)sessionStorage.setItem('siege-cloud-note',note);}catch{}setOwner(cloudUser.id);location.reload();}
+function applyRemote(remote,note){noteSync('불러옴',remote.data);const loc=readRawSave();if(loc&&progressScore(loc)>0)keepAlt(loc,'이 기기');if(remote.data?.alt?.data)keepAlt(remote.data.alt.data,remote.data.alt.from||'계정');const {alt:_x,...rd}=remote.data;writeRawSave(mergeSaves(rd,loc,getAlt()?.data)||{...rd,savedAt:Date.now()});/* v79: merge, never overwrite */setBase(remote.updatedAt);try{if(Array.isArray(remote.data?.recent))localStorage.setItem('stock-siege-recent',JSON.stringify(remote.data.recent.slice(0,5)));sessionStorage.setItem('siege-cloud-applied',String(remote.updatedAt));if(note)sessionStorage.setItem('siege-cloud-note',note);}catch{}setOwner(cloudUser.id);location.reload();}
 async function pushNow(force=false){clearTimeout(cloudTimer);cloudTimer=null;if(!cloudUser||cloudKicked)return;if(!force&&Date.now()<handoffUntil){scheduleCloudPush(handoffUntil-Date.now()+500);return;}const raw=cloudPayload();if(!raw)return;
  try{const st=await sessionState(cloudUser);if(st&&st.sessionId&&st.sessionId!==SESSION_ID){await kicked(st);return;}const v=Date.now();await push(cloudUser,{...raw,savedAt:v});setBase(v);cloudState='synced';noteSync('저장',raw);}catch{cloudState='error';}renderAccount();}
 async function kicked(st){if(cloudKicked)return;cloudKicked=true;clearTimeout(cloudTimer);save();
  // flush this device's progress once, but only right after the takeover (so a long-asleep tab can't overwrite newer play)
  let flushed=false;if(Date.now()-(st?.sessionAt||0)<30000){const raw=cloudPayload();if(raw){try{await push(cloudUser,raw);flushed=true;}catch{}}}
  closePanel?.();const w=document.createElement('div');w.id='kicked-overlay';w.className='exit-confirm';w.innerHTML=`<div class="exit-card"><strong>다른 기기에서 접속했어요</strong><p>같은 계정으로 다른 기기에서 게임을 시작해서 이 기기의 연결을 끊었어요.${flushed?' 여기까지의 진행 상황은 계정에 저장했어요.':''}</p><div class="exit-actions"><button type="button" id="kick-resume">이 기기에서 계속하기</button></div></div>`;document.body.append(w);
- w.querySelector('#kick-resume').onclick=async()=>{w.querySelector('#kick-resume').disabled=true;try{await claimSession(cloudUser);const remote=await pull(cloudUser),loc=readRawSave();if(remote&&remote.data&&Object.keys(remote.data).length&&progressScore(remote.data)>=progressScore(loc)){applyRemote(remote,'이 기기로 이어서 플레이해요');return;}if(remote?.data)keepAlt(remote.data,'다른 기기');cloudKicked=false;await pushNow(true);try{sessionStorage.setItem('siege-cloud-note','이 기기 진행 상황을 계정에 저장했어요');}catch{}}catch{}location.reload();};}
+ w.querySelector('#kick-resume').onclick=async()=>{w.querySelector('#kick-resume').disabled=true;try{await claimSession(cloudUser);const remote=await pull(cloudUser),loc=readRawSave();if(remote&&remote.data&&Object.keys(remote.data).length&&coreOf(mergeSaves(remote.data,loc))!==coreOf(loc)){applyRemote(remote,'두 기기 진행 상황을 합쳤어요');return;}if(remote?.data)keepAlt(remote.data,'다른 기기');cloudKicked=false;await pushNow(true);try{sessionStorage.setItem('siege-cloud-note','이 기기 진행 상황을 계정에 저장했어요');}catch{}}catch{}location.reload();};}
 function watchSession(){clearInterval(sessionWatch);sessionWatch=setInterval(async()=>{if(!cloudUser||cloudKicked||document.hidden)return;try{const st=await sessionState(cloudUser);if(st&&st.sessionId&&st.sessionId!==SESSION_ID)await kicked(st);}catch{}},9000);}
 async function startCloud(fromLogin=false){if(qaMode||!cloudConfigured())return;if(!fromLogin)cloudUser=await currentUser();if(!cloudUser){renderAccount();return;}cloudState='syncing';renderAccount();
  try{const remote=await pull(cloudUser),local=readRawSave(),hasRemote=!!(remote&&remote.data&&Object.keys(remote.data).length),boundHere=ownerOf()===cloudUser.id;let applied=false;try{applied=sessionStorage.getItem('siege-cloud-applied')===String(remote?.updatedAt);}catch{}
   if(remote?.data?.alt?.data)keepAlt(remote.data.alt.data,remote.data.alt.from||'계정');
   // v45: conflicting saves → the one with more progress wins; the other is kept as a restorable backup.
-  if(hasRemote&&!applied&&!courseRun){const rs=progressScore(remote.data),ls=progressScore(local);if(rs>ls||(rs===ls&&remote.updatedAt!==getBase())){await claimSession(cloudUser);applyRemote(remote,fromLogin?'계정 진행 상황 불러오기 완료!':'계정의 진행 상황을 이어받았어요');return;}if(rs>0&&remote.updatedAt!==getBase())keepAlt(remote.data,'다른 기기');}
+  if(hasRemote&&!applied&&!courseRun){const {alt:_r,...rd}=remote.data,merged=mergeSaves(rd,local,getAlt()?.data);if(merged&&coreOf(merged)!==coreOf(local)){await claimSession(cloudUser);if(local&&progressScore(local)>0)keepAlt(local,'이 기기');writeRawSave(merged);try{await push(cloudUser,{...merged,by:SESSION_ID,recent:recentSymbols()});setBase(Date.now());}catch{}noteSync('합침',merged);setOwner(cloudUser.id);try{sessionStorage.setItem('siege-cloud-applied',String(remote.updatedAt));sessionStorage.setItem('siege-cloud-note',fromLogin?'계정 진행 상황을 합쳐서 불러왔어요':'다른 기기 진행 상황까지 합쳤어요');}catch{}location.reload();return;}}
   const takeover=!!(remote?.sessionId&&remote.sessionId!==SESSION_ID);await claimSession(cloudUser,cloudPayload());setOwner(cloudUser.id);
-  if(takeover){handoffUntil=Date.now()+20000;const claimAt=Date.now();setTimeout(async()=>{try{const r=await pull(cloudUser);if(r&&r.data?.by&&r.data.by!==SESSION_ID&&r.updatedAt!==getBase()&&progressScore(r.data)>progressScore(readRawSave())){applyRemote(r,'다른 기기의 마지막 진행 상황까지 이어받았어요');return;}}catch{}handoffUntil=0;pushNow(true);},18000);}
+  if(takeover){handoffUntil=Date.now()+20000;const claimAt=Date.now();setTimeout(async()=>{try{const r=await pull(cloudUser);if(r&&r.data?.by&&r.data.by!==SESSION_ID&&r.updatedAt!==getBase()&&coreOf(mergeSaves(r.data,readRawSave()))!==coreOf(readRawSave())){applyRemote(r,'다른 기기의 마지막 진행 상황까지 이어받았어요');return;}}catch{}handoffUntil=0;pushNow(true);},18000);}
   else if(local)await pushNow(true);
   if(fromLogin){await pushNow(true);try{sessionStorage.setItem('siege-cloud-note','계정 진행 상황 불러오기 완료!');}catch{}location.reload();return;}
   cloudState='synced';let note='';try{note=sessionStorage.getItem('siege-cloud-note')||'';sessionStorage.removeItem('siege-cloud-note');}catch{}toast(note?'☁ '+note:'☁ '+idOf(cloudUser)+' · 계정 저장 연결됨');watchSession();setTimeout(applyGrant,1500);}
@@ -307,7 +307,7 @@ function openAccountForm(mode='signup',reason=''){document.getElementById('accou
 setInterval(()=>{if(marketChosen&&!document.hidden){playClock+=10;if(playClock>=300)promptSignup('5분 넘게 플레이했어요!');}},10000);
 window.addEventListener('pagehide',()=>{if(cloudUser&&!cloudKicked)pushNow(true);});
 /* v43: alternate devices freely — leaving pushes now; coming back adopts the other device's play and reclaims the session */
-document.addEventListener('visibilitychange',async()=>{if(!cloudUser||qaMode)return;if(document.hidden){if(!cloudKicked)pushNow(true);return;}try{const st=await sessionState(cloudUser);if(st&&st.sessionId&&st.sessionId!==SESSION_ID){cloudKicked=true;await claimSession(cloudUser);const r=await pull(cloudUser);if(r&&r.data&&Object.keys(r.data).length&&r.updatedAt!==getBase()&&progressScore(r.data)>=progressScore(readRawSave())){applyRemote(r,'다른 기기에서 하던 진행 상황을 이어받았어요');return;}cloudKicked=false;document.getElementById('kicked-overlay')?.remove();pushNow(true);}}catch{}});
+document.addEventListener('visibilitychange',async()=>{if(!cloudUser||qaMode)return;if(document.hidden){if(!cloudKicked)pushNow(true);return;}try{const st=await sessionState(cloudUser);if(st&&st.sessionId&&st.sessionId!==SESSION_ID){cloudKicked=true;await claimSession(cloudUser);const r=await pull(cloudUser);if(r&&r.data&&Object.keys(r.data).length&&coreOf(mergeSaves(r.data,readRawSave()))!==coreOf(readRawSave())){applyRemote(r,'다른 기기 진행 상황까지 합쳤어요');return;}cloudKicked=false;document.getElementById('kicked-overlay')?.remove();pushNow(true);}}catch{}});
 startCloud();
 // Current time (KST) at the top of the battlefield.
 {const f=new Intl.DateTimeFormat('ko-KR',{timeZone:'Asia/Seoul',hour:'2-digit',minute:'2-digit',hour12:false});}

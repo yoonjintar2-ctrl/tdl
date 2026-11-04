@@ -1,11 +1,11 @@
-import { WORLD_WIDTH as W,CANNONS,ENEMIES,SUPPLIES,WALL_STAGES,DRONE,WALL,cannonStats,validPlacement,validDronePlacement,snapSlot,ALL_SLOTS,FORWARD_X,FORWARD_DY,clamp } from './config.js?v=bbce5924c3';
-import{WALL_MAX_LEVEL,WALL_MAX_XP}from'./progression.js?v=bbce5924c3';
-import{isAIStock}from'./symbols.js?v=bbce5924c3';
-import { QuarterCamera, DEPTH_SCALE, WALL_ELEVATION } from './camera.js?v=bbce5924c3';
-import { drawClayMortar, drawClayMortarIcon, clayBattlefield } from './clay-assets.js?v=bbce5924c3';
-import{drawProjectile,drawEffect}from'./combat-fx.js?v=bbce5924c3';
-import{artCrop}from'./terrain.js?v=bbce5924c3';import{drawEffectV68,drawUltV68,drawShotV68,drawSpecialV73,drawEnemyShotsV73}from'./fx-v68.js?v=bbce5924c3';
-import { drawClayTower, drawClayUnit, drawClayWall, drawClayPreview, drawForwardPad, drawRearPad, hasKeep, drawClaySprite, clayReady, metaOf, drawClayTowerIcon, wallOutline, tierOf, tierTint, drawTierBack, drawTierFront } from './clay-runtime.js?v=bbce5924c3';
+import { WORLD_WIDTH as W,CANNONS,ENEMIES,SUPPLIES,WALL_STAGES,DRONE,WALL,cannonStats,validPlacement,validDronePlacement,snapSlot,ALL_SLOTS,FORWARD_X,FORWARD_DY,clamp } from './config.js?v=19af3ae636';
+import{WALL_MAX_LEVEL,WALL_MAX_XP}from'./progression.js?v=19af3ae636';
+import{isAIStock}from'./symbols.js?v=19af3ae636';
+import { QuarterCamera, DEPTH_SCALE, WALL_ELEVATION } from './camera.js?v=19af3ae636';
+import { drawClayMortar, drawClayMortarIcon, clayBattlefield } from './clay-assets.js?v=19af3ae636';
+import{drawProjectile,drawEffect}from'./combat-fx.js?v=19af3ae636';
+import{artCrop}from'./terrain.js?v=19af3ae636';import{drawEffectV68,drawUltV68,drawShotV68,drawSpecialV73,drawEnemyShotsV73}from'./fx-v68.js?v=19af3ae636';
+import { drawClayTower, drawClayUnit, drawClayWall, drawClayPreview, drawForwardPad, drawRearPad, hasKeep, drawClaySprite, clayReady, metaOf, drawClayTowerIcon, wallOutline, tierOf, tierTint, drawTierBack, drawTierFront } from './clay-runtime.js?v=19af3ae636';
 const BAND=270;
 const TAU=Math.PI*2;
 function box(c,x,y,w,h,r,fill,stroke){c.beginPath();c.roundRect(x,y,w,h,r);if(fill){c.fillStyle=fill;c.fill();}if(stroke){c.lineWidth=1;c.strokeStyle=stroke;c.stroke();}}
@@ -306,9 +306,10 @@ export class Renderer{
   {const list=g.enemies.filter(e=>e.alive&&!(e.special==='pole'&&e.y>g.wallAt(e.x)-6)).sort((a,b)=>this.point(a.x,a.y+Math.min(a.radius,14)).y-this.point(b.x,b.y+Math.min(b.radius,14)).y),fwdY=this.point(216,g.wallAt(216)+WALL.deck+WALL.mountOffset-FORWARD_DY,0).y;let done=false;const outpost=()=>{const fwd=g.cannons.find(u=>u.type!=='drone'&&Math.abs(u.x-216)<.5);drawForwardPad(c,g,(x,y,z)=>this.point(x,y,z),!!fwd);if(fwd){const p=this.cannonAnchor(fwd);c.save();if(this.ghost?.cannon===fwd)c.globalAlpha=.2;buffAura(c,p.x,p.y,t,g.wallLevel);drawCannon(c,{...fwd,angle:this.screenAngle(fwd)},p.x,p.y,t,g.power,fwd===g.selected);buffAura(c,p.x,p.y,t,g.wallLevel,true);c.restore();}};for(const e of list){if(!done&&this.point(e.x,e.y+Math.min(e.radius,14)).y>fwdY){outpost();done=true;}this.enemy(c,e);}if(!done)outpost();}
   for(const bh of g.cannons.filter(u=>u.type==='blackhole')){const st=cannonStats('blackhole',bh.level),pp=g.cannonPosition(bh),p=this.point(pp.x,pp.y,0);c.save();for(let i=0;i<4;i++){const q=((t*.5+i/4)%1),r=st.range*(1-q);c.globalAlpha=q*.35;c.strokeStyle='#b28cff';c.lineWidth=2;c.beginPath();c.ellipse(p.x,p.y,r,r*DEPTH_SCALE,0,0,TAU);c.stroke();}const gr=c.createRadialGradient(p.x,p.y,0,p.x,p.y,st.range*.5);gr.addColorStop(0,'rgba(40,10,70,.35)');gr.addColorStop(1,'rgba(40,10,70,0)');c.globalAlpha=1;c.fillStyle=gr;c.beginPath();c.ellipse(p.x,p.y,st.range*.5,st.range*.5*DEPTH_SCALE,0,0,TAU);c.fill();c.restore();}
   this.knightsAndSweeps(c,t);
-  this.wallGround(c);this.wall(c);this.wallLevelFX(c);drawRearPad(c,g,(x,y,z)=>this.point(x,y,z),g.cannons.some(u=>u.type!=='drone'&&Math.abs(u.x-217)<.5));for(const e of g.enemies)if(e.alive&&e.special==='pole'&&e.y>g.wallAt(e.x)-6)this.enemy(c,e);/* v78: 장대 음봉 past the wall draws in front of it */
+  this.wallGround(c);this.wall(c);this.wallLevelFX(c);drawRearPad(c,g,(x,y,z)=>this.point(x,y,z),g.cannons.some(u=>u.type!=='drone'&&Math.abs(u.x-217)<.5));
   if(!hasKeep(g)){const cx=g.commandX,cu={type:'command',x:cx,level:1,angle:-Math.PI/2},cp=this.cannonAnchor(cu);drawClayTower(c,cu,cp.x,cp.y,t,1,g.selectedCommand,false);}
   for(const u of g.cannons.filter(u=>u.type!=='drone'&&Math.abs(u.x-216)>=.5)){const p=this.cannonAnchor(u);c.save();if(this.ghost?.cannon===u)c.globalAlpha=.2;buffAura(c,p.x,p.y,t,g.wallLevel);drawCannon(c,{...u,angle:this.screenAngle(u)},p.x,p.y,t,g.power,u===g.selected);buffAura(c,p.x,p.y,t,g.wallLevel,true);c.restore();}
+  for(const e of g.enemies)if(e.alive&&e.special==='pole'&&e.y>g.wallAt(e.x)-6)this.enemy(c,e);/* v79: 장대 음봉 behind the wall line draws in front of the wall towers */
   // Attackers stop at the north upper silhouette; masonry covers only their
   // south-facing contact edge. Supply units approach from the foreground.
   for(const s of g.supplies.filter(s=>s.alive).sort((a,b)=>this.point(a.x,a.y+Math.min(a.radius,14)).y-this.point(b.x,b.y+Math.min(b.radius,14)).y))this.supply(c,s);

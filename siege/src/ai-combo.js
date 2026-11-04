@@ -1,8 +1,8 @@
 // v78: "AI 조합 추천" — a local optimiser. Every press samples a new, different lineup from the
 // owned towers (DPS × level, role coverage, synergies), then assigns slots to fit each tower's reach.
-import { CANNONS, cannonStats, WALL_SLOTS, FORWARD_X, REAR_X, SUPPORT_TYPES } from './config.js?v=bbce5924c3';
-import { dpsOf } from './card-ui.js?v=bbce5924c3';
-import { TOWER_RARITY } from './cards.js?v=bbce5924c3';
+import { CANNONS, cannonStats, WALL_SLOTS, FORWARD_X, REAR_X, SUPPORT_TYPES } from './config.js?v=19af3ae636';
+import { dpsOf } from './card-ui.js?v=19af3ae636';
+import { TOWER_RARITY } from './cards.js?v=19af3ae636';
 const ROLE = { sticky: 'control', sonic: 'control', blackhole: 'control', poison: 'dot', mortar: 'area', siege: 'area', musk: 'area', laser: 'pierce', hbm: 'area', ant: 'close', bull: 'close', machine: 'single', sniper: 'boss', drone: 'single', fed: 'chain', summoner: 'swarm' };
 const CLOSE = new Set(['sonic', 'bull', 'ant', 'machine', 'sticky', 'poison', 'blackhole', 'fed']);
 const RAR = { common: 0, rare: .08, epic: .16, legend: .26 };

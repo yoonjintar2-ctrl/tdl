@@ -21,13 +21,19 @@ export function installEnemiesV73(Game, { SPECIALS, WALL, FORWARD_DY, WORLD_WIDT
       }
       return false; // walks like a normal candle
     }
-    if (sp === 'pole') { // 장대 음봉: strides over the wall and hunts supply candles from the rear line
+    if (sp === 'pole') { // 장대 음봉: strides over the wall, then walks up to supply candles and smashes them
       const hold = this.wallAt(e.x) + WALL.deck + WALL.mountOffset + 70; e.attacking = false; e.vx = 0;
       if (e.y < hold) { e.y = Math.min(hold, e.y + speed * dt); e.striding = true; return true; }
-      e.striding = false; e.swing = Math.max(0, (e.swing || 0) - dt); e.hitT = (e.hitT ?? .4) - dt * slowF(this, e);
-      if (e.hitT <= 0) { const prey = this.supplies.filter(s => s.alive && Math.abs(s.y - e.y) < 120 && Math.abs(s.x - e.x) < 120).sort((a, b) => Math.hypot(a.x - e.x, a.y - e.y) - Math.hypot(b.x - e.x, b.y - e.y))[0];
-        if (prey) { e.hitT = 1.2; e.swing = .4; this.effect('impact', prey.x, prey.y, '#ff6a4a', '', .45); this.remove(prey, 'pole'); } else e.hitT = .3; }
-      if (!this.supplies.some(s => s.alive && Math.abs(s.x - e.x) < 120)) { const t = this.supplies.filter(s => s.alive && s.y > e.y - 40).sort((a, b) => Math.abs(a.x - e.x) - Math.abs(b.x - e.x))[0]; if (t) e.x += Math.sign(t.x - e.x) * Math.min(Math.abs(t.x - e.x), speed * .8 * dt); }
+      e.striding = false;
+      if (e.swing > 0) { e.swing -= dt; if (e.swing <= .18 && e.swingTarget != null) { const prey = this.supplies.find(s => s.alive && s.id === e.swingTarget); e.swingTarget = null;
+          const hx = e.x + e.face * 26, hy = e.y + 30; this.effect('explosion', hx, hy, '#ff7a4a', '', .55, { radius: 26 }); this.effect('ult-hit', hx, hy, '#ff6a4a', '', .45, { ult: 'drone', small: true }); this.shake = Math.max(this.shake || 0, .35);
+          if (prey && Math.abs(prey.x - hx) < 50 && Math.abs(prey.y - hy) < 90) { this.effect('text', prey.x, prey.y - 14, '#ff8a6a', '쾅!', .7, { sourceAltitude: 16 }); this.remove(prey, 'crush'); } }
+        return true; }
+      const prey = this.supplies.filter(s => s.alive && s.y > e.y - 30 && s.y < e.y + 200).sort((a, b) => Math.hypot(a.x - e.x, a.y - e.y) - Math.hypot(b.x - e.x, b.y - e.y))[0];
+      if (!prey) return true;
+      const dx = prey.x - (e.x + Math.sign(prey.x - e.x || 1) * 26), dy = prey.y - (e.y + 30);
+      if (Math.abs(dx) > 6) { e.x += Math.sign(dx) * Math.min(Math.abs(dx), speed * 4 * dt); e.walkT = (e.walkT || 0) + dt; }
+      else if (dy < 80 && dy > -50) { e.face = Math.sign(prey.x - e.x) || 1; e.swing = .5; e.swingTarget = prey.id; }
       return true;
     }
     if (sp === 'catapult') {
