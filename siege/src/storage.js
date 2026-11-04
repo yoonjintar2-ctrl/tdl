@@ -1,8 +1,8 @@
-import{campaignProgress}from'./campaign-courses.js?v=19af3ae636';
-import{SETTINGS,CANNONS,DRONE,WORLD_WIDTH,validPlacement,snapSlot,clamp}from'./config.js?v=19af3ae636';
-import{validSymbol}from'./symbols.js?v=19af3ae636';
-import{legacySlotXP,playerLevelFor,towerSlots,WALL_MAX_XP}from'./progression.js?v=19af3ae636';
-import{MODE_ORDER,MAX_CARD_LEVEL}from'./cards.js?v=19af3ae636';
+import{campaignProgress}from'./campaign-courses.js?v=7f79b486f9';
+import{SETTINGS,CANNONS,DRONE,WORLD_WIDTH,validPlacement,snapSlot,clamp}from'./config.js?v=7f79b486f9';
+import{validSymbol}from'./symbols.js?v=7f79b486f9';
+import{legacySlotXP,playerLevelFor,towerSlots,WALL_MAX_XP}from'./progression.js?v=7f79b486f9';
+import{MODE_ORDER,MAX_CARD_LEVEL}from'./cards.js?v=7f79b486f9';
 export const campaignModes=raw=>({nightmare:campaignProgress(raw?.nightmare),hell:campaignProgress(raw?.hell)});
 // Some hosts throw on localStorage access itself (private windows, sandboxed frames).
 const memoryStore=new Map();export const memoryStorage={getItem:k=>memoryStore.get(k)??null,setItem:(k,v)=>memoryStore.set(k,String(v)),removeItem:k=>memoryStore.delete(k)};
@@ -19,21 +19,6 @@ export function snapshotGame(game){const inventory=new Map(game.inventory.map(c=
 export function writeSave(game,storage=safeStorage()){try{storage.setItem(SETTINGS.saveKey,JSON.stringify({...snapshotGame(game),savedAt:Date.now()}));return true;}catch{return false;}}
 export function readRawSave(storage=safeStorage()){try{return JSON.parse(storage.getItem(SETTINGS.saveKey));}catch{return null;}}
 export function writeRawSave(data,storage=safeStorage()){try{storage.setItem(SETTINGS.saveKey,JSON.stringify(data));return true;}catch{return false;}}
-// v79: never lose progress on login — merge saves field by field instead of "one whole save wins".
-// Progress (player XP, card levels, mission clears, kills, wall investment) takes the max of every copy;
-// spendable / situational state (gold, layout, settings) comes from the most recently saved copy,
-// unless that copy looks like a fresh reset (then the richer gold is kept).
-export function mergeSaves(...saves){
- const list=saves.filter(s=>s&&typeof s==='object'&&Array.isArray(s.inventory));if(!list.length)return null;if(list.length===1)return list[0];
- const newest=list.slice().sort((a,b)=>(b.savedAt||0)-(a.savedAt||0))[0],maxXP=Math.max(...list.map(s=>s.playerXP||0));
- const inv=new Map();for(const s of list)for(const c of s.inventory||[]){if(!c||!CANNONS[c.type])continue;const p=inv.get(c.type);if(!p||c.level>p.level||(c.level===p.level&&(c.xp||0)>(p.xp||0)))inv.set(c.type,{type:c.type,level:c.level||1,xp:c.xp||0});}
- const camp=k=>{const cs=list.map(s=>k?campaignProgress(s.campaignModes?.[k]):campaignProgress(s.campaign));return{cleared:Math.max(...cs.map(c=>c.cleared)),settled:[...new Set(cs.flatMap(c=>c.settled))].slice(-64)};};
- const reset=(newest.playerXP||0)<maxXP*.5;
- return{...newest,version:5,playerXP:maxXP,lifetimeKills:Math.max(...list.map(s=>s.lifetimeKills||0)),wallInvest:Math.max(...list.map(s=>s.wallInvest||0)),
-  inventory:[...inv.values()],cannons:(newest.cannons||[]).map(c=>({...c,level:inv.get(c.type)?.level||c.level})),
-  campaign:camp(null),campaignModes:{nightmare:camp('nightmare'),hell:camp('hell')},
-  gold:reset?Math.max(...list.map(s=>s.gold||0)):(newest.gold||0),freePack:list.every(s=>s.freePack===true),
-  grantsApplied:[...new Set(list.flatMap(s=>Array.isArray(s.grantsApplied)?s.grantsApplied:[]))].slice(-50),
-  playerName:newest.playerName||list.map(s=>s.playerName).find(Boolean)||'',savedAt:Date.now()};
-}
+// v80: the most recently saved copy wins as a whole (the other copy is kept as a restorable backup by the caller).
+export function mergeSaves(...saves){const list=saves.filter(s=>s&&typeof s==='object'&&Array.isArray(s.inventory));if(!list.length)return null;return list.slice().sort((a,b)=>(b.savedAt||0)-(a.savedAt||0))[0];}
 export const coreOf=s=>s?JSON.stringify([Math.floor(s.playerXP||0),Math.floor(s.lifetimeKills||0),s.wallInvest||0,(s.inventory||[]).map(c=>c.type+c.level+':'+(c.xp||0)).sort(),campaignProgress(s.campaign).cleared,campaignProgress(s.campaignModes?.nightmare).cleared,campaignProgress(s.campaignModes?.hell).cleared,Math.floor(s.gold||0),(s.grantsApplied||[]).length]):'';

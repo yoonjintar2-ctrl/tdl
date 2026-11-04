@@ -1,26 +1,26 @@
-import{CampaignView}from'./campaign-view.js?v=19af3ae636';
-import{CampaignDataProvider,newCourseRun,readCourseRun,checkpointCourse,storeCourseRun,removeCourseRun,restoreCourseCombat,settleCourse}from'./campaign.js?v=19af3ae636';
-import{courseFor,courseTime,CAMPAIGN_REWARD_RATE,campaignProgress}from'./campaign-courses.js?v=19af3ae636';
-import{stockFor}from'./symbols.js?v=19af3ae636';
-import{StockPicker}from'./stock-picker.js?v=19af3ae636';
-import{drawSessionChart}from'./session-chart.js?v=19af3ae636';
-import{WALL_MAX_XP}from'./progression.js?v=19af3ae636';
-import { CANNONS,SCENARIOS,SETTINGS,ENEMIES,SUPPLIES,WORLD_WIDTH,DRONE,WALL,WALL_STAGES,cannonStats,upgradeCost,validPlacement,validDronePlacement,clamp,ULT_INFO,ultNeed } from './config.js?v=19af3ae636';
-import { DemoMarketDataProvider, LiveMarketDataProvider, AlpacaMarketDataProvider, MARKET_ERRORS } from './market.js?v=19af3ae636';
-import { Game } from './game.js?v=19af3ae636';
-import { DIGITS, DIGIT_H, DIGIT_W } from './digit-sprites.js?v=19af3ae636';
+import{CampaignView}from'./campaign-view.js?v=7f79b486f9';
+import{CampaignDataProvider,newCourseRun,readCourseRun,checkpointCourse,storeCourseRun,removeCourseRun,restoreCourseCombat,settleCourse}from'./campaign.js?v=7f79b486f9';
+import{courseFor,courseTime,CAMPAIGN_REWARD_RATE,campaignProgress}from'./campaign-courses.js?v=7f79b486f9';
+import{stockFor}from'./symbols.js?v=7f79b486f9';
+import{StockPicker}from'./stock-picker.js?v=7f79b486f9';
+import{drawSessionChart}from'./session-chart.js?v=7f79b486f9';
+import{WALL_MAX_XP}from'./progression.js?v=7f79b486f9';
+import { CANNONS,SCENARIOS,SETTINGS,ENEMIES,SUPPLIES,WORLD_WIDTH,DRONE,WALL,WALL_STAGES,cannonStats,upgradeCost,validPlacement,validDronePlacement,clamp,ULT_INFO,ultNeed } from './config.js?v=7f79b486f9';
+import { DemoMarketDataProvider, LiveMarketDataProvider, AlpacaMarketDataProvider, MARKET_ERRORS } from './market.js?v=7f79b486f9';
+import { Game } from './game.js?v=7f79b486f9';
+import { DIGITS, DIGIT_H, DIGIT_W } from './digit-sprites.js?v=7f79b486f9';
 var goldShown='',goldNum=0;
-import { Renderer,renderShopIcon } from './renderer.js?v=19af3ae636';import {REAR_X,REAR_DY,SUPPORT_TYPES,isRear} from './config.js?v=19af3ae636';import {recommend,applyCombo} from './ai-combo.js?v=19af3ae636';
-import { initialState,readSave,writeSave,snapshotGame,safeStorage,readRawSave,writeRawSave,mergeSaves,coreOf } from './storage.js?v=19af3ae636';
-import{cloudConfigured,currentUser,signUpEmail,signInEmail,signOut,pull,push,EMAIL_RULE,idOf,claimSession,sessionState,SESSION_ID,pullGrant}from'./cloud.js?v=19af3ae636';
-import{recentSymbols}from'./stock-picker.js?v=19af3ae636';
-import { loadClayAssets,useBattlefield } from './clay-assets.js?v=19af3ae636';
-import{THEMES,themeFor}from'./themes.js?v=19af3ae636';
-import { drawClayPreview } from './clay-runtime.js?v=19af3ae636';
-import{money,playerXPAt,SLOT_LEVELS,wallXPAt,WALL_MAX_LEVEL,wallPower}from'./progression.js?v=19af3ae636';
-import{openPack,applyCard,PACKS,MODES,MODE_ORDER,modeFor,RARITIES,TOWER_RARITY}from'./cards.js?v=19af3ae636';
-import{CardStage,renderCollection,towerCard,statLines,dpsOf,dpsText,nextLevelLines,openCodex}from'./card-ui.js?v=19af3ae636';
-import{xpForNext,MAX_CARD_LEVEL}from'./cards.js?v=19af3ae636';
+import { Renderer,renderShopIcon } from './renderer.js?v=7f79b486f9';import {REAR_X,REAR_DY,SUPPORT_TYPES,isRear} from './config.js?v=7f79b486f9';import {recommend,applyCombo} from './ai-combo.js?v=7f79b486f9';
+import { initialState,readSave,writeSave,snapshotGame,safeStorage,readRawSave,writeRawSave,mergeSaves,coreOf } from './storage.js?v=7f79b486f9';
+import{cloudConfigured,currentUser,signUpEmail,signInEmail,signOut,pull,push,EMAIL_RULE,idOf,claimSession,sessionState,SESSION_ID,pullGrant}from'./cloud.js?v=7f79b486f9';
+import{recentSymbols}from'./stock-picker.js?v=7f79b486f9';
+import { loadClayAssets,useBattlefield } from './clay-assets.js?v=7f79b486f9';
+import{THEMES,themeFor}from'./themes.js?v=7f79b486f9';
+import { drawClayPreview } from './clay-runtime.js?v=7f79b486f9';
+import{money,playerXPAt,SLOT_LEVELS,wallXPAt,WALL_MAX_LEVEL,wallPower}from'./progression.js?v=7f79b486f9';
+import{openPack,applyCard,PACKS,MODES,MODE_ORDER,modeFor,RARITIES,TOWER_RARITY}from'./cards.js?v=7f79b486f9';
+import{CardStage,renderCollection,towerCard,statLines,dpsOf,dpsText,nextLevelLines,openCodex}from'./card-ui.js?v=7f79b486f9';
+import{xpForNext,MAX_CARD_LEVEL}from'./cards.js?v=7f79b486f9';
 const $=id=>document.getElementById(id),fmt=new Intl.NumberFormat('ko-KR'),nyTime=new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',hour12:false,hour:'2-digit',minute:'2-digit',second:'2-digit'});
 async function prepareArt(){const started=performance.now();
  $('asset-retry').hidden=true;$('asset-loading-message').textContent='클레이 전장을 준비하고 있어요.';
@@ -260,7 +260,7 @@ const BASE_KEY='stock-siege-cloud-base',DIRTY_KEY='stock-siege-cloud-dirty';cons
 const ALT_KEY='stock-siege-alt';const getAlt=()=>{try{return JSON.parse(localStorage.getItem(ALT_KEY)||'null');}catch{return null;}};function keepAlt(d,from){if(!d||!progressScore(d))return;const {alt,...clean}=d,cur=getAlt();if(cur&&progressScore(cur.data)>=progressScore(clean))return;try{localStorage.setItem(ALT_KEY,JSON.stringify({data:clean,from,at:Date.now()}));}catch{}}
 function cloudPayload(){const raw=readRawSave();if(!raw)return null;const {alt:_a,...clean}=raw,a=getAlt();return{...clean,by:SESSION_ID,recent:recentSymbols(),...(a?{alt:a}:{})};}
 function noteSync(kind,d){try{localStorage.setItem('stock-siege-sync-info',JSON.stringify({kind,at:Date.now(),cleared:d?.campaign?.cleared||0,xp:Math.floor(d?.playerXP||0),cards:(d?.inventory||[]).length}));}catch{}}
-function applyRemote(remote,note){noteSync('불러옴',remote.data);const loc=readRawSave();if(loc&&progressScore(loc)>0)keepAlt(loc,'이 기기');if(remote.data?.alt?.data)keepAlt(remote.data.alt.data,remote.data.alt.from||'계정');const {alt:_x,...rd}=remote.data;writeRawSave(mergeSaves(rd,loc,getAlt()?.data)||{...rd,savedAt:Date.now()});/* v79: merge, never overwrite */setBase(remote.updatedAt);try{if(Array.isArray(remote.data?.recent))localStorage.setItem('stock-siege-recent',JSON.stringify(remote.data.recent.slice(0,5)));sessionStorage.setItem('siege-cloud-applied',String(remote.updatedAt));if(note)sessionStorage.setItem('siege-cloud-note',note);}catch{}setOwner(cloudUser.id);location.reload();}
+function applyRemote(remote,note){noteSync('불러옴',remote.data);const loc=readRawSave();if(loc&&progressScore(loc)>0)keepAlt(loc,'이 기기');if(remote.data?.alt?.data)keepAlt(remote.data.alt.data,remote.data.alt.from||'계정');const {alt:_x,...rd}=remote.data;writeRawSave({...rd,savedAt:rd.savedAt||Date.now()});setBase(remote.updatedAt);try{if(Array.isArray(remote.data?.recent))localStorage.setItem('stock-siege-recent',JSON.stringify(remote.data.recent.slice(0,5)));sessionStorage.setItem('siege-cloud-applied',String(remote.updatedAt));if(note)sessionStorage.setItem('siege-cloud-note',note);}catch{}setOwner(cloudUser.id);location.reload();}
 async function pushNow(force=false){clearTimeout(cloudTimer);cloudTimer=null;if(!cloudUser||cloudKicked)return;if(!force&&Date.now()<handoffUntil){scheduleCloudPush(handoffUntil-Date.now()+500);return;}const raw=cloudPayload();if(!raw)return;
  try{const st=await sessionState(cloudUser);if(st&&st.sessionId&&st.sessionId!==SESSION_ID){await kicked(st);return;}const v=Date.now();await push(cloudUser,{...raw,savedAt:v});setBase(v);cloudState='synced';noteSync('저장',raw);}catch{cloudState='error';}renderAccount();}
 async function kicked(st){if(cloudKicked)return;cloudKicked=true;clearTimeout(cloudTimer);save();
@@ -273,7 +273,7 @@ async function startCloud(fromLogin=false){if(qaMode||!cloudConfigured())return;
  try{const remote=await pull(cloudUser),local=readRawSave(),hasRemote=!!(remote&&remote.data&&Object.keys(remote.data).length),boundHere=ownerOf()===cloudUser.id;let applied=false;try{applied=sessionStorage.getItem('siege-cloud-applied')===String(remote?.updatedAt);}catch{}
   if(remote?.data?.alt?.data)keepAlt(remote.data.alt.data,remote.data.alt.from||'계정');
   // v45: conflicting saves → the one with more progress wins; the other is kept as a restorable backup.
-  if(hasRemote&&!applied&&!courseRun){const {alt:_r,...rd}=remote.data,merged=mergeSaves(rd,local,getAlt()?.data);if(merged&&coreOf(merged)!==coreOf(local)){await claimSession(cloudUser);if(local&&progressScore(local)>0)keepAlt(local,'이 기기');writeRawSave(merged);try{await push(cloudUser,{...merged,by:SESSION_ID,recent:recentSymbols()});setBase(Date.now());}catch{}noteSync('합침',merged);setOwner(cloudUser.id);try{sessionStorage.setItem('siege-cloud-applied',String(remote.updatedAt));sessionStorage.setItem('siege-cloud-note',fromLogin?'계정 진행 상황을 합쳐서 불러왔어요':'다른 기기 진행 상황까지 합쳤어요');}catch{}location.reload();return;}}
+  if(hasRemote&&!applied&&!courseRun){/* v80: account data follows the latest save; a device that never synced with this account takes the account's copy */const {alt:_r,...rd}=remote.data,merged=boundHere?mergeSaves(rd,local):rd;if(merged&&coreOf(merged)!==coreOf(local)){await claimSession(cloudUser);if(local&&progressScore(local)>0)keepAlt(local,'이 기기');writeRawSave(merged);try{await push(cloudUser,{...merged,by:SESSION_ID,recent:recentSymbols()});setBase(Date.now());}catch{}noteSync('합침',merged);setOwner(cloudUser.id);try{sessionStorage.setItem('siege-cloud-applied',String(remote.updatedAt));sessionStorage.setItem('siege-cloud-note',fromLogin?'계정 진행 상황을 합쳐서 불러왔어요':'다른 기기 진행 상황까지 합쳤어요');}catch{}location.reload();return;}}
   const takeover=!!(remote?.sessionId&&remote.sessionId!==SESSION_ID);await claimSession(cloudUser,cloudPayload());setOwner(cloudUser.id);
   if(takeover){handoffUntil=Date.now()+20000;const claimAt=Date.now();setTimeout(async()=>{try{const r=await pull(cloudUser);if(r&&r.data?.by&&r.data.by!==SESSION_ID&&r.updatedAt!==getBase()&&coreOf(mergeSaves(r.data,readRawSave()))!==coreOf(readRawSave())){applyRemote(r,'다른 기기의 마지막 진행 상황까지 이어받았어요');return;}}catch{}handoffUntil=0;pushNow(true);},18000);}
   else if(local)await pushNow(true);

@@ -1,4 +1,4 @@
-import { WALL } from './config.js?v=19af3ae636';
+import { WALL } from './config.js?v=7f79b486f9';
 // A flat seat beneath each ground tower blends into the original wall.
 // The renderer and contact geometry split this extension equally north/south.
 export function wallMountDepth(cannons,x){
