@@ -1,7 +1,7 @@
-import { CANNONS, cannonStats, PERKS, towerTier, ULT_INFO } from './config.js?v=7f79b486f9';
-import { RARITIES, TOWER_RARITY, xpForNext, MAX_CARD_LEVEL, cardOdds, PACKS } from './cards.js?v=7f79b486f9';
-import { renderShopIcon } from './renderer.js?v=7f79b486f9';
-import { FX } from './fx.js?v=7f79b486f9';
+import { CANNONS, cannonStats, PERKS, towerTier, ULT_INFO } from './config.js?v=51ed4cc6d1';
+import { RARITIES, TOWER_RARITY, xpForNext, MAX_CARD_LEVEL, cardOdds, PACKS } from './cards.js?v=51ed4cc6d1';
+import { renderShopIcon } from './renderer.js?v=51ed4cc6d1';
+import { FX } from './fx.js?v=51ed4cc6d1';
 
 const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
 const wait = ms => new Promise(r => setTimeout(r, ms));
@@ -102,6 +102,15 @@ export class CardStage {
   async levelShow() {
     const ups = new Map(); for (const r of this.results) { if (r.isNew) continue; const u = ups.get(r.type); const from = r.level - r.levelUps; if (!u) ups.set(r.type, { type: r.type, from, to: r.level, any: r.levelUps > 0 }); else { u.from = Math.min(u.from, from); u.to = Math.max(u.to, r.level); u.any ||= r.levelUps > 0; } }
     const list = [...ups.values()].filter(u => u.any && u.to > u.from); if (!list.length || !this.root) return;
+    /* v81: 3+ towers levelled (e.g. a 100-pack) → one board with every result at once instead of a show per tower */
+    if (list.length >= 3 || this.results.length >= 100) {
+      const ov = el('div', 'lvup'), board = el('div', 'lvup-board'), grid = el('div', 'lvb-grid');
+      board.append(el('strong', '', `레벨 업! · ${list.length}종`), grid, el('small', 'lvup-tap', '탭하여 닫기'));
+      list.sort((a, b) => (b.to - b.from) - (a.to - a.from));
+      list.forEach((u, i) => { const it = el('div', 'lvb-item'); it.style.animationDelay = Math.min(i * 40, 600) + 'ms'; const cv = el('canvas'); cv.width = 120; cv.height = 104; const evo = towerTier(u.from, 10) !== towerTier(u.to, 10), perks = (PERKS[u.type] || []).filter(p => p.lv > u.from && p.lv <= u.to); it.append(cv, el('b', '', CANNONS[u.type].short), el('span', '', `Lv.${u.from} → ${u.to}`)); if (evo || perks.length) it.append(el('small', '', evo ? '외형 진화!' : '새 능력!')); grid.append(it); renderShopIcon(cv, u.type, u.to); });
+      ov.append(board); this.root.append(ov); { const b = board.getBoundingClientRect(); this.fx?.burst(b.left + b.width / 2, b.top + 40, '#ffd34f', { count: 60, speed: 320, size: 3 }); }
+      await new Promise(res => { const t = setTimeout(res, 6000); ov.onclick = () => { clearTimeout(t); res(); }; }); ov.remove(); return;
+    }
     const ov = el('div', 'lvup'); this.root.append(ov); let skip = false; const tap = el('small', 'lvup-tap', '탭하여 넘기기'); ov.onclick = () => { skip = true; };
     for (const u of list) {
       if (!this.root) return; skip = false;

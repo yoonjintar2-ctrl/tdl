@@ -1266,3 +1266,17 @@ button.primary:disabled,.course-primary:disabled,button.secondary:disabled{filte
 .wall-pop .ti-card.wall-info{max-height:none!important;height:auto!important}
 .wall-pop .wi-hint{margin:4px 0 0!important;font-size:11px!important;line-height:1.35!important;word-break:keep-all}
 .wall-pop .wi-invest{margin:6px 0 2px}
+/* v81: result title ribbon is never clipped — only the list scrolls */
+.gacha-stage .gacha-summary{overflow:visible!important;max-height:none!important;margin-top:22px!important;padding-top:22px!important}
+.gacha-stage .gacha-summary .gs-list{max-height:min(34vh,300px);overflow-y:auto;padding:3px 3px 4px;-webkit-overflow-scrolling:touch}
+/* v81: compact level-up board (many towers at once) */
+.lvup-board{display:flex;flex-direction:column;align-items:center;gap:10px;width:min(92vw,420px);padding:22px 14px 16px;border-radius:18px;background:linear-gradient(180deg,#fff8e4,#f3e0b0);box-shadow:0 0 0 3px #2b1a0b,inset 0 0 0 3px #c9952f,0 10px 26px #000a;max-height:80vh;box-sizing:border-box}
+.lvup-board>strong{font:400 22px/1.2 var(--gk-font);color:#2b1a0b}
+.lvb-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;width:100%;overflow-y:auto;max-height:56vh;padding:2px}
+.lvb-item{display:flex;flex-direction:column;align-items:center;min-width:0;padding:6px 4px;border-radius:12px;background:#fff6dccc;box-shadow:inset 0 0 0 1.5px #c99a4a;animation:lvbIn .35s cubic-bezier(.2,1.5,.4,1) both}
+.lvb-item canvas{width:100%;max-width:76px;height:auto;aspect-ratio:120/104}
+.lvb-item b{font:400 12px/1.2 var(--gk-font);max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lvb-item span{font:400 13px/1.2 var(--gk-font);color:#2f6b1d;white-space:nowrap}
+.lvb-item small{font-size:10px;color:#b0420e;white-space:nowrap}
+@keyframes lvbIn{from{transform:scale(.6);opacity:0}}
+.lvb-item b{color:#2b1a0b!important}

@@ -1,6 +1,6 @@
 // v68/v71: visuals for the v67 towers. GPT sprite sheets only (fx-flash, fx-shots, ult-hits) — no hand-drawn
 // vector shapes on the battlefield. Dedicated GPT sheets will replace these re-tinted stand-ins.
-import { drawClaySprite, clayReady } from './clay-runtime.js?v=7f79b486f9';
+import { drawClaySprite, clayReady } from './clay-runtime.js?v=51ed4cc6d1';
 const TAU = Math.PI * 2;
 const PINK = 'hue-rotate(285deg) saturate(1.6) brightness(1.1)', GOLD = 'sepia(1) saturate(5) hue-rotate(-12deg) brightness(1.25)', WHITE = 'grayscale(1) brightness(2.2)';
 function spr(c, key, x, y, size, frame, filter) { if (!clayReady(key)) return false; c.save(); if (filter) c.filter = filter; drawClaySprite(c, key, x, y, size, frame); c.restore(); return true; }
@@ -27,7 +27,7 @@ export function drawShotV68(r, c, p, pt, ang, position, u) {
 }
 export function drawUltV68(r, c, u, k, t, W, H) {
   const fade = Math.min(1, u.t * 5, (u.dur - u.t) * 4);
-  if (u.kind === 'totem' && clayReady('fx-bless')) { c.globalAlpha = 1; const fr = Math.min(5, Math.floor(k * 6)); for (const tw of r.game.cannons) { if (tw.type === 'drone') continue; const a = r.cannonAnchor(tw); drawClaySprite(c, 'fx-bless', a.x, a.y + 4, 92, fr); } return true; }
+  if (u.kind === 'totem' && clayReady('fx-bless') && u.t < 1.6) { c.save(); c.globalAlpha = 1; const fr = Math.min(5, Math.floor(u.t / 1.6 * 6)); for (const tw of r.game.cannons) { if (tw.type === 'drone') continue; const a = r.cannonAnchor(tw); drawClaySprite(c, 'fx-bless', a.x, a.y + 4, 92, fr); } c.restore(); } /* v81: pillars first, then the original blessing glow keeps playing */
   if (u.kind === 'sonic') { const o = r.point(u.x, u.y, 0); for (let i = 0; i < 3; i++) { const kk = Math.max(0, k - i * .12); if (kk <= 0) continue; c.globalAlpha = fade * (1 - kk) * .75; c.save(); c.translate(o.x, o.y - 60 - kk * 120); c.scale(1, .5); drawClaySprite(c, 'fx-sonic', 0, 0, 160 + kk * 900, Math.min(5, Math.floor(kk * 6))); c.restore(); } return true; }
   if (u.kind === 'sniper') { c.globalAlpha = fade * .55; const g = c.createRadialGradient(W / 2, H * .38, H * .18, W / 2, H * .38, H * .7); g.addColorStop(0, '#0000'); g.addColorStop(1, '#000c'); c.fillStyle = g; c.fillRect(0, 0, W, H); return true; }
   if (u.kind === 'hbm') { c.globalAlpha = fade * (.1 + .06 * Math.sin(t * 24)); c.fillStyle = '#20ffb0'; c.globalCompositeOperation = 'lighter'; c.fillRect(0, 0, W, H * .62); return true; }
