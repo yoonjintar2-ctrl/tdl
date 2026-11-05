@@ -1,5 +1,5 @@
-import { loadClayCollection,CLAY_CATALOG } from './clay-runtime.js?v=d20f2e2148';
-import { WALL } from './config.js?v=d20f2e2148';
+import { loadClayCollection,CLAY_CATALOG } from './clay-runtime.js?v=adb3a06876';
+import { WALL } from './config.js?v=adb3a06876';
 const images = new Map();
 export const CLAY_ART = {
   mortar: new URL('../assets/clay/mortar-master-v1.webp', import.meta.url).href,
@@ -8,7 +8,7 @@ export const CLAY_ART = {
 };
 export function clayBattlefield(){return images.get('battlefield');}
 // Swap the battlefield painting (per-stock themes). Resolves true once decoded.
-const fields=new Map();export async function useBattlefield(file){if(typeof Image==='undefined')return false;if(fields.has(file)){images.set('battlefield',fields.get(file));return true;}const img=new Image();img.decoding='async';img.src=new URL('../assets/clay/'+file,import.meta.url).href;try{await img.decode();if(fields.size>=4)fields.delete(fields.keys().next().value);/* v76: keep at most 4 decoded battlefields (memory) */fields.set(file,img);images.set('battlefield',img);return true;}catch{return false;}}
+const fields=new Map();export async function useBattlefield(file){if(typeof Image==='undefined')return false;if(fields.has(file)){images.set('battlefield',fields.get(file));return true;}const img=new Image();img.decoding='async';img.src=new URL('../assets/clay/'+file,import.meta.url).href;try{/* v83: iOS can reject decode() under memory pressure even though the image loaded — fall back to the load event */try{await img.decode();}catch(e){if(!(img.complete&&img.naturalWidth))await new Promise((res,rej)=>{if(img.complete&&img.naturalWidth)return res();img.onload=res;img.onerror=rej;setTimeout(()=>img.naturalWidth?res():rej(e),8000);});}if(fields.size>=4)fields.delete(fields.keys().next().value);/* v76: keep at most 4 decoded battlefields (memory) */fields.set(file,img);images.set('battlefield',img);return true;}catch{return false;}}
 export async function loadClayAssets({onProgress=()=>{}}={}) {
   if (typeof Image === 'undefined') return false;
   let baseDone=0,collectionDone=0;const total=CLAY_CATALOG.length+2;const report=()=>onProgress(baseDone+collectionDone,total);
