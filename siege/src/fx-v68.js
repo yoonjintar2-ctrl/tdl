@@ -1,6 +1,6 @@
 // v68/v71: visuals for the v67 towers. GPT sprite sheets only (fx-flash, fx-shots, ult-hits) — no hand-drawn
 // vector shapes on the battlefield. Dedicated GPT sheets will replace these re-tinted stand-ins.
-import { drawClaySprite, clayReady } from './clay-runtime.js?v=51ed4cc6d1';
+import { drawClaySprite, clayReady } from './clay-runtime.js?v=d20f2e2148';
 const TAU = Math.PI * 2;
 const PINK = 'hue-rotate(285deg) saturate(1.6) brightness(1.1)', GOLD = 'sepia(1) saturate(5) hue-rotate(-12deg) brightness(1.25)', WHITE = 'grayscale(1) brightness(2.2)';
 function spr(c, key, x, y, size, frame, filter) { if (!clayReady(key)) return false; c.save(); if (filter) c.filter = filter; drawClaySprite(c, key, x, y, size, frame); c.restore(); return true; }
@@ -42,7 +42,7 @@ export function drawSpecialV73(r, c, e, foot, t) {
   const big = e.special === 'pole' ? 190 : e.special === 'catapult' ? 118 : e.special === 'drum' ? 66 : e.special === 'burry' ? 104 : 80, d = e._depth || 1, sz = big * d;
   let key, fr;
   if (e.special === 'drum') { key = 'enemy-drum'; fr = Math.floor(t * 9 + e.id) % 6; }
-  else if (e.special === 'catapult') { key = 'enemy-catapult'; fr = e.phaseT || 0; }
+  else if (e.special === 'catapult') { if (e.moving && clayReady('enemy-catapult-move')) { key = 'enemy-catapult-move'; fr = Math.floor(t * 8 + e.id) % 6; } else { key = 'enemy-catapult'; fr = e.phaseT || 0; } }
   else if (e.special === 'fed') { key = 'enemy-fed'; fr = e.throwing > 0 ? (e.throwing > .22 ? 4 : 5) : Math.floor(t * 7 + e.id) % 4; }
   else if (e.special === 'pole') { key = 'enemy-pole'; fr = e.swing > 0 ? (e.swing > .2 ? 4 : 5) : (e.striding || e.walkT) ? Math.floor(t * 6 + e.id) % 4 : 0; }
   else if (e.special === 'burry') { key = 'enemy-burry'; fr = e.drumming > 0 ? 4 + (Math.floor(t * 8) % 2) : Math.floor(t * 7 + e.id) % 4; }
@@ -50,7 +50,7 @@ export function drawSpecialV73(r, c, e, foot, t) {
   if (!clayReady(key)) return false;
   c.save(); c.fillStyle = '#1d2a1e40'; c.beginPath(); c.ellipse(foot.x, foot.y, sz * .32, sz * .09, 0, 0, TAU); c.fill();
   if (e.hit > 0) c.filter = 'brightness(1.6)'; else if (e.special === 'fed' && e.charging > 0 && !e.hiked) c.filter = `drop-shadow(0 0 ${6 + Math.sin(t * 20) * 4}px #ff2a1a)`;
-  if (e.special === 'pole' && e.face < 0) { c.translate(foot.x, 0); c.scale(-1, 1); c.translate(-foot.x, 0); } drawClaySprite(c, key, foot.x, foot.y, sz, fr); c.filter = 'none'; if (e.special === 'pole' && e.face < 0) { c.translate(foot.x, 0); c.scale(-1, 1); c.translate(-foot.x, 0); }
+  if (e.special === 'pole' && e.face < 0) { c.translate(foot.x, 0); c.scale(-1, 1); c.translate(-foot.x, 0); } { const rock = e.special === 'catapult' && e.moving && key === 'enemy-catapult' ? Math.sin(t * 9 + e.id) : 0; if (rock) { c.translate(foot.x, foot.y); c.rotate(rock * .04); c.translate(-foot.x, -foot.y - Math.abs(rock) * 2.5); } drawClaySprite(c, key, foot.x, foot.y, sz, fr); } c.filter = 'none'; if (e.special === 'pole' && e.face < 0) { c.translate(foot.x, 0); c.scale(-1, 1); c.translate(-foot.x, 0); }
   const k = Math.max(0, e.hp / e.maxHP), w = Math.max(26, sz * .55), y = foot.y - sz * .95; c.fillStyle = '#2b1a0bdd'; c.beginPath(); c.roundRect(foot.x - w / 2 - 1, y - 1, w + 2, 6, 3); c.fill(); c.fillStyle = k > .5 ? '#ff8a72' : '#ff4a3a'; c.beginPath(); c.roundRect(foot.x - w / 2, y, w * k, 4, 2); c.fill();
   c.restore(); return true;
 }

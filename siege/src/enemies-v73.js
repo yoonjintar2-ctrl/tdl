@@ -38,8 +38,8 @@ export function installEnemiesV73(Game, { SPECIALS, WALL, FORWARD_DY, WORLD_WIDT
     }
     if (sp === 'catapult') {
       const hold = Math.max(60, stop - 250);
-      if (e.y < hold) { e.y = Math.min(hold, e.y + speed * dt); e.attacking = false; return true; }
-      e.attacking = false; e.fire = (e.fire ?? 1.5) - dt * slowF(this, e);
+      if (e.y < hold) { e.y = Math.min(hold, e.y + speed * dt); e.attacking = false; e.moving = true; return true; }
+      e.moving = false; e.attacking = false; e.fire = (e.fire ?? 1.5) - dt * slowF(this, e);
       e.phaseT = e.fire < .9 ? Math.min(5, Math.floor((.9 - e.fire) / .15)) : 0;
       if (e.fire <= 0) { e.fire = 4.2; shoot(this, e, 'stone', def.damage, 1.4); }
       return true;

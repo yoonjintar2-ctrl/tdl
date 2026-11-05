@@ -1,11 +1,11 @@
-import { WORLD_WIDTH as W,CANNONS,ENEMIES,SUPPLIES,WALL_STAGES,DRONE,WALL,cannonStats,validPlacement,validDronePlacement,snapSlot,ALL_SLOTS,FORWARD_X,FORWARD_DY,clamp } from './config.js?v=51ed4cc6d1';
-import{WALL_MAX_LEVEL,WALL_MAX_XP}from'./progression.js?v=51ed4cc6d1';
-import{isAIStock}from'./symbols.js?v=51ed4cc6d1';
-import { QuarterCamera, DEPTH_SCALE, WALL_ELEVATION } from './camera.js?v=51ed4cc6d1';
-import { drawClayMortar, drawClayMortarIcon, clayBattlefield } from './clay-assets.js?v=51ed4cc6d1';
-import{drawProjectile,drawEffect}from'./combat-fx.js?v=51ed4cc6d1';
-import{artCrop}from'./terrain.js?v=51ed4cc6d1';import{drawEffectV68,drawUltV68,drawShotV68,drawSpecialV73,drawEnemyShotsV73}from'./fx-v68.js?v=51ed4cc6d1';
-import { drawClayTower, drawClayUnit, drawClayWall, drawClayPreview, drawForwardPad, drawRearPad, hasKeep, drawClaySprite, clayReady, metaOf, drawClayTowerIcon, wallOutline, tierOf, tierTint, drawTierBack, drawTierFront } from './clay-runtime.js?v=51ed4cc6d1';
+import { WORLD_WIDTH as W,CANNONS,ENEMIES,SUPPLIES,WALL_STAGES,DRONE,WALL,cannonStats,validPlacement,validDronePlacement,snapSlot,ALL_SLOTS,FORWARD_X,FORWARD_DY,clamp } from './config.js?v=d20f2e2148';
+import{WALL_MAX_LEVEL,WALL_MAX_XP}from'./progression.js?v=d20f2e2148';
+import{isAIStock}from'./symbols.js?v=d20f2e2148';
+import { QuarterCamera, DEPTH_SCALE, WALL_ELEVATION } from './camera.js?v=d20f2e2148';
+import { drawClayMortar, drawClayMortarIcon, clayBattlefield } from './clay-assets.js?v=d20f2e2148';
+import{drawProjectile,drawEffect}from'./combat-fx.js?v=d20f2e2148';
+import{artCrop}from'./terrain.js?v=d20f2e2148';import{drawEffectV68,drawUltV68,drawShotV68,drawSpecialV73,drawEnemyShotsV73}from'./fx-v68.js?v=d20f2e2148';
+import { drawClayTower, drawClayUnit, drawClayWall, drawClayPreview, drawForwardPad, drawRearPad, hasKeep, drawClaySprite, clayReady, metaOf, drawClayTowerIcon, wallOutline, tierOf, tierTint, drawTierBack, drawTierFront } from './clay-runtime.js?v=d20f2e2148';
 const BAND=270;
 const TAU=Math.PI*2;
 function box(c,x,y,w,h,r,fill,stroke){c.beginPath();c.roundRect(x,y,w,h,r);if(fill){c.fillStyle=fill;c.fill();}if(stroke){c.lineWidth=1;c.strokeStyle=stroke;c.stroke();}}
