@@ -1418,6 +1418,144 @@ details.repeat-details[open] summary{color:var(--accent-deep);}
 .fx-swirl{animation:fxSwirl 8s linear infinite;transform-origin:32px 60px;transform-box:view-box;}
 @keyframes fxTwinkle{0%,100%{opacity:.12;transform:scale(.65)}50%{opacity:1;transform:scale(1.25)}}
 .fx-twinkle{animation:fxTwinkle 1.9s ease-in-out infinite;transform-origin:center;transform-box:fill-box;}
+
+/* ═══════════ 모바일 v2 — 확인·빠른 추가 중심 (ver 13.0) ═══════════ */
+/* 상단: 로고 · 검색 · 더보기만 남김 (필터·커뮤니케이션·설치·설정은 더보기 안으로) */
+body.mob #mFilterBtn,body.mob #mCollabBtn,body.mob #mInstall,body.mob #mSetBtn,body.mob #mDdayBtn,body.mob #mUser{display:none!important;}
+body.mob #mFab,body.mob #mMicFab{display:none!important;}
+#mMoreBtn{position:relative;}
+#mMoreDot{position:absolute;top:2px;right:2px;min-width:16px;height:16px;border-radius:9px;background:var(--imp-strong);color:#7A4B00;font-size:9.5px;font-weight:700;display:flex;align-items:center;justify-content:center;padding:0 3px;box-sizing:border-box;}
+#mMoreDot.hidden{display:none;}
+#mMoreBtn.filter-on::after{content:'';position:absolute;bottom:6px;right:7px;width:6px;height:6px;border-radius:50%;background:var(--accent);}
+body.mob #mList{padding:2px 10px 14px;}
+body.mob #ntWrap{bottom:calc(96px + env(safe-area-inset-bottom,0px));}
+
+/* 필터 적용 표시 */
+.mfchip{display:flex;align-items:center;gap:8px;background:var(--accent-soft);color:var(--accent-deep);border-radius:12px;padding:9px 12px;margin:2px 0 8px;font-size:12px;font-weight:600;}
+.mfchip span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.mfchip button{flex:0 0 auto;border:none;background:var(--panel);color:var(--text);border-radius:9px;padding:5px 10px;font-size:11.5px;font-family:inherit;font-weight:600;}
+
+/* 날짜 묶음 */
+.mgrp{background:var(--panel);border-radius:16px;margin-bottom:10px;overflow:hidden;}
+.mgh{display:flex;align-items:baseline;gap:7px;padding:11px 14px 7px;position:relative;}
+.mgh b{font-size:14.5px;font-weight:800;color:var(--text);letter-spacing:-0.2px;}
+.mgh span{font-size:12px;color:var(--text-dim);font-weight:600;}
+.mgh i{margin-left:auto;font-style:normal;font-size:11px;font-weight:700;color:var(--text-dim);}
+.mgrp.today .mgh b,.mgrp.today .mgh span{color:var(--today);}
+.mgrp.today{box-shadow:inset 0 3px 0 var(--today);}
+.mgh.drop-here::after{content:'';position:absolute;left:10px;right:10px;bottom:0;height:3px;border-radius:2px;background:var(--accent);}
+.mgb .mswipe{border-radius:0;margin-bottom:0;}
+.mgb .mswipe + .mswipe .mrow::before{content:'';position:absolute;left:46px;right:0;top:0;height:1px;background:var(--line);}
+.mgb .mrow{border-radius:0;margin-bottom:0;padding:10px 12px 10px 4px;gap:2px;align-items:flex-start;}
+.mgb .msw-b.del,.mgb .msw-b.fav{border-radius:0;}
+.mg-empty{padding:4px 14px 13px;font-size:12.5px;color:var(--text-dim);}
+
+/* 완료 체크(한 번 탭) */
+.m-chk{flex:0 0 auto;width:42px;height:38px;border:none;background:transparent;padding:0;display:flex;align-items:center;justify-content:center;cursor:pointer;margin-top:-4px;}
+.m-chk i{width:21px;height:21px;border-radius:50%;border:1.7px solid var(--bar,#B7B7BC);box-sizing:border-box;display:flex;align-items:center;justify-content:center;transition:background .15s,border-color .15s,transform .12s;}
+.m-chk:active i{transform:scale(0.86);}
+.m-chk.on i{background:var(--accent);border-color:var(--accent);}
+.m-chk.on i::after{content:'';width:9px;height:5px;border-left:2px solid #fff;border-bottom:2px solid #fff;transform:rotate(-45deg) translate(1px,-1px);}
+.m-chk.rep i{border-radius:7px;}
+.mgb .mrow .m-txt{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;font-size:14.5px;line-height:1.38;word-break:keep-all;overflow-wrap:anywhere;}
+.mgb .mrow .m-tags{flex-wrap:wrap;row-gap:3px;margin-top:4px;}
+.mgb .mrow .m-tags:empty{display:none;}
+.mgb .mrow .m-right{align-self:center;padding-left:4px;}
+.m-camp{font-size:10.5px;padding:2px 7px;}
+.m-tm{font-size:11px;font-weight:700;color:var(--text);}
+.m-when{flex:0 0 auto;font-size:10.5px;font-weight:600;color:var(--text-dim);}
+.m-when.late{color:#C4675E;}
+.mrow.mq-new{animation:mqNew 1.6s ease;}
+@keyframes mqNew{0%,45%{background:var(--accent-soft);}100%{background:var(--panel);}}
+
+/* 밀린 일 · 지난 일정 접기 */
+.mfold{display:flex;align-items:center;gap:8px;width:100%;border:none;background:var(--panel);border-radius:14px;padding:12px 14px;margin-bottom:10px;font-family:inherit;font-size:13px;font-weight:700;color:var(--text);text-align:left;cursor:pointer;}
+.mfold em{font-style:normal;font-weight:800;}
+.mfold.late{color:#B4574F;background:color-mix(in srgb,#C4675E 11%,var(--panel));}
+.mfold .ar{margin-left:auto;font-size:12px;color:var(--text-dim);font-weight:600;}
+.mfold.open{margin-bottom:6px;}
+.mfold.past{background:transparent;justify-content:center;color:var(--text-dim);font-weight:600;font-size:12.5px;padding:10px;}
+.mfold.past .ar{margin-left:4px;}
+
+/* 하단 빠른 추가 바 */
+#mQuick{flex:0 0 auto;margin:0 4px calc(4px + env(safe-area-inset-bottom,0px));background:var(--panel);border-radius:20px;box-shadow:0 6px 22px rgba(40,34,60,0.16);padding:6px;position:relative;z-index:230;}
+body.theme-dark #mQuick{box-shadow:0 6px 22px rgba(0,0,0,0.4);}
+#mqForm{display:flex;align-items:center;gap:4px;margin:0;}
+#mqIn{flex:1;min-width:0;border:none;background:transparent;outline:none;padding:11px 6px 11px 12px;font-family:inherit;color:var(--text);}
+#mqIn::placeholder{color:var(--text-dim);}
+.mq-btn{flex:0 0 auto;width:42px;height:42px;border-radius:50%;border:none;background:transparent;color:var(--text-dim);display:flex;align-items:center;justify-content:center;padding:0;cursor:pointer;}
+.mq-btn.hidden{display:none;}
+#mqSend{background:var(--accent);color:#fff;}
+#mqSend:active{transform:scale(0.93);}
+#mqExtra{display:none;padding:2px 4px 6px;}
+#mQuick.open #mqExtra{display:block;}
+#mqHint{font-size:12px;font-weight:700;color:var(--accent-deep);padding:4px 8px 6px;display:flex;align-items:center;gap:6px;}
+#mqHint.hidden{display:none;}
+#mqHint span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+#mqHint button{flex:0 0 auto;white-space:nowrap;border:none;background:var(--bg);color:var(--text-dim);border-radius:8px;font-size:10.5px;padding:3px 7px;font-family:inherit;}
+.mq-chips{display:flex;gap:6px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding:2px 4px;scrollbar-width:none;}
+.mq-chips::-webkit-scrollbar{display:none;}
+.mq-chip{flex:0 0 auto;position:relative;border:1px solid var(--line-strong);background:var(--bg);color:var(--text);border-radius:20px;padding:7px 12px;font-size:12.5px;font-weight:600;font-family:inherit;white-space:nowrap;cursor:pointer;max-width:none!important;}
+.mq-chip.on{background:var(--accent);border-color:var(--accent);color:#fff;}
+.mq-chip.ghost{border-style:dashed;color:var(--text-dim);}
+.mq-chip input[type=date]{position:absolute;inset:0;width:100%;height:100%;opacity:0;border:none;padding:0;margin:0;}
+.mq-sep{flex:0 0 auto;width:1px;background:var(--line-strong);margin:5px 2px;}
+#mToast{position:fixed;left:14px;right:14px;top:calc(70px + env(safe-area-inset-top,0px));z-index:620;display:flex;align-items:center;gap:10px;background:#2b2c30;color:#fff;border-radius:14px;padding:11px 14px;font-size:13px;box-shadow:0 8px 24px rgba(0,0,0,0.25);opacity:0;transform:translateY(-8px);transition:opacity .18s,transform .18s;pointer-events:none;}
+#mToast.in{opacity:1;transform:translateY(0);pointer-events:auto;}
+#mToast span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+#mToast button{flex:0 0 auto;border:none;background:transparent;color:#F2C94C;font-weight:700;font-size:13px;font-family:inherit;padding:2px 4px;}
+
+/* 상세 시트: 자주 쓰는 것만 위에, 나머지는 더보기 */
+.ms-chips{display:flex;flex-wrap:wrap;gap:6px;max-height:112px;overflow-y:auto;}
+.ms-chip{border:1px solid var(--line-strong);background:var(--bg);color:var(--text);border-radius:20px;padding:8px 12px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;}
+.ms-chip.on{background:var(--accent);border-color:var(--accent);color:#fff;}
+.ms-more{margin-top:14px;border-top:1px solid var(--line);padding-top:4px;}
+.ms-more summary{list-style:none;cursor:pointer;font-size:12.5px;font-weight:700;color:var(--text-dim);padding:10px 2px;display:flex;align-items:center;gap:6px;}
+.ms-more summary::-webkit-details-marker{display:none;}
+.ms-more summary::after{content:'›';margin-left:auto;font-size:15px;transform:rotate(90deg);transition:transform .15s;}
+.ms-more[open] summary::after{transform:rotate(-90deg);}
+.ms-more summary small{font-weight:500;font-size:11px;}
+#mSheet .ms-quick{margin-top:10px;}
+
+.via-mob{flex:0 0 auto;width:19px;height:19px;margin-left:8px;border:none;border-radius:6px;background:#FBEBD8;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;}
+.via-mob i{display:block;width:7px;height:12px;border:1.5px solid #B9772F;border-radius:2.5px;box-sizing:border-box;}
+.via-mob:hover{background:#F5DDBF;}
+body.theme-dark .via-mob{background:#4A3F2C;}
+body.theme-dark .via-mob i{border-color:#E0B37A;}
+.info-detail .via-mob + input{padding-left:6px;}
+
+/* ── ver 13.1: 홈은 "오늘까지 / 내일 이후" 두 묶음, 줄마다 날짜 ── */
+.msec{display:flex;align-items:baseline;padding:12px 8px 6px;font-size:13px;font-weight:800;color:var(--text-dim);}
+.msec i{margin-left:auto;font-style:normal;font-size:12px;font-weight:700;}
+.mgb .mrow{align-items:center;padding:7px 12px 7px 2px;gap:2px;}
+.mgb .m-chk{margin-top:0;width:40px;height:34px;}
+.m-date{flex:0 0 auto;width:62px;font-size:12.5px;font-weight:700;color:var(--text);opacity:.72;font-variant-numeric:tabular-nums;white-space:nowrap;}
+.mgb .mrow .m-txt{flex:1;min-width:0;display:block;-webkit-line-clamp:unset;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:14.5px;}
+.mgb .mrow .m-right{gap:5px;padding-left:6px;max-width:46%;}
+.mgb .mrow .m-right .m-camp{max-width:96px;}
+.mrow.done .m-date{opacity:.7;}
+/* 등록 바: 입력 한 줄 + 미리 선택된 3칸 */
+#mqExtra{padding:0 4px 6px;}
+#mqPills{display:flex;align-items:center;gap:6px;overflow-x:auto;scrollbar-width:none;}
+#mqPills::-webkit-scrollbar{display:none;}
+.mq-pill{flex:0 0 auto;position:relative;border:1px solid var(--line-strong);background:var(--bg);color:var(--text);border-radius:20px;padding:8px 12px;font-size:13px;font-weight:700;font-family:inherit;white-space:nowrap;cursor:pointer;max-width:none!important;}
+.mq-pill.empty{color:var(--text-dim);font-weight:600;border-style:dashed;}
+.mq-pill.on{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent);}
+.mq-pill input[type=date]{position:absolute;inset:0;width:100%;height:100%;opacity:0;border:none;padding:0;margin:0;}
+.mq-more{flex:0 0 auto;margin-left:auto;border:none;background:none;color:var(--text-dim);font-size:12.5px;font-weight:600;font-family:inherit;padding:8px 4px;white-space:nowrap;}
+#mqOpts{padding:8px 0 0;}
+#mqOpts.hidden{display:none;}
+/* 상세 창: 내용 + 같은 3칸 + 필요할 때만 추가하는 것들 */
+body.mob #mSheet .ms-head{display:none;}
+.ms-top{display:flex;align-items:flex-start;background:var(--bg);border-radius:13px;padding:2px 4px 2px 0;}
+.ms-top .m-chk{margin-top:7px;}
+#mSheet .ms-top textarea{background:transparent;padding:11px 10px 11px 0;min-height:70px;}
+.ms-pills{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px;}
+#mSheet .ms-pill{width:auto!important;flex:0 0 auto;border:1px solid var(--line-strong)!important;background:var(--bg);color:var(--text);border-radius:20px!important;padding:9px 13px!important;font-size:13px!important;font-weight:700;font-family:inherit;cursor:pointer;max-width:100%;}
+#mSheet select.ms-pill{-webkit-appearance:none;appearance:none;text-align:center;text-align-last:center;}
+#mSheet .ms-pill.opt{border-style:dashed!important;color:var(--text-dim);font-weight:600;}
+#mSheet .ms-foot .ms-ok{flex:1;}
+
 @media (prefers-reduced-motion:reduce){.fx-bead,.fx-shine,.fx-swirl,.fx-twinkle{animation:none;}}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -1552,6 +1690,7 @@ null
     <button class="m-ic" id="mCollabBtn" title="커뮤니케이션" style="position:relative;"><span id="mCollabDot" class="hidden"></span></button>
     <button class="m-ic" id="mInstall" title="홈 화면에 추가"></button>
     <button class="m-ic" id="mSetBtn" title="설정"></button>
+    <button class="m-ic" id="mMoreBtn" title="더보기 (필터 · 알림 · 설정)"><span id="mMoreDot" class="hidden"></span></button>
     <button class="m-ic hidden" id="mDdayBtn" title="D-day">D</button>
     <button class="m-ic hidden" id="mUser" title="로그아웃"></button>
   </div>
@@ -1561,6 +1700,17 @@ null
   </div>
   <div id="mSaveSub"></div>
   <div id="mList"></div>
+  <div id="mQuick">
+    <form id="mqForm" autocomplete="off">
+      <input type="text" id="mqIn" placeholder="할 일 추가" autocomplete="off" enterkeyhint="done" aria-label="할 일 추가">
+      <button type="button" class="mq-btn" id="mqMic" title="음성으로 추가" aria-label="음성으로 추가"></button>
+      <button type="submit" class="mq-btn hidden" id="mqSend" title="추가" aria-label="추가"></button>
+    </form>
+    <div id="mqExtra">
+      <div id="mqPills"></div>
+      <div id="mqOpts" class="mq-chips hidden"></div>
+    </div>
+  </div>
   <button id="mMicFab" title="음성으로 일정 추가"></button>
   <button id="mFab" title="일정 추가"></button>
 </div>
@@ -1678,7 +1828,7 @@ null
 <div id="mSet" class="hidden">
   <div class="mv-back" onclick="document.getElementById('mSet').classList.add('hidden')"></div>
   <div class="mv-card">
-    <div class="mv-head"><b>설정</b><button class="ms-x" onclick="document.getElementById('mSet').classList.add('hidden')">✕</button></div>
+    <div class="mv-head"><b>더보기</b><button class="ms-x" onclick="document.getElementById('mSet').classList.add('hidden')">✕</button></div>
     <div id="mSetBody"></div>
     <div class="mv-acts"><button class="btn" style="flex:1;" onclick="document.getElementById('mSet').classList.add('hidden')">닫기</button></div>
   </div>
@@ -1700,22 +1850,22 @@ null
     <div class="ms-head" style="padding:0 16px;"><b>일정 상세</b><button class="ms-x" id="msClose">✕</button></div>
     <div class="ms-scroll">
 
-    <div class="ms-lab">세부내용</div>
-    <textarea id="msDetail" placeholder="할 일을 적어주세요"></textarea>
-
-    <div class="ms-quick">
-      <button class="ms-q" id="msDate"><span class="ic" data-ic="calendar"></span><span class="q-t">날짜 선택</span></button>
-      <button class="ms-q q-ico" id="msTimeBtn" title="시간" aria-label="시간"><span class="ic" data-ic="clock"></span></button>
-      <button class="ms-q q-ico" id="msLinkBtn" title="링크" aria-label="링크"><span class="ic" data-ic="link"></span></button>
-      <button class="ms-q ms-star q-ico" id="msImp" title="즐겨찾기" aria-label="즐겨찾기"><span class="ic" data-ic="star"></span></button>
+    <div class="ms-top">
+      <button class="m-chk" id="msDoneC" aria-label="완료"><i></i></button>
+      <textarea id="msDetail" placeholder="할 일을 적어주세요"></textarea>
     </div>
-
-    <div class="ms-lab">분류</div>
-    <div class="ms-2col"><select id="msCat"></select><select id="msCamp"></select></div>
-
-    <div class="ms-lab">공유</div>
-    <button class="ms-share-btn" id="msShareBtn">👥 공유 설정</button>
-    <div class="hint" id="msShareWho"></div>
+    <div class="ms-pills">
+      <button class="ms-pill" id="msDate">📅 날짜</button>
+      <select class="ms-pill" id="msCat" aria-label="카테고리"></select>
+      <select class="ms-pill" id="msCamp" aria-label="캠페인"></select>
+    </div>
+    <div class="ms-pills">
+      <button class="ms-pill opt" id="msTimeBtn">＋ 시간</button>
+      <button class="ms-pill opt" id="msRepBtn">＋ 반복</button>
+      <button class="ms-pill opt" id="msLinkBtn">＋ 링크</button>
+      <button class="ms-pill opt ms-star" id="msImp">☆ 중요</button>
+    </div>
+    <div style="display:none;"><button id="msShareBtn"></button><div id="msShareWho"></div></div>
 
     </div>
     <div class="ms-foot">
@@ -2558,6 +2708,7 @@ function normalize(d){
 function loadState(){
   const found=readAnyStored();
   if(found){ state=normalize(found); } else { state=normalize(buildDefaultState()); isFirstRun=true; }
+  syncRebase();
 }
 function persistLocal(){ try{ state.savedAt=Date.now(); localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(e){} }
 
@@ -2718,7 +2869,7 @@ function exportBackup(){
 
 function updateFileStatusHint(t){ const el=document.getElementById('fileStatusHint'); if(el) el.textContent=t; }
 /* ═══════════════ 클라우드 저장 (Supabase) ═══════════════ */
-const APP_VER='ver 12.6', APP_BUILD='2026-08-14 04:00';
+const APP_VER='ver 13.2', APP_BUILD='2026-11-11 09:00';
 const LOGO_SRC='data:image/png;base64,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';
 function paintLogos(){ document.querySelectorAll('img.tdl-logo').forEach(i=>{ i.src=LOGO_SRC; }); }
 const IS_WEB = /^https?:$/i.test(location.protocol);
@@ -2802,31 +2953,194 @@ function showGate(){ document.getElementById('gate').classList.remove('hidden');
 function hideGate(){ document.getElementById('gate').classList.add('hidden'); }
 function showSetupGate(){ document.getElementById('setupGate').classList.remove('hidden'); }
 
+/* ═══════════ 기기 간 동기화 (ver 13.2) ═══════════
+   예전: 일정 전체를 통째로 덮어써서, 열어 둔 다른 기기가 방금 추가한 일정을 지워 버렸다.
+   지금: 저장 직전에 서버 최신본을 받아 "일정 단위"로 합친 뒤 저장한다.
+   - 일정마다 고친 시각(_mt), 지운 일정은 state.deleted 에 지운 시각을 남긴다 (saveAll 에서 자동 기록).
+   - syncBase = 마지막으로 서버와 맞춘 시점의 모습. 그 뒤 이 기기에서 건드렸는지 판단하는 기준. */
+let syncBase=null, syncLast=new Map(), syncBaseKeys={}, cloudSeenAt=null, cloudPullAt=0, cloudPulling=false, cloudRenderPending=false;
+const SYNC_SKIP={tasks:1,deleted:1,savedAt:1,usage:1,_bk:1,dataVersion:1};
+function syncSigTask(t){ return JSON.stringify(t,(k,v)=>(k==='_seq'||k==='_mt')? undefined : v); }
+function syncKeysOf(d){ const o={}; Object.keys(d||{}).forEach(k=>{ if(!SYNC_SKIP[k]) o[k]=JSON.stringify(d[k]); }); return o; }
+function syncRebase(src){
+  const d=src||state;
+  syncBase=new Map((d.tasks||[]).filter(t=>t&&t.id).map(t=>[t.id, syncSigTask(t)]));
+  syncLast=new Map(syncBase);
+  syncBaseKeys=syncKeysOf(d);
+}
+/* 마지막 동기화 이후 바뀐 일정에 시각을 찍고, 사라진 일정은 '지움'으로 남긴다 */
+function syncStamp(){
+  if(!state || !Array.isArray(state.tasks)) return;
+  if(!syncBase){ syncRebase(); return; }
+  if(!state.deleted || typeof state.deleted!=='object') state.deleted={};
+  const now=Date.now(), seen=new Set();
+  state.tasks.forEach(t=>{
+    seen.add(t.id);
+    const sig=syncSigTask(t);
+    if(syncBase.get(t.id)!==sig && syncLast.get(t.id)!==sig){ t._mt=now; syncLast.set(t.id,sig); }   /* 실제로 바뀐 순간에만 시각을 찍음 */
+    if(state.deleted[t.id]) delete state.deleted[t.id];
+  });
+  syncBase.forEach((v,id)=>{ if(!seen.has(id) && !state.deleted[id]) state.deleted[id]=now; });
+}
+function syncAdopt(l,r){ Object.keys(l).forEach(k=>{ delete l[k]; }); Object.assign(l, JSON.parse(JSON.stringify(r))); }
+/* 서버본(remote)을 지금 상태에 합친다. startup=true 는 앱을 처음 열 때(기준이 없으므로 시각으로 판단). 바뀐 게 있으면 true */
+function syncMerge(remote, startup){
+  if(!remote || !Array.isArray(remote.tasks)) return false;
+  const lAt=state.savedAt||0, rAt=remote.savedAt||0;
+  if(!state.deleted || typeof state.deleted!=='object') state.deleted={};
+  const ld=state.deleted, rd=(remote.deleted && typeof remote.deleted==='object')? remote.deleted : {};
+  const base=syncBase||new Map();
+  let changed=false;
+  const lmap=new Map(state.tasks.map(t=>[t.id,t]));
+  const rids=new Set(), add=[];
+  remote.tasks.forEach(r=>{
+    if(!r || !r.id) return;
+    rids.add(r.id);
+    const l=lmap.get(r.id), rm=r._mt||0, rsig=syncSigTask(r);
+    if(l){
+      const lm=l._mt||0, lsig=syncSigTask(l);
+      if(lsig===rsig) return;
+      let takeR;
+      if(startup) takeR = (rm!==lm)? (rm>lm) : (rAt>=lAt);
+      else {
+        const b=base.get(r.id);
+        if(b===lsig) takeR=true;                 /* 이 기기에선 안 건드림 → 서버 것 */
+        else if(b===rsig) takeR=false;           /* 서버 쪽이 그대로 → 내 것 */
+        else takeR = rm>lm;                      /* 양쪽 다 고침 → 나중에 고친 쪽 */
+      }
+      if(takeR){ syncAdopt(l,r); changed=true; }
+    } else {
+      let take;
+      if(ld[r.id] && ld[r.id]>=rm) take=false;                    /* 내가 그 뒤에 지움 */
+      else if(!startup && base.has(r.id)) take = (base.get(r.id)!==rsig) && rm>(ld[r.id]||0);   /* 내가 지웠는데 서버에서 그 뒤 고쳐짐 */
+      else if(rm) take=true;                                      /* 다른 기기에서 새로 추가 */
+      else take = startup? (rAt>=lAt) : true;
+      if(take) add.push(JSON.parse(JSON.stringify(r)));
+    }
+  });
+  const drop=new Set();
+  state.tasks.forEach(l=>{
+    if(rids.has(l.id)) return;
+    const lm=l._mt||0;
+    let keep;
+    if(rd[l.id] && rd[l.id]>=lm) keep=false;                      /* 다른 기기에서 지움 */
+    else if(!startup && base.has(l.id)) keep = base.get(l.id)!==syncSigTask(l);   /* 서버에서 사라졌지만 내가 그 뒤 고침 */
+    else if(lm) keep=true;                                        /* 이 기기에서 새로 추가 (아직 못 올린 것 포함) */
+    else keep = startup? (lAt>rAt) : true;
+    if(!keep) drop.add(l.id);
+  });
+  if(drop.size){ state.tasks=state.tasks.filter(t=>!drop.has(t.id)); changed=true; }
+  if(add.length){ add.forEach(t=>state.tasks.push(t)); changed=true; }
+  /* 지움 기록 합치기 (90일 지난 건 정리) */
+  const cutoff=Date.now()-90*86400000;
+  Object.keys(rd).forEach(id=>{ if(!ld[id] || rd[id]>ld[id]) ld[id]=rd[id]; });
+  Object.keys(ld).forEach(id=>{ if(ld[id]<cutoff || state.tasks.some(t=>t.id===id)) delete ld[id]; });
+  /* 일정 외(캠페인·메모·설정 등): 이 기기에서 안 건드린 항목만 서버 것으로 */
+  const rk=syncKeysOf(remote);
+  Object.keys(rk).forEach(k=>{
+    const mine=JSON.stringify(state[k]);
+    if(mine===rk[k]) return;
+    const takeR = startup? (rAt>=lAt) : (state[k]===undefined || syncBaseKeys[k]===mine);
+    if(takeR){ state[k]=JSON.parse(rk[k]); changed=true; }
+  });
+  /* 합쳐 들어온 일정이 쓰는 캠페인·카테고리가 이쪽에 없으면 같이 가져온다 */
+  ['categories','campaigns'].forEach(key=>{
+    const mineArr=Array.isArray(state[key])? state[key] : (state[key]=[]);
+    const field = key==='categories'? 'categoryId' : 'campaignId';
+    (remote[key]||[]).forEach(x=>{
+      if(x && x.id && !mineArr.some(y=>y.id===x.id) && state.tasks.some(t=>t[field]===x.id)){ mineArr.push(JSON.parse(JSON.stringify(x))); changed=true; }
+    });
+  });
+  /* 사용 횟수는 큰 쪽 */
+  if(remote.usage && remote.usage.c){
+    const u=state.usage||(state.usage={since:remote.usage.since||todayStr(), c:{}}); if(!u.c) u.c={};
+    Object.keys(remote.usage.c).forEach(k=>{ if((remote.usage.c[k]||0)>(u.c[k]||0)) u.c[k]=remote.usage.c[k]; });
+  }
+  /* 기준 = 서버 모습. (이 기기에서 건드린 일정 외 항목은 기준을 그대로 둬서 다음에도 '내가 고침'으로 본다) */
+  const keepKeys=syncBaseKeys||{};
+  syncBase=new Map(remote.tasks.filter(t=>t&&t.id).map(t=>[t.id, syncSigTask(t)]));
+  syncBase.forEach((v,id)=>{ if(!syncLast.has(id)) syncLast.set(id,v); });
+  const nb={}; Object.keys(rk).forEach(k=>{ nb[k] = (JSON.stringify(state[k])===rk[k] || startup)? rk[k] : (keepKeys[k]!==undefined? keepKeys[k] : rk[k]); });
+  syncBaseKeys=nb;
+  if(changed){ state=normalize(state); state.tasks.forEach((t,i)=>{ if(typeof t._seq!=='number') t._seq=i; }); }
+  return changed;
+}
+/* 서버에 아직 없는 내 변경이 남아 있는지 */
+function syncDirty(){
+  if(!syncBase) return true;
+  if(state.tasks.length!==syncBase.size) return true;
+  if(state.tasks.some(t=>syncBase.get(t.id)!==syncSigTask(t))) return true;
+  const mk=syncKeysOf(state);
+  return Object.keys(mk).some(k=>syncBaseKeys[k]!==mk[k]);
+}
+/* 합친 결과를 화면에 — 글을 입력하는 중이면 끝난 뒤에 다시 그린다 */
+function cloudAfterMerge(){
+  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(e){}
+  const busy=()=>{ const ae=document.activeElement; return (typeof dragFreeze!=='undefined' && dragFreeze) || (ae && /^(INPUT|TEXTAREA|SELECT)$/.test(ae.tagName) && ae.type!=='checkbox'); };
+  const paint=()=>{ try{ applyTheme(state.settings.theme); render(); }catch(e){} };
+  if(!busy()){ paint(); return; }
+  if(cloudRenderPending) return;
+  cloudRenderPending=true;
+  const iv=setInterval(()=>{ if(busy()) return; clearInterval(iv); cloudRenderPending=false; paint(); }, 700);
+}
+async function cloudFetchRow(cols){
+  const {data,error}=await sb.from('planner').select(cols).eq('user_id',cloudUser.id).maybeSingle();
+  if(error) throw error;
+  return data;
+}
+/* 다른 기기에서 바뀐 게 있으면 받아와 합친다 (탭으로 돌아올 때 · 주기적으로) */
+async function cloudPull(force){
+  if(!sb||!cloudUser||!cloudReady||cloudBusy||cloudPulling) return;
+  if(!force && Date.now()-cloudPullAt<4000) return;
+  cloudPullAt=Date.now(); cloudPulling=true;
+  try{
+    const head=await cloudFetchRow('updated_at');
+    if(head && head.updated_at!==cloudSeenAt){
+      const row=await cloudFetchRow('data,updated_at');
+      if(row && row.data && Array.isArray(row.data.tasks)){
+        syncStamp();
+        const ch=syncMerge(row.data,false);
+        cloudSeenAt=row.updated_at;
+        remoteHad=(row.data.tasks||[]).length+(row.data.notes||[]).length+(row.data.campaigns||[]).length;
+        if(ch){ cloudAfterMerge(); cloudStatus('다른 기기의 변경을 받아왔어요'); }
+        if(syncDirty()) scheduleCloudSave(); else cloudDirty=false;
+      }
+    }
+  }catch(e){}
+  cloudPulling=false; syncSaveBtn();
+}
+
 async function cloudLoad(){
   if(!sb||!cloudUser) return;
   try{
     cloudStatus('클라우드에서 불러오는 중…');
-    const {data,error}=await sb.from('planner').select('data,updated_at').eq('user_id',cloudUser.id).maybeSingle();
-    if(error) throw error;
-    const remote = data && data.data && Array.isArray(data.data.tasks) ? data.data : null;
+    const row=await cloudFetchRow('data,updated_at');
+    const remote = row && row.data && Array.isArray(row.data.tasks) ? row.data : null;
+    cloudSeenAt = row? row.updated_at : null;
     const cnt=(d)=>d? ((d.tasks||[]).length + (d.notes||[]).length + (d.campaigns||[]).length) : 0;
     const localN=cnt(state), remoteN=cnt(remote);
     remoteHad=remoteN;
-    const localAt = (state && state.savedAt) || 0;
-    const remoteAt = remote ? (remote.savedAt||0) : 0;
-    const takeRemote = remote && (remoteAt >= localAt || (localN===0 && remoteN>0));
-    if(takeRemote){
-      state=normalize(remote);
-      state.tasks.forEach((t,i)=>{ if(typeof t._seq!=='number') t._seq=i; });
-      persistLocal(); saveSafetyCopy();
-      applyFontScale(); applyFont(); applyTheme(state.settings.theme); applyBodyBackground(); syncDateLockBtn(); render();
-      cloudStatus('클라우드에서 불러왔어요 (일정 '+(state.tasks||[]).length+'건)');
-    } else if(remote && localN===0 && remoteN===0){
-      cloudStatus('아직 저장된 일정이 없어요');
+    const repaint=()=>{ applyFontScale(); applyFont(); applyTheme(state.settings.theme); applyBodyBackground(); syncDateLockBtn(); render(); };
+    if(remote && localN===0){
+      if(remoteN>0 || localN===0){
+        state=normalize(JSON.parse(JSON.stringify(remote)));
+        state.tasks.forEach((t,i)=>{ if(typeof t._seq!=='number') t._seq=i; });
+        syncRebase();
+        try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(e){}
+        saveSafetyCopy(); repaint();
+      }
+      cloudStatus(remoteN? ('클라우드에서 불러왔어요 (일정 '+(state.tasks||[]).length+'건)') : '아직 저장된 일정이 없어요');
     } else if(remote){
-      cloudStatus('이 기기 내용이 더 최신이라 그대로 두었어요');
-      cloudDirty=true;
+      /* 서버본과 이 기기 내용을 일정 단위로 합친다 — 한쪽을 통째로 버리지 않음 */
+      syncStamp();
+      const ch=syncMerge(remote,true);
+      try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(e){}
+      saveSafetyCopy();
+      if(ch) repaint();
+      if(syncDirty()){ cloudDirty=true; cloudStatus('이 기기에서 바뀐 내용을 합쳤어요 — 곧 저장합니다'); }
+      else cloudStatus('클라우드에서 불러왔어요 (일정 '+(state.tasks||[]).length+'건)');
     } else {
+      syncBase=new Map(); syncLast=new Map(); syncBaseKeys={};
       cloudStatus(localN? '클라우드에 처음 저장합니다' : '아직 저장된 일정이 없어요');
       if(localN) cloudDirty=true;
     }
@@ -2846,7 +3160,8 @@ async function cloudLoad(){
   syncSaveBtn();
 }
 
-const CLOUD_IDLE=2500, CLOUD_MIN_GAP=6000;
+/* 모바일은 급히 추가하고 바로 닫는 일이 많아 더 빨리 올린다 */
+const CLOUD_IDLE=IS_MOBILE? 700 : 2500, CLOUD_MIN_GAP=IS_MOBILE? 1500 : 6000;
 function scheduleCloudSave(){
   cloudDirty=true; syncSaveBtn();
   if(!sb||!cloudUser||!cloudReady) return;
@@ -2856,24 +3171,52 @@ function scheduleCloudSave(){
 }
 async function cloudWrite(){
   if(!sb||!cloudUser||!cloudReady) return;
-  const mine=(state.tasks||[]).length + (state.notes||[]).length + (state.campaigns||[]).length;
-  if(mine===0 && remoteHad>0){
+  const count=()=>(state.tasks||[]).length + (state.notes||[]).length + (state.campaigns||[]).length;
+  if(count()===0 && remoteHad>0){
     cloudStatus('⚠ 이 기기가 비어 있어 저장을 멈췄어요. 서버 자료를 지우지 않습니다. 새로고침해 주세요.');
     cloudDirty=false; return;
   }
   if(cloudBusy){ cloudPending=true; return; }
   cloudBusy=true; syncSaveBtn();
   try{
-    state.savedAt=Date.now();
-    pushSnapshot();
-    const {error}=await sb.from('planner').upsert({
-      user_id: cloudUser.id,
-      data: state,
-      updated_at: new Date().toISOString()
-    },{onConflict:'user_id'});
-    if(error) throw error;
+    syncStamp();
+    let ok=false;
+    for(let attempt=0; attempt<4 && !ok; attempt++){
+      /* ① 서버가 내가 마지막으로 본 뒤에 바뀌었으면 먼저 받아서 합친다 */
+      let exists=true;
+      try{
+        const head=await cloudFetchRow('updated_at');
+        exists=!!head;
+        if(head && head.updated_at!==cloudSeenAt){
+          const row=await cloudFetchRow('data,updated_at');
+          if(row && row.data && Array.isArray(row.data.tasks)){
+            if(syncMerge(row.data,false)) cloudAfterMerge();
+          }
+          cloudSeenAt=row? row.updated_at : null; exists=!!row;
+        }
+      }catch(e){ if(attempt<3) continue; throw e; }
+      /* ② 내가 본 그 버전일 때만 덮어쓴다 — 그 사이 다른 기기가 저장했으면 ①부터 다시 */
+      state.savedAt=Date.now();
+      pushSnapshot();
+      const iso=new Date().toISOString();
+      if(!exists){
+        const {data,error}=await sb.from('planner').upsert({user_id:cloudUser.id, data:state, updated_at:iso},{onConflict:'user_id'}).select('updated_at');
+        if(error) throw error;
+        cloudSeenAt=(data && data[0] && data[0].updated_at) || iso; ok=true;
+      } else if(attempt<3){
+        const {data,error}=await sb.from('planner').update({data:state, updated_at:iso}).eq('user_id',cloudUser.id).eq('updated_at',cloudSeenAt).select('updated_at');
+        if(error) throw error;
+        if(data && data.length){ cloudSeenAt=data[0].updated_at || iso; ok=true; }
+      } else {
+        /* 계속 엇갈리면 저장이 막히지 않게 마지막엔 그냥 올린다 (방금 합친 상태라 손실 가능성은 낮음) */
+        const {data,error}=await sb.from('planner').upsert({user_id:cloudUser.id, data:state, updated_at:iso},{onConflict:'user_id'}).select('updated_at');
+        if(error) throw error;
+        cloudSeenAt=(data && data[0] && data[0].updated_at) || iso; ok=true;
+      }
+    }
     lastCloudAt=Date.now(); lastSavedAt=lastCloudAt; cloudDirty=false;
-    remoteHad=mine; saveSafetyCopy();
+    remoteHad=count(); syncRebase(); saveSafetyCopy();
+    try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(e){}
     cloudStatus('클라우드에 저장됨 ('+new Date().toLocaleTimeString()+')');
   }catch(e){
     cloudStatus('저장 실패: '+(e.message||e)+' — 이 기기에는 보관되어 있어요');
@@ -2884,6 +3227,7 @@ async function cloudWrite(){
 
 function saveAll(){
   if(booting) return;
+  syncStamp();                 /* 바뀐 일정에 고친 시각 · 지운 일정 기록 (기기 간 합치기용) */
   persistLocal();
   syncSharedTasks();
   if(CLOUD_MODE) scheduleCloudSave(); else scheduleFileWrite();
@@ -3398,6 +3742,14 @@ function buildBody(){
       if(detailSnap!==null && inp.value!==detailBefore){ pushHistoryRaw(detailSnap,'세부내용 수정'); }
       detailSnap=null;
     });
+    if(task.viaMobile){                             /* 모바일에서 넣은 일정 — 다듬을 때까지 작은 휴대폰 표시 */
+      const mb=document.createElement('button'); mb.type='button'; mb.className='via-mob';
+      mb.innerHTML='<i></i>'; mb.title='모바일에서 입력한 일정 · 내용을 고치면 사라져요 (클릭해서 지우기)';
+      mb.addEventListener('mousedown',(e)=>e.stopPropagation());
+      mb.addEventListener('click',(e)=>{ e.preventDefault(); e.stopPropagation(); if(tLocked) return; delete task.viaMobile; saveAll(); mb.remove(); });
+      cDet.appendChild(mb);
+      inp.addEventListener('input',()=>{ if(!tLocked && task.viaMobile){ delete task.viaMobile; saveAll(); mb.remove(); } });
+    }
     cDet.appendChild(inp);
     if(task.link){                                  /* 링크가 있을 때만 표시 */
       const lbtn=document.createElement('button');
@@ -4655,7 +5007,18 @@ let histUndo=[], histRedo=[];
 const HIST_MAX=80;
 function snapTasks(){ return JSON.stringify(state.tasks); }
 /* 변경하기 "직전"에 호출 */
-function pushHistory(label){ pushHistoryRaw(snapTasks(), label); }
+function pushHistory(label){ useCount(label); pushHistoryRaw(snapTasks(), label); }
+/* 어떤 기능을 얼마나 쓰는지 기기별(m=모바일, p=PC)로 세어 둔다 — 본인 데이터 안에만 저장되며 백업 파일의 usage 항목으로 확인 */
+function useCount(label){
+  try{
+    if(!state) return;
+    const u=state.usage||(state.usage={since:todayStr(), c:{}});
+    if(!u.c) u.c={};
+    const k=(IS_MOBILE?'m:':'p:')+String(label||'').replace(/^\d+건 /,'N건 ');
+    u.c[k]=(u.c[k]||0)+1;
+    u.last=todayStr();
+  }catch(e){}
+}
 function pushHistoryRaw(json,label){
   histUndo.push({tasks:json, label:label||'변경'});
   if(histUndo.length>HIST_MAX) histUndo.shift();
@@ -7274,10 +7637,13 @@ document.getElementById('btnSave').addEventListener('click', async ()=>{
 });
 /* 탭을 벗어나거나 닫을 때 남은 변경분 저장 */
 document.addEventListener('visibilitychange',()=>{
-  if(!document.hidden) return;
+  if(!document.hidden){ if(CLOUD_MODE) cloudPull(); return; }      /* 돌아오면 다른 기기 변경을 받아옴 */
   if(CLOUD_MODE){ if(cloudDirty){ clearTimeout(cloudTimer); cloudWrite(); } return; }
   if(dirty && selfHandle){ clearTimeout(saveTimer); writeSelf(); }
 });
+window.addEventListener('focus',()=>{ if(CLOUD_MODE) cloudPull(); });
+window.addEventListener('online',()=>{ if(CLOUD_MODE){ if(cloudDirty) scheduleCloudSave(); else cloudPull(); } });
+setInterval(()=>{ if(CLOUD_MODE && !document.hidden) cloudPull(); }, 60000);   /* 켜 둔 화면도 1분마다 확인 */
 window.addEventListener('beforeunload',()=>{
   if(CLOUD_MODE){ if(cloudDirty) cloudWrite(); return; }
   if(dirty && selfHandle) writeSelf();
@@ -9001,7 +9367,7 @@ function mStartDrag(wrap, row, task, startY){
     row.style.transition='none';
     row.style.transform='translateY('+dy+'px) scale(1.02)';
     /* 지금 위치가 어느 항목 사이인지 표시 */
-    list.querySelectorAll('.mswipe,.mdiv').forEach(el=>el.classList.remove('drop-here'));
+    list.querySelectorAll('.mswipe,.mgh').forEach(el=>el.classList.remove('drop-here'));
     const tgt=mDropTarget(list, t.clientY, wrap);
     if(tgt) tgt.classList.add('drop-here');
   };
@@ -9012,7 +9378,7 @@ function mStartDrag(wrap, row, task, startY){
     const tgt=mDropTarget(list, t.clientY, wrap);
     row.style.transition=''; row.style.transform='';
     wrap.classList.remove('dragging');
-    list.querySelectorAll('.mswipe,.mdiv').forEach(el=>el.classList.remove('drop-here'));
+    list.querySelectorAll('.mswipe,.mgh').forEach(el=>el.classList.remove('drop-here'));
     mDragEl=null; mDragTask=null;
     if(tgt) mApplyDrop(task, tgt);
   };
@@ -9021,7 +9387,7 @@ function mStartDrag(wrap, row, task, startY){
 }
 /* 현재 손가락 위치 바로 위에 있는 항목(또는 오늘까지 구분선) */
 function mDropTarget(list, y, self){
-  const nodes=Array.from(list.querySelectorAll('.mswipe,.mdiv')).filter(n=>n!==self);
+  const nodes=Array.from(list.querySelectorAll('.mswipe,.mgh')).filter(n=>n!==self);
   let best=null;
   nodes.forEach(n=>{
     const r=n.getBoundingClientRect();
@@ -9031,17 +9397,8 @@ function mDropTarget(list, y, self){
 }
 /* 놓은 위치에 맞춰 시작일을 바꿔 준다 */
 function mApplyDrop(task, tgt){
-  let newStart=null;
-  if(tgt.classList.contains('mdiv')){
-    newStart=fmt(addDays(parseYMD(todayStr()),1));           /* 오늘까지 선 아래 → 내일 */
-  }else{
-    const id=tgt.querySelector('.mrow') && tgt.querySelector('.mrow').dataset.taskId;
-    const above=state.tasks.find(t=>t.id===id);
-    if(!above) return;
-    const ds=mOccDate(above);
-    if(!ds) return;
-    newStart=fmt(addDays(parseYMD(ds),1));                    /* 그 일정 다음 날짜 */
-  }
+  /* 놓은 자리의 날짜 묶음으로 옮긴다 (밀린 일·지난 일정·날짜 미정 묶음에는 반응하지 않음) */
+  const newStart = tgt.classList.contains('mgh') ? (tgt.dataset.date||null) : (tgt.dataset.gdate||null);
   if(!newStart || newStart===task.start) return;
   pushHistory('일정 날짜 변경');
   const span=(task.start&&task.end)? Math.round((parseYMD(task.end)-parseYMD(task.start))/86400000) : 0;
@@ -9050,8 +9407,9 @@ function mApplyDrop(task, tgt){
   delete task.pinBottom; delete task.pinNew;
   if(task._sid) clPushTask(task);
   try{ syncTaskAlarm(task); }catch(e){}
+  mFlashId=task.id;
   saveAll(); render();
-  try{ flashHist('시작일 → '+newStart); }catch(e){}
+  try{ mToast(mShortDate(newStart)+'로 옮겼어요', true); }catch(e){}
 }
 function mToggleDone(task){
   pushHistory('완료 상태 변경');
@@ -9064,93 +9422,187 @@ function mToggleDone(task){
   if(task._sid) clPushTask(task);
   saveAll(); render();
 }
+/* ═══════════ 모바일 홈 v2 — 날짜별 아젠다 ═══════════
+   열자마자 "오늘"이 보이도록: 밀린 일(접힘) → 오늘 → 내일 → 이후 날짜 → 날짜 미정 → 지난 일정(접힘).
+   완료는 왼쪽 동그라미 한 번 탭, 추가는 하단 입력 바에서 바로. */
+let mOverOpen=null, mPastOpen=false, mFlashId=null;
+function mSpanDays(t){ return (t.start&&t.end)? Math.max(0,Math.round((parseYMD(t.end)-parseYMD(t.start))/86400000)) : 0; }
+function mShortDate(ds){ const d=parseYMD(ds); return (d.getMonth()+1)+'/'+d.getDate()+'('+WD[d.getDay()]+')'; }
+function mHeadLabel(ds, ts){
+  const d=parseYMD(ds), diff=Math.round((d-parseYMD(ts))/86400000);
+  return { rel: diff===0?'오늘' : diff===1?'내일' : diff===2?'모레' : '', txt:(d.getMonth()+1)+'월 '+d.getDate()+'일 ('+WD[d.getDay()]+')' };
+}
+/* 캠페인을 많이 쓴 순서로 */
+function mCampOrder(){
+  const n={}; (state.tasks||[]).forEach(t=>{ if(t.campaignId) n[t.campaignId]=(n[t.campaignId]||0)+1; });
+  return (state.campaigns||[]).slice().sort((a,b)=>(n[b.id]||0)-(n[a.id]||0));
+}
+function mToast(msg, undo){
+  let el=document.getElementById('mToast');
+  if(!el){ el=document.createElement('div'); el.id='mToast'; document.body.appendChild(el); }
+  el.innerHTML='<span></span>'+(undo?'<button>실행취소</button>':'');
+  el.firstChild.textContent=msg;
+  const b=el.querySelector('button'); if(b) b.addEventListener('click',()=>{ el.classList.remove('in'); doUndo(); });
+  el.classList.add('in');
+  clearTimeout(mToast._t); mToast._t=setTimeout(()=>el.classList.remove('in'), 3200);
+}
+function mPostpone(task){
+  pushHistory('내일로 미루기');
+  const span=mSpanDays(task);
+  let ns=addDays(startOfToday(),1);
+  if(task.start && parseYMD(task.start)>=ns) ns=addDays(parseYMD(task.start),1);
+  task.start=fmt(ns); task.end=fmt(addDays(ns,span));
+  delete task.pinBottom; delete task.pinNew;
+  if(task._sid) clPushTask(task);
+  try{ syncTaskAlarm(task); }catch(e){}
+  mFlashId=task.id;
+  saveAll(); render();
+  mToast(mShortDate(task.start)+'로 미뤘어요', true);
+}
+function mFilterSummary(){
+  const s=state.settings||{}, out=[];
+  (s.filterCategories||[]).forEach(id=>{ const c=getCategory(id); if(c) out.push(c.name); });
+  (s.filterCampaigns||[]).forEach(id=>{ if(id==='none') out.push('캠페인 없음'); else { const c=getCampaign(id); if(c) out.push(c.name); } });
+  if(s.filterIncomplete) out.push('완료 숨김');
+  return out;
+}
+/* 마감일: 며칠짜리 일정은 끝나는 날, 반복은 이번 회차 기준 */
+function mDue(task){
+  const ds=mOccDate(task); if(!ds) return '';
+  return fmt(addDays(parseYMD(ds), mSpanDays(task)));
+}
+function mBuildRow(task, o){
+  const camp=getCampaign(task.campaignId);
+  const isRep=!!(task.repeat && task.repeat.type!=='none');
+  const done=mIsDone(task);
+  const due=mDue(task);
+  const row=document.createElement('div');
+  row.className='mrow';
+  if(done) row.classList.add('done');
+  if(task.important) row.classList.add('imp-row');
+  row.dataset.taskId=task.id;
+
+  let tail='';
+  if(task.startTime) tail+='<span class="m-tm">'+escapeHtml(task.startTime)+'</span>';
+  if(isRep) tail+='<span class="m-badge ic" data-ic="repeat" title="반복"></span>';
+  if(task.link) tail+='<span class="m-badge ic" data-ic="link" title="링크"></span>';
+  if(task.important) tail+='<span class="m-badge ic imp-on" data-ic="star" title="중요"></span>';
+  if(task._sid && typeof sharedOthers==='function'){
+    const others=sharedOthers(task);
+    if(others.length && typeof clAvatarSvg==='function'){
+      tail+='<span class="m-ava" title="'+escapeHtml(others.map(clName).join(', '))+'">'+clAvatarSvg(others[0])+'</span>';
+    }
+  }
+  if(camp) tail+='<span class="m-camp"'+campPillStyle(camp)+'>'+(camp.icon?(camp.icon+' '):'')+escapeHtml(camp.name)+'</span>';
+
+  const det=(task.detail||'').trim();
+  row.innerHTML='<button class="m-chk'+(done?' on':'')+(isRep?' rep':'')+'" aria-label="'+(done?'완료 해제':'완료')+'"><i></i></button>'+
+    '<span class="m-date">'+(due? escapeHtml(mShortDate(due)) : '미정')+'</span>'+
+    '<div class="m-txt'+(det?'':' empty')+'">'+escapeHtml(det||'(내용 없음)')+'</div>'+
+    '<div class="m-right">'+tail+'</div>';
+
+  const wrap=document.createElement('div'); wrap.className='mswipe';
+  wrap.dataset.gdate=mOccDate(task)||'';
+  const acts=document.createElement('div'); acts.className='msw-acts';
+  acts.innerHTML='<button class="msw-b ok">'+(isRep?'완료':'내일로')+'</button><button class="msw-b del">삭제</button>';
+  const favs=document.createElement('div'); favs.className='msw-favs';
+  favs.innerHTML='<button class="msw-b fav'+(task.important?' on':'')+'">'+(task.important?'★ 해제':'☆ 중요')+'</button>';
+  wrap.appendChild(acts); wrap.appendChild(favs); wrap.appendChild(row);
+
+  row.querySelector('.m-chk').addEventListener('click',(e)=>{
+    e.stopPropagation();
+    if(wrap.classList.contains('open')||wrap.classList.contains('open-r')){ mCloseSwipe(); return; }
+    const was=mIsDone(task);
+    mToggleDone(task);
+    if(!was) mToast('완료했어요', true);
+  });
+  favs.querySelector('.fav').addEventListener('click',(e)=>{
+    e.stopPropagation();
+    pushHistory('중요 표시 변경'); task.important=!task.important;
+    if(task._sid) clPushTask(task);
+    mCloseSwipe(); saveAll(); render();
+  });
+  acts.querySelector('.ok').addEventListener('click',(e)=>{
+    e.stopPropagation(); mCloseSwipe();
+    if(isRep) mToggleDone(task); else mPostpone(task);
+  });
+  acts.querySelector('.del').addEventListener('click',(e)=>{
+    e.stopPropagation();
+    if(!confirm('“'+(det||'이 일정')+'”을 삭제할까요?')) return;
+    pushHistory('일정 삭제');
+    if(state.time&&state.time.alarms) state.time.alarms=state.time.alarms.filter(a=>a.taskId!==task.id);
+    state.tasks=state.tasks.filter(t=>t.id!==task.id);
+    mCloseSwipe(); saveAll(); render();
+    mToast('삭제했어요', true);
+  });
+  mAttachSwipe(wrap, row, task);
+  row.addEventListener('click',()=>{ if(wrap.classList.contains('open')||wrap.classList.contains('open-r')){ mCloseSwipe(); return; } openMSheet(task.id); });
+  return wrap;
+}
+/* 홈: "오늘까지" 해야 할 일(밀린 것 포함, 오래된 것부터) → "내일 이후". 완료한 일정은 더보기에서 켰을 때만. */
 function renderMobileList(){
   const box=document.getElementById('mList');
   if(!box) return;
   syncMFilterBtn();
+  const keepTop=box.scrollTop;
   box.innerHTML=''; mSwipeOpenEl=null;
-  const vlist=visibleTasks();
+  const q=(searchQuery||'').trim();
+  const ts=todayStr();
+  /* '완료 숨김' 설정과 무관하게 모바일은 미완료 중심으로 보여주므로, 목록은 그 필터를 빼고 가져온다 */
+  const keepInc=state.settings.filterIncomplete; state.settings.filterIncomplete=false;
+  let vlist; try{ vlist=visibleTasks(); } finally { state.settings.filterIncomplete=keepInc; }
+
+  const fs=mFilterSummary().filter(x=>x!=='완료 숨김');
+  const mb=document.getElementById('mMoreBtn'); if(mb) mb.classList.toggle('filter-on', fs.length>0);
+  if(fs.length){
+    const fc=document.createElement('div'); fc.className='mfchip';
+    fc.innerHTML='<span>필터: '+escapeHtml(fs.join(' · '))+'</span><button>해제</button>';
+    fc.querySelector('span').addEventListener('click', openMFilter);
+    fc.querySelector('button').addEventListener('click', resetMFilter);
+    box.appendChild(fc);
+  }
+
+  const now=[], later=[], done=[];
+  vlist.forEach(task=>{
+    if(mIsDone(task)){ done.push(task); return; }
+    const due=mDue(task);
+    if(due && due<=ts) now.push(task); else later.push(task);
+  });
+  const byDue=(a,b)=>{ const x=mDue(a)||'9999', y=mDue(b)||'9999'; return x<y?-1 : x>y?1 : 0; };
+  now.sort(byDue); later.sort(byDue);
+
+  const addGroup=(label, tasks, emptyMsg)=>{
+    const h=document.createElement('div'); h.className='msec';
+    h.innerHTML='<span>'+label+'</span><i>'+tasks.length+'</i>';
+    box.appendChild(h);
+    const g=document.createElement('div'); g.className='mgrp';
+    const b=document.createElement('div'); b.className='mgb';
+    tasks.forEach(t=>b.appendChild(mBuildRow(t,{})));
+    if(!tasks.length && emptyMsg){ const e=document.createElement('div'); e.className='mg-empty'; e.textContent=emptyMsg; b.appendChild(e); }
+    g.appendChild(b); box.appendChild(g);
+  };
+
   if(!vlist.length){
-    const q=(searchQuery||'').trim();
-    box.innerHTML='<div class="m-empty">'+(q?'검색 결과가 없습니다.':'표시할 일정이 없습니다.<br>＋ 를 눌러 새 일정을 추가해보세요.')+'</div>';
+    const e=document.createElement('div'); e.className='m-empty';
+    e.innerHTML = q? '검색 결과가 없습니다.' : (fs.length? '필터에 맞는 일정이 없습니다.' : '아직 일정이 없습니다.<br>아래 입력 칸에 할 일을 적어 보세요.');
+    box.appendChild(e);
     if(mSheetTaskId) mPaintSheet();
     return;
   }
-  const ts=todayStr();
-  let dividerIdx=-1;
-  for(let i=0;i<vlist.length;i++){ const d=mOccDate(vlist[i]); if(d && d<=ts) dividerIdx=i; }
+  if(now.length || !q) addGroup('오늘까지', now, '오늘까지 해야 할 일이 없어요.');
+  if(later.length) addGroup('내일 이후', later);
+  if((mPastOpen || q) && done.length){
+    done.sort((a,b)=>-byDue(a,b));
+    addGroup('완료', done.slice(0,80));
+  }
 
-  vlist.forEach((task,idx)=>{
-    const ds=mOccDate(task);
-    const cat=getCategory(task.categoryId), camp=getCampaign(task.campaignId);
-    const row=document.createElement('div');
-    row.className='mrow';
-    if(mIsDone(task)) row.classList.add('done');
-    if(ds===ts) row.classList.add('today');
-    else if(ds && ds<ts) row.classList.add('past');
-    row.dataset.taskId=task.id;
-
-    const dd=mDateChip(ds);
-    /* 카테고리는 상세에서만 — 목록은 캠페인 · 시간 · 상태 아이콘만 */
-    let tags='';
-    if(camp) tags+='<span class="m-camp"'+campPillStyle(camp)+'>'+(camp.icon?(camp.icon+' '):'')+escapeHtml(camp.name)+'</span>';
-    if(task.startTime) tags+='<span class="m-tm">'+escapeHtml(task.startTime)+(task.endTime?('~'+escapeHtml(task.endTime)):'')+'</span>';
-    if(task.repeat && task.repeat.type!=='none') tags+='<span class="m-badge ic" data-ic="repeat" title="반복"></span>';
-    if(task.link) tags+='<span class="m-badge ic" data-ic="link" title="링크"></span>';
-
-    let right='';
-    if(task._sid && typeof sharedOthers==='function'){
-      /* 나 말고 이 일정을 함께 보는 사람 — 내가 만든 일정이면 상대방이, 받은 일정이면 만든 사람이 나온다 */
-      const others=sharedOthers(task);
-      if(others.length && typeof clAvatarSvg==='function'){
-        right+='<span class="m-ava" title="'+escapeHtml(others.map(clName).join(', '))+'">'+clAvatarSvg(others[0])+'</span>';
-      }
-    }
-    if(task.important) right+='<span class="m-badge ic imp-on" data-ic="star" title="중요"></span>';
-    right+='<span class="m-ar">›</span>';
-
-    const det=(task.detail||'').trim();
-    if(task.important) row.classList.add('imp-row');
-    /* 세부내용을 먼저 크게, 카테고리·캠페인은 그 아래 작게 */
-    row.innerHTML='<div class="m-d">'+dd.top+'<small>'+dd.sub+'</small></div>'+
-      '<div class="m-mid">'+
-      '<div class="m-txt'+(det?'':' empty')+'">'+escapeHtml(det||'(내용 없음)')+'</div>'+
-      '<div class="m-tags">'+tags+'</div></div>'+
-      '<div class="m-right">'+right+'</div>';
-
-    /* 스와이프 액션 (완료 · 수정 · 삭제) */
-    const wrap=document.createElement('div'); wrap.className='mswipe';
-    const acts=document.createElement('div'); acts.className='msw-acts';
-    acts.innerHTML='<button class="msw-b ok">완료</button><button class="msw-b del">삭제</button>';
-    const favs=document.createElement('div'); favs.className='msw-favs';
-    favs.innerHTML='<button class="msw-b fav'+(task.important?' on':'')+'">'+(task.important?'★ 해제':'☆ 즐겨찾기')+'</button>';
-    wrap.appendChild(acts); wrap.appendChild(favs); wrap.appendChild(row);
-    favs.querySelector('.fav').addEventListener('click',(e)=>{
-      e.stopPropagation();
-      pushHistory('중요 표시 변경'); task.important=!task.important;
-      if(task._sid) clPushTask(task);
-      mCloseSwipe(); saveAll(); render();
-    });
-    acts.querySelector('.ok').addEventListener('click',(e)=>{ e.stopPropagation(); mToggleDone(task); mCloseSwipe(); });
-    acts.querySelector('.del').addEventListener('click',(e)=>{
-      e.stopPropagation();
-      if(!confirm('“'+(det||'이 일정')+'”을 삭제할까요?\n삭제하면 되돌릴 수 없어요.')) return;
-      pushHistory('일정 삭제');
-      if(state.time&&state.time.alarms) state.time.alarms=state.time.alarms.filter(a=>a.taskId!==task.id);
-      state.tasks=state.tasks.filter(t=>t.id!==task.id);
-      mCloseSwipe(); saveAll(); render();
-    });
-    mAttachSwipe(wrap, row, task);
-    row.addEventListener('click',()=>{ if(wrap.classList.contains('open')||wrap.classList.contains('open-r')){ mCloseSwipe(); return; } openMSheet(task.id); });
-    box.appendChild(wrap);
-
-    if(idx===dividerIdx){
-      const dv=document.createElement('div'); dv.className='mdiv';
-      dv.innerHTML='<span>오늘까지</span>';
-      box.appendChild(dv);
-    }
-  });
   paintIcons(box);
+  if(mFlashId){
+    const id=mFlashId; mFlashId=null;
+    const r=box.querySelector('.mrow[data-task-id="'+id+'"]');
+    if(r){ r.classList.add('mq-new'); try{ r.scrollIntoView({block:'center'}); }catch(e){} }
+    else box.scrollTop=keepTop;
+  } else box.scrollTop=keepTop;
   if(mSheetTaskId) mPaintSheet();
 }
 
@@ -9164,8 +9616,8 @@ function mCurTask(){
 function mFillCampSelect(task){
   const sel=document.getElementById('msCamp');
   sel.innerHTML='';
-  const o0=document.createElement('option'); o0.value=''; o0.textContent='캠페인 선택'; sel.appendChild(o0);
-  campaignsByCategory(task.categoryId).forEach(c=>{
+  const o0=document.createElement('option'); o0.value=''; o0.textContent='캠페인'; sel.appendChild(o0);
+  (task.categoryId? campaignsByCategory(task.categoryId) : mCampOrder()).forEach(c=>{
     const o=document.createElement('option'); o.value=c.id;
     o.textContent=(c.icon?(c.icon+' '):'')+c.name;
     sel.appendChild(o);
@@ -9180,13 +9632,15 @@ function openMSheet(id){
   const isNew=!!(mDraft && mDraft.id===id);
   document.getElementById('msDel').style.display = isNew? 'none' : '';   /* 새 일정엔 삭제 없음 */
   document.getElementById('msOk').textContent = isNew? '등록' : '확인';
+  document.getElementById('msDone').style.display='none';   /* 완료는 왼쪽 동그라미로만 — 닫다가 실수로 누르지 않게 */
+  const mm=document.getElementById('msMore'); if(mm) mm.open=!!((t.link||'').trim() || t._sid || (t.categoryId && !t.campaignId));
   const hd=document.querySelector('#mSheet .ms-head b'); if(hd) hd.textContent = isNew? '새 일정' : '일정 상세';
   document.getElementById('msDetail').value=t.detail||'';
   document.getElementById('msLink').value=t.link||'';
   document.getElementById('msT1').value=t.startTime||'';
   document.getElementById('msT2').value=t.endTime||'';
   const cs=document.getElementById('msCat'); cs.innerHTML='';
-  const csPh=document.createElement('option'); csPh.value=''; csPh.textContent='카테고리 선택'; cs.appendChild(csPh);
+  const csPh=document.createElement('option'); csPh.value=''; csPh.textContent='카테고리'; cs.appendChild(csPh);
   state.categories.forEach(c=>{
     const o=document.createElement('option'); o.value=c.id; o.textContent=c.name; cs.appendChild(o);
   });
@@ -9202,24 +9656,21 @@ function closeMSheet(){
 }
 function mPaintSheet(){
   const t=mCurTask(); if(!t) return;
-  const btn=document.getElementById('msDate');
-  let label;
-  if(!t.start) label='날짜 선택';
-  else if(t.end && t.end!==t.start) label=fmtDayLabel(t.start)+' ~ '+fmtDayLabel(t.end);
-  else label=fmtDayLabel(t.start);
-  const rl=repeatLabel(t.repeat);
-  const tm=(t.startTime? (' · '+t.startTime) : '');
-  btn.innerHTML='<span class="ic" data-ic="calendar"></span><span class="q-t">'+escapeHtml(label)+(rl?(' 🔁'):'')+'</span>';
-  paintIcons(btn);
-  const tb=document.getElementById('msTimeBtn');
-  if(tb){ tb.innerHTML='<span class="ic" data-ic="clock"></span><span class="q-t">'+(t.startTime? escapeHtml(t.startTime):'시간')+'</span>'; paintIcons(tb); }
-  const lb=document.getElementById('msLinkBtn');
-  if(lb){ lb.innerHTML='<span class="ic" data-ic="link"></span><span class="q-t">'+((t.link||'').trim()? '링크 있음':'링크')+'</span>'; paintIcons(lb); }
-  const dbtn=document.getElementById('msDone');
   const isRep=!!(t.repeat && t.repeat.type!=='none');
-  dbtn.textContent = isRep ? '이 회차 완료' : '완료';
-  dbtn.classList.toggle('on', mIsDone(t));
+  let label;
+  if(!t.start) label='날짜';
+  else if(t.end && t.end!==t.start) label=mShortDate(t.start)+' ~ '+mShortDate(t.end);
+  else label=mShortDate(t.start);
+  document.getElementById('msDate').textContent='📅 '+label;
+  const set=(id,txt,on)=>{ const e=document.getElementById(id); if(e){ e.textContent=txt; e.classList.toggle('opt', !on); } };
+  set('msTimeBtn', t.startTime? ('🕒 '+t.startTime+(t.endTime?('~'+t.endTime):'')) : '＋ 시간', !!t.startTime);
+  set('msRepBtn', isRep? ('🔁 '+repeatLabel(t.repeat)) : '＋ 반복', isRep);
+  set('msLinkBtn', (t.link||'').trim()? '🔗 링크' : '＋ 링크', !!(t.link||'').trim());
+  set('msImp', t.important? '★ 중요' : '☆ 중요', !!t.important);
   document.getElementById('msImp').classList.toggle('on', !!t.important);
+  const dc=document.getElementById('msDoneC');
+  if(dc){ dc.classList.toggle('on', mIsDone(t)); dc.classList.toggle('rep', isRep); dc.style.display=(mDraft && t===mDraft)? 'none' : ''; }
+  const dbtn=document.getElementById('msDone'); if(dbtn) dbtn.classList.toggle('on', mIsDone(t));
   mPaintShareBtn(t);
 }
 /* 모바일 공유 버튼 표기 */
@@ -9293,6 +9744,16 @@ function openMSet(){
     cb.addEventListener('change',()=>{ set(cb.checked); saveAll(); });
     b.appendChild(cb); body.appendChild(b);
   };
+
+  sec('바로가기');
+  { const fsum=mFilterSummary();
+    row('🔎','필터', fsum.length? ('적용 중: '+fsum.join(' · ')) : '카테고리 · 캠페인', ()=>openMFilter());
+    row('✅', mPastOpen? '완료한 일정 숨기기' : '완료한 일정 보기', '목록 맨 아래에 표시돼요', ()=>{ mPastOpen=!mPastOpen; renderMobileList(); });
+    const cd=document.getElementById('mCollabDot');
+    const cn=(cd && !cd.classList.contains('hidden'))? (cd.textContent||'').trim() : '';
+    row('💬','알림 · 동료 · 미니홈피', cn? ('새 소식 '+cn+'건') : '쪽지와 공유 소식을 확인해요', ()=>openMCollab());
+    if(typeof isStandalone==='function' && !isStandalone()) row('📲','홈 화면에 추가','앱처럼 바로 열 수 있어요', ()=>openInstallModal());
+  }
 
   sec('일정');
   row('📅','D-day 관리','기념일·마감일을 등록하고 확인해요', ()=>{ if(typeof openMDday==='function') openMDday(); });
@@ -9384,7 +9845,15 @@ function mApply(fn, label){
   });
 
   $('msCamp').addEventListener('change',()=>{
-    mApply(t=>{ t.campaignId=$('msCamp').value||null; },'캠페인 변경');
+    mApply(t=>{ t.campaignId=$('msCamp').value||null; const c=getCampaign(t.campaignId); if(c) t.categoryId=c.categoryId; },'캠페인 변경');
+    const t=mCurTask(); if(t){ $('msCat').value=t.categoryId||''; mFillCampSelect(t); }
+  });
+  if($('msRepBtn')) $('msRepBtn').addEventListener('click',()=>$('msDate').click());
+  if($('msDoneC')) $('msDoneC').addEventListener('click',()=>{
+    const t=mCurTask(); if(!t) return;
+    const was=mIsDone(t);
+    $('msDone').click();
+    if(!was && mIsDone(t)){ closeMSheet(); mToast('완료했어요', true); }
   });
 
   $('msLink').addEventListener('input',()=>{
@@ -9643,7 +10112,7 @@ function vzQuickAdd(text){
   pushHistory('음성으로 일정 추가');
   const t={id:uid(), categoryId:g.catId||'', campaignId:g.campId||null,
            detail:detail+' (음성인식으로 등록)', done:false, important:false,
-           start:p.date, end:p.date, startTime:p.time||'', endTime:'', repeat:null, link:''};
+           start:p.date, end:p.date, startTime:p.time||'', endTime:'', repeat:null, link:'', viaMobile:true};
   state.tasks.push(t);
   state.tasks.forEach((x,i)=>{ x._seq=i; });
   saveAll(); renderMobileList();
@@ -9691,7 +10160,7 @@ function vzCommit(){
   const t={id:uid(), categoryId:catId, campaignId:null,
            detail: detail+(/\(음성인식으로 등록\)$/.test(detail)?'':' (음성인식으로 등록)'),
            done:false, important:false,
-           start:dstr, end:dstr, startTime:tstr, endTime:'', repeat:null, link:''};
+           start:dstr, end:dstr, startTime:tstr, endTime:'', repeat:null, link:'', viaMobile:true};
   state.tasks.push(t);
   state.tasks.forEach((x,i)=>{ x._seq=i; });
   saveAll(); renderMobileList();
@@ -10504,7 +10973,7 @@ let mDraft=null;                 /* 확인을 누르기 전까지는 목록에 �
 function mAddTask(){
   const catId='';   /* 자동선택 안 함 — 사용자가 직접 고르도록 비워둠 */
   mDraft={id:uid(), categoryId:catId, campaignId:null, detail:'', done:false, important:false,
-          start:todayStr(), end:todayStr(), startTime:'', endTime:'', repeat:null, link:''};
+          start:todayStr(), end:todayStr(), startTime:'', endTime:'', repeat:null, link:'', viaMobile:true};
   openMSheet(mDraft.id);
   setTimeout(()=>{ const d=document.getElementById('msDetail'); if(d) d.focus(); }, 60);
 }
@@ -10514,6 +10983,7 @@ function mCommitDraft(){
   if(!(mDraft.detail||'').trim()){ alert('내용을 입력해 주세요.'); return false; }
   pushHistory('일정 추가');
   state.tasks.push(mDraft);
+  try{ mqRemember(mDraft); }catch(e){}
   state.tasks.forEach((x,i)=>{ x._seq=i; });
   mDraft=null;
   saveAll(); renderMobileList();
@@ -10558,7 +11028,15 @@ function mSyncTop(){
     list.addEventListener('touchend',()=>{
       if(!pulling) return;
       pulling=false;
-      if(dist>90){ ind.textContent='새로고침 중…'; setTimeout(()=>location.reload(),120); }
+      if(dist>90){
+        ind.textContent='새로고침 중…';
+        /* 아직 못 올린 변경이 있으면 먼저 저장하고 새로고침 (최대 4초 대기) */
+        const go=()=>location.reload();
+        if(CLOUD_MODE && cloudDirty && typeof cloudWrite==='function'){
+          clearTimeout(cloudTimer);
+          Promise.race([cloudWrite(), new Promise(r=>setTimeout(r,4000))]).then(go, go);
+        } else setTimeout(go,120);
+      }
       else ind.style.height='0px';
     });
   })();
@@ -13011,6 +13489,207 @@ function lgBuildActs(){
   });
   window.addEventListener('resize',()=>{ if(lgOpen){ lgCamera(); lgDrawMap(); } });
   window.addEventListener('beforeunload',()=>{ if(lgCh){ try{ lgCh.untrack(); }catch(e){} } });
+})();
+
+
+/* ═══════════ 모바일 빠른 추가 바 ═══════════
+   한 줄 적고 엔터 → 바로 등록. "내일 3시 미팅", "11/20 보고서", "금요일 회의"처럼 쓰면 날짜·시간을 알아서 넣고,
+   캠페인 이름으로 시작하면("BMW 견적 전달") 그 캠페인으로 분류한다. 칩으로 직접 고르면 칩이 우선. */
+/* 직접 친 글은 음성보다 엄격하게 해석 — 낱말로 떨어져 있을 때만 날짜·시간으로 본다 ("7시리즈", "3/4분기"는 건드리지 않음) */
+function mqParse(text){
+  const raw=(text||'').trim();
+  const today=startOfToday();
+  let s=' '+raw+' ', date=null, time='';
+  const cut=(m)=>{ s=s.replace(m,' '); };
+  let m;
+  if((m=s.match(/\s(\d{1,2})\s*월\s*(\d{1,2})\s*일(?:에|까지)?(?=\s)/)) || (m=s.match(/\s(\d{1,2})\/(\d{1,2})(?:에|까지)?(?=\s)/))){
+    const mo=parseInt(m[1],10)-1, dd=parseInt(m[2],10);
+    if(mo>=0 && mo<12 && dd>=1 && dd<=31){
+      let c=new Date(today.getFullYear(),mo,dd);
+      if(c<today) c=new Date(today.getFullYear()+1,mo,dd);
+      date=c; cut(m[0]);
+    }
+  }
+  if(!date && (m=s.match(/\s(오늘|내일|모레|글피)(?:까지|에)?(?=\s)/))){
+    date=addDays(today, {'오늘':0,'내일':1,'모레':2,'글피':3}[m[1]]); cut(m[0]);
+  }
+  if(!date && (m=s.match(/\s(다음\s?주|담주|이번\s?주)?\s?([일월화수목금토])요일(?:까지|에)?(?=\s)/))){
+    const target=WD_KO[m[2]];
+    if(m[1]){                                               /* 이번주·다음주는 월요일 시작 주 기준 */
+      const mon=addDays(today, -((today.getDay()+6)%7));
+      date=addDays(mon, ((target+6)%7) + (/다음|담주/.test(m[1])? 7 : 0));
+    } else {
+      let diff=(target-today.getDay()+7)%7; if(diff===0) diff=7;   /* 요일만 쓰면 다가오는 그 요일 */
+      date=addDays(today,diff);
+    }
+    cut(m[0]);
+  }
+  if((m=s.match(/\s(오전|오후|아침|저녁|밤)?\s?(\d{1,2})시(?:\s?(\d{1,2})분|\s?(반))?(?:에|까지)?(?=\s)/))){
+    let h=parseInt(m[2],10); const mer=m[1]||'';
+    if(h<=24){
+      if(/오후|저녁|밤/.test(mer) && h<12) h+=12;
+      else if(/오전|아침/.test(mer) && h===12) h=0;
+      else if(!mer && h>=1 && h<=7) h+=12;                 /* "3시"는 오후로 */
+      if(h>23) h=23;
+      time=pad2(h)+':'+pad2(m[3]? Math.min(59,parseInt(m[3],10)) : (m[4]?30:0));
+      cut(m[0]);
+    }
+  } else if((m=s.match(/\s(\d{1,2}):(\d{2})(?=\s)/)) && parseInt(m[1],10)<24 && parseInt(m[2],10)<60){
+    time=pad2(parseInt(m[1],10))+':'+m[2]; cut(m[0]);
+  }
+  /* 캠페인 이름으로 시작하면 그 캠페인 */
+  let campId=null;
+  let rest=s.replace(/\s{2,}/g,' ').trim();
+  const low=rest.toLowerCase();
+  (state.campaigns||[]).slice().sort((a,b)=>(b.name||'').length-(a.name||'').length).some(c=>{
+    const nm=(c.name||'').trim().toLowerCase();
+    if(nm.length>=2 && low.startsWith(nm+' ')){ campId=c.id; rest=rest.slice(nm.length).trim(); return true; }
+    return false;
+  });
+  return { detail: rest||raw, date: date? fmt(date):null, time, campId };
+}
+let mqState={date:null, cat:undefined, camp:undefined, pick:null};
+function mqReset(){ mqState={date:null, cat:undefined, camp:undefined, pick:null}; }
+/* 미리 선택해 둘 값 — 직전에 등록할 때 쓴 카테고리·캠페인 (처음엔 가장 최근 일정의 것) */
+function mqDefaults(){
+  const s=state.settings||{};
+  let camp=null, cat='';
+  if(typeof s.mLastCamp==='string'){ camp=getCampaign(s.mLastCamp)||null; cat=(typeof s.mLastCat==='string')? s.mLastCat : ''; }
+  else {
+    const top=mCampOrder()[0]; if(top && (state.tasks||[]).some(t=>t.campaignId===top.id)) camp=top;   /* 아직 기록이 없으면 가장 많이 쓴 캠페인 */
+    cat = camp? camp.categoryId : ((state.categories[0]||{}).id||'');
+  }
+  if(cat && !state.categories.some(c=>c.id===cat)) cat='';
+  if(camp && !cat) cat=camp.categoryId;
+  return {cat, camp: camp? camp.id : ''};
+}
+function mqResolve(){
+  const inp=document.getElementById('mqIn');
+  const raw=(inp.value||'').trim();
+  const p=mqParse(raw), def=mqDefaults();
+  let camp = (mqState.camp!==undefined)? mqState.camp : (p.campId || def.camp);
+  const co=getCampaign(camp);
+  let cat = (mqState.cat!==undefined)? mqState.cat : (co? co.categoryId : def.cat);
+  return { raw, detail:p.detail, date: mqState.date || p.date || todayStr(), time:p.time, cat:cat||'', camp: co? co.id : '' };
+}
+function mqPaint(){
+  const q=document.getElementById('mQuick'); if(!q || !state) return;
+  const inp=document.getElementById('mqIn');
+  const has=!!(inp.value||'').trim();
+  document.getElementById('mqSend').classList.toggle('hidden', !has);
+  document.getElementById('mqMic').classList.toggle('hidden', has);
+  const r=mqResolve(), ts=todayStr();
+  const hold=(b)=>b.addEventListener('pointerdown',(e)=>e.preventDefault());   /* 키보드가 내려가지 않게 */
+  /* 고르는 중일 때만 위에 선택지 한 줄 */
+  const opts=document.getElementById('mqOpts'); opts.innerHTML='';
+  opts.classList.toggle('hidden', !mqState.pick);
+  const opt=(label,on,fn)=>{
+    const b=document.createElement('button'); b.type='button'; b.className='mq-chip'+(on?' on':''); b.textContent=label;
+    hold(b); b.addEventListener('click',()=>{ fn(); mqState.pick=null; mqPaint(); }); opts.appendChild(b);
+  };
+  if(mqState.pick==='cat'){
+    state.categories.forEach(c=>opt(c.name, r.cat===c.id, ()=>{
+      mqState.cat=c.id;
+      const cur=getCampaign(r.camp); if(cur && cur.categoryId!==c.id) mqState.camp='';
+    }));
+    opt('없음', !r.cat, ()=>{ mqState.cat=''; mqState.camp=''; });
+  } else if(mqState.pick==='camp'){
+    mCampOrder().forEach(c=>opt((c.icon?c.icon+' ':'')+c.name, r.camp===c.id, ()=>{ mqState.camp=c.id; mqState.cat=c.categoryId; }));
+    opt('없음', !r.camp, ()=>{ mqState.camp=''; });
+  }
+  /* 미리 선택된 3칸 */
+  const box=document.getElementById('mqPills'); box.innerHTML='';
+  const dl=document.createElement('label'); dl.className='mq-pill';
+  dl.appendChild(document.createTextNode('📅 '+(r.date===ts? '오늘' : mShortDate(r.date))+(r.time?(' '+r.time):'')));
+  const di=document.createElement('input'); di.type='date'; di.value=r.date; di.setAttribute('aria-label','날짜 선택');
+  di.addEventListener('change',()=>{ if(di.value) mqState.date=di.value; mqPaint(); });
+  dl.appendChild(di); box.appendChild(dl);
+  const pill=(label,key,empty)=>{
+    const b=document.createElement('button'); b.type='button'; b.className='mq-pill'+(empty?' empty':'')+(mqState.pick===key?' on':'');
+    b.textContent=label; hold(b);
+    b.addEventListener('click',()=>{ mqState.pick=(mqState.pick===key)? null : key; mqPaint(); });
+    box.appendChild(b);
+  };
+  const co=getCampaign(r.camp), ca=r.cat? getCategory(r.cat) : null;
+  pill(ca? ca.name : '카테고리', 'cat', !ca);
+  pill(co? ((co.icon?co.icon+' ':'')+co.name) : '캠페인', 'camp', !co);
+  const more=document.createElement('button'); more.type='button'; more.className='mq-more'; more.textContent='상세 ›';
+  hold(more); more.addEventListener('click', mqOpenDetail); box.appendChild(more);
+}
+function mqMakeTask(r){
+  return {id:uid(), categoryId:r.cat||'', campaignId:r.camp||null,
+          detail:r.detail, done:false, important:false,
+          start:r.date, end:r.date, startTime:r.time||'', endTime:'', repeat:null, link:'',
+          viaMobile:true};                                   /* PC에서 "모바일로 넣은 일정" 표시용 */
+}
+function mqRemember(t){
+  state.settings.mLastCat=t.categoryId||'';
+  state.settings.mLastCamp=t.campaignId||'';
+}
+function mqAdd(){
+  const inp=document.getElementById('mqIn');
+  const r=mqResolve();
+  if(!r.raw) return;
+  pushHistory('빠른 추가');
+  const t=mqMakeTask(r);
+  state.tasks.push(t);
+  state.tasks.forEach((x,i)=>{ x._seq=i; });
+  try{ syncTaskAlarm(t); }catch(e){}
+  mqRemember(t);
+  inp.value=''; mqReset();
+  mFlashId=t.id;
+  saveAll(); renderMobileList(); mqPaint();
+  mToast(mShortDate(t.start)+(t.startTime?(' '+t.startTime):'')+'에 추가했어요', true);
+}
+/* 반복·기간·링크까지 넣고 싶을 때 — 적던 내용을 들고 상세 시트로 */
+function mqOpenDetail(){
+  const inp=document.getElementById('mqIn');
+  const r=mqResolve();
+  mDraft=mqMakeTask(r); if(!r.raw) mDraft.detail='';
+  inp.value=''; mqReset(); inp.blur(); mqPaint();
+  document.getElementById('mQuick').classList.remove('open');
+  openMSheet(mDraft.id);
+  if(!r.raw) setTimeout(()=>{ const d=document.getElementById('msDetail'); if(d) d.focus(); }, 60);
+}
+(function(){
+  const q=document.getElementById('mQuick'); if(!q) return;
+  const inp=document.getElementById('mqIn'), app=document.getElementById('mApp');
+  const mic=document.getElementById('mqMic'), send=document.getElementById('mqSend'), more=document.getElementById('mMoreBtn');
+  mic.innerHTML=mIcon('mic'); send.innerHTML=mIcon('plus');
+  if(more){
+    const dot=more.querySelector('#mMoreDot');
+    more.innerHTML='<svg viewBox="0 0 24 24" width="21" height="21" aria-hidden="true"><circle cx="5" cy="12" r="1.7" fill="currentColor"/><circle cx="12" cy="12" r="1.7" fill="currentColor"/><circle cx="19" cy="12" r="1.7" fill="currentColor"/></svg>';
+    if(dot) more.appendChild(dot);
+    more.addEventListener('click', openMSet);
+    /* 커뮤니케이션 알림 수를 더보기 버튼에 그대로 비춰 줌 */
+    const src=document.getElementById('mCollabDot');
+    if(src && dot && window.MutationObserver){
+      const sync=()=>{ dot.textContent=src.textContent; dot.classList.toggle('hidden', src.classList.contains('hidden')); };
+      new MutationObserver(sync).observe(src,{attributes:true,childList:true,characterData:true,subtree:true});
+      sync();
+    }
+  }
+  document.getElementById('mqForm').addEventListener('submit',(e)=>{ e.preventDefault(); mqAdd(); });
+  send.addEventListener('pointerdown',(e)=>e.preventDefault());
+  mic.addEventListener('click',()=>{ if(typeof openVoice==='function') openVoice(); });
+  inp.addEventListener('input', mqPaint);
+  /* 키보드가 올라와도 입력 바가 키보드 바로 위에 붙도록 화면 높이를 맞춤 */
+  const vv=window.visualViewport;
+  const fit=()=>{
+    if(vv && document.activeElement && q.contains(document.activeElement)){
+      app.style.height=vv.height+'px';
+      if(window.scrollY||vv.offsetTop) window.scrollTo(0,0);
+    } else app.style.height='';
+  };
+  if(vv){ vv.addEventListener('resize',fit); vv.addEventListener('scroll',fit); }
+  inp.addEventListener('focus',()=>{ q.classList.add('open'); mqPaint(); fit(); setTimeout(fit,280); });
+  q.addEventListener('focusout',()=>{
+    setTimeout(()=>{
+      if(q.contains(document.activeElement)) return;
+      fit();
+      if(!(inp.value||'').trim()){ q.classList.remove('open'); mqReset(); mqPaint(); }
+    },220);
+  });
 })();
 
 async function init(){
