@@ -1421,7 +1421,7 @@ details.repeat-details[open] summary{color:var(--accent-deep);}
 
 /* ═══════════ 모바일 v2 — 확인·빠른 추가 중심 (ver 13.0) ═══════════ */
 /* 상단: 로고 · 검색 · 더보기만 남김 (필터·커뮤니케이션·설치·설정은 더보기 안으로) */
-body.mob #mFilterBtn,body.mob #mCollabBtn,body.mob #mInstall,body.mob #mSetBtn,body.mob #mDdayBtn,body.mob #mUser{display:none!important;}
+body.mob #mCollabBtn,body.mob #mInstall,body.mob #mSetBtn,body.mob #mDdayBtn,body.mob #mUser{display:none!important;}
 body.mob #mFab,body.mob #mMicFab{display:none!important;}
 #mMoreBtn{position:relative;}
 #mMoreDot{position:absolute;top:2px;right:2px;min-width:16px;height:16px;border-radius:9px;background:var(--imp-strong);color:#7A4B00;font-size:9.5px;font-weight:700;display:flex;align-items:center;justify-content:center;padding:0 3px;box-sizing:border-box;}
@@ -1556,6 +1556,23 @@ body.mob #mSheet .ms-head{display:none;}
 #mSheet .ms-pill.opt{border-style:dashed!important;color:var(--text-dim);font-weight:600;}
 #mSheet .ms-foot .ms-ok{flex:1;}
 
+
+/* ver 13.3 — 글 옆 작은 무채색 아이콘(달력·반복), 모바일 목록 여백 축소 */
+.ic-in{display:inline-flex;align-items:center;vertical-align:-0.16em;margin-right:0.3em;color:var(--text-dim);}
+.ic-in svg{width:1.05em;height:1.05em;}
+.mset-ic .ic-in{margin:0;vertical-align:0;} .mset-ic .ic-in svg{width:19px;height:19px;}
+.tp-ic.ic-in{margin-right:0;}
+body.mob #mTop{padding:calc(8px + env(safe-area-inset-top,0px)) 12px 6px;}
+body.mob #mTop .m-ic{width:36px;height:36px;border-radius:12px;}
+body.mob #mFilterBtn.filter-on{color:var(--text)!important;}
+body.mob #mFilterBtn.filter-on::after{background:var(--text-dim);}
+body.mob #mMoreBtn.filter-on::after{display:none;}
+body.mob #mList{padding-top:0;}
+#alarmPopup .ap-bell{color:var(--text-dim);} #alarmPopup .ap-bell svg{width:1em;height:1em;}
+/* ver 13.5 — 알약 버튼 높이 통일 (이모지가 들어가도 같은 크기) */
+.mq-pill{display:inline-flex;align-items:center;justify-content:center;height:36px;padding:0 12px;line-height:1;box-sizing:border-box;}
+#mSheet .ms-pill{display:inline-flex;align-items:center;justify-content:center;height:38px!important;padding:0 13px!important;line-height:1!important;box-sizing:border-box;}
+#mSheet select.ms-pill{display:inline-block;line-height:36px!important;}
 @media (prefers-reduced-motion:reduce){.fx-bead,.fx-shine,.fx-swirl,.fx-twinkle{animation:none;}}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -1685,8 +1702,8 @@ null
   <div id="mTop">
     <div class="m-brand"><img class="tdl-logo" alt=""><span>TDL<span>.</span></span></div>
     <div class="m-sp"></div>
-    <button class="m-ic" id="mSearchBtn" title="검색"></button>
     <button class="m-ic" id="mFilterBtn" title="필터"></button>
+    <button class="m-ic" id="mSearchBtn" title="검색"></button>
     <button class="m-ic" id="mCollabBtn" title="커뮤니케이션" style="position:relative;"><span id="mCollabDot" class="hidden"></span></button>
     <button class="m-ic" id="mInstall" title="홈 화면에 추가"></button>
     <button class="m-ic" id="mSetBtn" title="설정"></button>
@@ -1756,7 +1773,7 @@ null
     <div id="mfCat" class="ms-check-list"></div>
     <div class="mv-lab">캠페인 (여러 개 선택 가능)</div>
     <div id="mfCamp" class="ms-check-list"></div>
-    <label class="chk-line" style="margin-top:12px;display:flex;align-items:center;gap:8px;">
+    <label class="chk-line" style="display:none;">
       <input type="checkbox" id="mfDone" style="width:auto;"> 완료 숨김
     </label>
     <div class="mv-acts">
@@ -1855,7 +1872,7 @@ null
       <textarea id="msDetail" placeholder="할 일을 적어주세요"></textarea>
     </div>
     <div class="ms-pills">
-      <button class="ms-pill" id="msDate">📅 날짜</button>
+      <button class="ms-pill" id="msDate">날짜</button>
       <select class="ms-pill" id="msCat" aria-label="카테고리"></select>
       <select class="ms-pill" id="msCamp" aria-label="캠페인"></select>
     </div>
@@ -1876,7 +1893,7 @@ null
   </div>
 </div>
 
-<div id="ctxMenu" class="hidden"><div class="item" id="ctxLink">🔗 링크 넣기</div><div class="item" id="ctxShare">👥 동료와 공유</div><div class="item ctx-dup" id="ctxDuplicate">📋 복제</div><div class="item danger" id="ctxDelete">🗑 삭제</div></div>
+<div id="ctxMenu" class="hidden"><div class="item" id="ctxLink"><span class="ic ic-in" data-ic="link"></span><span class="ctx-t">링크 넣기</span></div><div class="item" id="ctxShare">👥 동료와 공유</div><div class="item ctx-dup" id="ctxDuplicate">📋 복제</div><div class="item danger" id="ctxDelete">🗑 삭제</div></div>
 
 <div id="miniCal" class="hidden">
   <div id="miniCalHead">
@@ -1952,12 +1969,12 @@ null
 </div>
 <button id="noteFab" title="메모"><span class="ic" data-ic="note"></span></button>
 <div id="timePanel" class="hidden">
-  <div class="tp-head"><span>🕐 시간</span><button class="tp-close" id="tpClose">✕</button></div>
+  <div class="tp-head"><span><span class="ic ic-in" data-ic="clock"></span>시간</span><button class="tp-close" id="tpClose">✕</button></div>
   <div class="tp-tabs">
-    <button class="tp-tab on" data-t="timer"><span class="tp-ic">⏱️</span>타이머</button>
-    <button class="tp-tab" data-t="alarm"><span class="tp-ic">⏰</span>알람</button>
-    <button class="tp-tab" data-t="clock"><span class="tp-ic">🕐</span>시계</button>
-    <button class="tp-tab" data-t="dday"><span class="tp-ic">📅</span>D-day</button>
+    <button class="tp-tab on" data-t="timer"><span class="tp-ic ic ic-in" data-ic="timer"></span>타이머</button>
+    <button class="tp-tab" data-t="alarm"><span class="tp-ic ic ic-in" data-ic="bell"></span>알람</button>
+    <button class="tp-tab" data-t="clock"><span class="tp-ic ic ic-in" data-ic="clock"></span>시계</button>
+    <button class="tp-tab" data-t="dday"><span class="tp-ic ic ic-in" data-ic="calendar"></span>D-day</button>
   </div>
 
   <div class="tp-body" id="tpTimer">
@@ -2015,7 +2032,7 @@ null
 <div id="ddFloats"></div>
 <div id="msgFloats"></div>
 <div id="alarmPopup" class="hidden">
-  <div class="ap-bell">⏰</div>
+  <div class="ap-bell"><span class="ic" data-ic="bell"></span></div>
   <div class="ap-time" id="apTime"></div>
   <div class="ap-label" id="apLabel"></div>
   <div class="ap-btns"><button id="apSnooze">5분 뒤 다시</button><button id="apStop">끄기</button></div>
@@ -2040,7 +2057,7 @@ null
   </div>
 
   <div class="modal hidden" id="holidayModal">
-    <h2>📅 공휴일 관리</h2>
+    <h2><span class="ic ic-in" data-ic="calendar"></span>공휴일 관리</h2>
     <div class="hint">토·일요일은 자동으로 표시돼요. 날짜에 마우스를 올리면 이름이 보입니다.</div>
     <div class="row">
       <input type="date" id="newHolidayDate">
@@ -2052,7 +2069,7 @@ null
   </div>
 
   <div class="modal hidden" id="datePopup" style="width:480px;">
-    <h2>🗓 일정 날짜 설정</h2>
+    <h2><span class="ic ic-in" data-ic="calendar"></span>일정 날짜 설정</h2>
     <label class="chk-line" id="dpShareLine" style="margin-bottom:8px;"><input type="checkbox" id="dpShare"> 👥 동료와 함께하는 일정</label>
     <div class="hint" id="dpShareWho" style="margin-top:-4px;"></div>
     <div class="range-label" id="rangeLabel">-</div>
@@ -2060,7 +2077,7 @@ null
     <div class="row" style="margin-bottom:6px;"><button class="btn" id="dpToday" style="flex:1;">오늘 선택</button></div>
     <div class="cal-wrap" id="calWrap"></div>
     <div class="repeat-open" id="repeatSection">
-      <div class="field-label">🔁 반복 설정</div>
+      <div class="field-label"><span class="ic ic-in" data-ic="repeat"></span>반복 설정</div>
       <select id="repeatType">
         <option value="none">반복 안 함</option>
         <option value="weekdays">특정 요일 (매주)</option>
@@ -2162,7 +2179,7 @@ null
     <div class="hint">켜두면 동료가 아닌 사람은 방명록 등을 통해 내 미니홈피에 들어올 수 없어요.</div>
     <div class="field-label">기타</div>
     <div class="row">
-      <button class="btn" id="openHolidayFromSettings">📅 공휴일 관리</button>
+      <button class="btn" id="openHolidayFromSettings"><span class="ic ic-in" data-ic="calendar"></span>공휴일 관리</button>
       <button class="btn" id="openCategoryFromSettings">🗂 카테고리 관리 · 공유</button>
       <button class="btn" id="openCampaignFromSettings">🎯 캠페인 관리 · 공유</button>
     </div>
@@ -2430,7 +2447,7 @@ null
     <div class="hint">휴대폰 카메라로 아래 QR을 비추면 바로 열립니다. 같은 구글 계정으로 로그인하면 지금 보고 있는 일정이 그대로 보여요.</div>
     <div id="qrBox"></div>
     <div class="qr-url" id="qrUrl"></div>
-    <div class="row"><button class="btn" id="qrCopy" style="flex:1;">🔗 주소 복사</button></div>
+    <div class="row"><button class="btn" id="qrCopy" style="flex:1;"><span class="ic ic-in" data-ic="link"></span>주소 복사</button></div>
     <div class="modal-actions"><button class="btn primary" id="closeQrModal">닫기</button></div>
   </div>
 
@@ -2869,7 +2886,7 @@ function exportBackup(){
 
 function updateFileStatusHint(t){ const el=document.getElementById('fileStatusHint'); if(el) el.textContent=t; }
 /* ═══════════════ 클라우드 저장 (Supabase) ═══════════════ */
-const APP_VER='ver 13.2', APP_BUILD='2026-11-11 09:00';
+const APP_VER='ver 13.5', APP_BUILD='2026-11-11 22:40';
 const LOGO_SRC='data:image/png;base64,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';
 function paintLogos(){ document.querySelectorAll('img.tdl-logo').forEach(i=>{ i.src=LOGO_SRC; }); }
 const IS_WEB = /^https?:$/i.test(location.protocol);
@@ -4213,7 +4230,7 @@ function openLinkPopup(anchor, task){
     const m=/(https?:\/\/[^\s]+)/i.exec(task.detail||''); return m? m[1] : '';
   })();
   box.innerHTML=
-    '<div style="font-size:calc(11px * var(--fs,1));color:var(--text-dim);margin-bottom:7px;">🔗 링크 (선택)</div>'+
+    '<div style="font-size:calc(11px * var(--fs,1));color:var(--text-dim);margin-bottom:7px;">'+mIconIn('link')+'링크 (선택)</div>'+
     '<input type="text" id="lkUrl" placeholder="https://... 또는 D:\\폴더\\파일.xlsx" '+
       'style="width:100%;box-sizing:border-box;padding:8px 10px;border:none;background:var(--bg);border-radius:10px;font-size:calc(12px * var(--fs,1));font-family:inherit;color:var(--text);outline:none;">'+
     '<div style="display:flex;gap:5px;margin-top:9px;justify-content:flex-end;">'+
@@ -4222,7 +4239,7 @@ function openLinkPopup(anchor, task){
       '<button id="lkSave" style="border:none;background:var(--accent);color:#fff;border-radius:9px;padding:6px 14px;font-size:calc(11.5px * var(--fs,1));cursor:pointer;font-family:inherit;font-weight:600;">확인</button>'+
     '</div>'+
     '<div style="font-size:calc(10px * var(--fs,1));color:var(--text-dim);margin-top:7px;line-height:calc(14px * var(--fs,1));">'+
-      '설정 후에는 🔗 를 <b>클릭하면 바로 열리고</b>, <b>우클릭</b>하면 이 창이 다시 열려요.</div>';
+      '설정 후에는 링크 아이콘을 <b>클릭하면 바로 열리고</b>, <b>우클릭</b>하면 이 창이 다시 열려요.</div>';
   mountFloat(box, anchor);
   const inp=box.querySelector('#lkUrl');
   inp.value=guess;
@@ -4521,7 +4538,7 @@ function openTaskMenu(taskId, x, y, anchorTop){
   try{
     const _t=state.tasks.find(x2=>x2.id===ctxTaskId);
     const _l=document.getElementById('ctxLink');
-    if(_l) _l.textContent = (_t&&_t.link)? '🔗 링크 수정' : '🔗 링크 넣기';
+    if(_l) _l.innerHTML = mIconIn('link')+((_t&&_t.link)? '링크 수정' : '링크 넣기');
     const _lk=taskLocked(_t);
     if(_l){ _l.classList.toggle('disabled', _lk); if(_lk) _l.title=lockOwnerName(_t)+'님이 만든 공유 일정이에요'; else _l.title=''; }
     const _d=document.getElementById('ctxDelete');
@@ -7267,7 +7284,7 @@ function renderCoinHist(){
   const p=coinMyProfile();
   const log=(p?p.coin_log:[]).slice().reverse();
   if(!log.length){ box.innerHTML='<div class="hint">아직 내역이 없어요.</div>'; return; }
-  const TYPE_LABEL={login:'📅 접속 보너스', signup:'🎉 가입 보너스', buddy:'🤝 동료 추가 보너스', buy_outfit:'👕 옷 구매', buy_item:'🎒 아이템 구매', gift_out:'💌 쪽지에 코인 보냄', gift_in:'💌 쪽지로 코인 받음', seed:'🪙 초기 지급'};
+  const TYPE_LABEL={login:'접속 보너스', signup:'🎉 가입 보너스', buddy:'🤝 동료 추가 보너스', buy_outfit:'👕 옷 구매', buy_item:'🎒 아이템 구매', gift_out:'💌 쪽지에 코인 보냄', gift_in:'💌 쪽지로 코인 받음', seed:'🪙 초기 지급'};
   log.forEach(l=>{
     const r=document.createElement('div'); r.className='cl-row';
     const dt=new Date(l.at||Date.now());
@@ -8729,7 +8746,7 @@ function renderAlarms(){
     const row=document.createElement('div'); row.className='al-row'+(a.fired?' done':'');
     const when=document.createElement('span'); when.className='al-when';
     const dayTxt=(fmt(d)===todayStr())?'오늘':((d.getMonth()+1)+'/'+d.getDate());
-    when.textContent=(a.fired?'✔ ':'⏰ ')+dayTxt+' '+hhmm(d)+(a.label?('  ·  '+a.label):'');
+    when.textContent=(a.fired?'✔ ':'')+dayTxt+' '+hhmm(d)+(a.label?('  ·  '+a.label):'');
     const off=document.createElement('button'); off.className='al-off'; off.textContent='✕'; off.title='삭제';
     off.addEventListener('click',()=>{ TT().alarms=TT().alarms.filter(x=>x.id!==a.id); saveAll(); renderAlarms(); });
     row.appendChild(when); row.appendChild(off); w.appendChild(row);
@@ -9459,11 +9476,23 @@ function mPostpone(task){
   saveAll(); render();
   mToast(mShortDate(task.start)+'로 미뤘어요', true);
 }
+/* 모바일 필터는 PC와 따로 둔다 — 처음엔 '회사' 카테고리만 보이게 */
+function mFilterGet(){
+  const s=state.settings||{};
+  let cats=s.mFilterCategories, camps=s.mFilterCampaigns;
+  if(!Array.isArray(cats)){
+    const w=(state.categories||[]).find(c=>(c.name||'').trim()==='회사');
+    cats = w? [w.id] : [];
+  }
+  cats=cats.filter(id=>getCategory(id));
+  camps=(Array.isArray(camps)? camps : []).filter(id=> id==='none' || getCampaign(id));
+  return {cats, camps};
+}
 function mFilterSummary(){
   const s=state.settings||{}, out=[];
-  (s.filterCategories||[]).forEach(id=>{ const c=getCategory(id); if(c) out.push(c.name); });
-  (s.filterCampaigns||[]).forEach(id=>{ if(id==='none') out.push('캠페인 없음'); else { const c=getCampaign(id); if(c) out.push(c.name); } });
-  if(s.filterIncomplete) out.push('완료 숨김');
+  const mf=mFilterGet();
+  (mf.cats).forEach(id=>{ const c=getCategory(id); if(c) out.push(c.name); });
+  (mf.camps).forEach(id=>{ if(id==='none') out.push('캠페인 없음'); else { const c=getCampaign(id); if(c) out.push(c.name); } });
   return out;
 }
 /* 마감일: 며칠짜리 일정은 끝나는 날, 반복은 이번 회차 기준 */
@@ -9549,32 +9578,28 @@ function renderMobileList(){
   const q=(searchQuery||'').trim();
   const ts=todayStr();
   /* '완료 숨김' 설정과 무관하게 모바일은 미완료 중심으로 보여주므로, 목록은 그 필터를 빼고 가져온다 */
-  const keepInc=state.settings.filterIncomplete; state.settings.filterIncomplete=false;
-  let vlist; try{ vlist=visibleTasks(); } finally { state.settings.filterIncomplete=keepInc; }
+  const st=state.settings, mf=mFilterGet();
+  const keep=[st.filterIncomplete, st.filterCategories, st.filterCampaigns];
+  st.filterIncomplete=false; st.filterCategories=mf.cats; st.filterCampaigns=mf.camps;
+  let vlist; try{ vlist=visibleTasks(); } finally { st.filterIncomplete=keep[0]; st.filterCategories=keep[1]; st.filterCampaigns=keep[2]; }
+  const fs=mFilterSummary();
 
-  const fs=mFilterSummary().filter(x=>x!=='완료 숨김');
-  const mb=document.getElementById('mMoreBtn'); if(mb) mb.classList.toggle('filter-on', fs.length>0);
-  if(fs.length){
-    const fc=document.createElement('div'); fc.className='mfchip';
-    fc.innerHTML='<span>필터: '+escapeHtml(fs.join(' · '))+'</span><button>해제</button>';
-    fc.querySelector('span').addEventListener('click', openMFilter);
-    fc.querySelector('button').addEventListener('click', resetMFilter);
-    box.appendChild(fc);
-  }
-
-  const now=[], later=[], done=[];
+  const tm=fmt(addDays(startOfToday(),1));
+  const now=[], tmr=[], later=[], done=[];
   vlist.forEach(task=>{
     if(mIsDone(task)){ done.push(task); return; }
     const due=mDue(task);
-    if(due && due<=ts) now.push(task); else later.push(task);
+    if(due && due<=ts) now.push(task); else if(due===tm) tmr.push(task); else later.push(task);
   });
   const byDue=(a,b)=>{ const x=mDue(a)||'9999', y=mDue(b)||'9999'; return x<y?-1 : x>y?1 : 0; };
   now.sort(byDue); later.sort(byDue);
 
   const addGroup=(label, tasks, emptyMsg)=>{
-    const h=document.createElement('div'); h.className='msec';
-    h.innerHTML='<span>'+label+'</span><i>'+tasks.length+'</i>';
-    box.appendChild(h);
+    if(label){
+      const h=document.createElement('div'); h.className='msec';
+      h.innerHTML='<span>'+label+'</span><i>'+tasks.length+'</i>';
+      box.appendChild(h);
+    }
     const g=document.createElement('div'); g.className='mgrp';
     const b=document.createElement('div'); b.className='mgb';
     tasks.forEach(t=>b.appendChild(mBuildRow(t,{})));
@@ -9589,8 +9614,10 @@ function renderMobileList(){
     if(mSheetTaskId) mPaintSheet();
     return;
   }
-  if(now.length || !q) addGroup('오늘까지', now, '오늘까지 해야 할 일이 없어요.');
-  if(later.length) addGroup('내일 이후', later);
+  /* 제목 없이 세 묶음: 오늘까지(밀린 일 포함) · 내일 · 그 이후 */
+  if(now.length || !q) addGroup('', now, '오늘까지 해야 할 일이 없어요.');
+  if(tmr.length) addGroup('', tmr);
+  if(later.length) addGroup('', later);
   if((mPastOpen || q) && done.length){
     done.sort((a,b)=>-byDue(a,b));
     addGroup('완료', done.slice(0,80));
@@ -9661,11 +9688,11 @@ function mPaintSheet(){
   if(!t.start) label='날짜';
   else if(t.end && t.end!==t.start) label=mShortDate(t.start)+' ~ '+mShortDate(t.end);
   else label=mShortDate(t.start);
-  document.getElementById('msDate').textContent='📅 '+label;
-  const set=(id,txt,on)=>{ const e=document.getElementById(id); if(e){ e.textContent=txt; e.classList.toggle('opt', !on); } };
-  set('msTimeBtn', t.startTime? ('🕒 '+t.startTime+(t.endTime?('~'+t.endTime):'')) : '＋ 시간', !!t.startTime);
-  set('msRepBtn', isRep? ('🔁 '+repeatLabel(t.repeat)) : '＋ 반복', isRep);
-  set('msLinkBtn', (t.link||'').trim()? '🔗 링크' : '＋ 링크', !!(t.link||'').trim());
+  document.getElementById('msDate').innerHTML=mIconIn('calendar')+escapeHtml(label);
+  const set=(id,txt,on,ic)=>{ const e=document.getElementById(id); if(e){ e.innerHTML=(ic?mIconIn(ic):'')+escapeHtml(txt); e.classList.toggle('opt', !on); } };
+  set('msTimeBtn', t.startTime? (t.startTime+(t.endTime?('~'+t.endTime):'')) : '＋ 시간', !!t.startTime, t.startTime?'clock':'');
+  set('msRepBtn', isRep? repeatLabel(t.repeat) : '＋ 반복', isRep, isRep?'repeat':'');
+  set('msLinkBtn', (t.link||'').trim()? '링크' : '＋ 링크', !!(t.link||'').trim(), (t.link||'').trim()?'link':'');
   set('msImp', t.important? '★ 중요' : '☆ 중요', !!t.important);
   document.getElementById('msImp').classList.toggle('on', !!t.important);
   const dc=document.getElementById('msDoneC');
@@ -9746,8 +9773,7 @@ function openMSet(){
   };
 
   sec('바로가기');
-  { const fsum=mFilterSummary();
-    row('🔎','필터', fsum.length? ('적용 중: '+fsum.join(' · ')) : '카테고리 · 캠페인', ()=>openMFilter());
+  {
     row('✅', mPastOpen? '완료한 일정 숨기기' : '완료한 일정 보기', '목록 맨 아래에 표시돼요', ()=>{ mPastOpen=!mPastOpen; renderMobileList(); });
     const cd=document.getElementById('mCollabDot');
     const cn=(cd && !cd.classList.contains('hidden'))? (cd.textContent||'').trim() : '';
@@ -9756,7 +9782,7 @@ function openMSet(){
   }
 
   sec('일정');
-  row('📅','D-day 관리','기념일·마감일을 등록하고 확인해요', ()=>{ if(typeof openMDday==='function') openMDday(); });
+  row(mIconIn('calendar'),'D-day 관리','기념일·마감일을 등록하고 확인해요', ()=>{ if(typeof openMDday==='function') openMDday(); });
 
   sec('알림');
   toggle('🔔','팝업 알림','새 소식이 오면 화면 아래에 잠깐 표시돼요',
@@ -10573,16 +10599,16 @@ function baSay(text, isTip){
 }
 const BA_TIPS=[
   /* 시간·타이머 */
-  '🕐 버튼으로 타이머를 맞추면 내가 시계를 세워둘게',
+  '시계 버튼으로 타이머를 맞추면 내가 시계를 세워둘게',
   '내가 세워둔 시계나 디데이를 누르면 크기·투명도를 조절할 수 있어',
   '시계랑 디데이는 끌어서 원하는 자리로 옮길 수 있어',
   '알람을 맞춰두면 시간이 됐을 때 소리로 알려줄게',
-  '퇴근시간 타이머도 🕐 버튼 안에 있어',
+  '퇴근시간 타이머도 시계 버튼 안에 있어',
   '디데이를 등록하면 화면에 며칠 남았는지 크게 띄워둘 수 있어',
   /* 일정 기본 */
   '일정 위에서 마우스 오른쪽을 누르면 링크·공유·복제·삭제가 나와',
-  '일정에 링크를 넣어두면 🔗 를 눌러 바로 열 수 있어',
-  '🔗 는 웹주소뿐 아니라 D:\\폴더\\파일 같은 내 PC 경로도 넣을 수 있어',
+  '일정에 링크를 넣어두면 링크 아이콘을 눌러 바로 열 수 있어',
+  '링크는 웹주소뿐 아니라 D:\\폴더\\파일 같은 내 PC 경로도 넣을 수 있어',
   '같은 일정을 또 만들 땐 복제가 제일 빨라',
   '반복 일정을 걸어두면 매주·매달 알아서 생겨',
   '중요 표시를 해두면 눈에 띄게 강조돼',
@@ -10743,6 +10769,7 @@ function mIcon(name){
     mobile:`<rect x="7" y="2.6" width="10" height="18.8" rx="2.4" ${A}/><path d="M10.6 18.4 h2.8" ${A}/>`,
     calendar:`<rect x="3.4" y="5" width="17.2" height="16" rx="2.6" ${A}/><path d="M3.4 9.6 h17.2 M8 2.8 v3.6 M16 2.8 v3.6" ${A}/>`,
     note:`<path d="M5 3.4 h9.6 L19.4 8.2 V20.6 a1.6 1.6 0 0 1-1.6 1.6 H5 a1.6 1.6 0 0 1-1.6-1.6 V5 A1.6 1.6 0 0 1 5 3.4Z" ${A}/><path d="M14 3.6 v5 h5 M7.4 13 h9 M7.4 17 h6" ${A}/>`,
+    timer:`<circle cx="12" cy="13.4" r="7.6" ${A}/><path d="M12 9.4 V13.4 l2.6 1.6 M9.6 2.8 h4.8 M12 2.8 v3" ${A}/>`,
     clock:`<circle cx="12" cy="12" r="9" ${A}/><path d="M12 6.8 V12 l3.4 2" ${A}/>`,
     cup:`<path d="M4.4 7.6 h12.2 v6.2 a5 5 0 0 1-5 5 H9.4 a5 5 0 0 1-5-5Z" ${A}/><path d="M16.6 9.4 h1.8 a2.6 2.6 0 0 1 0 5.2 h-1.8" ${A}/><path d="M7.6 2.6 v2.4 M11 2.6 v2.4 M14.4 2.6 v2.4" ${A}/>`,
     /* 말풍선 안의 사람 — 동료와 이야기하는 공간 */
@@ -10762,6 +10789,7 @@ function mIcon(name){
   return '<svg viewBox="0 0 24 24" width="21" height="21" aria-hidden="true">'+(P[name]||'')+'</svg>';
 }
 /* data-ic 가 붙은 곳을 모두 같은 톤의 회색 아이콘으로 채움 */
+function mIconIn(name){ return '<span class="ic-in">'+mIcon(name)+'</span>'; }
 function paintIcons(root){
   (root||document).querySelectorAll('.ic[data-ic]').forEach(e=>{
     if(e.dataset.done) return;
@@ -10773,7 +10801,7 @@ function paintIcons(root){
 /* ═══════════════ 모바일: 필터 · 동료 ═══════════════ */
 function openMFilter(){
   const cat=document.getElementById('mfCat'), camp=document.getElementById('mfCamp');
-  const fca=state.settings.filterCategories||[], fpa=state.settings.filterCampaigns||[];
+  const mf=mFilterGet(), fca=mf.cats, fpa=mf.camps;
   cat.innerHTML='';
   state.categories.forEach(c=>mkCheckRow(cat,c.id,c.name,fca.includes(c.id)));
   camp.innerHTML='';
@@ -10784,20 +10812,19 @@ function openMFilter(){
 }
 function closeMFilter(){ document.getElementById('mFilter').classList.add('hidden'); }
 function applyMFilter(){
-  state.settings.filterCategories=readChecks(document.getElementById('mfCat'));
-  state.settings.filterCampaigns=readChecks(document.getElementById('mfCamp'));
-  state.settings.filterIncomplete=document.getElementById('mfDone').checked;
-  saveAll(); renderMobileList(); syncMFilterBtn(); closeMFilter();
+  state.settings.mFilterCategories=readChecks(document.getElementById('mfCat'));
+  state.settings.mFilterCampaigns=readChecks(document.getElementById('mfCamp'));
+  saveAll(); renderMobileList(); syncMFilterBtn(); closeMFilter(); if(typeof mqPaint==='function'){ mqReset(); mqPaint(); }
 }
 function resetMFilter(){
-  state.settings.filterCategories=[]; state.settings.filterCampaigns=[]; state.settings.filterIncomplete=false;
-  saveAll(); renderMobileList(); syncMFilterBtn(); closeMFilter();
+  state.settings.mFilterCategories=[]; state.settings.mFilterCampaigns=[];
+  saveAll(); renderMobileList(); syncMFilterBtn(); closeMFilter(); if(typeof mqPaint==='function'){ mqReset(); mqPaint(); }
 }
 function syncMFilterBtn(){
   const b=document.getElementById('mFilterBtn'); if(!b||!state||!state.settings) return;
-  const on=(state.settings.filterCategories||[]).length>0
-        || (state.settings.filterCampaigns||[]).length>0
-        || !!state.settings.filterIncomplete;
+  const mf=mFilterGet();
+  const on=mf.cats.length>0 || mf.camps.length>0;
+  b.title = on? ('필터: '+mFilterSummary().join(' · ')) : '필터';
   /* 다른 아이콘과 같은 밝은 배경 유지 — 켜졌을 때만 은은하게 */
   b.style.background='';                      /* 항상 다른 아이콘과 같은 흰 배경 */
   b.style.color = on? 'var(--accent-deep)' : '';
@@ -13561,6 +13588,22 @@ function mqDefaults(){
   }
   if(cat && !state.categories.some(c=>c.id===cat)) cat='';
   if(camp && !cat) cat=camp.categoryId;
+  /* 필터가 걸려 있으면 새 일정도 그 필터에 맞춰 넣는다 (추가했는데 목록에 안 보이는 일이 없게) */
+  const mf=mFilterGet(), by=(s.mLastCampBy && typeof s.mLastCampBy==='object')? s.mLastCampBy : {};
+  const fCamps=mf.camps.filter(id=>id!=='none');
+  if(fCamps.length){
+    if(!camp || !fCamps.includes(camp.id)) camp=getCampaign(fCamps[0])||null;
+    if(camp) cat=camp.categoryId||cat;
+  } else if(mf.camps.includes('none')) camp=null;
+  if(mf.cats.length && !mf.cats.includes(cat) && !(camp && fCamps.includes(camp.id))){
+    cat=mf.cats[0];
+    if(!mf.camps.includes('none')){
+      const last=(by[cat]!==undefined)? by[cat] : null;
+      if(last!==null) camp=getCampaign(last)||null;
+      else camp=mCampOrder().find(c=>c.categoryId===cat && (state.tasks||[]).some(t=>t.campaignId===c.id))||null;
+      if(camp && camp.categoryId!==cat) camp=null;
+    }
+  }
   return {cat, camp: camp? camp.id : ''};
 }
 function mqResolve(){
@@ -13600,7 +13643,7 @@ function mqPaint(){
   /* 미리 선택된 3칸 */
   const box=document.getElementById('mqPills'); box.innerHTML='';
   const dl=document.createElement('label'); dl.className='mq-pill';
-  dl.appendChild(document.createTextNode('📅 '+(r.date===ts? '오늘' : mShortDate(r.date))+(r.time?(' '+r.time):'')));
+  dl.insertAdjacentHTML('beforeend', mIconIn('calendar')); dl.appendChild(document.createTextNode((r.date===ts? '오늘' : mShortDate(r.date))+(r.time?(' '+r.time):'')));
   const di=document.createElement('input'); di.type='date'; di.value=r.date; di.setAttribute('aria-label','날짜 선택');
   di.addEventListener('change',()=>{ if(di.value) mqState.date=di.value; mqPaint(); });
   dl.appendChild(di); box.appendChild(dl);
@@ -13625,6 +13668,10 @@ function mqMakeTask(r){
 function mqRemember(t){
   state.settings.mLastCat=t.categoryId||'';
   state.settings.mLastCamp=t.campaignId||'';
+  if(t.categoryId){
+    if(!state.settings.mLastCampBy || typeof state.settings.mLastCampBy!=='object') state.settings.mLastCampBy={};
+    state.settings.mLastCampBy[t.categoryId]=t.campaignId||'';
+  }
 }
 function mqAdd(){
   const inp=document.getElementById('mqIn');
